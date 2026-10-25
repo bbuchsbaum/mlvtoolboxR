@@ -1,0 +1,24 @@
+{
+  "generated": "2026-10-25T23:26:28.188742+00:00",
+  "source": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+  "runtime": "Octave 11.1.0; image 2.20.0",
+  "adaptation": "Two jj++m_Neighbors8 expressions changed to jj + m_Neighbors8 in a temporary copy.",
+  "scope": "Synthetic Pratt, scalar AOF, signed-distance/MAT and MAT import fixtures; no natural-image data.",
+  "sha256": {
+    "pratt_output_ring.csv": "dcc5019ea7d1b2f88676f075d48dbd30928cbf470b92b3cb7f3099a7220a9a15",
+    "synthetic_drawings.mat": "9651c1892ba231b0c4223b273b96c033200514b78ff898671cd239d51c283b9d",
+    "mat_input.csv": "d04f5d8e15f9542856e6eb2c66a70a5662be67a0846a5b6eb19acc55b0005fb7",
+    "aof_output.csv": "2f2600a3bc7dc8bb7eae1af0f30d509ff15df9ef4e04ee0df8b0d21b288b7ecb",
+    "mat_distance.csv": "33172bab6ead8ff300163eb8fb882a435f2263b8bed4511b51b3daf677739119",
+    "pratt_input_random.csv": "1f54fa088aebf2573884585d88cc81f254228a3d18ec9d58afb5e9565516f93f",
+    "aof_index.csv": "6fbac6431b7d5a9dfc0f8d881868e5dcfb5c88c017917ff90039fa6001154c46",
+    "pratt_input_ring.csv": "dba8dfc222f96eed0aecbe1d38ed55786962161fefb3919dde82b94796862491",
+    "aof_distance.csv": "682ff8997874b04eab5e82e37efa66b6571a8175f9f231106332f8773e1242e1",
+    "pratt_input_box.csv": "a88a2d13ea44b935d99cc5c6a034d3999cc8c15463de3f1cb156898b7b6bc5cf",
+    "mat_skeleton.csv": "ab1eef1d4fc035d8eaf4f930920af9f25c1026394c513fafcf4a5a8ddb9fed49",
+    "pratt_output_box.csv": "798f5d6b4f52e13e88c270862da260fd6749c48246abb6803f8d91e95062e9b4",
+    "mat_aof.csv": "a2e5dab37e7f4648d923cb1ba0b1190e3010c8e2181779d21d82f607df313f53",
+    "mat_index.csv": "881173886599c4657de25c7484c7e2da0aab021d124c6664cde89014fc14ed62",
+    "pratt_output_random.csv": "f5f83ddfc896d949130ff7ee4964f2c588ea79824d52be8df1cceca7b0937bb0"
+  }
+}

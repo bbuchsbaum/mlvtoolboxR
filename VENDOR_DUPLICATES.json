@@ -1,0 +1,2717 @@
+{
+  "schema_version": 1,
+  "assessment_date": "2026-10-25",
+  "scope": "Local file metadata; SHA-256 of candidate regular files >= 1 MiB; Git stores excluded from duplicate hashing; MAT payload comparison skips a verified MATLAB-v5 128-byte header.",
+  "sources": [
+    {
+      "path": "MLV_toolbox",
+      "origin": "https://github.com/bwlabToronto/MLV_toolbox",
+      "commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+      "shallow": false,
+      "commit_count": 459,
+      "git_status": ""
+    },
+    {
+      "path": "vendor/pyMLV",
+      "origin": "https://github.com/bwlabToronto/pyMLV",
+      "commit": "14b3183b91146b1021eb7ef97db75ad703b06832",
+      "shallow": false,
+      "commit_count": 16,
+      "git_status": ""
+    }
+  ],
+  "sizes": [
+    {
+      "path": "MLV_toolbox",
+      "total_bytes": 2047013910,
+      "allocated_bytes": 2060333056,
+      "git_bytes": 1300241015,
+      "worktree_bytes": 746772895,
+      "file_count": 3782,
+      "groups": {
+        ".git/objects": {
+          "files": 2,
+          "bytes": 1299696621,
+          "allocated": 1299701760
+        },
+        "dataSets/IAPS": {
+          "files": 13,
+          "bytes": 286321771,
+          "allocated": 286343168
+        },
+        "dataSets/TorontoScenes": {
+          "files": 7,
+          "bytes": 176840031,
+          "allocated": 176852992
+        },
+        "dataSets/OASIS": {
+          "files": 10,
+          "bytes": 145463799,
+          "allocated": 145481728
+        },
+        "dataSets/ArchitecturalScenes": {
+          "files": 3,
+          "bytes": 71059575,
+          "allocated": 71065600
+        },
+        "MLVcode/edges-master": {
+          "files": 722,
+          "bytes": 35638540,
+          "allocated": 37302272
+        },
+        "demos/Forest_DBW.mat": {
+          "files": 1,
+          "bytes": 8115271,
+          "allocated": 8118272
+        },
+        "demos/Figure1.pdf": {
+          "files": 1,
+          "bytes": 5113636,
+          "allocated": 5115904
+        },
+        "dataSets/Snodgrass_Vanderwart": {
+          "files": 2,
+          "bytes": 2456883,
+          "allocated": 2461696
+        },
+        "demos/getcontourfeatures_Single.mlx": {
+          "files": 1,
+          "bytes": 1986006,
+          "allocated": 1986560
+        },
+        "demos/getLineDrawing.mlx": {
+          "files": 1,
+          "bytes": 1974588,
+          "allocated": 1978368
+        },
+        "demos/Figure3.pdf": {
+          "files": 1,
+          "bytes": 1777211,
+          "allocated": 1777664
+        },
+        "demos/Forest_DBW.png": {
+          "files": 1,
+          "bytes": 1725684,
+          "allocated": 1728512
+        },
+        "images/example_output.png": {
+          "files": 1,
+          "bytes": 1493483,
+          "allocated": 1495040
+        },
+        "images/medial_axis_transform.png": {
+          "files": 1,
+          "bytes": 1405273,
+          "allocated": 1409024
+        },
+        "demos/getMedialAxis.mlx": {
+          "files": 1,
+          "bytes": 1281947,
+          "allocated": 1282048
+        },
+        "doc/MLVcode": {
+          "files": 63,
+          "bytes": 537009,
+          "allocated": 671744
+        },
+        ".git/index": {
+          "files": 1,
+          "bytes": 518953,
+          "allocated": 520192
+        },
+        "3rdParty/m2html": {
+          "files": 142,
+          "bytes": 425169,
+          "allocated": 876544
+        },
+        "images/MLVlogo_QR.ai": {
+          "files": 1,
+          "bytes": 368318,
+          "allocated": 368640
+        },
+        "images/Logo_Banner.ai": {
+          "files": 1,
+          "bytes": 353695,
+          "allocated": 356352
+        },
+        "resources/project": {
+          "files": 2631,
+          "bytes": 250912,
+          "allocated": 10776576
+        },
+        "images/mountain_mirror_example.png": {
+          "files": 1,
+          "bytes": 247020,
+          "allocated": 249856
+        },
+        "images/mountain_contour_features_example.png": {
+          "files": 1,
+          "bytes": 226218,
+          "allocated": 229376
+        },
+        "demos/Figure_testPatterns.pdf": {
+          "files": 1,
+          "bytes": 171965,
+          "allocated": 172032
+        },
+        "images/mountain_example.png": {
+          "files": 1,
+          "bytes": 168708,
+          "allocated": 172032
+        },
+        "demos/Output": {
+          "files": 6,
+          "bytes": 161593,
+          "allocated": 172032
+        },
+        "images/example_output_SAM.png": {
+          "files": 1,
+          "bytes": 148855,
+          "allocated": 151552
+        },
+        "demos/Figure2.pdf": {
+          "files": 1,
+          "bytes": 138048,
+          "allocated": 139264
+        },
+        "images/MLVlogo.pdf": {
+          "files": 1,
+          "bytes": 103971,
+          "allocated": 106496
+        },
+        "images/MLVlogo.ai": {
+          "files": 1,
+          "bytes": 99366,
+          "allocated": 102400
+        },
+        "images/example.jpg": {
+          "files": 1,
+          "bytes": 90186,
+          "allocated": 94208
+        },
+        "demos/Figure4.pdf": {
+          "files": 1,
+          "bytes": 89447,
+          "allocated": 90112
+        },
+        "3rdParty/contour_tracing": {
+          "files": 19,
+          "bytes": 52813,
+          "allocated": 102400
+        },
+        "demos/Figure5.pdf": {
+          "files": 1,
+          "bytes": 44949,
+          "allocated": 45056
+        },
+        "images/MLV_logo_2_whiteBG.png": {
+          "files": 1,
+          "bytes": 35436,
+          "allocated": 36864
+        },
+        "images/Logo_Banner_whiteBG.png": {
+          "files": 1,
+          "bytes": 30633,
+          "allocated": 32768
+        },
+        ".git/hooks": {
+          "files": 13,
+          "bytes": 23513,
+          "allocated": 61440
+        },
+        "MLVcode/importSVG.m": {
+          "files": 1,
+          "bytes": 20217,
+          "allocated": 20480
+        },
+        "images/MLVlogo_QR.png": {
+          "files": 1,
+          "bytes": 19983,
+          "allocated": 20480
+        },
+        "images/MLV_logo_2.png": {
+          "files": 1,
+          "bytes": 18998,
+          "allocated": 20480
+        },
+        "images/example_LD.png": {
+          "files": 1,
+          "bytes": 18412,
+          "allocated": 20480
+        },
+        "images/Logo_Banner.png": {
+          "files": 1,
+          "bytes": 16308,
+          "allocated": 16384
+        },
+        ".DS_Store": {
+          "files": 1,
+          "bytes": 14340,
+          "allocated": 16384
+        },
+        "images/MLV_logo_1.png": {
+          "files": 1,
+          "bytes": 13922,
+          "allocated": 16384
+        },
+        "images/example_tower_thresh_0.5.png": {
+          "files": 1,
+          "bytes": 13054,
+          "allocated": 16384
+        },
+        "images/MLV_logo_4.png": {
+          "files": 1,
+          "bytes": 12436,
+          "allocated": 16384
+        },
+        "README.md": {
+          "files": 1,
+          "bytes": 11149,
+          "allocated": 12288
+        },
+        "doc/doxysearch.php": {
+          "files": 1,
+          "bytes": 8286,
+          "allocated": 12288
+        },
+        "dataSets/.DS_Store": {
+          "files": 1,
+          "bytes": 8196,
+          "allocated": 12288
+        },
+        "images/MLV_logo_3.png": {
+          "files": 1,
+          "bytes": 7461,
+          "allocated": 8192
+        },
+        "doc/index.html": {
+          "files": 1,
+          "bytes": 7109,
+          "allocated": 8192
+        },
+        "MLVcode/contour_tracing_package": {
+          "files": 8,
+          "bytes": 6476,
+          "allocated": 32768
+        },
+        "demos/Frontiers2023_Figures.m": {
+          "files": 1,
+          "bytes": 6305,
+          "allocated": 8192
+        },
+        "MLVcode/.DS_Store": {
+          "files": 1,
+          "bytes": 6148,
+          "allocated": 8192
+        },
+        "MLVcode/splitLDbyProperties.m": {
+          "files": 1,
+          "bytes": 5935,
+          "allocated": 8192
+        },
+        "MLVcode/generateFeatureDensityMap.m": {
+          "files": 1,
+          "bytes": 5634,
+          "allocated": 8192
+        },
+        "MLVcode/mapMATtoContour.m": {
+          "files": 1,
+          "bytes": 5078,
+          "allocated": 8192
+        },
+        "MLVcode/computeJunctionAnglesTypes.m": {
+          "files": 1,
+          "bytes": 4975,
+          "allocated": 8192
+        },
+        "MLVcode/segmentContoursAtJunctions.m": {
+          "files": 1,
+          "bytes": 4717,
+          "allocated": 8192
+        },
+        "MLVcode/traceLineDrawingFromRGB.m": {
+          "files": 1,
+          "bytes": 4332,
+          "allocated": 8192
+        },
+        "MLVcode/splitLDmiddleSegmentsVsJunctions.m": {
+          "files": 1,
+          "bytes": 4219,
+          "allocated": 8192
+        },
+        "MLVcode/applyCircularAperture.m": {
+          "files": 1,
+          "bytes": 3898,
+          "allocated": 4096
+        },
+        "MLVcode/splitLDbyHistogramWeights.m": {
+          "files": 1,
+          "bytes": 3756,
+          "allocated": 4096
+        },
+        "MLVcode/getContourPropertiesStats.m": {
+          "files": 1,
+          "bytes": 3582,
+          "allocated": 4096
+        },
+        "MLVcode/cleanupJunctions.m": {
+          "files": 1,
+          "bytes": 3520,
+          "allocated": 4096
+        },
+        "MLVcode/computeAOF.m": {
+          "files": 1,
+          "bytes": 3491,
+          "allocated": 4096
+        },
+        "MLVcode/averageProperty.m": {
+          "files": 1,
+          "bytes": 3485,
+          "allocated": 4096
+        },
+        "MLVcode/computeMATpropertyPerBranch.m": {
+          "files": 1,
+          "bytes": 3439,
+          "allocated": 4096
+        },
+        "MLVcode/mergeLineSegments.m": {
+          "files": 1,
+          "bytes": 3321,
+          "allocated": 4096
+        },
+        "MLVcode/getJunctionStats.m": {
+          "files": 1,
+          "bytes": 3276,
+          "allocated": 4096
+        },
+        "MLVcode/computeGradientVectorField.m": {
+          "files": 1,
+          "bytes": 3228,
+          "allocated": 4096
+        },
+        "MLVcode/extract2DSkeletonFromBinaryImage.m": {
+          "files": 1,
+          "bytes": 2995,
+          "allocated": 4096
+        },
+        "MLVcode/detectJunctions.m": {
+          "files": 1,
+          "bytes": 2804,
+          "allocated": 4096
+        },
+        "MLVcode/splitLDbyStatsModel.m": {
+          "files": 1,
+          "bytes": 2594,
+          "allocated": 4096
+        },
+        "MLVcode/randomlyShiftContours.m": {
+          "files": 1,
+          "bytes": 2508,
+          "allocated": 4096
+        },
+        "MLVcode/lineIntersection.m": {
+          "files": 1,
+          "bytes": 2452,
+          "allocated": 4096
+        },
+        "MLVcode/getCurvatureStats.m": {
+          "files": 1,
+          "bytes": 2423,
+          "allocated": 4096
+        },
+        "MLVcode/saveSceneLDsToTable.m": {
+          "files": 1,
+          "bytes": 2416,
+          "allocated": 4096
+        },
+        "3rdParty/redblue": {
+          "files": 2,
+          "bytes": 2361,
+          "allocated": 8192
+        },
+        "MLVcode/drawAllProperties.m": {
+          "files": 1,
+          "bytes": 2349,
+          "allocated": 4096
+        },
+        "MLVcode/predictContoursByStatsModel.m": {
+          "files": 1,
+          "bytes": 2322,
+          "allocated": 4096
+        },
+        "MLVcode/getLengthStats.m": {
+          "files": 1,
+          "bytes": 2291,
+          "allocated": 4096
+        },
+        "MLVcode/getOrientationStats.m": {
+          "files": 1,
+          "bytes": 2155,
+          "allocated": 4096
+        },
+        "MLVcode/renderLinedrawingProperty.m": {
+          "files": 1,
+          "bytes": 2151,
+          "allocated": 4096
+        },
+        "MLVcode/drawJunctions.m": {
+          "files": 1,
+          "bytes": 2148,
+          "allocated": 4096
+        },
+        "MLVcode/MATpropertiesToContours.m": {
+          "files": 1,
+          "bytes": 2098,
+          "allocated": 4096
+        },
+        "MLVcode/drawContoursByStatsModel.m": {
+          "files": 1,
+          "bytes": 2065,
+          "allocated": 4096
+        },
+        "MLVcode/computeColorIndex.m": {
+          "files": 1,
+          "bytes": 2042,
+          "allocated": 4096
+        },
+        "MLVcode/getHorizontalVerticalStats.m": {
+          "files": 1,
+          "bytes": 2029,
+          "allocated": 4096
+        },
+        "MLVcode/renderContoursByStatsModel.m": {
+          "files": 1,
+          "bytes": 1964,
+          "allocated": 4096
+        },
+        "MLVcode/computeAllMATfromVecLD.m": {
+          "files": 1,
+          "bytes": 1960,
+          "allocated": 4096
+        },
+        "MLVcode/renderJunctions.m": {
+          "files": 1,
+          "bytes": 1899,
+          "allocated": 4096
+        },
+        "MLVcode/allLDHistogramsToTable.m": {
+          "files": 1,
+          "bytes": 1898,
+          "allocated": 4096
+        },
+        "MLVcode/drawLinedrawingProperty.m": {
+          "files": 1,
+          "bytes": 1882,
+          "allocated": 4096
+        },
+        "MLVcode/getMATpropertyStats.m": {
+          "files": 1,
+          "bytes": 1875,
+          "allocated": 4096
+        },
+        "MLVcode/renderLinedrawing.m": {
+          "files": 1,
+          "bytes": 1840,
+          "allocated": 4096
+        },
+        "MLVcode/computeAllMATproperties.m": {
+          "files": 1,
+          "bytes": 1836,
+          "allocated": 4096
+        },
+        "images/MLVtoolbox_qrcode.png": {
+          "files": 1,
+          "bytes": 1795,
+          "allocated": 4096
+        },
+        "MLVcode/computeMATproperty.m": {
+          "files": 1,
+          "bytes": 1793,
+          "allocated": 4096
+        },
+        "MLVcode/computeJunctions.m": {
+          "files": 1,
+          "bytes": 1776,
+          "allocated": 4096
+        },
+        "MLVcode/fitLineSegments.m": {
+          "files": 1,
+          "bytes": 1747,
+          "allocated": 4096
+        },
+        "MLVcode/histogramToTable.m": {
+          "files": 1,
+          "bytes": 1742,
+          "allocated": 4096
+        },
+        "MLVcode/computeContourProperties.m": {
+          "files": 1,
+          "bytes": 1636,
+          "allocated": 4096
+        },
+        "MLVcode/rotateLinedrawing.m": {
+          "files": 1,
+          "bytes": 1623,
+          "allocated": 4096
+        },
+        "images/qrcode.svg": {
+          "files": 1,
+          "bytes": 1600,
+          "allocated": 4096
+        },
+        "MLVcode/computeMAT.m": {
+          "files": 1,
+          "bytes": 1578,
+          "allocated": 4096
+        },
+        "MLVcode/computeCurvature.m": {
+          "files": 1,
+          "bytes": 1571,
+          "allocated": 4096
+        },
+        "MLVcode/traceLinedrawingFromEdgeMap.m": {
+          "files": 1,
+          "bytes": 1383,
+          "allocated": 4096
+        },
+        "MLVcode/drawMATproperty.m": {
+          "files": 1,
+          "bytes": 1383,
+          "allocated": 4096
+        },
+        "MLVcode/renderMATproperty.m": {
+          "files": 1,
+          "bytes": 1359,
+          "allocated": 4096
+        },
+        "demos/testPatterns.svg": {
+          "files": 1,
+          "bytes": 1346,
+          "allocated": 4096
+        },
+        "MLVcode/InitializeNeighborhoods.m": {
+          "files": 1,
+          "bytes": 1334,
+          "allocated": 4096
+        },
+        "doc/m2html.css": {
+          "files": 1,
+          "bytes": 1188,
+          "allocated": 4096
+        },
+        "MLVcode/getDistanceFromLineSegment.m": {
+          "files": 1,
+          "bytes": 1183,
+          "allocated": 4096
+        },
+        "MLVcode/traceSkeleton.m": {
+          "files": 1,
+          "bytes": 1133,
+          "allocated": 4096
+        },
+        "MLVcode/removeZeroLengthContours.m": {
+          "files": 1,
+          "bytes": 1113,
+          "allocated": 4096
+        },
+        "MLVcode/drawLinedrawing.m": {
+          "files": 1,
+          "bytes": 1065,
+          "allocated": 4096
+        },
+        "MLVcode/labelMatrix2edges.m": {
+          "files": 1,
+          "bytes": 1054,
+          "allocated": 4096
+        },
+        "MLVcode/computeOrientation.m": {
+          "files": 1,
+          "bytes": 1012,
+          "allocated": 4096
+        },
+        "doc/simulinkicon.gif": {
+          "files": 1,
+          "bytes": 977,
+          "allocated": 4096
+        },
+        "MLVcode/computeLength.m": {
+          "files": 1,
+          "bytes": 867,
+          "allocated": 4096
+        },
+        "demos/cutable.csv": {
+          "files": 1,
+          "bytes": 639,
+          "allocated": 4096
+        },
+        ".git/packed-refs": {
+          "files": 1,
+          "bytes": 635,
+          "allocated": 4096
+        },
+        ".git/logs": {
+          "files": 3,
+          "bytes": 579,
+          "allocated": 12288
+        },
+        "doc/matlabicon.gif": {
+          "files": 1,
+          "bytes": 574,
+          "allocated": 4096
+        },
+        ".gitattributes": {
+          "files": 1,
+          "bytes": 455,
+          "allocated": 4096
+        },
+        "doc/c++.png": {
+          "files": 1,
+          "bytes": 327,
+          "allocated": 4096
+        },
+        ".git/config": {
+          "files": 1,
+          "bytes": 309,
+          "allocated": 4096
+        },
+        "doc/windows.png": {
+          "files": 1,
+          "bytes": 286,
+          "allocated": 4096
+        },
+        "doc/solaris.png": {
+          "files": 1,
+          "bytes": 286,
+          "allocated": 4096
+        },
+        "doc/alpha.png": {
+          "files": 1,
+          "bytes": 273,
+          "allocated": 4096
+        },
+        "doc/linux.png": {
+          "files": 1,
+          "bytes": 272,
+          "allocated": 4096
+        },
+        "doc/fortran.png": {
+          "files": 1,
+          "bytes": 265,
+          "allocated": 4096
+        },
+        "doc/sgi.png": {
+          "files": 1,
+          "bytes": 263,
+          "allocated": 4096
+        },
+        "doc/hp.png": {
+          "files": 1,
+          "bytes": 255,
+          "allocated": 4096
+        },
+        "doc/c.png": {
+          "files": 1,
+          "bytes": 252,
+          "allocated": 4096
+        },
+        "doc/mex.png": {
+          "files": 1,
+          "bytes": 242,
+          "allocated": 4096
+        },
+        ".git/info": {
+          "files": 1,
+          "bytes": 240,
+          "allocated": 4096
+        },
+        "doc/demoicon.gif": {
+          "files": 1,
+          "bytes": 214,
+          "allocated": 4096
+        },
+        "doc/pcode.png": {
+          "files": 1,
+          "bytes": 212,
+          "allocated": 4096
+        },
+        "MLV_toolbox_current.prj": {
+          "files": 1,
+          "bytes": 175,
+          "allocated": 4096
+        },
+        "doc/up.png": {
+          "files": 1,
+          "bytes": 162,
+          "allocated": 4096
+        },
+        "doc/left.png": {
+          "files": 1,
+          "bytes": 136,
+          "allocated": 4096
+        },
+        "doc/right.png": {
+          "files": 1,
+          "bytes": 136,
+          "allocated": 4096
+        },
+        "doc/down.png": {
+          "files": 1,
+          "bytes": 133,
+          "allocated": 4096
+        },
+        ".git/description": {
+          "files": 1,
+          "bytes": 73,
+          "allocated": 4096
+        },
+        ".git/refs": {
+          "files": 2,
+          "bytes": 71,
+          "allocated": 8192
+        },
+        "setup.m": {
+          "files": 1,
+          "bytes": 22,
+          "allocated": 4096
+        },
+        ".git/HEAD": {
+          "files": 1,
+          "bytes": 21,
+          "allocated": 4096
+        },
+        ".gitignore": {
+          "files": 1,
+          "bytes": 6,
+          "allocated": 4096
+        }
+      }
+    },
+    {
+      "path": "vendor/pyMLV",
+      "total_bytes": 1476195147,
+      "allocated_bytes": 1477693440,
+      "git_bytes": 758007578,
+      "worktree_bytes": 718187569,
+      "file_count": 582,
+      "groups": {
+        ".git/objects": {
+          "files": 2,
+          "bytes": 757926264,
+          "allocated": 757932032
+        },
+        "dataSets/IAPS": {
+          "files": 13,
+          "bytes": 286321771,
+          "allocated": 286343168
+        },
+        "dataSets/TorontoScenes": {
+          "files": 7,
+          "bytes": 176840031,
+          "allocated": 176852992
+        },
+        "dataSets/OASIS": {
+          "files": 10,
+          "bytes": 145463799,
+          "allocated": 145481728
+        },
+        "dataSets/ArchitecturalScenes": {
+          "files": 3,
+          "bytes": 71059575,
+          "allocated": 71065600
+        },
+        "MLVcode/MAT.mat": {
+          "files": 1,
+          "bytes": 8160320,
+          "allocated": 8163328
+        },
+        "demos/MAT.mat": {
+          "files": 1,
+          "bytes": 8160320,
+          "allocated": 8163328
+        },
+        "demos/Forest_DBW.mat": {
+          "files": 1,
+          "bytes": 8115271,
+          "allocated": 8118272
+        },
+        "demos/getcontourfeatures_Single.ipynb": {
+          "files": 1,
+          "bytes": 3950645,
+          "allocated": 3952640
+        },
+        "dataSets/Snodgrass_Vanderwart": {
+          "files": 2,
+          "bytes": 2456883,
+          "allocated": 2461696
+        },
+        "images/example_output.png": {
+          "files": 1,
+          "bytes": 1493483,
+          "allocated": 1495040
+        },
+        "images/medial_axis_transform.png": {
+          "files": 1,
+          "bytes": 1405273,
+          "allocated": 1409024
+        },
+        "demos/getMedialAxis.ipynb": {
+          "files": 1,
+          "bytes": 661766,
+          "allocated": 663552
+        },
+        "docs/latex": {
+          "files": 151,
+          "bytes": 496106,
+          "allocated": 897024
+        },
+        "images/MLVlogo_QR.ai": {
+          "files": 1,
+          "bytes": 368318,
+          "allocated": 368640
+        },
+        "images/Logo_Banner.ai": {
+          "files": 1,
+          "bytes": 353695,
+          "allocated": 356352
+        },
+        "images/mountain_mirror_example.png": {
+          "files": 1,
+          "bytes": 247020,
+          "allocated": 249856
+        },
+        "images/mountain_contour_features_example.png": {
+          "files": 1,
+          "bytes": 226218,
+          "allocated": 229376
+        },
+        "docs/jquery.js": {
+          "files": 1,
+          "bytes": 176630,
+          "allocated": 180224
+        },
+        "images/mountain_example.png": {
+          "files": 1,
+          "bytes": 168708,
+          "allocated": 172032
+        },
+        "Doxyfile": {
+          "files": 1,
+          "bytes": 127545,
+          "allocated": 131072
+        },
+        "images/MLVlogo.pdf": {
+          "files": 1,
+          "bytes": 103971,
+          "allocated": 106496
+        },
+        "images/MLVlogo.ai": {
+          "files": 1,
+          "bytes": 99366,
+          "allocated": 102400
+        },
+        "images/example.jpg": {
+          "files": 1,
+          "bytes": 90186,
+          "allocated": 94208
+        },
+        "docs/search": {
+          "files": 80,
+          "bytes": 89974,
+          "allocated": 360448
+        },
+        ".git/index": {
+          "files": 1,
+          "bytes": 56271,
+          "allocated": 57344
+        },
+        "docs/doxygen.css": {
+          "files": 1,
+          "bytes": 46191,
+          "allocated": 49152
+        },
+        "images/fluxOutput.png": {
+          "files": 1,
+          "bytes": 39788,
+          "allocated": 40960
+        },
+        "images/MLV_logo_2_whiteBG.png": {
+          "files": 1,
+          "bytes": 35436,
+          "allocated": 36864
+        },
+        "images/Logo_Banner_whiteBG.png": {
+          "files": 1,
+          "bytes": 30633,
+          "allocated": 32768
+        },
+        "MLVcode/imgLD.mat": {
+          "files": 1,
+          "bytes": 27876,
+          "allocated": 28672
+        },
+        "demos/imgLD.mat": {
+          "files": 1,
+          "bytes": 27876,
+          "allocated": 28672
+        },
+        ".git/hooks": {
+          "files": 13,
+          "bytes": 23513,
+          "allocated": 61440
+        },
+        "docs/dir_e3127b94713be55c3eb58d38b627d059.html": {
+          "files": 1,
+          "bytes": 22798,
+          "allocated": 24576
+        },
+        "docs/files.html": {
+          "files": 1,
+          "bytes": 21826,
+          "allocated": 24576
+        },
+        "docs/namespaces.html": {
+          "files": 1,
+          "bytes": 21121,
+          "allocated": 24576
+        },
+        "images/MLVlogo_QR.png": {
+          "files": 1,
+          "bytes": 19983,
+          "allocated": 20480
+        },
+        "images/MLV_logo_2.png": {
+          "files": 1,
+          "bytes": 18998,
+          "allocated": 20480
+        },
+        "images/example_LD.png": {
+          "files": 1,
+          "bytes": 18412,
+          "allocated": 20480
+        },
+        "images/Logo_Banner.png": {
+          "files": 1,
+          "bytes": 16308,
+          "allocated": 16384
+        },
+        "docs/doxygen.svg": {
+          "files": 1,
+          "bytes": 15461,
+          "allocated": 16384
+        },
+        "images/Logo_Banner_whiteBG_resized.png": {
+          "files": 1,
+          "bytes": 15332,
+          "allocated": 16384
+        },
+        "docs/Logo_Banner_whiteBG_resized.png": {
+          "files": 1,
+          "bytes": 15332,
+          "allocated": 16384
+        },
+        "docs/namespacemembers_func.html": {
+          "files": 1,
+          "bytes": 14750,
+          "allocated": 16384
+        },
+        "docs/namespacemembers.html": {
+          "files": 1,
+          "bytes": 14746,
+          "allocated": 16384
+        },
+        ".DS_Store": {
+          "files": 1,
+          "bytes": 14340,
+          "allocated": 16384
+        },
+        "images/MLV_logo_1.png": {
+          "files": 1,
+          "bytes": 13922,
+          "allocated": 16384
+        },
+        "docs/md__r_e_a_d_m_e.html": {
+          "files": 1,
+          "bytes": 12705,
+          "allocated": 16384
+        },
+        "images/MLV_logo_4.png": {
+          "files": 1,
+          "bytes": 12436,
+          "allocated": 16384
+        },
+        "docs/tabs.css": {
+          "files": 1,
+          "bytes": 11055,
+          "allocated": 12288
+        },
+        "docs/namespacemap_m_a_tto_contour.html": {
+          "files": 1,
+          "bytes": 10497,
+          "allocated": 12288
+        },
+        "images/Logo_Banner_resized.png": {
+          "files": 1,
+          "bytes": 9972,
+          "allocated": 12288
+        },
+        "docs/namespaceunique.html": {
+          "files": 1,
+          "bytes": 9357,
+          "allocated": 12288
+        },
+        "docs/namespaceget_contour_properties_stats.html": {
+          "files": 1,
+          "bytes": 8232,
+          "allocated": 12288
+        },
+        "docs/namespacesplit_l_dby_properties.html": {
+          "files": 1,
+          "bytes": 7943,
+          "allocated": 8192
+        },
+        "docs/dynsections.js": {
+          "files": 1,
+          "bytes": 7704,
+          "allocated": 8192
+        },
+        "MLVcode/applyCircularAperture.py": {
+          "files": 1,
+          "bytes": 7632,
+          "allocated": 8192
+        },
+        "docs/namespacepredict_contours_by_stats_model.html": {
+          "files": 1,
+          "bytes": 7599,
+          "allocated": 8192
+        },
+        "demos/outerBoundaryOriginal.mat": {
+          "files": 1,
+          "bytes": 7547,
+          "allocated": 8192
+        },
+        "docs/namespacegenerate_feature_density_map.html": {
+          "files": 1,
+          "bytes": 7505,
+          "allocated": 8192
+        },
+        "README.md": {
+          "files": 1,
+          "bytes": 7505,
+          "allocated": 8192
+        },
+        "images/MLV_logo_3.png": {
+          "files": 1,
+          "bytes": 7461,
+          "allocated": 8192
+        },
+        "docs/namespacemerge_line_segments.html": {
+          "files": 1,
+          "bytes": 7388,
+          "allocated": 8192
+        },
+        "MLVcode/splitLDbyProperties.py": {
+          "files": 1,
+          "bytes": 7343,
+          "allocated": 8192
+        },
+        "docs/namespacecleanup_junctions.html": {
+          "files": 1,
+          "bytes": 7308,
+          "allocated": 8192
+        },
+        "MLVcode/generateFeatureDensityMap.py": {
+          "files": 1,
+          "bytes": 7293,
+          "allocated": 8192
+        },
+        "docs/namespacedraw_all_properties.html": {
+          "files": 1,
+          "bytes": 7281,
+          "allocated": 8192
+        },
+        "docs/namespacesplit_l_dby_histogram_weights.html": {
+          "files": 1,
+          "bytes": 7192,
+          "allocated": 8192
+        },
+        "docs/namespaceextract2_d_skeleton_from_binary_image.html": {
+          "files": 1,
+          "bytes": 7183,
+          "allocated": 8192
+        },
+        "docs/namespaceis__outer__border__point.html": {
+          "files": 1,
+          "bytes": 7122,
+          "allocated": 8192
+        },
+        "docs/namespacedetect_junctions.html": {
+          "files": 1,
+          "bytes": 7079,
+          "allocated": 8192
+        },
+        "docs/namespaceline_intersection.html": {
+          "files": 1,
+          "bytes": 7012,
+          "allocated": 8192
+        },
+        "docs/namespacehistogram_to_table.html": {
+          "files": 1,
+          "bytes": 6947,
+          "allocated": 8192
+        },
+        "docs/namespaceall_l_d_histograms_to_table.html": {
+          "files": 1,
+          "bytes": 6923,
+          "allocated": 8192
+        },
+        "docs/namespacerandomly_shift_contours.html": {
+          "files": 1,
+          "bytes": 6874,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_a_o_f.html": {
+          "files": 1,
+          "bytes": 6835,
+          "allocated": 8192
+        },
+        "docs/namespaceget_m_a_tproperty_stats.html": {
+          "files": 1,
+          "bytes": 6783,
+          "allocated": 8192
+        },
+        "docs/namespacedraw_junctions.html": {
+          "files": 1,
+          "bytes": 6706,
+          "allocated": 8192
+        },
+        "docs/namespaceget_outer_boundary.html": {
+          "files": 1,
+          "bytes": 6705,
+          "allocated": 8192
+        },
+        "docs/namespaceget_length_stats.html": {
+          "files": 1,
+          "bytes": 6705,
+          "allocated": 8192
+        },
+        "docs/namespaceaverage_property.html": {
+          "files": 1,
+          "bytes": 6673,
+          "allocated": 8192
+        },
+        "docs/namespacedraw_this_property.html": {
+          "files": 1,
+          "bytes": 6647,
+          "allocated": 8192
+        },
+        "docs/namespaceget_branch_derivative.html": {
+          "files": 1,
+          "bytes": 6627,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_m_a_tproperty.html": {
+          "files": 1,
+          "bytes": 6542,
+          "allocated": 8192
+        },
+        "docs/namespacebwdist.html": {
+          "files": 1,
+          "bytes": 6386,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_all_m_a_tproperties.html": {
+          "files": 1,
+          "bytes": 6372,
+          "allocated": 8192
+        },
+        "docs/namespaceapply_circular_aperture.html": {
+          "files": 1,
+          "bytes": 6356,
+          "allocated": 8192
+        },
+        "docs/namespacesplit_l_dby_stats_model.html": {
+          "files": 1,
+          "bytes": 6353,
+          "allocated": 8192
+        },
+        "docs/namespaceget_orientation_stats.html": {
+          "files": 1,
+          "bytes": 6276,
+          "allocated": 8192
+        },
+        "docs/namespaceget_junction_stats.html": {
+          "files": 1,
+          "bytes": 6274,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_contour_properties.html": {
+          "files": 1,
+          "bytes": 6263,
+          "allocated": 8192
+        },
+        "docs/namespacedraw_contours_by_stats_model.html": {
+          "files": 1,
+          "bytes": 6235,
+          "allocated": 8192
+        },
+        "docs/namespaceget_curvature_stats.html": {
+          "files": 1,
+          "bytes": 6216,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_junction_angles_types.html": {
+          "files": 1,
+          "bytes": 6193,
+          "allocated": 8192
+        },
+        "docs/namespacesegment_contours_at_junctions.html": {
+          "files": 1,
+          "bytes": 6152,
+          "allocated": 8192
+        },
+        "dataSets/.DS_Store": {
+          "files": 1,
+          "bytes": 6148,
+          "allocated": 8192
+        },
+        "MLVcode/.DS_Store": {
+          "files": 1,
+          "bytes": 6148,
+          "allocated": 8192
+        },
+        "demos/.DS_Store": {
+          "files": 1,
+          "bytes": 6148,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_m_a_tproperty_per_branch.html": {
+          "files": 1,
+          "bytes": 6120,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_gradient_vector_field.html": {
+          "files": 1,
+          "bytes": 6093,
+          "allocated": 8192
+        },
+        "docs/namespacerotate_linedrawing.html": {
+          "files": 1,
+          "bytes": 6091,
+          "allocated": 8192
+        },
+        "MLVcode/mapMATtoContour.py": {
+          "files": 1,
+          "bytes": 6091,
+          "allocated": 8192
+        },
+        "docs/namespace_m_a_tproperties_to_contours.html": {
+          "files": 1,
+          "bytes": 6071,
+          "allocated": 8192
+        },
+        "docs/md_data_sets_2_toronto_scenes_2_toronto_scenes___readme.html": {
+          "files": 1,
+          "bytes": 6060,
+          "allocated": 8192
+        },
+        "docs/namespacesave_scene_l_ds_to_table.html": {
+          "files": 1,
+          "bytes": 6011,
+          "allocated": 8192
+        },
+        "docs/namespacedraw_linedrawing_property.html": {
+          "files": 1,
+          "bytes": 6009,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_m_a_t.html": {
+          "files": 1,
+          "bytes": 5996,
+          "allocated": 8192
+        },
+        "docs/namespacedraw_m_a_tproperty.html": {
+          "files": 1,
+          "bytes": 5974,
+          "allocated": 8192
+        },
+        "docs/namespaceget_horizontal_vertical_stats.html": {
+          "files": 1,
+          "bytes": 5930,
+          "allocated": 8192
+        },
+        "docs/menu.js": {
+          "files": 1,
+          "bytes": 5925,
+          "allocated": 8192
+        },
+        "docs/namespaceremove_zero_length_contours.html": {
+          "files": 1,
+          "bytes": 5907,
+          "allocated": 8192
+        },
+        "docs/namespacedraw_linedrawing.html": {
+          "files": 1,
+          "bytes": 5905,
+          "allocated": 8192
+        },
+        "docs/namespaceget_distance_from_line_segment.html": {
+          "files": 1,
+          "bytes": 5862,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_color_index.html": {
+          "files": 1,
+          "bytes": 5860,
+          "allocated": 8192
+        },
+        "docs/namespacesample__sphere__2_d.html": {
+          "files": 1,
+          "bytes": 5823,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_junctions.html": {
+          "files": 1,
+          "bytes": 5748,
+          "allocated": 8192
+        },
+        "docs/namespacesplit_l_dmiddle_segments_vs_junctions.html": {
+          "files": 1,
+          "bytes": 5735,
+          "allocated": 8192
+        },
+        "docs/map_m_a_tto_contour_8py.html": {
+          "files": 1,
+          "bytes": 5735,
+          "allocated": 8192
+        },
+        "docs/index.html": {
+          "files": 1,
+          "bytes": 5680,
+          "allocated": 8192
+        },
+        "docs/namespace_initialize_neighborhoods.html": {
+          "files": 1,
+          "bytes": 5644,
+          "allocated": 8192
+        },
+        "MLVcode/segmentContoursAtJunctions.py": {
+          "files": 1,
+          "bytes": 5641,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_all_m_a_tfrom_vec_l_d.html": {
+          "files": 1,
+          "bytes": 5582,
+          "allocated": 8192
+        },
+        "docs/namespaceload__mat.html": {
+          "files": 1,
+          "bytes": 5541,
+          "allocated": 8192
+        },
+        "docs/unique_8py.html": {
+          "files": 1,
+          "bytes": 5493,
+          "allocated": 8192
+        },
+        "docs/namespacetrace_skeleton.html": {
+          "files": 1,
+          "bytes": 5460,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_orientation.html": {
+          "files": 1,
+          "bytes": 5459,
+          "allocated": 8192
+        },
+        "docs/predict_contours_by_stats_model_8py.html": {
+          "files": 1,
+          "bytes": 5362,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_curvature.html": {
+          "files": 1,
+          "bytes": 5316,
+          "allocated": 8192
+        },
+        "docs/namespacecompute_length.html": {
+          "files": 1,
+          "bytes": 5296,
+          "allocated": 8192
+        },
+        "MLVcode/splitLDbyHistogramWeights.py": {
+          "files": 1,
+          "bytes": 5274,
+          "allocated": 8192
+        },
+        "docs/dir_4a53d14b12e88eec591f26ba6af19920.html": {
+          "files": 1,
+          "bytes": 5254,
+          "allocated": 8192
+        },
+        "docs/cleanup_junctions_8py.html": {
+          "files": 1,
+          "bytes": 5243,
+          "allocated": 8192
+        },
+        "docs/merge_line_segments_8py.html": {
+          "files": 1,
+          "bytes": 5232,
+          "allocated": 8192
+        },
+        "MLVcode/splitLDmiddleSegmentsVsJunctions.py": {
+          "files": 1,
+          "bytes": 5131,
+          "allocated": 8192
+        },
+        "docs/pages.html": {
+          "files": 1,
+          "bytes": 5022,
+          "allocated": 8192
+        },
+        "docs/get_contour_properties_stats_8py.html": {
+          "files": 1,
+          "bytes": 4944,
+          "allocated": 8192
+        },
+        "docs/extract2_d_skeleton_from_binary_image_8py.html": {
+          "files": 1,
+          "bytes": 4921,
+          "allocated": 8192
+        },
+        "docs/split_l_dmiddle_segments_vs_junctions_8py.html": {
+          "files": 1,
+          "bytes": 4904,
+          "allocated": 8192
+        },
+        "docs/draw_all_properties_8py.html": {
+          "files": 1,
+          "bytes": 4888,
+          "allocated": 8192
+        },
+        "docs/compute_contour_properties_8py.html": {
+          "files": 1,
+          "bytes": 4884,
+          "allocated": 8192
+        },
+        "MLVcode/computeJunctionAnglesTypes.py": {
+          "files": 1,
+          "bytes": 4883,
+          "allocated": 8192
+        },
+        "docs/generate_feature_density_map_8py.html": {
+          "files": 1,
+          "bytes": 4881,
+          "allocated": 8192
+        },
+        "docs/split_l_dby_histogram_weights_8py.html": {
+          "files": 1,
+          "bytes": 4877,
+          "allocated": 8192
+        },
+        "docs/compute_m_a_tproperty_per_branch_8py.html": {
+          "files": 1,
+          "bytes": 4874,
+          "allocated": 8192
+        },
+        "docs/draw_contours_by_stats_model_8py.html": {
+          "files": 1,
+          "bytes": 4868,
+          "allocated": 8192
+        },
+        "docs/compute_junction_angles_types_8py.html": {
+          "files": 1,
+          "bytes": 4854,
+          "allocated": 8192
+        },
+        "docs/get_horizontal_vertical_stats_8py.html": {
+          "files": 1,
+          "bytes": 4853,
+          "allocated": 8192
+        },
+        "docs/_m_a_tproperties_to_contours_8py.html": {
+          "files": 1,
+          "bytes": 4851,
+          "allocated": 8192
+        },
+        "docs/compute_gradient_vector_field_8py.html": {
+          "files": 1,
+          "bytes": 4848,
+          "allocated": 8192
+        },
+        "docs/get_distance_from_line_segment_8py.html": {
+          "files": 1,
+          "bytes": 4843,
+          "allocated": 8192
+        },
+        "docs/segment_contours_at_junctions_8py.html": {
+          "files": 1,
+          "bytes": 4842,
+          "allocated": 8192
+        },
+        "docs/all_l_d_histograms_to_table_8py.html": {
+          "files": 1,
+          "bytes": 4841,
+          "allocated": 8192
+        },
+        "MLVcode/getContourPropertiesStats.py": {
+          "files": 1,
+          "bytes": 4839,
+          "allocated": 8192
+        },
+        "docs/is__outer__border__point_8py.html": {
+          "files": 1,
+          "bytes": 4837,
+          "allocated": 8192
+        },
+        "docs/compute_all_m_a_tproperties_8py.html": {
+          "files": 1,
+          "bytes": 4835,
+          "allocated": 8192
+        },
+        "docs/draw_linedrawing_property_8py.html": {
+          "files": 1,
+          "bytes": 4834,
+          "allocated": 8192
+        },
+        "docs/remove_zero_length_contours_8py.html": {
+          "files": 1,
+          "bytes": 4824,
+          "allocated": 8192
+        },
+        "docs/compute_all_m_a_tfrom_vec_l_d_8py.html": {
+          "files": 1,
+          "bytes": 4822,
+          "allocated": 8192
+        },
+        "docs/split_l_dby_properties_8py.html": {
+          "files": 1,
+          "bytes": 4817,
+          "allocated": 8192
+        },
+        "docs/get_junction_stats_8py.html": {
+          "files": 1,
+          "bytes": 4812,
+          "allocated": 8192
+        },
+        "docs/randomly_shift_contours_8py.html": {
+          "files": 1,
+          "bytes": 4808,
+          "allocated": 8192
+        },
+        "docs/_initialize_neighborhoods_8py.html": {
+          "files": 1,
+          "bytes": 4806,
+          "allocated": 8192
+        },
+        "docs/apply_circular_aperture_8py.html": {
+          "files": 1,
+          "bytes": 4806,
+          "allocated": 8192
+        },
+        "docs/compute_m_a_tproperty_8py.html": {
+          "files": 1,
+          "bytes": 4802,
+          "allocated": 8192
+        },
+        "docs/get_m_a_tproperty_stats_8py.html": {
+          "files": 1,
+          "bytes": 4800,
+          "allocated": 8192
+        },
+        "docs/split_l_dby_stats_model_8py.html": {
+          "files": 1,
+          "bytes": 4798,
+          "allocated": 8192
+        },
+        "docs/get_curvature_stats_8py.html": {
+          "files": 1,
+          "bytes": 4793,
+          "allocated": 8192
+        },
+        "docs/save_scene_l_ds_to_table_8py.html": {
+          "files": 1,
+          "bytes": 4793,
+          "allocated": 8192
+        },
+        "docs/draw_junctions_8py.html": {
+          "files": 1,
+          "bytes": 4789,
+          "allocated": 8192
+        },
+        "docs/get_orientation_stats_8py.html": {
+          "files": 1,
+          "bytes": 4786,
+          "allocated": 8192
+        },
+        "docs/get_branch_derivative_8py.html": {
+          "files": 1,
+          "bytes": 4776,
+          "allocated": 8192
+        },
+        "docs/line_intersection_8py.html": {
+          "files": 1,
+          "bytes": 4775,
+          "allocated": 8192
+        },
+        "docs/histogram_to_table_8py.html": {
+          "files": 1,
+          "bytes": 4772,
+          "allocated": 8192
+        },
+        "docs/draw_m_a_tproperty_8py.html": {
+          "files": 1,
+          "bytes": 4767,
+          "allocated": 8192
+        },
+        "docs/compute_color_index_8py.html": {
+          "files": 1,
+          "bytes": 4767,
+          "allocated": 8192
+        },
+        "docs/get_outer_boundary_8py.html": {
+          "files": 1,
+          "bytes": 4766,
+          "allocated": 8192
+        },
+        "docs/draw_linedrawing_8py.html": {
+          "files": 1,
+          "bytes": 4765,
+          "allocated": 8192
+        },
+        "docs/sample__sphere__2_d_8py.html": {
+          "files": 1,
+          "bytes": 4764,
+          "allocated": 8192
+        },
+        "docs/compute_orientation_8py.html": {
+          "files": 1,
+          "bytes": 4762,
+          "allocated": 8192
+        },
+        "docs/rotate_linedrawing_8py.html": {
+          "files": 1,
+          "bytes": 4760,
+          "allocated": 8192
+        },
+        "docs/get_length_stats_8py.html": {
+          "files": 1,
+          "bytes": 4760,
+          "allocated": 8192
+        },
+        "docs/draw_this_property_8py.html": {
+          "files": 1,
+          "bytes": 4758,
+          "allocated": 8192
+        },
+        "docs/detect_junctions_8py.html": {
+          "files": 1,
+          "bytes": 4750,
+          "allocated": 8192
+        },
+        "docs/average_property_8py.html": {
+          "files": 1,
+          "bytes": 4745,
+          "allocated": 8192
+        },
+        "docs/compute_curvature_8py.html": {
+          "files": 1,
+          "bytes": 4744,
+          "allocated": 8192
+        },
+        "docs/compute_junctions_8py.html": {
+          "files": 1,
+          "bytes": 4744,
+          "allocated": 8192
+        },
+        "docs/compute_a_o_f_8py.html": {
+          "files": 1,
+          "bytes": 4723,
+          "allocated": 8192
+        },
+        "docs/compute_m_a_t_8py.html": {
+          "files": 1,
+          "bytes": 4718,
+          "allocated": 8192
+        },
+        "docs/compute_length_8py.html": {
+          "files": 1,
+          "bytes": 4717,
+          "allocated": 8192
+        },
+        "docs/trace_skeleton_8py.html": {
+          "files": 1,
+          "bytes": 4715,
+          "allocated": 8192
+        },
+        "docs/load__mat_8py.html": {
+          "files": 1,
+          "bytes": 4675,
+          "allocated": 8192
+        },
+        "MLVcode/extract2DSkeletonFromBinaryImage.py": {
+          "files": 1,
+          "bytes": 4661,
+          "allocated": 8192
+        },
+        "docs/bwdist_8py.html": {
+          "files": 1,
+          "bytes": 4648,
+          "allocated": 8192
+        },
+        "docs/md_data_sets_2_o_a_s_i_s_2_o_a_s_i_s___readme.html": {
+          "files": 1,
+          "bytes": 4451,
+          "allocated": 8192
+        },
+        "MLVcode/mergeLineSegments.py": {
+          "files": 1,
+          "bytes": 4439,
+          "allocated": 8192
+        },
+        "MLVcode/averageProperty.py": {
+          "files": 1,
+          "bytes": 4422,
+          "allocated": 8192
+        },
+        "MLVcode/getJunctionStats.py": {
+          "files": 1,
+          "bytes": 4356,
+          "allocated": 8192
+        },
+        "docs/md_data_sets_2_architectural_scenes_2_architectural_scenes___readme.html": {
+          "files": 1,
+          "bytes": 4352,
+          "allocated": 8192
+        },
+        "docs/md_data_sets_2_i_a_p_s_2_i_a_p_s___readme.html": {
+          "files": 1,
+          "bytes": 4332,
+          "allocated": 8192
+        },
+        "docs/md_data_sets_2_snodgrass___vanderwart_2_snodgrass___vanderwart___readme.html": {
+          "files": 1,
+          "bytes": 4135,
+          "allocated": 8192
+        },
+        "MLVcode/saveSceneLDsToTable.py": {
+          "files": 1,
+          "bytes": 3905,
+          "allocated": 4096
+        },
+        "docs/mainpage_8py.html": {
+          "files": 1,
+          "bytes": 3865,
+          "allocated": 4096
+        },
+        "MLVcode/unique.py": {
+          "files": 1,
+          "bytes": 3808,
+          "allocated": 4096
+        },
+        "MLVcode/randomlyShiftContours.py": {
+          "files": 1,
+          "bytes": 3745,
+          "allocated": 4096
+        },
+        "docs/dir_a24f43e7059bf20d9903ef2f2ded15de.html": {
+          "files": 1,
+          "bytes": 3618,
+          "allocated": 4096
+        },
+        "docs/dir_e5e7ae394fb388031d3e305a5c2967d0.html": {
+          "files": 1,
+          "bytes": 3615,
+          "allocated": 4096
+        },
+        "docs/dir_70bcb80b287fc43088b9c7cbd1a6f42f.html": {
+          "files": 1,
+          "bytes": 3597,
+          "allocated": 4096
+        },
+        "docs/dir_b6064b07f57ff1ed9a726f77c1996adf.html": {
+          "files": 1,
+          "bytes": 3573,
+          "allocated": 4096
+        },
+        "docs/dir_0c38d4be91f21d8f0619cff6d8d1de12.html": {
+          "files": 1,
+          "bytes": 3570,
+          "allocated": 4096
+        },
+        "MLVcode/lineIntersection.py": {
+          "files": 1,
+          "bytes": 3492,
+          "allocated": 4096
+        },
+        "MLVcode/computeMATpropertyPerBranch.py": {
+          "files": 1,
+          "bytes": 3465,
+          "allocated": 4096
+        },
+        "MLVcode/MATpropertiesToContours.py": {
+          "files": 1,
+          "bytes": 3447,
+          "allocated": 4096
+        },
+        "MLVcode/cleanupJunctions.py": {
+          "files": 1,
+          "bytes": 3439,
+          "allocated": 4096
+        },
+        "MLVcode/computeGradientVectorField.py": {
+          "files": 1,
+          "bytes": 3431,
+          "allocated": 4096
+        },
+        "docs/_snodgrass___vanderwart___readme_8md.html": {
+          "files": 1,
+          "bytes": 3409,
+          "allocated": 4096
+        },
+        "MLVcode/getMATpropertyStats.py": {
+          "files": 1,
+          "bytes": 3408,
+          "allocated": 4096
+        },
+        "docs/_architectural_scenes___readme_8md.html": {
+          "files": 1,
+          "bytes": 3405,
+          "allocated": 4096
+        },
+        "docs/_toronto_scenes___readme_8md.html": {
+          "files": 1,
+          "bytes": 3381,
+          "allocated": 4096
+        },
+        "MLVcode/getOrientationStats.py": {
+          "files": 1,
+          "bytes": 3369,
+          "allocated": 4096
+        },
+        "MLVcode/detectJunctions.py": {
+          "files": 1,
+          "bytes": 3356,
+          "allocated": 4096
+        },
+        "docs/_o_a_s_i_s___readme_8md.html": {
+          "files": 1,
+          "bytes": 3349,
+          "allocated": 4096
+        },
+        "docs/_i_a_p_s___readme_8md.html": {
+          "files": 1,
+          "bytes": 3345,
+          "allocated": 4096
+        },
+        "docs/namespacemainpage.html": {
+          "files": 1,
+          "bytes": 3315,
+          "allocated": 4096
+        },
+        "MLVcode/computeAOF.py": {
+          "files": 1,
+          "bytes": 3314,
+          "allocated": 4096
+        },
+        "docs/_r_e_a_d_m_e_8md.html": {
+          "files": 1,
+          "bytes": 3307,
+          "allocated": 4096
+        },
+        "MLVcode/getLengthStats.py": {
+          "files": 1,
+          "bytes": 3300,
+          "allocated": 4096
+        },
+        "docs/menudata.js": {
+          "files": 1,
+          "bytes": 3279,
+          "allocated": 4096
+        },
+        "docs/folderopen.svg": {
+          "files": 1,
+          "bytes": 3269,
+          "allocated": 4096
+        },
+        "docs/folderopend.svg": {
+          "files": 1,
+          "bytes": 3214,
+          "allocated": 4096
+        },
+        "MLVcode/drawJunctions.py": {
+          "files": 1,
+          "bytes": 3212,
+          "allocated": 4096
+        },
+        "MLVcode/computeColorIndex.py": {
+          "files": 1,
+          "bytes": 3194,
+          "allocated": 4096
+        },
+        "MLVcode/predictContoursByStatsModel.py": {
+          "files": 1,
+          "bytes": 3043,
+          "allocated": 4096
+        },
+        "docs/clipboard.js": {
+          "files": 1,
+          "bytes": 3004,
+          "allocated": 4096
+        },
+        "MLVcode/drawLinedrawingProperty.py": {
+          "files": 1,
+          "bytes": 2884,
+          "allocated": 4096
+        },
+        "MLVcode/getCurvatureStats.py": {
+          "files": 1,
+          "bytes": 2875,
+          "allocated": 4096
+        },
+        "MLVcode/getOuterBoundary.py": {
+          "files": 1,
+          "bytes": 2849,
+          "allocated": 4096
+        },
+        "MLVcode/drawContoursByStatsModel.py": {
+          "files": 1,
+          "bytes": 2793,
+          "allocated": 4096
+        },
+        "MLVcode/histogramToTable.py": {
+          "files": 1,
+          "bytes": 2779,
+          "allocated": 4096
+        },
+        "MLVcode/rotateLinedrawing.py": {
+          "files": 1,
+          "bytes": 2713,
+          "allocated": 4096
+        },
+        "MLVcode/splitLDbyStatsModel.py": {
+          "files": 1,
+          "bytes": 2699,
+          "allocated": 4096
+        },
+        "MLVcode/allLDHistogramsToTable.py": {
+          "files": 1,
+          "bytes": 2674,
+          "allocated": 4096
+        },
+        "MLVcode/getBranchDerivative.py": {
+          "files": 1,
+          "bytes": 2631,
+          "allocated": 4096
+        },
+        "MLVcode/is_outer_border_point.py": {
+          "files": 1,
+          "bytes": 2556,
+          "allocated": 4096
+        },
+        "MLVcode/drawThisProperty.py": {
+          "files": 1,
+          "bytes": 2497,
+          "allocated": 4096
+        },
+        "MLVcode/bwdist.py": {
+          "files": 1,
+          "bytes": 2438,
+          "allocated": 4096
+        },
+        "MLVcode/getHorizontalVerticalStats.py": {
+          "files": 1,
+          "bytes": 2428,
+          "allocated": 4096
+        },
+        "mainpage.py": {
+          "files": 1,
+          "bytes": 2397,
+          "allocated": 4096
+        },
+        "MLVcode/computeMAT.py": {
+          "files": 1,
+          "bytes": 2303,
+          "allocated": 4096
+        },
+        "MLVcode/computeAllMATfromVecLD.py": {
+          "files": 1,
+          "bytes": 2278,
+          "allocated": 4096
+        },
+        "MLVcode/drawAllProperties.py": {
+          "files": 1,
+          "bytes": 2271,
+          "allocated": 4096
+        },
+        "MLVcode/computeCurvature.py": {
+          "files": 1,
+          "bytes": 2238,
+          "allocated": 4096
+        },
+        "MLVcode/computeAllMATproperties.py": {
+          "files": 1,
+          "bytes": 2206,
+          "allocated": 4096
+        },
+        "MLVcode/computeJunctions.py": {
+          "files": 1,
+          "bytes": 2125,
+          "allocated": 4096
+        },
+        "MLVcode/computeMATproperty.py": {
+          "files": 1,
+          "bytes": 2120,
+          "allocated": 4096
+        },
+        "MLVcode/computeContourProperties.py": {
+          "files": 1,
+          "bytes": 2116,
+          "allocated": 4096
+        },
+        "docs/folderclosed.svg": {
+          "files": 1,
+          "bytes": 1996,
+          "allocated": 4096
+        },
+        "docs/folderclosedd.svg": {
+          "files": 1,
+          "bytes": 1996,
+          "allocated": 4096
+        },
+        "MLVcode/removeZeroLengthContours.py": {
+          "files": 1,
+          "bytes": 1972,
+          "allocated": 4096
+        },
+        "MLVcode/getDistanceFromLineSegment.py": {
+          "files": 1,
+          "bytes": 1968,
+          "allocated": 4096
+        },
+        "images/MLVtoolbox_qrcode.png": {
+          "files": 1,
+          "bytes": 1795,
+          "allocated": 4096
+        },
+        "MLVcode/drawMATproperty.py": {
+          "files": 1,
+          "bytes": 1700,
+          "allocated": 4096
+        },
+        "images/qrcode.svg": {
+          "files": 1,
+          "bytes": 1600,
+          "allocated": 4096
+        },
+        "MLVcode/drawLinedrawing.py": {
+          "files": 1,
+          "bytes": 1592,
+          "allocated": 4096
+        },
+        "MLVcode/sample_sphere_2D.py": {
+          "files": 1,
+          "bytes": 1576,
+          "allocated": 4096
+        },
+        "docs/doc.svg": {
+          "files": 1,
+          "bytes": 1503,
+          "allocated": 4096
+        },
+        "docs/docd.svg": {
+          "files": 1,
+          "bytes": 1503,
+          "allocated": 4096
+        },
+        "MLVcode/InitializeNeighborhoods.py": {
+          "files": 1,
+          "bytes": 1474,
+          "allocated": 4096
+        },
+        "MLVcode/traceSkeleton.py": {
+          "files": 1,
+          "bytes": 1444,
+          "allocated": 4096
+        },
+        "MLVcode/computeLength.py": {
+          "files": 1,
+          "bytes": 1354,
+          "allocated": 4096
+        },
+        "MLVcode/computeOrientation.py": {
+          "files": 1,
+          "bytes": 1325,
+          "allocated": 4096
+        },
+        "MLVcode/load_mat.py": {
+          "files": 1,
+          "bytes": 1113,
+          "allocated": 4096
+        },
+        "LICENSE": {
+          "files": 1,
+          "bytes": 1078,
+          "allocated": 4096
+        },
+        "docs/sync_off.png": {
+          "files": 1,
+          "bytes": 853,
+          "allocated": 4096
+        },
+        "docs/sync_on.png": {
+          "files": 1,
+          "bytes": 845,
+          "allocated": 4096
+        },
+        "docs/plusd.svg": {
+          "files": 1,
+          "bytes": 696,
+          "allocated": 4096
+        },
+        "docs/plus.svg": {
+          "files": 1,
+          "bytes": 696,
+          "allocated": 4096
+        },
+        "docs/bc_s.png": {
+          "files": 1,
+          "bytes": 676,
+          "allocated": 4096
+        },
+        "demos/cutable.csv": {
+          "files": 1,
+          "bytes": 639,
+          "allocated": 4096
+        },
+        "docs/bc_sd.png": {
+          "files": 1,
+          "bytes": 635,
+          "allocated": 4096
+        },
+        "docs/minusd.svg": {
+          "files": 1,
+          "bytes": 582,
+          "allocated": 4096
+        },
+        "docs/minus.svg": {
+          "files": 1,
+          "bytes": 582,
+          "allocated": 4096
+        },
+        ".git/logs": {
+          "files": 3,
+          "bytes": 561,
+          "allocated": 12288
+        },
+        "docs/splitbar.png": {
+          "files": 1,
+          "bytes": 314,
+          "allocated": 4096
+        },
+        ".git/config": {
+          "files": 1,
+          "bytes": 303,
+          "allocated": 4096
+        },
+        "docs/splitbard.png": {
+          "files": 1,
+          "bytes": 282,
+          "allocated": 4096
+        },
+        ".git/packed-refs": {
+          "files": 1,
+          "bytes": 261,
+          "allocated": 4096
+        },
+        ".git/info": {
+          "files": 1,
+          "bytes": 240,
+          "allocated": 4096
+        },
+        "requirements.txt": {
+          "files": 1,
+          "bytes": 220,
+          "allocated": 4096
+        },
+        "docs/tab_sd.png": {
+          "files": 1,
+          "bytes": 188,
+          "allocated": 4096
+        },
+        "docs/tab_s.png": {
+          "files": 1,
+          "bytes": 184,
+          "allocated": 4096
+        },
+        "docs/tab_hd.png": {
+          "files": 1,
+          "bytes": 180,
+          "allocated": 4096
+        },
+        "docs/tab_h.png": {
+          "files": 1,
+          "bytes": 177,
+          "allocated": 4096
+        },
+        "docs/tab_bd.png": {
+          "files": 1,
+          "bytes": 173,
+          "allocated": 4096
+        },
+        "docs/tab_b.png": {
+          "files": 1,
+          "bytes": 169,
+          "allocated": 4096
+        },
+        "docs/nav_fd.png": {
+          "files": 1,
+          "bytes": 169,
+          "allocated": 4096
+        },
+        "docs/nav_f.png": {
+          "files": 1,
+          "bytes": 153,
+          "allocated": 4096
+        },
+        "docs/tab_a.png": {
+          "files": 1,
+          "bytes": 142,
+          "allocated": 4096
+        },
+        "docs/tab_ad.png": {
+          "files": 1,
+          "bytes": 135,
+          "allocated": 4096
+        },
+        "docs/closed.png": {
+          "files": 1,
+          "bytes": 132,
+          "allocated": 4096
+        },
+        "docs/open.png": {
+          "files": 1,
+          "bytes": 123,
+          "allocated": 4096
+        },
+        "docs/nav_hd.png": {
+          "files": 1,
+          "bytes": 114,
+          "allocated": 4096
+        },
+        "docs/nav_h.png": {
+          "files": 1,
+          "bytes": 98,
+          "allocated": 4096
+        },
+        "docs/nav_g.png": {
+          "files": 1,
+          "bytes": 95,
+          "allocated": 4096
+        },
+        ".git/description": {
+          "files": 1,
+          "bytes": 73,
+          "allocated": 4096
+        },
+        ".git/refs": {
+          "files": 2,
+          "bytes": 71,
+          "allocated": 8192
+        },
+        ".gitignore": {
+          "files": 1,
+          "bytes": 22,
+          "allocated": 4096
+        },
+        ".git/HEAD": {
+          "files": 1,
+          "bytes": 21,
+          "allocated": 4096
+        }
+      }
+    }
+  ],
+  "exact_duplicates": {
+    "minimum_file_bytes": 1048576,
+    "candidate_files_hashed": 68,
+    "bytes_hashed": 1402622386,
+    "group_count": 33,
+    "redundant_logical_bytes": 693150873,
+    "groups": [
+      {
+        "size_bytes": 43908548,
+        "sha256": "dd840897655cd6385e4ac118b8ce0e01303291e5982d2efafadaae8c845d63db",
+        "redundant_logical_bytes": 43908548,
+        "paths": [
+          "MLV_toolbox/dataSets/TorontoScenes/cities_vecLD.mat",
+          "vendor/pyMLV/dataSets/TorontoScenes/cities_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 39860616,
+        "sha256": "0655e33c8c8f064a3e0454f71cfe5561c5295429d3d4deea3d81822677a3424a",
+        "redundant_logical_bytes": 39860616,
+        "paths": [
+          "MLV_toolbox/dataSets/TorontoScenes/offices_vecLD.mat",
+          "vendor/pyMLV/dataSets/TorontoScenes/offices_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 38526813,
+        "sha256": "fb023ac70f0ea30c2022febd18a1e873e42979c1af3de39304e3c87f73a1656c",
+        "redundant_logical_bytes": 38526813,
+        "paths": [
+          "MLV_toolbox/dataSets/ArchitecturalScenes/high_ceiling_vecLD.mat",
+          "vendor/pyMLV/dataSets/ArchitecturalScenes/high_ceiling_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 35791692,
+        "sha256": "4a65aadbf4190736cf949f20baf5b2aaa2b57b3c2fe8cebbf5e7816bcc3c7445",
+        "redundant_logical_bytes": 35791692,
+        "paths": [
+          "MLV_toolbox/dataSets/TorontoScenes/forests_vecLD.mat",
+          "vendor/pyMLV/dataSets/TorontoScenes/forests_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 32531999,
+        "sha256": "bd280f33ced5f82d9294c6b65a843902a38ea1ecf2e3150c0aadcb5613d08ef1",
+        "redundant_logical_bytes": 32531999,
+        "paths": [
+          "MLV_toolbox/dataSets/ArchitecturalScenes/low_ceiling_vecLD.mat",
+          "vendor/pyMLV/dataSets/ArchitecturalScenes/low_ceiling_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 28020575,
+        "sha256": "fc6be5a5991a44c4f9955a88bb0fd9a57598d5eb3e2baa285d512c1275ea1de8",
+        "redundant_logical_bytes": 28020575,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0801-0900_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0801-0900_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 27278071,
+        "sha256": "a2267cd8c82becd64dff1233056019925e12f51c9ad101a376828f63919e9571",
+        "redundant_logical_bytes": 27278071,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0201-0300_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0201-0300_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 27228389,
+        "sha256": "c8c040eb7f96264f0b9e115140396b1d95cc6d97fc9532f01bfd1a4fe4aaa886",
+        "redundant_logical_bytes": 27228389,
+        "paths": [
+          "MLV_toolbox/dataSets/TorontoScenes/highways_vecLD.mat",
+          "vendor/pyMLV/dataSets/TorontoScenes/highways_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 26782235,
+        "sha256": "101b1f1375259eb8b6f5bee44d18522374d2c9a4f3d30ade7b6f9d29c0535699",
+        "redundant_logical_bytes": 26782235,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_1001-1100_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_1001-1100_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 25713223,
+        "sha256": "3797a0c1025c16a69e1c03c09709dc2e49aafb06c9911932b20ad9da39add635",
+        "redundant_logical_bytes": 25713223,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0101-0200_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0101-0200_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 24872065,
+        "sha256": "65e994da3efaf8b4b2b496e65c9a34ea2d2cf0de5c2c6c05a3ee26633b8cca9c",
+        "redundant_logical_bytes": 24872065,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0901-1000_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0901-1000_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 24118345,
+        "sha256": "649f914e1aebf68c4c4f24ceb28613b885b8c7fa807bf2719b254d019a086e6a",
+        "redundant_logical_bytes": 24118345,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0501-0600_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0501-0600_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 22831720,
+        "sha256": "eac843039b955f3e84fe0d253a91358c255b11987e298ebca03f5d3c40abafe2",
+        "redundant_logical_bytes": 22831720,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0001-0100_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0001-0100_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 22634075,
+        "sha256": "f245469464c6364625e12e792629c5ba32f7fcb2fc79dac41ea2903d83e43781",
+        "redundant_logical_bytes": 22634075,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0301-0400_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0301-0400_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 21425025,
+        "sha256": "edeaa5e6ecb4c1bc88355ce9ccfa20261551c22805dc97409ff65751eaf702a6",
+        "redundant_logical_bytes": 21425025,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0401-0500_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0401-0500_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 20926210,
+        "sha256": "a96cf4f7f3bc9283a25fdf4a18a9e3307ed3a739117d3bd27f8a37736fa634aa",
+        "redundant_logical_bytes": 20926210,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0701-0800_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0701-0800_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 20879834,
+        "sha256": "f714dc00eaabb1196a5629493daa8989a3a15af9aaff74f637c5a631d76d48bc",
+        "redundant_logical_bytes": 20879834,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_0601-0700_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_0601-0700_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 20839725,
+        "sha256": "ffe52d5ce1ebe1e89daf68eed288cad29712148bc736fad6a17a7817bfe1029a",
+        "redundant_logical_bytes": 20839725,
+        "paths": [
+          "MLV_toolbox/dataSets/IAPS/IAPS_1101-1182_vecLD.mat",
+          "vendor/pyMLV/dataSets/IAPS/IAPS_1101-1182_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 18910585,
+        "sha256": "0bc17b1267501030d827efe0e0528b08449172f493792618b3081df6e2b66b51",
+        "redundant_logical_bytes": 18910585,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0301-0400_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0301-0400_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 17681122,
+        "sha256": "95b74a99889be35a118054e61cf0eead2ea10777c9336fa3fbe73264f47c2099",
+        "redundant_logical_bytes": 17681122,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0601-0700_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0601-0700_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 17368118,
+        "sha256": "9ca35525b267daaab189daa05d2a42e8ac335a97d2b3451d99e0799ed6a1949c",
+        "redundant_logical_bytes": 17368118,
+        "paths": [
+          "MLV_toolbox/dataSets/TorontoScenes/beaches_vecLD.mat",
+          "vendor/pyMLV/dataSets/TorontoScenes/beaches_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 17212563,
+        "sha256": "884eda500560febeb3e404cd422a7a3baab7ebfa27b34b5cebd30e78aa19eb43",
+        "redundant_logical_bytes": 17212563,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0201-0300_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0201-0300_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 17000757,
+        "sha256": "af3110a805338de12027f23764a37502dcb9446218bc70c3dd24acf9acbf3848",
+        "redundant_logical_bytes": 17000757,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0001-0100_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0001-0100_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 16211870,
+        "sha256": "b13584586443f83cbb6f03788b612d0ca86a2ec62217a115da1de98f12f6e847",
+        "redundant_logical_bytes": 16211870,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0101-0200_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0101-0200_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 16019136,
+        "sha256": "700b1dde5b14f2bb8a4dfdab764383bfffb08c32eae0a9620286065cd1202b80",
+        "redundant_logical_bytes": 16019136,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0701-0800_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0701-0800_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 14551213,
+        "sha256": "b4e3ac969a29390c4482fa5cab0da8d1ef85822bedb71c789077d9a2881a8b49",
+        "redundant_logical_bytes": 14551213,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0801-0900_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0801-0900_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 14005442,
+        "sha256": "9fab10131e648848d9d9106a4f10e21794c2c70a581c7d13be53401ce97f0180",
+        "redundant_logical_bytes": 14005442,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0501-0600_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0501-0600_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 13870314,
+        "sha256": "8d9c323dace672e80b6f532284ae0529e95af1c723dbdd85dd6cc94583c37b2e",
+        "redundant_logical_bytes": 13870314,
+        "paths": [
+          "MLV_toolbox/dataSets/OASIS/OASIS_0401-0500_vecLD.mat",
+          "vendor/pyMLV/dataSets/OASIS/OASIS_0401-0500_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 12680292,
+        "sha256": "d17a386c4e9263fbc85d6eb18e4a63d5349473d32ecd4631149b3f5c3ae538dd",
+        "redundant_logical_bytes": 12680292,
+        "paths": [
+          "MLV_toolbox/dataSets/TorontoScenes/mountains_vecLD.mat",
+          "vendor/pyMLV/dataSets/TorontoScenes/mountains_vecLD.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 8115271,
+        "sha256": "da1f7ed1a1e512913b0210f8aefcb83f8ef673b82fdcb7e1c5d62da2bd778fb5",
+        "redundant_logical_bytes": 8115271,
+        "paths": [
+          "MLV_toolbox/demos/Forest_DBW.mat",
+          "vendor/pyMLV/demos/Forest_DBW.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 2456274,
+        "sha256": "d9c2d669973342d3525da96e94b0e6cc529a6b41c9503f4a0f7f78f95e80a22d",
+        "redundant_logical_bytes": 2456274,
+        "paths": [
+          "MLV_toolbox/dataSets/Snodgrass_Vanderwart/Snodgrass_Vanderwart.mat",
+          "vendor/pyMLV/dataSets/Snodgrass_Vanderwart/Snodgrass_Vanderwart.mat"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 1493483,
+        "sha256": "35df9a3f240f48d577048782d02d8746fffdddf7f32e9169d381dc4bd286c430",
+        "redundant_logical_bytes": 1493483,
+        "paths": [
+          "MLV_toolbox/images/example_output.png",
+          "vendor/pyMLV/images/example_output.png"
+        ],
+        "distinct_inodes": 2
+      },
+      {
+        "size_bytes": 1405273,
+        "sha256": "7c969a2d92fb9c44075a89b99a49902c34794ce9510b49cd98f3f38690ccfb81",
+        "redundant_logical_bytes": 1405273,
+        "paths": [
+          "MLV_toolbox/images/medial_axis_transform.png",
+          "vendor/pyMLV/images/medial_axis_transform.png"
+        ],
+        "distinct_inodes": 2
+      }
+    ]
+  },
+  "matlab_payload_duplicates": {
+    "header_bytes": 128,
+    "files": [
+      {
+        "path": "vendor/pyMLV/MLVcode/MAT.mat",
+        "bytes": 8160320,
+        "sha256": "96bd08c78f68d0c1ac53e99c23cd98c40d2e936ec9179a4b0a1056226e8c47a2",
+        "matlab_v5_header": true,
+        "payload_offset": 128,
+        "payload_sha256": "683382d03752b8b7259ab34f7203dec7a4f51df726c0c57c637c67ee045898ac"
+      },
+      {
+        "path": "vendor/pyMLV/demos/MAT.mat",
+        "bytes": 8160320,
+        "sha256": "bbc711b7b33df0c5d586d49bad31ede2ba3ff775fd3a255be2b1218e6ffaa0e8",
+        "matlab_v5_header": true,
+        "payload_offset": 128,
+        "payload_sha256": "683382d03752b8b7259ab34f7203dec7a4f51df726c0c57c637c67ee045898ac"
+      }
+    ],
+    "redundant_logical_bytes": 8160320
+  },
+  "notebooks": [
+    {
+      "path": "vendor/pyMLV/demos/getMedialAxis.ipynb",
+      "file_bytes": 661766,
+      "cells": 13,
+      "output_records": 18,
+      "serialized_output_bytes": 650387,
+      "embedded_image_characters": 647464
+    },
+    {
+      "path": "vendor/pyMLV/demos/getcontourfeatures_Single.ipynb",
+      "file_bytes": 3950645,
+      "cells": 28,
+      "output_records": 34,
+      "serialized_output_bytes": 3938561,
+      "embedded_image_characters": 3934792
+    }
+  ],
+  "errors": [],
+  "caveat": "Logical duplicate bytes are potential savings, not measured reclaimable APFS physical space; cloned/shared extents and filesystem behavior can affect actual savings.",
+  "changes_to_repositories": "none"
+}

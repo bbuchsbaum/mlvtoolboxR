@@ -1,0 +1,4 @@
+MLV-P001 subpixel orientation: 0.0 expected: 315.0
+MLV-P002 horizontal/vertical histogram: KeyError 'orientation'
+MLV-P003 missing local dependencies: [["getBranchDerivative", "smoothData"], ["getBranchDerivative", "diff"], ["computeMATpropertyPerBranch", "fitLineSegments"], ["computeMATpropertyPerBranch", "smoothData"], ["computeMATpropertyPerBranch", "diff"], ["traceSkeleton", "GetConSeg"]]
+MLV-P004 alias semantics witness: retained_flux= [[0.0, 1.0]] original= [[0.0, 30.0]]

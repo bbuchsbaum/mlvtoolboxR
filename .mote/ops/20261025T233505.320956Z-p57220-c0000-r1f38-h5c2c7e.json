@@ -1,0 +1,1 @@
+{"actor":"codex-mlv","entity":"mlv-port","kind":"note","note_kind":"progress","op":"20261025T233505.320956Z-p57220-c0000-r1f38-h5c2c7e","text":"Core APIs and 152 assertions passed; Octave morphology/AOF/distance fixtures pass. Full R CMD check awaits disk-rule exception or >=20 GB free.","ts":"2026-10-25T23:35:05.320956Z","v":1}

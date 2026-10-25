@@ -1,0 +1,24 @@
+mlvtoolbox R implementation: Bradley Buchsbaum, 2026, GPL-3.0-or-later.
+
+Scientific definitions and reference sources:
+Dirk Bernhardt-Walther, Morteza Rezanejad, Delaram Farzanfar, Seohee Han,
+and the Bernhardt-Walther Lab, Mid-Level Vision Toolbox.
+Walther et al. (2023), doi:10.3389/fcomp.2023.1140723.
+Pinned reference provenance and file notices: vendor/SOURCES.json.
+
+AOF/signed-distance formulation follows Morteza Rezanejad's AOFSkeletons/MLV
+work (2019-2022), with GPL-3.0-or-later notices in the original source.
+
+Pratt morphology lookup tables in src/pratt_lut.h are derived from GNU Octave
+image package 2.20.0 bwmorph.m:
+Copyright (C) 2004 Josep Mones i Teixidor
+Copyright (C) 2013 Carne Draug
+GNU General Public License, version 3 or later; no warranty.
+The lookup-table implementation is adapted to compiled R kernels and tested
+against the pinned installed Octave image backend. It is not claimed to be
+MATLAB's proprietary skeletonization.
+
+The source-only reference snapshots retain original per-file notices.
+MATLAB core files with only copyright notices and mixed Python root/per-file
+notices remain identified in the rights inventory. No blanket relicensing of
+upstream snapshots or redistribution of their image datasets is asserted.

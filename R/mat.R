@@ -1,0 +1,265 @@
+.moving_mean <- function(x,k) {
+ n<-length(x);if(!n)return(numeric())
+ left<-floor(k/2);right<-k-left-1L
+ lo<-pmax(1L,seq_len(n)-left);hi<-pmin(n,seq_len(n)+right)
+ cs<-c(0,cumsum(x));(cs[hi+1L]-cs[lo])/(hi-lo+1L)
+}
+.pad_diff <- function(x) if(length(x)>1L){d<-diff(x);c(d,tail(d,1))} else rep(0,length(x))
+#' Average outward flux of a signed-distance/nearest-boundary field
+#' @param distance Numeric signed-distance matrix.
+#' @param index Nearest-boundary indices in R column-major order.
+#' @param samples Number of angular samples.
+#' @param epsilon Sampling-circle radius.
+#' @return Numeric flux matrix, without mutating the inputs.
+#' @export
+average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
+ if(!is.matrix(distance)||!is.numeric(distance)||anyNA(distance) ||
+    any(dim(distance)<1L)||prod(as.double(dim(distance)))>.Machine$integer.max ||
+    !is.matrix(index)||!identical(dim(index),dim(distance)))
+  stop("distance and index must be matching nonempty matrices",call.=FALSE)
+ if(any(!is.na(index)&(!is.finite(index)|index<1|index>length(distance)|index!=floor(index))))
+  stop("invalid nearest-boundary indices",call.=FALSE)
+ if(length(samples)!=1L||!is.finite(samples)||samples<4||samples!=floor(samples)||samples>100000L ||
+    length(epsilon)!=1L||!is.finite(epsilon)||epsilon<=0)
+  stop("invalid samples or epsilon",call.=FALSE)
+ storage.mode(index)<-"integer"
+ cpp_aof(distance,index,as.integer(samples),epsilon)
+}
+#' Construct an AOF medial-axis representation
+#'
+#' Uses the MLV signed-distance construction and 60-angle AOF by default.
+#' Pratt thinning is the explicitly identified Octave image backend, not a
+#' claim of equivalence to MATLAB's proprietary skeletonization. Empty ink
+#' sets have Inf distances and no skeleton; an all-ink image has no valid
+#' medial axis under this contour-background definition.
+#' @param mask Binary matrix, TRUE for ink; or a drawing.
+#' @param threshold_angle Object angle in degrees, in [0,90].
+#' @param samples,epsilon AOF sampling parameters. Angles use alpha=(2*pi)/samples followed by alpha*k;
+#'   the order matters when samples are mapped to discrete grid cells.
+#' @param min_component Minimum component size; default scales with image size.
+#' @param min_branch_points Minimum points retained in traced branches.
+#' @param trace_branches Trace branches now; FALSE defers this work until scoring.
+#' @return An `mlv_mat` with distance_map, nearest_boundary, AOF, skeleton,
+#'   branches, mask and method parameters.
+#' @export
+compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
+                        min_component=NULL,min_branch_points=10L,trace_branches=TRUE) {
+ if(inherits(mask,"mlv_drawing"))mask<-rasterize(mask)
+ mask<-.check_mask(mask); h<-nrow(mask);w<-ncol(mask)
+ if(!is.logical(trace_branches)||length(trace_branches)!=1L||is.na(trace_branches))stop("trace_branches must be TRUE or FALSE",call.=FALSE)
+ if(length(threshold_angle)!=1L||!is.finite(threshold_angle)||threshold_angle<0||threshold_angle>90)
+  stop("threshold_angle must be between 0 and 90 degrees",call.=FALSE)
+ if(is.null(min_component))min_component<-max(floor(.025*max(h,w)),1L)
+ if(!any(mask)||all(mask)) {
+  D<-matrix(if(all(mask)) -Inf else Inf,h,w)
+  idx<-matrix(NA_integer_,h,w)
+  flux<-average_outward_flux(D,idx,samples,epsilon)
+  sk<-skeletonize(matrix(FALSE,h,w),min_component)
+  if(length(min_branch_points)!=1L||!is.finite(min_branch_points)||min_branch_points<2||min_branch_points!=floor(min_branch_points))
+   stop("min_branch_points must be at least 2",call.=FALSE)
+  return(structure(list(distance_map=D,nearest_boundary=idx,AOF=flux,skeleton=sk,
+   mask=mask,branches=list(),parameters=list(threshold_angle=threshold_angle,
+   threshold=2/pi*sin(threshold_angle*pi/180),samples=samples,epsilon=epsilon,
+   min_component=min_component,min_branch_points=min_branch_points,
+   morphology="octave_image_pratt_2.20.0",tracing="pixel_graph_no_corner_cut")),class="mlv_mat"))
+ }
+ thin_ink<-skeletonize(mask)
+ white<-!thin_ink
+ outer<-matrix(FALSE,h,w)
+ if(h>=3L&&w>=3L)for(dc in -1:1)for(dr in -1:1)if(dr!=0L||dc!=0L) {
+  rows<-2:(h-1L);cols<-2:(w-1L)
+  outer[rows,cols]<-outer[rows,cols] | (thin_ink[rows,cols]&white[rows+dr,cols+dc])
+ }
+ d1<-distance_transform(thin_ink)
+ d2<-distance_transform(white|outer)
+ D<-d1$distance-d2$distance
+ index<-d1$index
+ on_ink<-d1$distance==0
+ index[on_ink]<-d2$index[on_ink]
+ index[outer]<-which(outer)
+ flux<-average_outward_flux(D,index,samples,epsilon)
+ threshold<-2/pi*sin(threshold_angle*pi/180)
+ sk<-skeletonize(flux>threshold*samples,min_component)
+ out<-structure(list(distance_map=D,nearest_boundary=index,AOF=flux,skeleton=sk,
+   mask=mask,branches=list(),parameters=list(threshold_angle=threshold_angle,
+   threshold=threshold,samples=samples,epsilon=epsilon,min_component=min_component,
+   min_branch_points=min_branch_points,morphology="octave_image_pratt_2.20.0",
+   tracing="pixel_graph_no_corner_cut")),class="mlv_mat")
+ if(trace_branches)out$branches<-trace_skeleton(out,min_branch_points)
+ out
+}
+#' Trace ordered medial-axis branches
+#' @param mat An mlv_mat object.
+#' @param min_points Minimum path size.
+#' @return A list of branch data frames with row, column, x, y, radius and AOF.
+#' @export
+trace_skeleton <- function(mat,min_points=10L) {
+ if(!inherits(mat,"mlv_mat"))stop("mat must be an mlv_mat",call.=FALSE)
+ if(length(min_points)!=1L||!is.finite(min_points)||min_points<2||min_points!=floor(min_points))
+  stop("min_points must be at least 2",call.=FALSE)
+ paths<-cpp_trace_graph(.check_mask(mat$skeleton),as.integer(min_points))
+ lapply(paths,function(index) {
+  rc<-arrayInd(index,dim(mat$skeleton))
+  data.frame(row=rc[,1],column=rc[,2],x=rc[,2],y=rc[,1],
+             radius=mat$distance_map[index],AOF=mat$AOF[index])
+ })
+}
+#' Greedy line fitting for ordered points
+#' @param xy Finite two-column point matrix.
+#' @param tolerance Maximum mean interior perpendicular distance.
+#' @return List with endpoint-index spans and per-point straightness scores.
+#' @export
+fit_line_segments <- function(xy,tolerance=1) {
+ if(!is.matrix(xy)||!is.numeric(xy)||ncol(xy)!=2L||any(!is.finite(xy)))
+  stop("xy must be a finite two-column matrix",call.=FALSE)
+ if(length(tolerance)!=1L||!is.finite(tolerance)||tolerance<0)stop("invalid tolerance",call.=FALSE)
+ cpp_fit_lines(xy,tolerance)
+}
+#' Score one skeletal branch
+#'
+#' The taper method uses explicit moving means of width three for both
+#' derivative stages; this replaces the upstream unspecified adaptive smoothing.
+#' Final scores use a width-three moving mean and power ten. Separation radii
+#' below one pixel are undefined and return NA.
+#' @param branch A data frame/list with x, y and radius vectors.
+#' @param property Parallelism, separation, mirror or taper.
+#' @param window Local derivative integration half-window.
+#' @param power Final score exponent.
+#' @return One numeric score per branch point.
+#' @export
+score_branch <- function(branch,property=c("parallelism","separation","mirror","taper"),
+                         window=5L,power=10) {
+ property<-match.arg(property)
+ X<-branch$x;Y<-branch$y;R<-branch$radius;n<-length(X)
+ if(length(Y)!=n||length(R)!=n||any(!is.finite(c(X,Y,R)))||any(R<0))
+  stop("branch coordinates/radii must be finite, nonnegative and equally sized",call.=FALSE)
+ if(length(window)!=1L||!is.finite(window)||window<1||window!=floor(window) ||
+    length(power)!=1L||!is.finite(power)||power<=0)
+  stop("invalid window or power",call.=FALSE)
+ if(!n)return(numeric())
+ R<-.moving_mean(R,2L);dx<-.pad_diff(X);dy<-.pad_diff(Y);dr<-.pad_diff(R)
+ out<-numeric(n)
+ if(property=="separation") {
+  out<-ifelse(R>=1,1-1/R,NA_real_)
+ } else if(property=="mirror") {
+  if(n>3L)out<-fit_line_segments(cbind(X,Y))$scores
+ } else {
+  derivative<-if(property=="taper").moving_mean(.pad_diff(.moving_mean(dr,3L)),3L) else dr
+  axis<-sqrt(dx^2+dy^2);arc<-sqrt(dx^2+dy^2+derivative^2)
+  if(n>=3L) {
+   ii<-2:(n-1L);k<-pmin(ii-1L,n-ii,window);lo<-ii-k;hi<-ii+k
+   a<-c(0,cumsum(axis));b<-c(0,cumsum(arc))
+   den<-b[hi+1L]-b[lo];out[ii]<-ifelse(den>0,(a[hi+1L]-a[lo])/den,0)
+  }
+ }
+ # Missingness is not allowed to contaminate every later cumulative window.
+ if(anyNA(out)) {
+  out<-vapply(seq_len(n),function(i){v<-out[max(1,i-1):min(n,i+1)];if(anyNA(v))NA_real_ else mean(v)},double(1))
+ } else out<-.moving_mean(out,3L)
+ out^power
+}
+#' Compute medial-axis symmetry scores
+#' @param mat An mlv_mat object.
+#' @param properties Requested branch score names.
+#' @param window,power Branch score parameters.
+#' @return An mlv_mat with branch scores and score images; unmapped pixels are NA.
+#' @export
+compute_mat_properties <- function(mat,properties=c("parallelism","separation","mirror"),
+                                   window=5L,power=10) {
+ if(!inherits(mat,"mlv_mat"))stop("mat must be an mlv_mat",call.=FALSE)
+ if(any(!properties %in% c("parallelism","separation","mirror","taper")))
+  stop("unknown MAT property",call.=FALSE)
+ if(!length(mat$branches)&&any(mat$skeleton))mat$branches<-trace_skeleton(mat,mat$parameters$min_branch_points)
+ mat$score_images<-list()
+ for(prop in properties) {
+  image<-matrix(NA_real_,nrow(mat$skeleton),ncol(mat$skeleton))
+  for(i in seq_along(mat$branches)) {
+   b<-mat$branches[[i]];scores<-score_branch(b,prop,window,power)
+   mat$branches[[i]][[prop]]<-scores
+   idx<-cbind(b$row,b$column)
+   image[idx]<-ifelse(is.na(image[idx]),scores,pmax(image[idx],scores,na.rm=TRUE))
+  }
+  mat$score_images[[prop]]<-image
+ }
+ mat$parameters$window<-window;mat$parameters$power<-power
+ mat$parameters$taper_smoothing<-"moving_mean_3"
+ mat
+}
+.tangent_points <- function(branch) {
+ n<-nrow(branch)
+ if(n<2L)return(list(points=matrix(numeric(),0,2),source=integer()))
+ X<-branch$row;Y<-branch$column;R<-branch$radius
+ points<-list();sources<-integer()
+ for(delta1 in c(-.1,0,.1))for(delta2 in c(-.1,0,.1)) {
+  x1<-head(X,-1);y1<-head(Y,-1);x2<-tail(X,-1);y2<-tail(Y,-1)
+  r1<-head(R,-1)+delta1;r2<-tail(R,-1)+delta2
+  d<-sqrt((x1-x2)^2+(y1-y2)^2)
+  ca<-(r2-r1)/d
+  bad<-abs(ca)>1;ca[bad]<-ca[bad]/(abs(ca[bad])+.00001)
+  sa<-sqrt(pmax(0,1-ca^2));mx<-(x1+x2)/2;my<-(y1+y2)/2;mr<-(r1+r2)/2
+  vx<-x1-mx;vy<-y1-my
+  for(sign in c(1,-1)) {
+   xx<-ca*vx+sign*sa*vy;yy<--sign*sa*vx+ca*vy
+   norm<-sqrt(xx^2+yy^2);valid<-is.finite(norm)&norm>0&mr>=0
+   points[[length(points)+1L]]<-cbind(mx[valid]+xx[valid]*mr[valid]/norm[valid],
+                                    my[valid]+yy[valid]*mr[valid]/norm[valid])
+   sources<-c(sources,which(valid))
+  }
+ }
+ list(points=do.call(rbind,points),source=sources)
+}
+#' Map branch ratings back to drawing contours
+#'
+#' Uses exact nearest tangent samples per branch, then the maximum across
+#' contributing branches. An explicit mapping mask distinguishes valid zero
+#' ratings from missing samples. Geometry is reused across requested properties.
+#' @param x A drawing.
+#' @param mat An mlv_mat with computed branch properties.
+#' @param radius Maximum tangent mapping distance in pixels.
+#' @return A drawing with per-contour MAT scores, score images and mapping masks.
+#' @export
+map_mat_properties <- function(x,mat,radius=4) {
+ .check_drawing(x)
+ if(!inherits(mat,"mlv_mat")||is.null(mat$score_images))stop("compute MAT properties first",call.=FALSE)
+ if(!identical(dim(mat$mask),c(x$height,x$width)))stop("drawing and MAT image dimensions differ",call.=FALSE)
+ if(length(radius)!=1L||!is.finite(radius)||radius<=0)stop("radius must be positive",call.=FALSE)
+ ink<-which(rasterize(x));rc<-arrayInd(ink,dim(mat$mask))
+ props<-names(mat$score_images);images<-lapply(props,function(p)rep(NA_real_,length(ink)));names(images)<-props
+ for(branch in mat$branches) {
+  fp<-.tangent_points(branch);if(!nrow(fp$points)||!length(ink))next
+  nn<-cpp_nearest(fp$points,rc)
+  ok<-which(nn$distance<radius)
+  if(!length(ok))next
+  source<-fp$source[nn$index[ok]]
+  for(prop in props) {
+   value<-branch[[prop]][source];valid<-is.finite(value);at<-ok[valid];value<-value[valid]
+   old<-images[[prop]][at];images[[prop]][at]<-ifelse(is.na(old),value,pmax(old,value))
+  }
+ }
+ x$mat_properties<-list();x$mat_images<-list();x$mat_mapping_masks<-list()
+ contour_indices<-lapply(seq_along(x$ids),function(i).raster_indices(x,i))
+ for(prop in props) {
+  image<-matrix(NA_real_,x$height,x$width);image[ink]<-images[[prop]]
+  x$mat_images[[prop]]<-image
+  x$mat_mapping_masks[[prop]]<-is.finite(image)
+  x$mat_properties[[prop]]<-lapply(contour_indices,function(index)image[index])
+ }
+ x$mat_parameters<-mat$parameters;x
+}
+#' Complete vector drawing to medial-axis feature workflow
+#' @param x A drawing.
+#' @param properties MAT property names.
+#' @param ... Arguments to compute_mat.
+#' @return List containing the enriched drawing and medial-axis representation.
+#' @export
+analyse_mat <- function(x,properties=c("parallelism","separation","mirror"),...) {
+ mat<-compute_mat(x,...)
+ mat<-compute_mat_properties(mat,properties)
+ list(drawing=map_mat_properties(x,mat),mat=mat)
+}
+#' @export
+print.mlv_mat <- function(x,...) {
+ cat("<mlv_mat>",nrow(x$skeleton),"x",ncol(x$skeleton),",",
+     sum(x$skeleton),"skeleton pixels,",length(x$branches),"branches\n")
+ invisible(x)
+}

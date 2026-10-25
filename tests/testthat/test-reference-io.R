@@ -1,0 +1,88 @@
+fixture_matrix<-function(name)unname(as.matrix(utils::read.csv(system.file("fixtures","octave",name,package="mlvtoolbox"),header=FALSE)))
+test_that("compiled Pratt agrees exactly with the identified Octave backend", {
+ for(name in c("box","ring","random")) {
+  input<-fixture_matrix(paste0("pratt_input_",name,".csv"))>0
+  reference<-fixture_matrix(paste0("pratt_output_",name,".csv"))>0
+  expect_identical(skeletonize(input),reference)
+ }
+})
+test_that("AOF agrees with executed upstream source on a unique-nearest field", {
+ D<-fixture_matrix("aof_distance.csv");index<-fixture_matrix("aof_index.csv")
+ expect_equal(average_outward_flux(D,index),fixture_matrix("aof_output.csv"),tolerance=1e-11)
+})
+test_that("MAT distances agree within reference single precision", {
+ ink<-fixture_matrix("mat_input.csv")==0
+ result<-compute_mat(ink)
+ expect_equal(result$distance_map,fixture_matrix("mat_distance.csv"),tolerance=2e-6)
+})
+test_that("MAT import handles synthetic structure arrays", {
+ skip_if_not_installed("R.matlab")
+ file<-system.file("fixtures","octave","synthetic_drawings.mat",package="mlvtoolbox")
+ drawings<-read_mlv_mat(file)
+ expect_length(drawings,2)
+ expect_equal(vapply(drawings,function(d)length(d$ids),integer(1)),c(2L,1L))
+ expect_equal(as.data.frame(drawings[[1]])$length,c(10,5,6))
+ expect_equal(drawings[[2]]$width,10L)
+ expect_error(read_mlv_mat(file,"absent"),"not found")
+})
+test_that("SVG imports paths, arcs, transforms, and pen lifts", {
+ skip_if_not_installed("xml2")
+ path<-tempfile(fileext=".svg")
+ writeLines('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><g transform="translate(2 3) scale(2)"><path d="M 0 0 l 3 0 v 2 H 0 z M 8 8 L 9 8"/></g></svg>',path)
+ d<-read_mlv_svg(path)
+ expect_length(d$contours,2)
+ expect_equal(unname(d$contours[[1]][1,]),c(3,4,9,4))
+ expect_equal(sum(as.data.frame(d)$length),22)
+ writeLines('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path d="M1 1 Q 5 10 10 1 T 20 1 C 25 1 25 10 30 10 S 35 15 35 20 A 5 5 0 0 1 30 25"/></svg>',path)
+ d<-read_mlv_svg(path,curve_step=.5)
+ expect_length(d$contours,1);expect_true(all(is.finite(as.matrix(as.data.frame(d)[,-1]))))
+ expect_equal(unname(tail(d$contours[[1]],1)[,3:4]),c(31,26),tolerance=1e-10)
+ writeLines('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><text>no</text></svg>',path)
+ expect_error(read_mlv_svg(path),"unsupported")
+ expect_warning(read_mlv_svg(path,strict=FALSE),"unsupported")
+ writeLines('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0 L2"/></svg>',path)
+ expect_error(read_mlv_svg(path),"incomplete")
+})
+test_that("image IO and explicit providers have no hidden file dependencies", {
+ skip_if_not_installed("png")
+ d<-mlv_drawing(list(matrix(c(2,3,8,3),1)),10,10)
+ file<-tempfile(fileext=".png");write_mlv_png(d,file)
+ image<-read_mlv_image(file);expect_identical(dim(image),c(10L,10L))
+ expect_equal(sum(image==0),7)
+ traced<-trace_contours(file)
+ expect_equal(sum(rasterize(traced)),7)
+ rgb<-array(0,c(10,10,3))
+ provided<-trace_rgb(rgb,function(z)rasterize(d))
+ expect_equal(sum(rasterize(provided)),7)
+ csv<-tempfile(fileext=".csv");write_feature_csv(d,csv)
+ expect_true(file.exists(csv))
+ expect_equal(dim(feature_density(d,"length")),c(10L,10L))
+ expect_equal(sum(feature_density(d,"length")),6)
+ expect_equal(dim(feature_density(d,"length",sigma=1)),c(10L,10L))
+})
+
+test_that("MAT flux comparisons identify reference tie choices separately", {
+ reference_index<-fixture_matrix("mat_index.csv")
+ reference_distance<-fixture_matrix("mat_distance.csv")
+ expect_equal(average_outward_flux(reference_distance,reference_index),
+              fixture_matrix("mat_aof.csv"),tolerance=1e-11)
+})
+
+test_that("SVG aspect ratios, model colors, local score colors and batch results work", {
+ skip_if_not_installed("xml2")
+ file<-tempfile(fileext=".svg")
+ writeLines('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" width="40" height="20"><line x1="0" y1="0" x2="10" y2="10"/></svg>',file)
+ d<-read_mlv_svg(file,width=40,height=20)
+ expect_equal(unname(d$contours[[1]][1,]),c(11,1,31,21))
+ d<-mlv_drawing(list(matrix(c(2,3,8,3),1)),10,10)
+ expect_equal(dim(render_drawing(d,values=1)),c(10L,10L,3L))
+ d$mat_images<-list(parallelism=matrix(NA_real_,10,10))
+ d$mat_images$parallelism[3,2:8]<-seq(0,1,length.out=7)
+ d$mat_properties<-list(parallelism=list(seq(0,1,length.out=7)))
+ rendered<-render_drawing(d,"parallelism")
+ expect_false(identical(rendered[3,2,],rendered[3,8,]))
+ expect_equal(nrow(batch_statistics(list(d,d),properties="length")),16)
+ device<-tempfile(fileext=".pdf")
+ grDevices::pdf(device);on.exit(grDevices::dev.off(),add=TRUE)
+ expect_invisible(plot_properties(d,properties=c("length","parallelism")))
+})

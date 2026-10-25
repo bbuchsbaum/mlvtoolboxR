@@ -1,0 +1,6 @@
+bibentry(bibtype = "Article",
+  title = "The mid-level vision toolbox for computing structural properties of real-world images",
+  author = c(person("Dirk B.", "Walther"), person("Delaram", "Farzanfar"),
+             person("Seohee", "Han"), person("Morteza", "Rezanejad")),
+  year = "2023", journal = "Frontiers in Computer Science", volume = "5",
+  pages = "1140723", doi = "10.3389/fcomp.2023.1140723")

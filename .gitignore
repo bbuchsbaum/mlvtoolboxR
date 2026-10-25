@@ -1,0 +1,16 @@
+/.dashboard/
+/.agent-work/
+/reference-data/
+/.cleanup-staging/
+/MLV_toolbox/
+/build/
+*.Rcheck/
+*.tar.gz
+src/*.o
+src/*.so
+src/*.dll
+.Rhistory
+.RData
+/.mote/local/
+/.mote/authority/
+/.mote/tmp/

@@ -1,0 +1,21 @@
+Package: mlvtoolbox
+Type: Package
+Title: Contour Geometry and Mid-Level Vision Analysis
+Version: 0.1.0
+Authors@R: person("Bradley", "Buchsbaum", email = "brad.buchsbaum@gmail.com",
+    role = c("aut", "cre"))
+Description: Analyses vectorized line drawings using contour orientation, length,
+    curvature, junctions, and average-outward-flux medial-axis representations.
+    Includes image tracing, stimulus manipulation, reproducible feature tables,
+    and explicit handling of degenerate geometry. Implements methods described
+    by Walther et al. (2023) <doi:10.3389/fcomp.2023.1140723>.
+License: GPL (>= 3)
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
+Imports: Rcpp, graphics, grDevices, stats, utils, tools
+LinkingTo: Rcpp
+Suggests: testthat (>= 3.0.0), xml2, png, jpeg, R.matlab, knitr, rmarkdown
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+RoxygenNote: 7.3.3
+SystemRequirements: C++17

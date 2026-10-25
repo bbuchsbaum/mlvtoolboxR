@@ -1,0 +1,80 @@
+---
+title: "Contour analysis and medial-axis workflows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Contour analysis and medial-axis workflows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height = 4)
+library(mlvtoolbox)
+```
+
+A drawing contains ordered segment matrices in image coordinates. Keep
+individual contours separate: contour identity affects junction counts,
+curvature and stimulus selection.
+
+```{r drawing}
+drawing <- mlv_drawing(
+  list(matrix(c(5, 5, 35, 5), 1),
+       matrix(c(20, 2, 20, 25), 1),
+       rbind(c(5, 15, 10, 20), c(10, 20, 15, 15))),
+  width = 40, height = 30
+)
+drawing <- compute_contour_properties(drawing)
+as.data.frame(drawing)
+drawing$junctions[, c("x", "y", "type", "min_angle")]
+plot(drawing, property = "junctions")
+```
+
+Orientation is directed and measured in degrees. Orientation histograms are
+axial (modulo 180) and length weighted. Curvature is a wrapped turning angle
+divided by segment length, including an explicit last-segment convention.
+
+```{r statistics}
+stats <- contour_statistics(drawing, properties = c("orientation", "curvature"))
+head(stats)
+feature_table(drawing, properties = c("length", "curvature"), bins = 4)
+```
+
+Stimulus selection uses whole contours and conservative length budgets. Changes
+to geometry invalidate derived tables so old properties cannot silently follow
+a rotated or segmented drawing.
+
+```{r manipulation}
+parts <- split_contours(drawing, property = "length", fraction = 0.5)
+sum(as.data.frame(parts$top)$length)
+sum(as.data.frame(drawing)$length) * 0.5
+plot(clip_circle(rotate_drawing(drawing, 25), radius = 12))
+```
+
+The medial-axis workflow first creates an ink mask, then computes signed
+distance, average outward flux and a thinned skeleton. It records the exact
+threshold and backend. Here TRUE denotes ink; image arrays index row, column.
+
+```{r mat}
+result <- analyse_mat(drawing, min_branch_points = 2)
+result$mat
+result$mat$parameters
+plot(result$drawing, property = "parallelism")
+head(contour_statistics(result$drawing, "parallelism"))
+```
+
+Valid zero ratings are retained. Unmapped pixels are NA and have a separate
+mapping mask. Branch derivatives, smoothing, score exponents and tangent
+mapping have explicit parameters.
+
+The package uses exact Euclidean distances and the identified Octave-image
+Pratt morphology backend. Small synthetic fixtures compare compiled kernels to
+executed references and independent exhaustive calculations. This does not
+establish MATLAB-specific morphology/raster equivalence or validity on every
+class of natural image. Rasterization, graph tracing, axial mean orientation
+and taper smoothing are documented method choices.
+
+For file adapters, use read_mlv_svg(), read_mlv_mat(), and trace_contours().
+Their dependencies are optional. SVG curves are sampled; unsupported visible
+elements error by default. MAT v5 structures are supported. RGB extraction uses
+an explicitly supplied trace_rgb() provider; model weights and preprocessing
+remain the provider's responsibility.

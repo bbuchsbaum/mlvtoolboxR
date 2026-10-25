@@ -1,0 +1,10 @@
+MLV-M001 horizontal histogram total: observed=0 expected=10
+MLV-M002 empty junction angle bins: observed=5 expected=8
+MLV-M003 top split length: observed=8 maximum=5
+MLV-M005 outside-outside aperture length: observed=0 expected=4
+MLV-M006 transitive junction groups: observed=2 expected=1
+MLV-M007 diagonal T minimum angle: observed=0 expected=90
+MLV-M008 negative-coordinate intersection count: observed=0 expected=2 (coordinates -3,-3)
+MLV-M009 two-point line fitting error: 'lineSegs' undefined near line 57, column 20
+MLV-M004 threshold conversion: omitted=0.3 explicit28=0.29887487943380647
+MLV-M010 parse incompatibility: computeGradientVectorField contains two jj++m_Neighbors8 expressions; see reference adapter.

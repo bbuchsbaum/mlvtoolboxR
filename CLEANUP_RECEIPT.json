@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-25T22:57:19.455618+00:00",
+  "before_logical_bytes": 3523209057,
+  "after_vendor_bytes": 548418,
+  "after_shared_data_bytes": 698469852,
+  "logical_bytes_removed": 2824190787,
+  "source_files_verified": 159,
+  "retained_data_files_verified": 39,
+  "source_manifest": "vendor/SOURCES.json",
+  "shared_data_manifest": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/MANIFEST.json",
+  "restoration": "tools/restore_upstream.py",
+  "external_custody": [
+    [
+      "https://github.com/bwlabToronto/MLV_toolbox",
+      "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+      "74b4bc8f3be1b34823be9c3dbfde2491f87b6fc2"
+    ],
+    [
+      "https://github.com/bwlabToronto/pyMLV",
+      "14b3183b91146b1021eb7ef97db75ad703b06832",
+      "f8f84ad328172e6ef3d2730339de4011fe57b9b0"
+    ]
+  ],
+  "full_references_removed": true
+}

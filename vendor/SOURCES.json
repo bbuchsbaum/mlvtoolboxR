@@ -1,0 +1,1640 @@
+{
+  "schema_version": 1,
+  "created": "2026-10-25T22:57:14.004968+00:00",
+  "remote_custody_verified": "GitHub commit API verified both source commits and root Git trees in this session before cleanup.",
+  "repositories": [
+    {
+      "name": "MLV_toolbox",
+      "old": "MLV_toolbox",
+      "commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+      "tree": "74b4bc8f3be1b34823be9c3dbfde2491f87b6fc2",
+      "origin": "https://github.com/bwlabToronto/MLV_toolbox",
+      "refs": [
+        "refs/heads/main f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "refs/remotes/origin/FixationDensityMaps 12a42080706497cbd5b1236d773424013ebad2d9",
+        "refs/remotes/origin/HEAD f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "refs/remotes/origin/MAT-properties-stats fd4565ec384d944d79a235c4469e631775d0f88f",
+        "refs/remotes/origin/bugFixes 08d05b014666624aec74b276471119ea1c3e5b43",
+        "refs/remotes/origin/curvatureLinearBin 95fbeb21c369e90474d23f1db7d698798d266964",
+        "refs/remotes/origin/futureRelease 29b11cda365dca2001018fdf97c33d0e2fcc5a3f",
+        "refs/remotes/origin/main f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "refs/remotes/origin/output_SED_images 9c85b77b07f8e32fd4804b398b0d1bf5596775ec",
+        "refs/tags/v1.1 0da01e31c13983184dc32cc0e058973498e99452"
+      ],
+      "before_bytes": 2047013910
+    },
+    {
+      "name": "pyMLV",
+      "old": "vendor/pyMLV",
+      "commit": "14b3183b91146b1021eb7ef97db75ad703b06832",
+      "tree": "f8f84ad328172e6ef3d2730339de4011fe57b9b0",
+      "origin": "https://github.com/bwlabToronto/pyMLV",
+      "refs": [
+        "refs/heads/main 14b3183b91146b1021eb7ef97db75ad703b06832",
+        "refs/remotes/origin/HEAD 14b3183b91146b1021eb7ef97db75ad703b06832",
+        "refs/remotes/origin/gh-pages d4e08579853fc48bfa32256b3b922b62eb4df9b9",
+        "refs/remotes/origin/main 14b3183b91146b1021eb7ef97db75ad703b06832",
+        "refs/remotes/origin/under_development 75903190591975b88525ce8958c845a6f8d2f074"
+      ],
+      "before_bytes": 1476195147
+    }
+  ],
+  "retained_source_files": [
+    {
+      "repository": "MLV_toolbox",
+      "path": "setup.m",
+      "original_sha256": "47eb1399668d75cf624ea89266bdd0e5e70257e4fdd2eb594ecc3ead44648c42",
+      "snapshot_sha256": "47eb1399668d75cf624ea89266bdd0e5e70257e4fdd2eb594ecc3ead44648c42",
+      "bytes": 22,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "README.md",
+      "original_sha256": "200dcabc6f9d146b0168a229effc93ebf96d5120d6a6959f2991a958a9be500e",
+      "snapshot_sha256": "200dcabc6f9d146b0168a229effc93ebf96d5120d6a6959f2991a958a9be500e",
+      "bytes": 11149,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/renderLinedrawingProperty.m",
+      "original_sha256": "d8b34184eb8db326ca56dda18f2ea72ac807b7cdb87dae938f481f7e77f10a88",
+      "snapshot_sha256": "d8b34184eb8db326ca56dda18f2ea72ac807b7cdb87dae938f481f7e77f10a88",
+      "bytes": 2151,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/cleanupJunctions.m",
+      "original_sha256": "1e8a2aebdfb5fe93765266f1d21b59e1af4af72cd22ba93002f49ab6fc9ebc84",
+      "snapshot_sha256": "1e8a2aebdfb5fe93765266f1d21b59e1af4af72cd22ba93002f49ab6fc9ebc84",
+      "bytes": 3520,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/drawAllProperties.m",
+      "original_sha256": "dfa10579c9b4be5333b4396598e2e621135de9c7b04082488daff44325ff06ea",
+      "snapshot_sha256": "dfa10579c9b4be5333b4396598e2e621135de9c7b04082488daff44325ff06ea",
+      "bytes": 2349,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeAOF.m",
+      "original_sha256": "44d2745687ba849e28d449e0d82821871b0e1ff0943e51710e174f4f0dc1e14e",
+      "snapshot_sha256": "44d2745687ba849e28d449e0d82821871b0e1ff0943e51710e174f4f0dc1e14e",
+      "bytes": 3491,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeJunctions.m",
+      "original_sha256": "e49974b3cd8457466685268665c356fa136e838a0b82a786861d0b882e50934c",
+      "snapshot_sha256": "e49974b3cd8457466685268665c356fa136e838a0b82a786861d0b882e50934c",
+      "bytes": 1776,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeJunctionAnglesTypes.m",
+      "original_sha256": "8b07e9e546cad70596951fb3e5104d37113945ea43539400bcc55ec20a6760f5",
+      "snapshot_sha256": "8b07e9e546cad70596951fb3e5104d37113945ea43539400bcc55ec20a6760f5",
+      "bytes": 4975,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/labelMatrix2edges.m",
+      "original_sha256": "1e660c2d62d34dbbd45d905136cbcb13104c00432d17a0350fa8cbc6728be8c4",
+      "snapshot_sha256": "1e660c2d62d34dbbd45d905136cbcb13104c00432d17a0350fa8cbc6728be8c4",
+      "bytes": 1054,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getMATpropertyStats.m",
+      "original_sha256": "7ec8a57b2230730bb06d12557712c58c9124ce935e252fbda7fd4bc189dcbed9",
+      "snapshot_sha256": "7ec8a57b2230730bb06d12557712c58c9124ce935e252fbda7fd4bc189dcbed9",
+      "bytes": 1875,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/fitLineSegments.m",
+      "original_sha256": "830fa2c59ffde7a7f2b7cccc785df6174a75279035ed4e50f087dfe0f3092f86",
+      "snapshot_sha256": "830fa2c59ffde7a7f2b7cccc785df6174a75279035ed4e50f087dfe0f3092f86",
+      "bytes": 1747,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/splitLDbyStatsModel.m",
+      "original_sha256": "40da33d21b7cee491d2645808ecc7c186b81c5517b3e8a8c5fe97ebf08401300",
+      "snapshot_sha256": "40da33d21b7cee491d2645808ecc7c186b81c5517b3e8a8c5fe97ebf08401300",
+      "bytes": 2594,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/drawLinedrawing.m",
+      "original_sha256": "ce7f748867945feecdcae3a095dbe6c4fcc60c5d0013c02f2e79d414e5a1996e",
+      "snapshot_sha256": "ce7f748867945feecdcae3a095dbe6c4fcc60c5d0013c02f2e79d414e5a1996e",
+      "bytes": 1065,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeMATproperty.m",
+      "original_sha256": "f6495760fdee406e7b99e5aacd47fbc6e25da78e3f38b31c18a41f1a06896c82",
+      "snapshot_sha256": "f6495760fdee406e7b99e5aacd47fbc6e25da78e3f38b31c18a41f1a06896c82",
+      "bytes": 1793,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getHorizontalVerticalStats.m",
+      "original_sha256": "26c980ee5e3515cff21c12c668dcbe1870f96f17c48ced7687d9af1337e30857",
+      "snapshot_sha256": "26c980ee5e3515cff21c12c668dcbe1870f96f17c48ced7687d9af1337e30857",
+      "bytes": 2029,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/renderJunctions.m",
+      "original_sha256": "63d49c0a5ed4e9cd454cefcdec4369939413146d79368b9617ea13b9be8d9491",
+      "snapshot_sha256": "63d49c0a5ed4e9cd454cefcdec4369939413146d79368b9617ea13b9be8d9491",
+      "bytes": 1899,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getOrientationStats.m",
+      "original_sha256": "0e42b7c743af502b8ce3c57dfa87db26a3a47e813f2cb7131481af96f5e7db92",
+      "snapshot_sha256": "0e42b7c743af502b8ce3c57dfa87db26a3a47e813f2cb7131481af96f5e7db92",
+      "bytes": 2155,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeAllMATproperties.m",
+      "original_sha256": "9c2459b7d4ac9805f17a557064a8e6292e8911c904242a7886af25ca3fe1fec5",
+      "snapshot_sha256": "9c2459b7d4ac9805f17a557064a8e6292e8911c904242a7886af25ca3fe1fec5",
+      "bytes": 1836,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/drawJunctions.m",
+      "original_sha256": "007ec35bea9b6e6faaa7317fc74a552cc0edf96c09003e28e2adf6a5770a95b2",
+      "snapshot_sha256": "007ec35bea9b6e6faaa7317fc74a552cc0edf96c09003e28e2adf6a5770a95b2",
+      "bytes": 2148,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeAllMATfromVecLD.m",
+      "original_sha256": "452b8ed670f3474cba4e4c8f5274e695e8ff66abf3b99e3e7f3f9afc25ee44b7",
+      "snapshot_sha256": "452b8ed670f3474cba4e4c8f5274e695e8ff66abf3b99e3e7f3f9afc25ee44b7",
+      "bytes": 1960,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/MATpropertiesToContours.m",
+      "original_sha256": "3b962fc6d2992c8da26b31e0fda7ab4558456a09130334f64041f13e3021d98b",
+      "snapshot_sha256": "3b962fc6d2992c8da26b31e0fda7ab4558456a09130334f64041f13e3021d98b",
+      "bytes": 2098,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getContourPropertiesStats.m",
+      "original_sha256": "3315b751e29ef318ef3d0d15908f46163b7a55e45b52fbe23056d720bb4d60fb",
+      "snapshot_sha256": "3315b751e29ef318ef3d0d15908f46163b7a55e45b52fbe23056d720bb4d60fb",
+      "bytes": 3582,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/randomlyShiftContours.m",
+      "original_sha256": "eec505251206af001125997e9fe612ca94f5b0e1e45baa8a9678c6ab536dd7c3",
+      "snapshot_sha256": "eec505251206af001125997e9fe612ca94f5b0e1e45baa8a9678c6ab536dd7c3",
+      "bytes": 2508,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/traceLineDrawingFromRGB.m",
+      "original_sha256": "fbc17641eb14436657bf51fbe943601db5fdc497bb2e10f48abbef52f45a43c7",
+      "snapshot_sha256": "fbc17641eb14436657bf51fbe943601db5fdc497bb2e10f48abbef52f45a43c7",
+      "bytes": 4332,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/splitLDbyHistogramWeights.m",
+      "original_sha256": "db471936322620f738d74516b8e427f4210731175b6e855eaf24990232903180",
+      "snapshot_sha256": "db471936322620f738d74516b8e427f4210731175b6e855eaf24990232903180",
+      "bytes": 3756,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeOrientation.m",
+      "original_sha256": "16a910d55df9a199485a436f08c2c845ec2caddda4d20a6845f1fc06b985c4b3",
+      "snapshot_sha256": "16a910d55df9a199485a436f08c2c845ec2caddda4d20a6845f1fc06b985c4b3",
+      "bytes": 1012,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/segmentContoursAtJunctions.m",
+      "original_sha256": "6ea9e347a155be14a8a847a828b699ca9666707d33405e79a79f7f4bf45d605b",
+      "snapshot_sha256": "6ea9e347a155be14a8a847a828b699ca9666707d33405e79a79f7f4bf45d605b",
+      "bytes": 4717,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/importSVG.m",
+      "original_sha256": "535b02ffc9f8ff0257dbc5829726e72402a893ca69f650af6a88778365e744fa",
+      "snapshot_sha256": "535b02ffc9f8ff0257dbc5829726e72402a893ca69f650af6a88778365e744fa",
+      "bytes": 20217,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/mapMATtoContour.m",
+      "original_sha256": "f3ab61e0a4afac6712883631a685a4ac9ba2824dfded7479802245431905a716",
+      "snapshot_sha256": "f3ab61e0a4afac6712883631a685a4ac9ba2824dfded7479802245431905a716",
+      "bytes": 5078,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/drawContoursByStatsModel.m",
+      "original_sha256": "e4a2bda7db54b22196d8fd6038236f1a6409fff59ba0c31c985768c7f816bdb2",
+      "snapshot_sha256": "e4a2bda7db54b22196d8fd6038236f1a6409fff59ba0c31c985768c7f816bdb2",
+      "bytes": 2065,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getCurvatureStats.m",
+      "original_sha256": "e43995383baeace6ec4059c16c675423b43707faaa7056de5d0b365490678a73",
+      "snapshot_sha256": "e43995383baeace6ec4059c16c675423b43707faaa7056de5d0b365490678a73",
+      "bytes": 2423,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/renderLinedrawing.m",
+      "original_sha256": "eeff7d856e23440a2127c44678d380e39187e2f329a719e611871290a4d02b56",
+      "snapshot_sha256": "eeff7d856e23440a2127c44678d380e39187e2f329a719e611871290a4d02b56",
+      "bytes": 1840,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/saveSceneLDsToTable.m",
+      "original_sha256": "00a4e9e6d87861d74579f88c529402d7f45ffee0f4fb5a44c38718465d417984",
+      "snapshot_sha256": "00a4e9e6d87861d74579f88c529402d7f45ffee0f4fb5a44c38718465d417984",
+      "bytes": 2416,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/extract2DSkeletonFromBinaryImage.m",
+      "original_sha256": "11826039f8dac1efe6430b34cd5148b280dca198479ae2028c97ebeb6d9ff453",
+      "snapshot_sha256": "11826039f8dac1efe6430b34cd5148b280dca198479ae2028c97ebeb6d9ff453",
+      "bytes": 2995,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/splitLDmiddleSegmentsVsJunctions.m",
+      "original_sha256": "193279407d1371fa9026fb0c5e905f7e0cdea809a1d30aac4819093e3427aff8",
+      "snapshot_sha256": "193279407d1371fa9026fb0c5e905f7e0cdea809a1d30aac4819093e3427aff8",
+      "bytes": 4219,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/drawLinedrawingProperty.m",
+      "original_sha256": "15b7246b725576d8aeef34aea83997daf3eef31ab270236b7d0009808364bf5b",
+      "snapshot_sha256": "15b7246b725576d8aeef34aea83997daf3eef31ab270236b7d0009808364bf5b",
+      "bytes": 1882,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/InitializeNeighborhoods.m",
+      "original_sha256": "1eb64883ccf2794f3e1dcd218b6332d6f0782a2d1a7c2cd8fd550d98fc42ec67",
+      "snapshot_sha256": "1eb64883ccf2794f3e1dcd218b6332d6f0782a2d1a7c2cd8fd550d98fc42ec67",
+      "bytes": 1334,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeCurvature.m",
+      "original_sha256": "e136365495f531e6ad6468a7bd05fe1e7a3bf71336079c9e9385508c466ac45e",
+      "snapshot_sha256": "e136365495f531e6ad6468a7bd05fe1e7a3bf71336079c9e9385508c466ac45e",
+      "bytes": 1571,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeMAT.m",
+      "original_sha256": "a5d7f735c480ffce74f5d8570f31b3b2d7f8981d6323ad6011201dd4790c3093",
+      "snapshot_sha256": "a5d7f735c480ffce74f5d8570f31b3b2d7f8981d6323ad6011201dd4790c3093",
+      "bytes": 1578,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/lineIntersection.m",
+      "original_sha256": "5393cee8b13d8edbad3b451f2de8d33ad204276808bf2cfc4015aecef7d058c8",
+      "snapshot_sha256": "5393cee8b13d8edbad3b451f2de8d33ad204276808bf2cfc4015aecef7d058c8",
+      "bytes": 2452,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/predictContoursByStatsModel.m",
+      "original_sha256": "3b6b32d2dcef7f6e3c4e56daa7fdaaa75ffc4102cd3ba968cde92629cbb7f41b",
+      "snapshot_sha256": "3b6b32d2dcef7f6e3c4e56daa7fdaaa75ffc4102cd3ba968cde92629cbb7f41b",
+      "bytes": 2322,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/allLDHistogramsToTable.m",
+      "original_sha256": "3e4eefd65d59813761669b68edc85769818e76f0225e393738763e012adb3ebb",
+      "snapshot_sha256": "3e4eefd65d59813761669b68edc85769818e76f0225e393738763e012adb3ebb",
+      "bytes": 1898,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeMATpropertyPerBranch.m",
+      "original_sha256": "23dd16ca5e3a982490cc20dab5160ee3f731246cf9f18187af0554757e2192c3",
+      "snapshot_sha256": "23dd16ca5e3a982490cc20dab5160ee3f731246cf9f18187af0554757e2192c3",
+      "bytes": 3439,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/traceLinedrawingFromEdgeMap.m",
+      "original_sha256": "390abe3aed5aeeb351b09f9918d946c520c32444f07d5c287f56ace9088a0b68",
+      "snapshot_sha256": "390abe3aed5aeeb351b09f9918d946c520c32444f07d5c287f56ace9088a0b68",
+      "bytes": 1383,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeContourProperties.m",
+      "original_sha256": "9c4d3d43a17fdf3f96ccae61c469d93982b4293b4de6e4948ae4cc29b917c02b",
+      "snapshot_sha256": "9c4d3d43a17fdf3f96ccae61c469d93982b4293b4de6e4948ae4cc29b917c02b",
+      "bytes": 1636,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getDistanceFromLineSegment.m",
+      "original_sha256": "35f4374df5beb40776c52141a8abf2ada4e0982e1a8ec063b70880463da407f7",
+      "snapshot_sha256": "35f4374df5beb40776c52141a8abf2ada4e0982e1a8ec063b70880463da407f7",
+      "bytes": 1183,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeLength.m",
+      "original_sha256": "88c5faa9fdd8b992e2b1bfe9b7f6797514ab814988a4d519eee16f1f6e4ba006",
+      "snapshot_sha256": "88c5faa9fdd8b992e2b1bfe9b7f6797514ab814988a4d519eee16f1f6e4ba006",
+      "bytes": 867,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getLengthStats.m",
+      "original_sha256": "66b2e12ffa316b05400eb7a312d92b0ad6dfe14f19c0a6abfb8f96fb1e3ee1ec",
+      "snapshot_sha256": "66b2e12ffa316b05400eb7a312d92b0ad6dfe14f19c0a6abfb8f96fb1e3ee1ec",
+      "bytes": 2291,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/renderContoursByStatsModel.m",
+      "original_sha256": "6b1fb4802b38b23891b37053843a81182b9296db8e6c632ea27d8875e785e880",
+      "snapshot_sha256": "6b1fb4802b38b23891b37053843a81182b9296db8e6c632ea27d8875e785e880",
+      "bytes": 1964,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/histogramToTable.m",
+      "original_sha256": "dcd092228ec2821459bf9bc1dcde6cb7502c13fbeab16d860239dea4994f6747",
+      "snapshot_sha256": "dcd092228ec2821459bf9bc1dcde6cb7502c13fbeab16d860239dea4994f6747",
+      "bytes": 1742,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeGradientVectorField.m",
+      "original_sha256": "485c56651f4380113002598ca88d04369d5858136c9ea16d28fc4d5f89a6e71a",
+      "snapshot_sha256": "485c56651f4380113002598ca88d04369d5858136c9ea16d28fc4d5f89a6e71a",
+      "bytes": 3228,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/rotateLinedrawing.m",
+      "original_sha256": "3be864368aebb95d50eca03839708875e7c971213bbe53cf08e26d9980a8404f",
+      "snapshot_sha256": "3be864368aebb95d50eca03839708875e7c971213bbe53cf08e26d9980a8404f",
+      "bytes": 1623,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/detectJunctions.m",
+      "original_sha256": "8b083161dfb55462aaf54e942ed5e227deabbfe12f20bfc9764f6d6a70dd8022",
+      "snapshot_sha256": "8b083161dfb55462aaf54e942ed5e227deabbfe12f20bfc9764f6d6a70dd8022",
+      "bytes": 2804,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/splitLDbyProperties.m",
+      "original_sha256": "5f1afdd95d74f83594be8cf091e6048f5b8105afebbdeec454afebb1eb68424a",
+      "snapshot_sha256": "5f1afdd95d74f83594be8cf091e6048f5b8105afebbdeec454afebb1eb68424a",
+      "bytes": 5935,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/generateFeatureDensityMap.m",
+      "original_sha256": "cf919016801246441c1615487d413f30c1bb3aeb86daeba36a7d6c1cf1d8b3da",
+      "snapshot_sha256": "cf919016801246441c1615487d413f30c1bb3aeb86daeba36a7d6c1cf1d8b3da",
+      "bytes": 5634,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/renderMATproperty.m",
+      "original_sha256": "6d55a320956c05b892a35961eade3f42725f35055103fdab55634d9df466899a",
+      "snapshot_sha256": "6d55a320956c05b892a35961eade3f42725f35055103fdab55634d9df466899a",
+      "bytes": 1359,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/traceSkeleton.m",
+      "original_sha256": "7a04dd39ac93de51051ee86e2de10294ba12cd44a336461d948197bc65daf20e",
+      "snapshot_sha256": "7a04dd39ac93de51051ee86e2de10294ba12cd44a336461d948197bc65daf20e",
+      "bytes": 1133,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/computeColorIndex.m",
+      "original_sha256": "b7d13667b089a36c2ce8f7deb05a26fe97ed7c1a6cffd6d1321a0880c2b962f8",
+      "snapshot_sha256": "b7d13667b089a36c2ce8f7deb05a26fe97ed7c1a6cffd6d1321a0880c2b962f8",
+      "bytes": 2042,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/drawMATproperty.m",
+      "original_sha256": "103d724a116439e3f87f2d25a4ef01e579433b96e6b0d782df360394245342ab",
+      "snapshot_sha256": "103d724a116439e3f87f2d25a4ef01e579433b96e6b0d782df360394245342ab",
+      "bytes": 1383,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/removeZeroLengthContours.m",
+      "original_sha256": "995667e51b08a1b808a4c2e6583c84e537f6b0ccbff44bfddb91c17b7cfb02dd",
+      "snapshot_sha256": "995667e51b08a1b808a4c2e6583c84e537f6b0ccbff44bfddb91c17b7cfb02dd",
+      "bytes": 1113,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/applyCircularAperture.m",
+      "original_sha256": "9a685b746ae593ee1d157d7cdf9bcb8052c330d8f779443bf579d94b4c1703b6",
+      "snapshot_sha256": "9a685b746ae593ee1d157d7cdf9bcb8052c330d8f779443bf579d94b4c1703b6",
+      "bytes": 3898,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/getJunctionStats.m",
+      "original_sha256": "1f719b9604be85e608129d8c9e0c8ef62bf1c9f9d9df2ee7d2e7c00fbee96363",
+      "snapshot_sha256": "1f719b9604be85e608129d8c9e0c8ef62bf1c9f9d9df2ee7d2e7c00fbee96363",
+      "bytes": 3276,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/mergeLineSegments.m",
+      "original_sha256": "86f51be37305493bc45dda5ed8cf95d974acbaf9221191b4278024e5f7ef47f7",
+      "snapshot_sha256": "86f51be37305493bc45dda5ed8cf95d974acbaf9221191b4278024e5f7ef47f7",
+      "bytes": 3321,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/averageProperty.m",
+      "original_sha256": "15a3bf513b02706333eceb3a2ed0a40744baad3e442ec9357636cee571c1f482",
+      "snapshot_sha256": "15a3bf513b02706333eceb3a2ed0a40744baad3e442ec9357636cee571c1f482",
+      "bytes": 3485,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "demos/testPatterns.svg",
+      "original_sha256": "1490140620fb038b7a9a8713952442b0ff4e8cf625699cd27238d178074eea52",
+      "snapshot_sha256": "1490140620fb038b7a9a8713952442b0ff4e8cf625699cd27238d178074eea52",
+      "bytes": 1346,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "demos/Frontiers2023_Figures.m",
+      "original_sha256": "4bc0b9857cf56e46b009986cc1260149e0fca0184d6bec6ddf7342a81ebd8ea0",
+      "snapshot_sha256": "4bc0b9857cf56e46b009986cc1260149e0fca0184d6bec6ddf7342a81ebd8ea0",
+      "bytes": 6305,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/edgelink.m",
+      "original_sha256": "d96f40aa7debea471ae6380b552fc787c577781c7cc19da3e010e5759a6a8978",
+      "snapshot_sha256": "d96f40aa7debea471ae6380b552fc787c577781c7cc19da3e010e5759a6a8978",
+      "bytes": 13388,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/findendsjunctions.m",
+      "original_sha256": "edf85cbee46ec95ab00e23b666e4c2caeca27e6ecc0b8591d7c46f01bb4d0f80",
+      "snapshot_sha256": "edf85cbee46ec95ab00e23b666e4c2caeca27e6ecc0b8591d7c46f01bb4d0f80",
+      "bytes": 3378,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/index.html",
+      "original_sha256": "2b0097ee19cf3868756379c9a57816f76d39d349ce0dded7dfa3efeb2a998648",
+      "snapshot_sha256": "2b0097ee19cf3868756379c9a57816f76d39d349ce0dded7dfa3efeb2a998648",
+      "bytes": 1712,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/drawedgelist.m",
+      "original_sha256": "66f9f56576ffe6bf44ba50cad6b67f0bf7573ae8e0f5be8655d54f139741850a",
+      "snapshot_sha256": "66f9f56576ffe6bf44ba50cad6b67f0bf7573ae8e0f5be8655d54f139741850a",
+      "bytes": 3494,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/lineseg.m",
+      "original_sha256": "db3a8ea6c8c73207dc05639d3bf819a482318ad7f229e611fbdb924c21dcb296",
+      "snapshot_sha256": "db3a8ea6c8c73207dc05639d3bf819a482318ad7f229e611fbdb924c21dcb296",
+      "bytes": 3017,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/cleanedgelist.m",
+      "original_sha256": "0ba384f205c956a4835eb1654b7bba5b868102b925f2ae48767e7f3dea2a15db",
+      "snapshot_sha256": "0ba384f205c956a4835eb1654b7bba5b868102b925f2ae48767e7f3dea2a15db",
+      "bytes": 13314,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/edgelist2image.m",
+      "original_sha256": "3f3cbf4dd88cac827ba1cd39bbdb72234a46ad508c21013de145fde22c858929",
+      "snapshot_sha256": "3f3cbf4dd88cac827ba1cd39bbdb72234a46ad508c21013de145fde22c858929",
+      "bytes": 2027,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/edge_linking/maxlinedev.m",
+      "original_sha256": "805d13dfe82fece5fe5e07f9c0634a92873686507769671ec6e6093c3c1b8c14",
+      "snapshot_sha256": "805d13dfe82fece5fe5e07f9c0634a92873686507769671ec6e6093c3c1b8c14",
+      "bytes": 2478,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/ToolGraphCutsRsvm.m",
+      "original_sha256": "ac9450f7ed9280109e1aa64bb5c81f07c60ba9654e39cd02a75bf41bae23aaf0",
+      "snapshot_sha256": "ac9450f7ed9280109e1aa64bb5c81f07c60ba9654e39cd02a75bf41bae23aaf0",
+      "bytes": 811,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/ConstructSmoothnessRsvm.m",
+      "original_sha256": "90be049fd0634d143d2acd8ea67580a45ede84ef1f11ea74b170a36253fb4f27",
+      "snapshot_sha256": "90be049fd0634d143d2acd8ea67580a45ede84ef1f11ea74b170a36253fb4f27",
+      "bytes": 455,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/initialopt.m",
+      "original_sha256": "d1e4f9f48f34aa9d06d9e858780f503b41ab20882dff88ed4dd85e25a12c4847",
+      "snapshot_sha256": "d1e4f9f48f34aa9d06d9e858780f503b41ab20882dff88ed4dd85e25a12c4847",
+      "bytes": 403,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/GestaltGroupRsvm.m",
+      "original_sha256": "ea50bb46bb2a570a6b7cb35f40959ada5e9dd598f3d4ee4763fe87fb3f377ee5",
+      "snapshot_sha256": "ea50bb46bb2a570a6b7cb35f40959ada5e9dd598f3d4ee4763fe87fb3f377ee5",
+      "bytes": 682,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/showGrouping.m",
+      "original_sha256": "2d0ecc4f7ac24aac848e740209e770bbdc4f26df7163a46cbcd82ab650cc9dce",
+      "snapshot_sha256": "2d0ecc4f7ac24aac848e740209e770bbdc4f26df7163a46cbcd82ab650cc9dce",
+      "bytes": 861,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/GetConSeg.m",
+      "original_sha256": "5e8945708a10d59b2a9bb9c28900c5698b7744415ead6eb99922f2b6bcb5c91e",
+      "snapshot_sha256": "5e8945708a10d59b2a9bb9c28900c5698b7744415ead6eb99922f2b6bcb5c91e",
+      "bytes": 142,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/RanksvmScore.m",
+      "original_sha256": "9e43301f3be886193cc29937809bc5c7e63b56b79f21f2f9e25376577ad49e50",
+      "snapshot_sha256": "9e43301f3be886193cc29937809bc5c7e63b56b79f21f2f9e25376577ad49e50",
+      "bytes": 2173,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/ranksvmwunion.mat",
+      "original_sha256": "d9278eed4789f653c3e59134cb9acfb66cc7edd44fe218daed23aa7c3d6ebb0e",
+      "snapshot_sha256": "d9278eed4789f653c3e59134cb9acfb66cc7edd44fe218daed23aa7c3d6ebb0e",
+      "bytes": 1928,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/GraphConstructRsvm.m",
+      "original_sha256": "53489a466d6b60328be849f1362aea3d2233f241c3715f1ea27d30a24e5efceb",
+      "snapshot_sha256": "53489a466d6b60328be849f1362aea3d2233f241c3715f1ea27d30a24e5efceb",
+      "bytes": 1459,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/colors.mat",
+      "original_sha256": "11af795946dfd681cf3dd4a106aaca8785987e9c1bdffecf37876ddfc854888a",
+      "snapshot_sha256": "11af795946dfd681cf3dd4a106aaca8785987e9c1bdffecf37876ddfc854888a",
+      "bytes": 264,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "3rdParty/contour_tracing/main/ConstructDatacostRsvm.m",
+      "original_sha256": "b5668df7bb1e785a4d9771525b189e6af8b375c197eccfe85ea5532701701143",
+      "snapshot_sha256": "b5668df7bb1e785a4d9771525b189e6af8b375c197eccfe85ea5532701701143",
+      "bytes": 827,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/trace_boundary_contours.m",
+      "original_sha256": "53ed2556e33dfea2173da10f2507aea6668a3119d4fa0cf4aa353c414dd0f429",
+      "snapshot_sha256": "53ed2556e33dfea2173da10f2507aea6668a3119d4fa0cf4aa353c414dd0f429",
+      "bytes": 1596,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/get_figure_image.m",
+      "original_sha256": "dd3beae6a54c7adae7070790d005eeba132b221a946a5c9f9d07698401282eac",
+      "snapshot_sha256": "dd3beae6a54c7adae7070790d005eeba132b221a946a5c9f9d07698401282eac",
+      "bytes": 168,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/wols.m",
+      "original_sha256": "c34eb34c22411b2beb17c92e3110ca1609ea43cf9d70bc8caca154d2f973f52c",
+      "snapshot_sha256": "c34eb34c22411b2beb17c92e3110ca1609ea43cf9d70bc8caca154d2f973f52c",
+      "bytes": 452,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/extractContoursLD.m",
+      "original_sha256": "13f36f62d7a26e6ffa912848942a47352db24dae72e7955768a5059592ccc844",
+      "snapshot_sha256": "13f36f62d7a26e6ffa912848942a47352db24dae72e7955768a5059592ccc844",
+      "bytes": 210,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/find_real_branch_points.m",
+      "original_sha256": "c17a5db5b940bf437ff9679c07e3675b46dee7328903201cc15381f15fbd7036",
+      "snapshot_sha256": "c17a5db5b940bf437ff9679c07e3675b46dee7328903201cc15381f15fbd7036",
+      "bytes": 1546,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/smooth_contours.m",
+      "original_sha256": "47f00e831c156cb6bbbf8fc39ea54ca5e84e9b56bac04795b10504e325030cb1",
+      "snapshot_sha256": "47f00e831c156cb6bbbf8fc39ea54ca5e84e9b56bac04795b10504e325030cb1",
+      "bytes": 1113,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/project_point_on_line.m",
+      "original_sha256": "24c9eac24077eebe7c0b7ae49a6ef25c7bc0d2f2882b8c238c989b6aa4f4c130",
+      "snapshot_sha256": "24c9eac24077eebe7c0b7ae49a6ef25c7bc0d2f2882b8c238c989b6aa4f4c130",
+      "bytes": 188,
+      "transformation": null
+    },
+    {
+      "repository": "MLV_toolbox",
+      "path": "MLVcode/contour_tracing_package/try_bwtraceboundary_4.m",
+      "original_sha256": "7dc5c12f846cfa822804cf048aaec2379d759efb2f24d87c5f5d8b59882f2bc8",
+      "snapshot_sha256": "7dc5c12f846cfa822804cf048aaec2379d759efb2f24d87c5f5d8b59882f2bc8",
+      "bytes": 1203,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "LICENSE",
+      "original_sha256": "b2dd91873eaa83dd1b9f1f7a3999eb65896ad8e7c02a772b1e8c8fd4c62a513b",
+      "snapshot_sha256": "b2dd91873eaa83dd1b9f1f7a3999eb65896ad8e7c02a772b1e8c8fd4c62a513b",
+      "bytes": 1078,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "requirements.txt",
+      "original_sha256": "c04de5bb09af4a754009a683bdbda571e5088494f5219992b2dce671b5d6312e",
+      "snapshot_sha256": "c04de5bb09af4a754009a683bdbda571e5088494f5219992b2dce671b5d6312e",
+      "bytes": 220,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "README.md",
+      "original_sha256": "89553bb8bf262348afdff7a1634523ca5a5c8bcbf89789639f17612917bf0b5b",
+      "snapshot_sha256": "89553bb8bf262348afdff7a1634523ca5a5c8bcbf89789639f17612917bf0b5b",
+      "bytes": 7505,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "mainpage.py",
+      "original_sha256": "958cf48e543c2427cd079925079025bd60488db83a5f4e5630431ce05afbd9ed",
+      "snapshot_sha256": "958cf48e543c2427cd079925079025bd60488db83a5f4e5630431ce05afbd9ed",
+      "bytes": 2397,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getDistanceFromLineSegment.py",
+      "original_sha256": "247eab883c9edd0f1714238a394b3f549c93977e73e4c18ed62c6724cbc324d6",
+      "snapshot_sha256": "247eab883c9edd0f1714238a394b3f549c93977e73e4c18ed62c6724cbc324d6",
+      "bytes": 1968,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/segmentContoursAtJunctions.py",
+      "original_sha256": "a3556eafab3c446e158beec5d939feec23c1b342204fcaf1d4f61318a49f862c",
+      "snapshot_sha256": "a3556eafab3c446e158beec5d939feec23c1b342204fcaf1d4f61318a49f862c",
+      "bytes": 5641,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeAllMATproperties.py",
+      "original_sha256": "ca9e8c7acdd67218873be9c69e22ee8a709cd9baf1266028275a51d97d001bb0",
+      "snapshot_sha256": "ca9e8c7acdd67218873be9c69e22ee8a709cd9baf1266028275a51d97d001bb0",
+      "bytes": 2206,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/detectJunctions.py",
+      "original_sha256": "6d78294621ec065280c8a8945d95bf23018505cad177b0cfe5b21ee5e9c9c687",
+      "snapshot_sha256": "6d78294621ec065280c8a8945d95bf23018505cad177b0cfe5b21ee5e9c9c687",
+      "bytes": 3356,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeJunctionAnglesTypes.py",
+      "original_sha256": "407997b214c2d4f53240e1491cfca9581691a4860b6cb7ddd934c3fe59cac8a9",
+      "snapshot_sha256": "407997b214c2d4f53240e1491cfca9581691a4860b6cb7ddd934c3fe59cac8a9",
+      "bytes": 4883,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/cleanupJunctions.py",
+      "original_sha256": "e363b694c9fd46c9cbab4cad8a3aae3c9e586ea8a319a27d3f3938aa4b04453e",
+      "snapshot_sha256": "e363b694c9fd46c9cbab4cad8a3aae3c9e586ea8a319a27d3f3938aa4b04453e",
+      "bytes": 3439,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/sample_sphere_2D.py",
+      "original_sha256": "15b31e12707e1ff8a33921098d05844e820ce83b1e34f59f07450f189636c370",
+      "snapshot_sha256": "15b31e12707e1ff8a33921098d05844e820ce83b1e34f59f07450f189636c370",
+      "bytes": 1576,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/splitLDbyStatsModel.py",
+      "original_sha256": "7c8f655d5afd8af46968d6b23a8767f7d09cb95996cc10a4f32b334e27e2d90a",
+      "snapshot_sha256": "7c8f655d5afd8af46968d6b23a8767f7d09cb95996cc10a4f32b334e27e2d90a",
+      "bytes": 2699,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/randomlyShiftContours.py",
+      "original_sha256": "4642a68cea8297012997350e4ef087271faf22291b85ca412960f133fcdfe08d",
+      "snapshot_sha256": "4642a68cea8297012997350e4ef087271faf22291b85ca412960f133fcdfe08d",
+      "bytes": 3745,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeGradientVectorField.py",
+      "original_sha256": "a3f8c78b25cac7e0747ac522cc7ba151a99afef0bff206e85cdab4b338dfbc92",
+      "snapshot_sha256": "a3f8c78b25cac7e0747ac522cc7ba151a99afef0bff206e85cdab4b338dfbc92",
+      "bytes": 3431,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/extract2DSkeletonFromBinaryImage.py",
+      "original_sha256": "80c0ed3b539a6253b5886bdf7c200bd46e8340aa4c5b3705371061474f47a39a",
+      "snapshot_sha256": "80c0ed3b539a6253b5886bdf7c200bd46e8340aa4c5b3705371061474f47a39a",
+      "bytes": 4661,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeColorIndex.py",
+      "original_sha256": "a71192933c0892edb9317d36d1bbc0bb6159261411faa2ff29f0ac20a46bc935",
+      "snapshot_sha256": "a71192933c0892edb9317d36d1bbc0bb6159261411faa2ff29f0ac20a46bc935",
+      "bytes": 3194,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/load_mat.py",
+      "original_sha256": "268008b3a5c459f551991051f55980ff767ed088f92b42b8ec41d747e00fed57",
+      "snapshot_sha256": "268008b3a5c459f551991051f55980ff767ed088f92b42b8ec41d747e00fed57",
+      "bytes": 1113,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/predictContoursByStatsModel.py",
+      "original_sha256": "e1bd0302dee0172e4aee31aae8c7350cd0b9506259b668a409ba0fd34aabc2c7",
+      "snapshot_sha256": "e1bd0302dee0172e4aee31aae8c7350cd0b9506259b668a409ba0fd34aabc2c7",
+      "bytes": 3043,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getBranchDerivative.py",
+      "original_sha256": "6d93c3e5ede15796f3e2470daae13f889d442cbe48adb7afc35e871b5371e36b",
+      "snapshot_sha256": "6d93c3e5ede15796f3e2470daae13f889d442cbe48adb7afc35e871b5371e36b",
+      "bytes": 2631,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/removeZeroLengthContours.py",
+      "original_sha256": "005eb37a79c89803e779662e7a00bec42f7ac31651029e2a13ef1c5da0b616c7",
+      "snapshot_sha256": "005eb37a79c89803e779662e7a00bec42f7ac31651029e2a13ef1c5da0b616c7",
+      "bytes": 1972,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getJunctionStats.py",
+      "original_sha256": "a189e9451875b75fabb3c970bc4f4e8283a0623c1fe03dc0f1deccee4541f721",
+      "snapshot_sha256": "a189e9451875b75fabb3c970bc4f4e8283a0623c1fe03dc0f1deccee4541f721",
+      "bytes": 4356,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getLengthStats.py",
+      "original_sha256": "e6a9096df2729af47a3e502a1c99caba14eea2546364bda2b514689f0cbdddf1",
+      "snapshot_sha256": "e6a9096df2729af47a3e502a1c99caba14eea2546364bda2b514689f0cbdddf1",
+      "bytes": 3300,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeJunctions.py",
+      "original_sha256": "3f9b97ceb6be3023df42360b6f635191aed91dd92b66aa99df54b7a4791d2c65",
+      "snapshot_sha256": "3f9b97ceb6be3023df42360b6f635191aed91dd92b66aa99df54b7a4791d2c65",
+      "bytes": 2125,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getHorizontalVerticalStats.py",
+      "original_sha256": "91fa74878df66160ebbc6d1598675747a88a06c6777500b96f0257cc01e40c9d",
+      "snapshot_sha256": "91fa74878df66160ebbc6d1598675747a88a06c6777500b96f0257cc01e40c9d",
+      "bytes": 2428,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeMAT.py",
+      "original_sha256": "9be90dff3bc08ad15208dd6da5f61763d167b2b5052985129fa0b35bac68e477",
+      "snapshot_sha256": "9be90dff3bc08ad15208dd6da5f61763d167b2b5052985129fa0b35bac68e477",
+      "bytes": 2303,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/generateFeatureDensityMap.py",
+      "original_sha256": "72c215c414c871c70979d21c3494f2d89125e120ce4f2935167180b25fa538c5",
+      "snapshot_sha256": "72c215c414c871c70979d21c3494f2d89125e120ce4f2935167180b25fa538c5",
+      "bytes": 7293,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/unique.py",
+      "original_sha256": "7975b896ee783bda93e32a1fd565e38a1f89542d8102a79520ed2ffa7e18bf02",
+      "snapshot_sha256": "7975b896ee783bda93e32a1fd565e38a1f89542d8102a79520ed2ffa7e18bf02",
+      "bytes": 3808,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeAllMATfromVecLD.py",
+      "original_sha256": "504a600cca0f7af34606a238f9dbff49addee138361da01f3b4884af74221689",
+      "snapshot_sha256": "504a600cca0f7af34606a238f9dbff49addee138361da01f3b4884af74221689",
+      "bytes": 2278,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/drawThisProperty.py",
+      "original_sha256": "c77ad6516d466632476c0e13265326979adffddee75a3bd8f370bc3c27ede9e3",
+      "snapshot_sha256": "c77ad6516d466632476c0e13265326979adffddee75a3bd8f370bc3c27ede9e3",
+      "bytes": 2497,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/allLDHistogramsToTable.py",
+      "original_sha256": "7a4affd727588afa1d8796d0aa49e5b6cf38abc345f4fb73afebf7a8a518e5af",
+      "snapshot_sha256": "7a4affd727588afa1d8796d0aa49e5b6cf38abc345f4fb73afebf7a8a518e5af",
+      "bytes": 2674,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/applyCircularAperture.py",
+      "original_sha256": "25cf74fa1d061feaed16a7027a3b07be0ee593e7b9eefc61dcb60200b91394fe",
+      "snapshot_sha256": "25cf74fa1d061feaed16a7027a3b07be0ee593e7b9eefc61dcb60200b91394fe",
+      "bytes": 7632,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/saveSceneLDsToTable.py",
+      "original_sha256": "d622bc4a08d7ed40bf3537c247f3742d3f90ee0d1763a9fecdfd20bcd091dfe7",
+      "snapshot_sha256": "d622bc4a08d7ed40bf3537c247f3742d3f90ee0d1763a9fecdfd20bcd091dfe7",
+      "bytes": 3905,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeContourProperties.py",
+      "original_sha256": "e0310ae645cef7cfe7d9d088e57943e331c0f705337ce93da9ea7aa1756a59ca",
+      "snapshot_sha256": "e0310ae645cef7cfe7d9d088e57943e331c0f705337ce93da9ea7aa1756a59ca",
+      "bytes": 2116,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeCurvature.py",
+      "original_sha256": "e91620b55ec90986277c40e29ebec6523f3ab67c3ee27f485f685c44e667ca78",
+      "snapshot_sha256": "e91620b55ec90986277c40e29ebec6523f3ab67c3ee27f485f685c44e667ca78",
+      "bytes": 2238,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/histogramToTable.py",
+      "original_sha256": "7552fb105ccd7c22d5cdedf95e499750bdc3ad3863a7bac63042db2357a084bf",
+      "snapshot_sha256": "7552fb105ccd7c22d5cdedf95e499750bdc3ad3863a7bac63042db2357a084bf",
+      "bytes": 2779,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/is_outer_border_point.py",
+      "original_sha256": "d7c05be937278075753622a6559c8993bde4611e06d685801152a8b641eb467f",
+      "snapshot_sha256": "d7c05be937278075753622a6559c8993bde4611e06d685801152a8b641eb467f",
+      "bytes": 2556,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getOrientationStats.py",
+      "original_sha256": "bbf0fee434bacb7e75f6cdfea9123a876a2b258738e0bbc747942f73eb560ffb",
+      "snapshot_sha256": "bbf0fee434bacb7e75f6cdfea9123a876a2b258738e0bbc747942f73eb560ffb",
+      "bytes": 3369,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/MATpropertiesToContours.py",
+      "original_sha256": "4e1203f7a141de06668508c5c3430f28913cb5e702be8f385831251d4b2535cb",
+      "snapshot_sha256": "4e1203f7a141de06668508c5c3430f28913cb5e702be8f385831251d4b2535cb",
+      "bytes": 3447,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getContourPropertiesStats.py",
+      "original_sha256": "a2efaca6e9bfc9eb13d57fc6a3f6ac6d472cd54d386a0253ff3429ea060026f5",
+      "snapshot_sha256": "a2efaca6e9bfc9eb13d57fc6a3f6ac6d472cd54d386a0253ff3429ea060026f5",
+      "bytes": 4839,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/mergeLineSegments.py",
+      "original_sha256": "cfb3cae7908692b965e176e4285c31917c7ff7a0912edc8add32a6242083946c",
+      "snapshot_sha256": "cfb3cae7908692b965e176e4285c31917c7ff7a0912edc8add32a6242083946c",
+      "bytes": 4439,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/drawLinedrawingProperty.py",
+      "original_sha256": "e915851584558750bd50647405420ccd7b1752021cd1180e6cbacb167312d38b",
+      "snapshot_sha256": "e915851584558750bd50647405420ccd7b1752021cd1180e6cbacb167312d38b",
+      "bytes": 2884,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/bwdist.py",
+      "original_sha256": "daea9df211c93c604c60580048611b060ea749dbae7874a381d9047cf1809eaa",
+      "snapshot_sha256": "daea9df211c93c604c60580048611b060ea749dbae7874a381d9047cf1809eaa",
+      "bytes": 2438,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getMATpropertyStats.py",
+      "original_sha256": "e265b2499d9baf8ba3dabf32052f28fd863ee17f853d5dec91f965ae2fb40407",
+      "snapshot_sha256": "e265b2499d9baf8ba3dabf32052f28fd863ee17f853d5dec91f965ae2fb40407",
+      "bytes": 3408,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getCurvatureStats.py",
+      "original_sha256": "158893e12355a9b575ffa2d16d4dca9f43e68f3e226f551de8908f1884fc3c84",
+      "snapshot_sha256": "158893e12355a9b575ffa2d16d4dca9f43e68f3e226f551de8908f1884fc3c84",
+      "bytes": 2875,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/InitializeNeighborhoods.py",
+      "original_sha256": "4985cd7685f22d78a5080f9c8f49dc40509f2a5ae794459c262b7584c0f6c41a",
+      "snapshot_sha256": "4985cd7685f22d78a5080f9c8f49dc40509f2a5ae794459c262b7584c0f6c41a",
+      "bytes": 1474,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeMATproperty.py",
+      "original_sha256": "4f3714bf159a941e64744b0a74c255fa259067a5e3378249f100dae21502ef6c",
+      "snapshot_sha256": "4f3714bf159a941e64744b0a74c255fa259067a5e3378249f100dae21502ef6c",
+      "bytes": 2120,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/splitLDmiddleSegmentsVsJunctions.py",
+      "original_sha256": "f468003a6d2eb43fd71e9c3398bb18d87586509c47a495a31fb80d90587085b4",
+      "snapshot_sha256": "f468003a6d2eb43fd71e9c3398bb18d87586509c47a495a31fb80d90587085b4",
+      "bytes": 5131,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/lineIntersection.py",
+      "original_sha256": "c1ada5147c5a3634d7e107031a08b1b3e30bc09d697142ced212020033d9ee64",
+      "snapshot_sha256": "c1ada5147c5a3634d7e107031a08b1b3e30bc09d697142ced212020033d9ee64",
+      "bytes": 3492,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/drawJunctions.py",
+      "original_sha256": "0308300056e081c55ab7594d7c13228c01dbb659cd843f9639be0f5a6cd953b8",
+      "snapshot_sha256": "0308300056e081c55ab7594d7c13228c01dbb659cd843f9639be0f5a6cd953b8",
+      "bytes": 3212,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/averageProperty.py",
+      "original_sha256": "da86c9206e18d76638b17e0261bf1c5ea4f82f7bfa739cb42c2e9a3c14fc1c32",
+      "snapshot_sha256": "da86c9206e18d76638b17e0261bf1c5ea4f82f7bfa739cb42c2e9a3c14fc1c32",
+      "bytes": 4422,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeMATpropertyPerBranch.py",
+      "original_sha256": "35f6d29b1cbbf60ab2219b72ee199160e71605015dbc6c67a130699e085949af",
+      "snapshot_sha256": "35f6d29b1cbbf60ab2219b72ee199160e71605015dbc6c67a130699e085949af",
+      "bytes": 3465,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/traceSkeleton.py",
+      "original_sha256": "4fb02842b3321e484700afa8df51e986b3227bfba0e4b1df439888c1d26f860a",
+      "snapshot_sha256": "4fb02842b3321e484700afa8df51e986b3227bfba0e4b1df439888c1d26f860a",
+      "bytes": 1444,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/splitLDbyHistogramWeights.py",
+      "original_sha256": "7cc2203c98b7d1f7ec15ed3afb9dee36c635113bb0975002225538c2621321dc",
+      "snapshot_sha256": "7cc2203c98b7d1f7ec15ed3afb9dee36c635113bb0975002225538c2621321dc",
+      "bytes": 5274,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/mapMATtoContour.py",
+      "original_sha256": "8f18da8e73cb3594b79de87fa1beccebf479a721a308cab1af09575a6a2d4b0f",
+      "snapshot_sha256": "8f18da8e73cb3594b79de87fa1beccebf479a721a308cab1af09575a6a2d4b0f",
+      "bytes": 6091,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/drawMATproperty.py",
+      "original_sha256": "5df7357d7d9a951797ce3e771b69876cd26d1591629a480f4b1bdad393717e66",
+      "snapshot_sha256": "5df7357d7d9a951797ce3e771b69876cd26d1591629a480f4b1bdad393717e66",
+      "bytes": 1700,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeLength.py",
+      "original_sha256": "b8a704c31d7f8f136ab72844e8887cc7acb870df81fa5ad930da7cdaf1454392",
+      "snapshot_sha256": "b8a704c31d7f8f136ab72844e8887cc7acb870df81fa5ad930da7cdaf1454392",
+      "bytes": 1354,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeAOF.py",
+      "original_sha256": "aa6c43dca7d58cd5b39b6e2aa46da8fccb86739d2730ed1444d68ce1f4f204b6",
+      "snapshot_sha256": "aa6c43dca7d58cd5b39b6e2aa46da8fccb86739d2730ed1444d68ce1f4f204b6",
+      "bytes": 3314,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/getOuterBoundary.py",
+      "original_sha256": "c15249dea7db0e1490594557d5ab80539a5456e60f1f5ea3452835263bf586f5",
+      "snapshot_sha256": "c15249dea7db0e1490594557d5ab80539a5456e60f1f5ea3452835263bf586f5",
+      "bytes": 2849,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/drawContoursByStatsModel.py",
+      "original_sha256": "f66d5b6930e059d081d80df5b1bbfef7ffc1d9210cdeb7b7bef4e6866e100da3",
+      "snapshot_sha256": "f66d5b6930e059d081d80df5b1bbfef7ffc1d9210cdeb7b7bef4e6866e100da3",
+      "bytes": 2793,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/drawLinedrawing.py",
+      "original_sha256": "fc12f1cb31b7d61faa3135c19f0c679f7299457dab85251be1c737a9e7225bfd",
+      "snapshot_sha256": "fc12f1cb31b7d61faa3135c19f0c679f7299457dab85251be1c737a9e7225bfd",
+      "bytes": 1592,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/rotateLinedrawing.py",
+      "original_sha256": "259806b53358b95f007ac1c5f643f141538006b015ba48f0d9528a451f546416",
+      "snapshot_sha256": "259806b53358b95f007ac1c5f643f141538006b015ba48f0d9528a451f546416",
+      "bytes": 2713,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/computeOrientation.py",
+      "original_sha256": "84c4f382c29b8b4b59dbbc76a357e5c7ba2ae207607e0746e7b62593ca76fa57",
+      "snapshot_sha256": "84c4f382c29b8b4b59dbbc76a357e5c7ba2ae207607e0746e7b62593ca76fa57",
+      "bytes": 1325,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/drawAllProperties.py",
+      "original_sha256": "634c84414290001a0bddbbbe60c196393fb4ccf8403eab874732075b2187d448",
+      "snapshot_sha256": "634c84414290001a0bddbbbe60c196393fb4ccf8403eab874732075b2187d448",
+      "bytes": 2271,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "MLVcode/splitLDbyProperties.py",
+      "original_sha256": "64ec23a76d75e940ca3932fb9149f7dae1e5aef2bbad158d0c94e7bfd68d1b5b",
+      "snapshot_sha256": "64ec23a76d75e940ca3932fb9149f7dae1e5aef2bbad158d0c94e7bfd68d1b5b",
+      "bytes": 7343,
+      "transformation": null
+    },
+    {
+      "repository": "pyMLV",
+      "path": "demos/getMedialAxis.ipynb",
+      "original_sha256": "edf0c06b309629116af8aa0f4f721e0f11146e93ca3e230f06f6064a51cbee93",
+      "snapshot_sha256": "3c104b8dd6f9d3be3a00fa7737cd87eec35c44b73c78c435aea89021d6f9e9fd",
+      "bytes": 10349,
+      "transformation": "Cleared saved notebook outputs and execution counts; source cells retained."
+    },
+    {
+      "repository": "pyMLV",
+      "path": "demos/getcontourfeatures_Single.ipynb",
+      "original_sha256": "b3b49a7cfa8d6893ac9400a18209b7da98ea318180d050cac41f122652be7145",
+      "snapshot_sha256": "9583d00e6b417c90ea21f0311bc42b80fe67c4d84642bee9c5065fa1d14fbac1",
+      "bytes": 10217,
+      "transformation": "Cleared saved notebook outputs and execution counts; source cells retained."
+    }
+  ],
+  "shared_data": {
+    "path": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv",
+    "filesystem_device": 16777233,
+    "volume": "APFS Data volume, disk3s5 at assessment",
+    "files": [
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/.DS_Store",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/.DS_Store",
+        "bytes": 8196,
+        "sha256": "294ff79658379fbc29bd2e10011a3a3bb57c0964d6f47b0be19f3b467a66bd0a"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0801-0900_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0801-0900_vecLD.mat",
+        "bytes": 14551213,
+        "sha256": "b4e3ac969a29390c4482fa5cab0da8d1ef85822bedb71c789077d9a2881a8b49"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0201-0300_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0201-0300_vecLD.mat",
+        "bytes": 17212563,
+        "sha256": "884eda500560febeb3e404cd422a7a3baab7ebfa27b34b5cebd30e78aa19eb43"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0101-0200_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0101-0200_vecLD.mat",
+        "bytes": 16211870,
+        "sha256": "b13584586443f83cbb6f03788b612d0ca86a2ec62217a115da1de98f12f6e847"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0001-0100_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0001-0100_vecLD.mat",
+        "bytes": 17000757,
+        "sha256": "af3110a805338de12027f23764a37502dcb9446218bc70c3dd24acf9acbf3848"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0301-0400_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0301-0400_vecLD.mat",
+        "bytes": 18910585,
+        "sha256": "0bc17b1267501030d827efe0e0528b08449172f493792618b3081df6e2b66b51"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0601-0700_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0601-0700_vecLD.mat",
+        "bytes": 17681122,
+        "sha256": "95b74a99889be35a118054e61cf0eead2ea10777c9336fa3fbe73264f47c2099"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_Readme.md",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_Readme.md",
+        "bytes": 797,
+        "sha256": "f9972ab5e36999f968c0fde7ca0f9c289a965fa736513fa8e4106c896eed41db"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0701-0800_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0701-0800_vecLD.mat",
+        "bytes": 16019136,
+        "sha256": "700b1dde5b14f2bb8a4dfdab764383bfffb08c32eae0a9620286065cd1202b80"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0401-0500_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0401-0500_vecLD.mat",
+        "bytes": 13870314,
+        "sha256": "8d9c323dace672e80b6f532284ae0529e95af1c723dbdd85dd6cc94583c37b2e"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/OASIS/OASIS_0501-0600_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/OASIS/OASIS_0501-0600_vecLD.mat",
+        "bytes": 14005442,
+        "sha256": "9fab10131e648848d9d9106a4f10e21794c2c70a581c7d13be53401ce97f0180"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0701-0800_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0701-0800_vecLD.mat",
+        "bytes": 20926210,
+        "sha256": "a96cf4f7f3bc9283a25fdf4a18a9e3307ed3a739117d3bd27f8a37736fa634aa"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0601-0700_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0601-0700_vecLD.mat",
+        "bytes": 20879834,
+        "sha256": "f714dc00eaabb1196a5629493daa8989a3a15af9aaff74f637c5a631d76d48bc"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_1101-1182_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_1101-1182_vecLD.mat",
+        "bytes": 20839725,
+        "sha256": "ffe52d5ce1ebe1e89daf68eed288cad29712148bc736fad6a17a7817bfe1029a"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0301-0400_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0301-0400_vecLD.mat",
+        "bytes": 22634075,
+        "sha256": "f245469464c6364625e12e792629c5ba32f7fcb2fc79dac41ea2903d83e43781"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0501-0600_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0501-0600_vecLD.mat",
+        "bytes": 24118345,
+        "sha256": "649f914e1aebf68c4c4f24ceb28613b885b8c7fa807bf2719b254d019a086e6a"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0401-0500_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0401-0500_vecLD.mat",
+        "bytes": 21425025,
+        "sha256": "edeaa5e6ecb4c1bc88355ce9ccfa20261551c22805dc97409ff65751eaf702a6"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0201-0300_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0201-0300_vecLD.mat",
+        "bytes": 27278071,
+        "sha256": "a2267cd8c82becd64dff1233056019925e12f51c9ad101a376828f63919e9571"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0801-0900_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0801-0900_vecLD.mat",
+        "bytes": 28020575,
+        "sha256": "fc6be5a5991a44c4f9955a88bb0fd9a57598d5eb3e2baa285d512c1275ea1de8"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0901-1000_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0901-1000_vecLD.mat",
+        "bytes": 24872065,
+        "sha256": "65e994da3efaf8b4b2b496e65c9a34ea2d2cf0de5c2c6c05a3ee26633b8cca9c"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_1001-1100_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_1001-1100_vecLD.mat",
+        "bytes": 26782235,
+        "sha256": "101b1f1375259eb8b6f5bee44d18522374d2c9a4f3d30ade7b6f9d29c0535699"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0001-0100_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0001-0100_vecLD.mat",
+        "bytes": 22831720,
+        "sha256": "eac843039b955f3e84fe0d253a91358c255b11987e298ebca03f5d3c40abafe2"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_0101-0200_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_0101-0200_vecLD.mat",
+        "bytes": 25713223,
+        "sha256": "3797a0c1025c16a69e1c03c09709dc2e49aafb06c9911932b20ad9da39add635"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/IAPS/IAPS_Readme.md",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/IAPS/IAPS_Readme.md",
+        "bytes": 668,
+        "sha256": "c40b7bd0e4128514bf30c085fed28e6d4968ca825ddb4d2176f70b01f17a1ca5"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/ArchitecturalScenes/low_ceiling_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/ArchitecturalScenes/low_ceiling_vecLD.mat",
+        "bytes": 32531999,
+        "sha256": "bd280f33ced5f82d9294c6b65a843902a38ea1ecf2e3150c0aadcb5613d08ef1"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/ArchitecturalScenes/ArchitecturalScenes_Readme.md",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/ArchitecturalScenes/ArchitecturalScenes_Readme.md",
+        "bytes": 763,
+        "sha256": "0b80b06891523c08b4486dcf5d4e3f3d3c0668aa3c770e5256251e83618c5d45"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/ArchitecturalScenes/high_ceiling_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/ArchitecturalScenes/high_ceiling_vecLD.mat",
+        "bytes": 38526813,
+        "sha256": "fb023ac70f0ea30c2022febd18a1e873e42979c1af3de39304e3c87f73a1656c"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/TorontoScenes/forests_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/TorontoScenes/forests_vecLD.mat",
+        "bytes": 35791692,
+        "sha256": "4a65aadbf4190736cf949f20baf5b2aaa2b57b3c2fe8cebbf5e7816bcc3c7445"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/TorontoScenes/mountains_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/TorontoScenes/mountains_vecLD.mat",
+        "bytes": 12680292,
+        "sha256": "d17a386c4e9263fbc85d6eb18e4a63d5349473d32ecd4631149b3f5c3ae538dd"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/TorontoScenes/highways_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/TorontoScenes/highways_vecLD.mat",
+        "bytes": 27228389,
+        "sha256": "c8c040eb7f96264f0b9e115140396b1d95cc6d97fc9532f01bfd1a4fe4aaa886"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/TorontoScenes/TorontoScenes_Readme.md",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/TorontoScenes/TorontoScenes_Readme.md",
+        "bytes": 2376,
+        "sha256": "e2900d206077ce23c70e1f44c3d07d41af039f40e87aa74392a8629078bb9557"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/TorontoScenes/cities_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/TorontoScenes/cities_vecLD.mat",
+        "bytes": 43908548,
+        "sha256": "dd840897655cd6385e4ac118b8ce0e01303291e5982d2efafadaae8c845d63db"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/TorontoScenes/beaches_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/TorontoScenes/beaches_vecLD.mat",
+        "bytes": 17368118,
+        "sha256": "9ca35525b267daaab189daa05d2a42e8ac335a97d2b3451d99e0799ed6a1949c"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/TorontoScenes/offices_vecLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/TorontoScenes/offices_vecLD.mat",
+        "bytes": 39860616,
+        "sha256": "0655e33c8c8f064a3e0454f71cfe5561c5295429d3d4deea3d81822677a3424a"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/Snodgrass_Vanderwart/Snodgrass_Vanderwart_Readme.md",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/Snodgrass_Vanderwart/Snodgrass_Vanderwart_Readme.md",
+        "bytes": 609,
+        "sha256": "c83b07d5b5bde646c3a62e70b34a45ec659cd53aeba9a5c89ceff7e981109bd2"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "dataSets/Snodgrass_Vanderwart/Snodgrass_Vanderwart.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/dataSets/Snodgrass_Vanderwart/Snodgrass_Vanderwart.mat",
+        "bytes": 2456274,
+        "sha256": "d9c2d669973342d3525da96e94b0e6cc529a6b41c9503f4a0f7f78f95e80a22d"
+      },
+      {
+        "source_repository": "MLV_toolbox",
+        "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+        "source_path": "demos/Forest_DBW.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/examples/Forest_DBW.mat",
+        "bytes": 8115271,
+        "sha256": "da1f7ed1a1e512913b0210f8aefcb83f8ef673b82fdcb7e1c5d62da2bd778fb5"
+      },
+      {
+        "source_repository": "pyMLV",
+        "source_commit": "14b3183b91146b1021eb7ef97db75ad703b06832",
+        "source_path": "MLVcode/MAT.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/examples/MAT.mat",
+        "bytes": 8160320,
+        "sha256": "96bd08c78f68d0c1ac53e99c23cd98c40d2e936ec9179a4b0a1056226e8c47a2"
+      },
+      {
+        "source_repository": "pyMLV",
+        "source_commit": "14b3183b91146b1021eb7ef97db75ad703b06832",
+        "source_path": "MLVcode/imgLD.mat",
+        "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/examples/imgLD.mat",
+        "bytes": 27876,
+        "sha256": "3209102e42c0d6372900f97cc7b0f821f501089851b6cad4daa5e50a9a7d5e74"
+      }
+    ]
+  },
+  "notes": [
+    "Source snapshots exclude Git object stores, datasets, generated documentation/figures, model weights and saved notebook outputs.",
+    "Full originals are recoverable from pinned upstream commits using tools/restore_upstream.py.",
+    "Retained source files preserve their original copyright and license notices; root license claims do not override per-file notices."
+  ]
+}
