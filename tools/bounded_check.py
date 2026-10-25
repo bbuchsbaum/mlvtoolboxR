@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build/install/check this package with an owned 200 MiB work-directory cap."""
 from pathlib import Path
-import os,subprocess,signal,time,json,sys,tarfile
+import os,subprocess,signal,time,json,sys,tarfile,shutil,hashlib
 root=Path(__file__).resolve().parents[1]
 work=root/'build';work.mkdir(exist_ok=True)
 tmp=work/'tmp';tmp.mkdir(exist_ok=True)
@@ -12,6 +12,19 @@ env=os.environ.copy()
 env.update({'LC_ALL':'en_US.UTF-8','LANG':'en_US.UTF-8','TMPDIR':str(tmp),
             'R_PROFILE_USER':'/dev/null','R_ENVIRON_USER':'/dev/null'})
 commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+staged=work/'package-source';staged.mkdir(exist_ok=True)
+tracked=subprocess.check_output(['git','ls-files','-z']).decode().split(chr(0))
+manifest={}
+for rel in tracked:
+    if not rel: continue
+    path=Path(rel)
+    if path.parts[0] not in {'R','src','man','inst','tests','vignettes'} and rel not in {'DESCRIPTION','NAMESPACE','README.md','.Rbuildignore','LICENSE','NEWS.md'}:continue
+    original=root/path
+    if not original.is_file():continue
+    dest=staged/path;dest.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copy2(original,dest)
+    manifest[rel]=hashlib.sha256(original.read_bytes()).hexdigest()
+(logs/'package-source-manifest.json').write_text(json.dumps(manifest,indent=2)+chr(10))
 def usage():
     return sum(p.stat().st_size for p in work.rglob('*') if p.is_file())
 def run(stage,args,timeout=300):
@@ -35,7 +48,7 @@ def run(stage,args,timeout=300):
     (logs/f'{stage}.json').write_text(json.dumps(meta,indent=2)+'\n')
     print(json.dumps(meta),flush=True)
     if proc.returncode or reason!='exited':raise SystemExit(proc.returncode or 125)
-run('build-01',['R','CMD','build','--no-manual',str(root)])
+run('build-02',['R','CMD','build','--no-manual',str(staged)])
 tarball=work/'mlvtoolbox_0.1.0.tar.gz'
 with tarfile.open(tarball) as archive:
     names=archive.getnames()

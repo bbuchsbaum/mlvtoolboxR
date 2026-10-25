@@ -115,3 +115,7 @@ asserted; package tests use synthetic inputs.
 Run testthat::test_local() for behavior/numerical checks. The reference generation
 and upstream reproducer scripts are in tools/reference and tools/upstream.
 Local check results, benchmarks and cross-platform status are recorded separately.
+
+For a bounded source build/check, use `python3 tools/bounded_check.py`.
+It stages only package files before invoking R, so retained reference data
+are not copied into the build workspace.
