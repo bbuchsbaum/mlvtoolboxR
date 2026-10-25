@@ -145,14 +145,16 @@ trace_rgb <- function(image,backend,...,min_points=2L) {
 #' @export
 plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...) {
  .check_drawing(x)
- graphics::plot(NA_real_,xlim=c(0,x$width),ylim=c(x$height,0),asp=1,
-                xlab="",ylab="",type="n",...)
+ arguments<-utils::modifyList(list(x=NA_real_,xlim=c(0,x$width),ylim=c(x$height,0),
+                                   asp=1,xlab="",ylab="",type="n"),list(...))
+ do.call(graphics::plot,arguments)
  st<-.segment_table(x)
  colors<-rep(col,nrow(st))
  if(!is.null(property)) {
   if(property %in% c("length","orientation","curvature")) {
-   value<-st[[property]]; rr<-range(value,finite=TRUE)
+   value<-st[[property]]
    if(length(value)) {
+    rr<-range(value,finite=TRUE)
     scaled<-if(diff(rr)==0)rep(0.5,length(value)) else (value-rr[1])/diff(rr)
     colors<-grDevices::hcl.colors(256,"Viridis")[1L+pmin(255L,as.integer(255*scaled))]
    }

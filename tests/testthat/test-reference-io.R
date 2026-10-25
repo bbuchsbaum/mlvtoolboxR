@@ -86,3 +86,12 @@ test_that("SVG aspect ratios, model colors, local score colors and batch results
  grDevices::pdf(device);on.exit(grDevices::dev.off(),add=TRUE)
  expect_invisible(plot_properties(d,properties=c("length","parallelism")))
 })
+
+test_that("plot options and empty drawings preserve graphics state", {
+ device<-tempfile(fileext=".pdf");grDevices::pdf(device);on.exit(grDevices::dev.off(),add=TRUE)
+ d<-mlv_drawing(list(),10,10)
+ expect_warning(graphics::plot(d,property="length",xlab="x",ylab="y"),NA)
+ before<-graphics::par("mfrow")
+ plot_properties(d,properties=c("length","curvature"))
+ expect_equal(graphics::par("mfrow"),before)
+})
