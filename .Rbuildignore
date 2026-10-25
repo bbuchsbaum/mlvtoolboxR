@@ -6,7 +6,6 @@
 ^\.dashboard$
 ^\.agent-work$
 ^\.cleanup-staging$
-^build$
 ^PORTING_PLAN\.md$
 ^ASSESSMENT_EVIDENCE\.md$
 ^VENDOR_.*$

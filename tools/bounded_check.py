@@ -3,7 +3,7 @@
 from pathlib import Path
 import os,subprocess,signal,time,json,sys,tarfile,shutil,hashlib
 root=Path(__file__).resolve().parents[1]
-work=root/'build';work.mkdir(exist_ok=True)
+work=root/'.agent-work/package-build';work.mkdir(parents=True,exist_ok=True)
 tmp=work/'tmp';tmp.mkdir(exist_ok=True)
 lib=work/'library';lib.mkdir(exist_ok=True)
 logs=root/'.agent-work';logs.mkdir(exist_ok=True)
@@ -28,8 +28,9 @@ for rel in tracked:
 def usage():
     return sum(p.stat().st_size for p in work.rglob('*') if p.is_file())
 def run(stage,args,timeout=300):
-    log=logs/f'{stage}.log'
-    if log.exists():raise RuntimeError(f'Refusing to overwrite {log}')
+    stem=stage.rsplit('-',1)[0];attempt=1
+    while (logs/f'{stem}-{attempt:02d}.log').exists():attempt+=1
+    stage=f'{stem}-{attempt:02d}';log=logs/f'{stage}.log'
     started=time.monotonic();peak=usage();reason='exited'
     with log.open('wb') as stream:
         proc=subprocess.Popen(args,cwd=work,env=env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
@@ -56,4 +57,4 @@ with tarfile.open(tarball) as archive:
     (logs/'tarball-contents.txt').write_text('\n'.join(names)+'\n')
 run('install-01',['R','CMD','INSTALL','--preclean','--library='+str(lib),str(tarball)])
 run('check-01',['R','CMD','check','--as-cran','--no-manual',str(tarball)],timeout=420)
-print('Bounded package check completed; log: build/mlvtoolbox.Rcheck/00check.log')
+print('Bounded package check completed; log: '+str(work/'mlvtoolbox.Rcheck/00check.log'))

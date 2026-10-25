@@ -15,9 +15,22 @@ for(n in c(32L,64L,128L,512L)) {
  feature<-matrix(FALSE,n,n);feature[round(n/2),round(n/2)]<-TRUE
  dt<-distance_transform(feature)
  # Warm kernel timing, no input generation/model loading inside the timed call.
+ reference<-file.path(dirname(args[2]),paste0("aof-octave-",n,".csv"))
+ if(file.exists(reference)) {
+  expected<-unname(as.matrix(utils::read.csv(reference,header=FALSE)))
+  stopifnot(max(abs(average_outward_flux(dt$distance,dt$index)-expected))<1e-10)
+ }
  a<-timer(function()average_outward_flux(dt$distance,dt$index))
  rows[[length(rows)+1L]]<-data.frame(stage="aof",size=n,t(a))
  ink<-matrix(FALSE,n,n);ink[3:(n-2),round(n*.25)]<-TRUE;ink[3:(n-2),round(n*.75)]<-TRUE
+ reference<-file.path(dirname(args[2]),paste0("mat-aof-octave-",n,".csv"))
+ if(file.exists(reference)) {
+  actual<-compute_mat(ink,trace_branches=FALSE)
+  f<-function(prefix)unname(as.matrix(utils::read.csv(file.path(dirname(args[2]),paste0(prefix,n,".csv")),header=FALSE)))
+  stopifnot(max(abs(actual$AOF-f("mat-aof-octave-")))<1e-10,
+            max(abs(actual$distance_map-f("mat-distance-octave-")))<2e-6,
+            identical(actual$skeleton,f("mat-skeleton-octave-")>0))
+ }
  b<-timer(function()compute_mat(ink,trace_branches=FALSE))
  rows[[length(rows)+1L]]<-data.frame(stage="mat_core",size=n,t(b))
 }
