@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "exact_comparisons": 296,
+  "accumulation_bytes": 8,
+  "R": "R version 4.5.1 (2025-06-13)",
+  "package_version": "0.1.1",
+  "checked_source": "d83ed952fdc9f639b98e849b0d8697259894de46",
+  "seed": 2751,
+  "forest_contours": 562,
+  "forest_segments": 2072,
+  "note": "Experimental closures and sourceCpp functions only; installed namespace unchanged."
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T13:27:25.449938+00:00",
+  "finished_utc": "2026-10-26T13:27:35.564621+00:00",
+  "duration_seconds": 10.114446,
+  "command": [
+    "python3",
+    "tools/performance/histogram_python.py",
+    ".agent-work/histogram-spike",
+    "docs/evidence/histogram-spike"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/histogram-spike/python.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 60.0,
+  "log_bytes": 757
+}

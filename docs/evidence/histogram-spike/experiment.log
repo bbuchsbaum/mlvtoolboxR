@@ -1,0 +1,89 @@
+/Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB -o 'sourceCpp_2.so' 'histogram_candidates.cpp' 
+using C++ compiler: ‘Apple clang version 15.0.0 (clang-1500.1.0.2.5)’
+using C++17
+using SDK: ‘MacOSX14.2.sdk’
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include" -I"/Users/bbuchsbaum/code/mlvtoolbox/tools/performance" -I/opt/R/arm64/include    -fPIC  -O2 -g0  -c histogram_candidates.cpp -o histogram_candidates.o
+clang++ -arch arm64 -std=gnu++17 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -L/Library/Frameworks/R.framework/Resources/lib -L/opt/R/arm64/lib -o sourceCpp_2.so histogram_candidates.o -F/Library/Frameworks/R.framework/.. -framework R
+1 forest R_0.1.1 0.00475 seconds
+1 forest cpp_grouping 0.00275 seconds
+1 forest cpp_grouping_and_lengths 0.000953125 seconds
+1 many_contours R_0.1.1 0.016875 seconds
+1 many_contours cpp_grouping 0.00590625 seconds
+1 many_contours cpp_grouping_and_lengths 0.0028125 seconds
+1 one_long_contour R_0.1.1 0.00659375 seconds
+1 one_long_contour cpp_grouping 0.002203125 seconds
+1 one_long_contour cpp_grouping_and_lengths 0.001734375 seconds
+2 forest cpp_grouping_and_lengths 0.0009609375 seconds
+2 forest cpp_grouping 0.002703125 seconds
+2 forest R_0.1.1 0.0050625 seconds
+2 many_contours cpp_grouping_and_lengths 0.0026875 seconds
+2 many_contours cpp_grouping 0.0060625 seconds
+2 many_contours R_0.1.1 0.01725 seconds
+2 one_long_contour cpp_grouping_and_lengths 0.001914063 seconds
+2 one_long_contour cpp_grouping 0.002078125 seconds
+2 one_long_contour R_0.1.1 0.00684375 seconds
+3 forest R_0.1.1 0.00484375 seconds
+3 forest cpp_grouping 0.002765625 seconds
+3 forest cpp_grouping_and_lengths 0.000984375 seconds
+3 many_contours R_0.1.1 0.016625 seconds
+3 many_contours cpp_grouping 0.00640625 seconds
+3 many_contours cpp_grouping_and_lengths 0.002859375 seconds
+3 one_long_contour R_0.1.1 0.00684375 seconds
+3 one_long_contour cpp_grouping 0.00203125 seconds
+3 one_long_contour cpp_grouping_and_lengths 0.001851563 seconds
+   round         workload                   method median_seconds  min_seconds
+1      1           forest                  R_0.1.1   0.0047500000 0.0046250000
+2      1           forest             cpp_grouping   0.0027500000 0.0026250000
+3      1           forest cpp_grouping_and_lengths   0.0009531250 0.0009218750
+4      1    many_contours                  R_0.1.1   0.0168750000 0.0166250000
+5      1    many_contours             cpp_grouping   0.0059062500 0.0057187500
+6      1    many_contours cpp_grouping_and_lengths   0.0028125000 0.0025937500
+7      1 one_long_contour                  R_0.1.1   0.0065937500 0.0065000000
+8      1 one_long_contour             cpp_grouping   0.0022031250 0.0021406250
+9      1 one_long_contour cpp_grouping_and_lengths   0.0017343750 0.0016484375
+10     2           forest cpp_grouping_and_lengths   0.0009609375 0.0009492187
+11     2           forest             cpp_grouping   0.0027031250 0.0025625000
+12     2           forest                  R_0.1.1   0.0050625000 0.0045000000
+13     2    many_contours cpp_grouping_and_lengths   0.0026875000 0.0025468750
+14     2    many_contours             cpp_grouping   0.0060625000 0.0056250000
+15     2    many_contours                  R_0.1.1   0.0172500000 0.0167500000
+16     2 one_long_contour cpp_grouping_and_lengths   0.0019140625 0.0018515625
+17     2 one_long_contour             cpp_grouping   0.0020781250 0.0020000000
+18     2 one_long_contour                  R_0.1.1   0.0068437500 0.0065625000
+19     3           forest                  R_0.1.1   0.0048437500 0.0048125000
+20     3           forest             cpp_grouping   0.0027656250 0.0026093750
+21     3           forest cpp_grouping_and_lengths   0.0009843750 0.0009843750
+22     3    many_contours                  R_0.1.1   0.0166250000 0.0161250000
+23     3    many_contours             cpp_grouping   0.0064062500 0.0061875000
+24     3    many_contours cpp_grouping_and_lengths   0.0028593750 0.0025156250
+25     3 one_long_contour                  R_0.1.1   0.0068437500 0.0067812500
+26     3 one_long_contour             cpp_grouping   0.0020312500 0.0019531250
+27     3 one_long_contour cpp_grouping_and_lengths   0.0018515625 0.0017578125
+    max_seconds iterations
+1  0.0048750000         32
+2  0.0030000000         64
+3  0.0009921875        128
+4  0.0170000000          8
+5  0.0061562500         32
+6  0.0029843750         64
+7  0.0067500000         32
+8  0.0025781250         64
+9  0.0018593750        128
+10 0.0010117188        256
+11 0.0028593750         64
+12 0.0051562500         32
+13 0.0028125000         64
+14 0.0069687500         32
+15 0.0175000000          8
+16 0.0020625000        128
+17 0.0021406250         64
+18 0.0071250000         32
+19 0.0049375000         32
+20 0.0029062500         64
+21 0.0009921875        128
+22 0.0170000000          8
+23 0.0065312500         32
+24 0.0030625000         64
+25 0.0074687500         32
+26 0.0020625000         64
+27 0.0020078125        128

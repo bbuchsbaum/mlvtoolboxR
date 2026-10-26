@@ -1,0 +1,9 @@
+{
+  "source": "14b3183b91146b1021eb7ef97db75ad703b06832",
+  "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "numpy": "2.4.3",
+  "max_abs_error": 5.4569682106375694e-12,
+  "tolerance": 1e-08,
+  "raw_length_failure": "setting an array element with a sequence.",
+  "adapter": "reshape contourLengths from (n,1) to (n,) before histogram timing"
+}

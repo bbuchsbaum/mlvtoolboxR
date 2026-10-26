@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T13:26:21.446642+00:00",
+  "finished_utc": "2026-10-26T13:27:06.222920+00:00",
+  "duration_seconds": 44.775545,
+  "command": [
+    "Rscript",
+    "--vanilla",
+    "tools/performance/histogram_spike.R",
+    ".agent-work/histogram-spike/library",
+    "docs/evidence/histogram-spike",
+    ".agent-work/histogram-spike"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/histogram-spike/experiment.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 120.0,
+  "log_bytes": 5085
+}

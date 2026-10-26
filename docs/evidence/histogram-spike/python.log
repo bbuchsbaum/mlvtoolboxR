@@ -1,0 +1,30 @@
+Matplotlib is building the font cache; this may take a moment.
+[
+  {
+    "round": 1,
+    "workload": "forest",
+    "method": "adapted_python",
+    "median_seconds": 0.005248401062544872,
+    "min_seconds": 0.005191027343698806,
+    "max_seconds": 0.0052912070311776915,
+    "iterations": 32
+  },
+  {
+    "round": 2,
+    "workload": "forest",
+    "method": "adapted_python",
+    "median_seconds": 0.0052243359375552245,
+    "min_seconds": 0.005131180968646731,
+    "max_seconds": 0.00525281118757448,
+    "iterations": 32
+  },
+  {
+    "round": 3,
+    "workload": "forest",
+    "method": "adapted_python",
+    "median_seconds": 0.005207048156307792,
+    "min_seconds": 0.005135313812616005,
+    "max_seconds": 0.005228354187465811,
+    "iterations": 32
+  }
+]

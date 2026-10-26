@@ -1,0 +1,19 @@
+{
+  "baseline_archive": "mlvtoolbox_0.1.1.tar.gz",
+  "baseline_sha256": "1860a64ac5ac92284972f2e9ba76b8f78e97064e3634dd1fedc79d42e11b668d",
+  "checked_source": "d83ed952fdc9f639b98e849b0d8697259894de46",
+  "forest_sha256": "da1f7ed1a1e512913b0210f8aefcb83f8ef673b82fdcb7e1c5d62da2bd778fb5",
+  "prototype_files": {
+    "tools/performance/histogram_candidates.cpp": "ce00f5f991c6a0c6841be5897e7a56f93f0b58f67faf7f183e481d6415334a20",
+    "tools/performance/histogram_spike.R": "eacdf1420d6ac5c82aff98dd7ba91e3f547730366bc8a1c53f89152792cc2842",
+    "tools/performance/histogram_python.py": "d79161d59806b7b2c5f203cca621643cb9294d31c4d051360485fa21cf0b8b84"
+  },
+  "thread_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "baseline_namespace_modified": false,
+  "production_integrated": false,
+  "R_CMD_check_run_for_prototype": false
+}
