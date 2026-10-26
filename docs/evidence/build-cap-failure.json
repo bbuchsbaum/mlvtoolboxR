@@ -1,0 +1,17 @@
+{
+  "stage": "build-01",
+  "args": [
+    "R",
+    "CMD",
+    "build",
+    "--no-manual",
+    "/Users/bbuchsbaum/code/mlvtoolbox"
+  ],
+  "exit_code": -15,
+  "reason": "work_directory_limit",
+  "duration_seconds": 1.109424875001423,
+  "peak_work_bytes": 231459892,
+  "limit_bytes": 209715200,
+  "source_commit": "b9ff7418c439fca9e6161eac964af2d1db597092",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/build-01.log"
+}

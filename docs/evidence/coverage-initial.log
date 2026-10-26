@@ -1,0 +1,964 @@
+* installing *source* package ‘mlvtoolbox’ ...
+** this is package ‘mlvtoolbox’ version ‘0.1.0’
+** using non-staged installation
+** libs
+using C++ compiler: ‘Apple clang version 15.0.0 (clang-1500.1.0.2.5)’
+using C++17
+using SDK: ‘MacOSX14.2.sdk’
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -I/opt/homebrew/opt/gettext/include    -fPIC  -falign-functions=64 -Wall -g -O2  -O0 --coverage  -c RcppExports.cpp -o RcppExports.o
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -I/opt/homebrew/opt/gettext/include    -fPIC  -falign-functions=64 -Wall -g -O2  -O0 --coverage  -c kernels.cpp -o kernels.o
+clang++ -arch arm64 -std=gnu++17 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -L/Library/Frameworks/R.framework/Resources/lib -L/opt/R/arm64/lib -lomp -L/opt/homebrew/opt/gettext/lib --coverage -o mlvtoolbox.so RcppExports.o kernels.o -F/Library/Frameworks/R.framework/.. -framework R
+installing to /Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/tmp/RtmpUzVCwa/R_LIBS3c786942df0f/mlvtoolbox/libs
+** R
+** inst
+** tests
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package ‘mlvtoolbox’
+    mlv_drawing                             example
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded
+* DONE (mlvtoolbox)
+Testing examples for package ‘mlvtoolbox’
+Running specific tests for package ‘mlvtoolbox’
+  Running ‘testthat.R’
+'/usr/bin/gcov' './kernels.gcno' '-p' '-o' '.' 
+
+File 'kernels.cpp'
+Lines executed:97.30% of 222
+Creating 'kernels.cpp.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/iostream/Rstreambuf.h'
+Lines executed:0.00% of 26
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#iostream#Rstreambuf.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/Named.h'
+Lines executed:28.57% of 7
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Named.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/Matrix.h'
+Lines executed:93.33% of 15
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Matrix.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector'
+Lines executed:97.86% of 234
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#vector.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/iota.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__numeric#iota.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/min.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#min.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/max.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#max.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdlib.h'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#stdlib.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/stable_sort.h'
+Lines executed:17.92% of 106
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#stable_sort.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/Interrupt.h'
+Lines executed:85.71% of 7
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Interrupt.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/remove_if.h'
+Lines executed:100.00% of 11
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#remove_if.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/wrap_iter.h'
+Lines executed:87.50% of 40
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#wrap_iter.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/sort.h'
+Lines executed:44.88% of 303
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#sort.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/array'
+Lines executed:100.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#array.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/Vector.h'
+Lines executed:75.00% of 64
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Vector.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/math.h'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#math.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string'
+Lines executed:0.00% of 59
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#string.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/clone.h'
+Lines executed:100.00% of 5
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#clone.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/unique.h'
+Lines executed:100.00% of 15
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unique.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/wrap_end.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap_end.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/set'
+Lines executed:100.00% of 8
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#set.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/generic_proxy.h'
+Lines executed:0.00% of 13
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#generic_proxy.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h'
+Lines executed:100.00% of 3
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#comp.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/limits'
+Lines executed:50.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#limits.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h'
+Lines executed:95.00% of 20
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#compressed_pair.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/allocator_traits.h'
+Lines executed:100.00% of 18
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator_traits.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/pointer_traits.h'
+Lines executed:100.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#pointer_traits.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/allocator.h'
+Lines executed:94.12% of 17
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__split_buffer'
+Lines executed:93.33% of 30
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__split_buffer.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdexcept'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#stdexcept.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/allocate_at_least.h'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocate_at_least.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/new'
+Lines executed:0.00% of 29
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#new.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uninitialized_algorithms.h'
+Lines executed:78.79% of 33
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#uninitialized_algorithms.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_iterator.h'
+Lines executed:72.73% of 11
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#reverse_iterator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/swap.h'
+Lines executed:100.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#swap.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__debug'
+Lines executed:80.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__debug.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/move.h'
+Lines executed:100.00% of 13
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#move.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy_move_common.h'
+Lines executed:68.75% of 16
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy_move_common.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/unwrap_range.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_range.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/unwrap_iter.h'
+Lines executed:100.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_iter.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/pair.h'
+Lines executed:73.33% of 15
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#pair.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/iterator_operations.h'
+Lines executed:42.11% of 19
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#iterator_operations.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/storage/PreserveStorage.h'
+Lines executed:0.00% of 17
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#storage#PreserveStorage.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/RcppCommon.h'
+Lines executed:0.00% of 5
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#RcppCommon.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/routines.h'
+Lines executed:0.00% of 16
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#routines.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/exception_guard.h'
+Lines executed:88.89% of 9
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#exception_guard.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/initializer_list'
+Lines executed:100.00% of 3
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#initializer_list.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy.h'
+Lines executed:100.00% of 7
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tree'
+Lines executed:94.97% of 199
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__tree.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/unique_ptr.h'
+Lines executed:85.71% of 21
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#unique_ptr.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/operations.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__functional#operations.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/traits.h'
+Lines executed:37.50% of 24
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#traits.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/nth_element.h'
+Lines executed:47.90% of 119
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#nth_element.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__debug_utils/randomize_range.h'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__debug_utils#randomize_range.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/exceptions.h'
+Lines executed:0.00% of 19
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/utils/tinyformat/tinyformat.h'
+Lines executed:0.00% of 232
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#utils#tinyformat#tinyformat.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/sstream'
+Lines executed:0.00% of 6
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#sstream.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios'
+Lines executed:0.00% of 59
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ios.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ostream'
+Lines executed:0.00% of 27
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ostream.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__string/char_traits.h'
+Lines executed:0.00% of 8
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__string#char_traits.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__locale.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/exception'
+Lines executed:0.00% of 1
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#exception.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/exceptions_impl.h'
+Lines executed:0.00% of 24
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions_impl.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h'
+Lines executed:0.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#transform.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/back_insert_iterator.h'
+Lines executed:0.00% of 7
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#back_insert_iterator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/locale'
+Lines executed:0.00% of 29
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#locale.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/ostreambuf_iterator.h'
+Lines executed:0.00% of 3
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#ostreambuf_iterator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/streambuf'
+Lines executed:0.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#streambuf.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/iter_swap.h'
+Lines executed:100.00% of 3
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#iter_swap.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/min_element.h'
+Lines executed:91.67% of 12
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#min_element.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/invoke.h'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__functional#invoke.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/identity.h'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__functional#identity.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstring'
+Lines executed:0.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#cstring.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/r_vector.h'
+Lines executed:66.67% of 9
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#r_vector.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/fill.h'
+Lines executed:100.00% of 6
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#fill.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/fill_n.h'
+Lines executed:100.00% of 6
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#fill_n.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/convert_to_integral.h'
+Lines executed:100.00% of 1
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#convert_to_integral.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/temporary_buffer.h'
+Lines executed:0.00% of 17
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#temporary_buffer.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/destruct_n.h'
+Lines executed:0.00% of 14
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#destruct_n.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/inplace_merge.h'
+Lines executed:0.00% of 79
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#inplace_merge.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/upper_bound.h'
+Lines executed:0.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#upper_bound.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/lower_bound.h'
+Lines executed:0.00% of 15
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#lower_bound.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/rotate.h'
+Lines executed:0.00% of 58
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#rotate.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/advance.h'
+Lines executed:0.00% of 8
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#advance.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/half_positive.h'
+Lines executed:0.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#half_positive.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/next.h'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#next.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/distance.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#distance.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/move_backward.h'
+Lines executed:0.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#move_backward.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/prev.h'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#prev.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/swap_ranges.h'
+Lines executed:60.00% of 15
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#swap_ranges.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/find_if.h'
+Lines executed:100.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#find_if.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__bit/countl.h'
+Lines executed:100.00% of 1
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__bit#countl.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/partial_sort.h'
+Lines executed:0.00% of 24
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#partial_sort.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/make_heap.h'
+Lines executed:0.00% of 9
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#make_heap.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/sift_down.h'
+Lines executed:0.00% of 43
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#sift_down.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/sort_heap.h'
+Lines executed:0.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#sort_heap.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pop_heap.h'
+Lines executed:0.00% of 16
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#pop_heap.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/push_heap.h'
+Lines executed:0.00% of 18
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#push_heap.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/Dimension.h'
+Lines executed:100.00% of 8
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Dimension.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/proxy/AttributeProxy.h'
+Lines executed:100.00% of 8
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#proxy#AttributeProxy.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/api/meat/proxy.h'
+Lines executed:100.00% of 3
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#proxy.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/accumulate.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__numeric#accumulate.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/protection/Shield.h'
+Lines executed:0.00% of 11
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#protection#Shield.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/wrap.h'
+Lines executed:100.00% of 50
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/api/meat/Dimension.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#Dimension.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/api/bones/wrap_extra_steps.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#bones#wrap_extra_steps.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/traits/named_object.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#traits#named_object.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/Proxy_Iterator.h'
+Lines executed:0.00% of 7
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#Proxy_Iterator.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/converter.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#converter.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/r_cast.h'
+Lines executed:0.00% of 18
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#r_cast.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/adjacent_find.h'
+Lines executed:90.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#adjacent_find.h.gcov'
+
+gcov output for ./kernels.gcno:
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#adjacent_find.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#comp.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy_move_common.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#fill_n.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#fill.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#find_if.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#half_positive.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#inplace_merge.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#iter_swap.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#iterator_operations.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#lower_bound.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#make_heap.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#max.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#min_element.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#min.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#move_backward.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#move.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#nth_element.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#partial_sort.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#pop_heap.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#push_heap.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#remove_if.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#rotate.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#sift_down.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#sort_heap.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#sort.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#stable_sort.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#swap_ranges.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#transform.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unique.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_iter.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_range.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#upper_bound.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__bit#countl.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__debug_utils#randomize_range.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__debug.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__functional#identity.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__functional#invoke.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__functional#operations.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#advance.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#back_insert_iterator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#distance.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#next.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#ostreambuf_iterator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#prev.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#reverse_iterator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#wrap_iter.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__locale.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocate_at_least.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator_traits.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#compressed_pair.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#destruct_n.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#pointer_traits.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#temporary_buffer.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#uninitialized_algorithms.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#unique_ptr.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__numeric#accumulate.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__numeric#iota.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__split_buffer.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__string#char_traits.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__tree.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#convert_to_integral.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#exception_guard.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#pair.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#swap.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#array.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#cstring.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#exception.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#initializer_list.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ios.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#limits.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#locale.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#math.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#new.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ostream.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#set.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#sstream.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#stdexcept.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#stdlib.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#streambuf.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#string.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#vector.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#bones#wrap_extra_steps.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#Dimension.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#proxy.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#clone.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Dimension.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions_impl.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#Proxy_Iterator.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#r_vector.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap_end.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Interrupt.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#iostream#Rstreambuf.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Named.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#protection#Shield.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#proxy#AttributeProxy.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#r_cast.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#routines.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#storage#PreserveStorage.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#traits#named_object.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#utils#tinyformat#tinyformat.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#converter.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#generic_proxy.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Matrix.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#traits.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Vector.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#RcppCommon.h.gcov
+./kernels.cpp.gcov
+'/usr/bin/gcov' './RcppExports.gcno' '-p' '-o' '.' 
+
+File 'RcppExports.cpp'
+Lines executed:100.00% of 111
+Creating 'RcppExports.cpp.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/iostream/Rstreambuf.h'
+Lines executed:7.69% of 26
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#iostream#Rstreambuf.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/Named.h'
+Lines executed:57.14% of 7
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Named.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/RObject.h'
+Lines executed:83.33% of 6
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#RObject.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/RNGScope.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#RNGScope.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/InputParameter.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#InputParameter.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/wrap_end.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap_end.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/Matrix.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Matrix.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/Vector.h'
+Lines executed:44.44% of 54
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Vector.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/storage/PreserveStorage.h'
+Lines executed:100.00% of 22
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#storage#PreserveStorage.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/exceptions.h'
+Lines executed:0.00% of 113
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string'
+Lines executed:23.73% of 59
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#string.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/routines.h'
+Lines executed:50.00% of 32
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#routines.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/RcppCommon.h'
+Lines executed:100.00% of 5
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#RcppCommon.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/protection/Shield.h'
+Lines executed:100.00% of 11
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#protection#Shield.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/pointer_traits.h'
+Lines executed:40.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#pointer_traits.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h'
+Lines executed:37.50% of 16
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#compressed_pair.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/typeinfo'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#typeinfo.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/protection/Shelter.h'
+Lines executed:0.00% of 8
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#protection#Shelter.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/api/meat/Rcpp_eval.h'
+Lines executed:0.00% of 7
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#Rcpp_eval.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/unwindProtect.h'
+Lines executed:0.00% of 13
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#unwindProtect.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/exceptions_impl.h'
+Lines executed:0.00% of 36
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions_impl.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector'
+Lines executed:0.00% of 105
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#vector.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy.h'
+Lines executed:0.00% of 11
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/proxy/AttributeProxy.h'
+Lines executed:100.00% of 8
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#proxy#AttributeProxy.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/api/meat/proxy.h'
+Lines executed:100.00% of 3
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#proxy.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/traits.h'
+Lines executed:100.00% of 11
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#traits.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/r_vector.h'
+Lines executed:75.00% of 4
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#r_vector.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/Proxy_Iterator.h'
+Lines executed:100.00% of 7
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#Proxy_Iterator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy_move_common.h'
+Lines executed:0.00% of 7
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy_move_common.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/unwrap_range.h'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_range.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/unwrap_iter.h'
+Lines executed:0.00% of 10
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_iter.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/pair.h'
+Lines executed:0.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#pair.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/wrap_iter.h'
+Lines executed:0.00% of 11
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#wrap_iter.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/string_proxy.h'
+Lines executed:0.00% of 14
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#string_proxy.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/wrap.h'
+Lines executed:26.47% of 34
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/generic_proxy.h'
+Lines executed:100.00% of 13
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#generic_proxy.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/vector/converter.h'
+Lines executed:0.00% of 4
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#converter.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/traits/named_object.h'
+Lines executed:0.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#traits#named_object.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__string/char_traits.h'
+Lines executed:50.00% of 8
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__string#char_traits.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__debug'
+Lines executed:25.00% of 8
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__debug.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/allocator.h'
+Lines executed:11.76% of 17
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstring'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#cstring.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ios'
+Lines executed:15.25% of 59
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ios.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ostream'
+Lines executed:7.41% of 27
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ostream.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/as.h'
+Lines executed:88.24% of 17
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#as.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/Exporter.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#Exporter.h.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/r_cast.h'
+Lines executed:60.00% of 20
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#r_cast.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/exception'
+Lines executed:0.00% of 1
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#exception.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/utils/tinyformat/tinyformat.h'
+Lines executed:0.00% of 232
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#utils#tinyformat#tinyformat.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/sstream'
+Lines executed:0.00% of 6
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#sstream.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__locale.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h'
+Lines executed:0.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#transform.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/back_insert_iterator.h'
+Lines executed:0.00% of 7
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#back_insert_iterator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/allocator_traits.h'
+Lines executed:0.00% of 11
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator_traits.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__split_buffer'
+Lines executed:0.00% of 30
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__split_buffer.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/max.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#max.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/min.h'
+Lines executed:100.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#min.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/limits'
+Lines executed:100.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#limits.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h'
+Lines executed:100.00% of 1
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#comp.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdexcept'
+Lines executed:0.00% of 4
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#stdexcept.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/allocate_at_least.h'
+Lines executed:0.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocate_at_least.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/new'
+Lines executed:73.91% of 23
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#new.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uninitialized_algorithms.h'
+Lines executed:0.00% of 19
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#uninitialized_algorithms.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/reverse_iterator.h'
+Lines executed:0.00% of 9
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#reverse_iterator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/swap.h'
+Lines executed:0.00% of 5
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#swap.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/exception_guard.h'
+Lines executed:0.00% of 9
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#exception_guard.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/locale'
+Lines executed:0.00% of 29
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#locale.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/ostreambuf_iterator.h'
+Lines executed:0.00% of 3
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#ostreambuf_iterator.h.gcov'
+
+File '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/streambuf'
+Lines executed:0.00% of 2
+Creating '#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#streambuf.gcov'
+
+File '/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include/Rcpp/internal/caster.h'
+Lines executed:100.00% of 2
+Creating '#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#caster.h.gcov'
+
+gcov output for ./RcppExports.gcno:
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#comp.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy_move_common.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#copy.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#max.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#min.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#transform.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_iter.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__algorithm#unwrap_range.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__debug.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#back_insert_iterator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#ostreambuf_iterator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#reverse_iterator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__iterator#wrap_iter.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__locale.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocate_at_least.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator_traits.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#allocator.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#compressed_pair.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#pointer_traits.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__memory#uninitialized_algorithms.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__split_buffer.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__string#char_traits.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#exception_guard.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#pair.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#__utility#swap.h.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#cstring.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#exception.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ios.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#limits.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#locale.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#new.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#ostream.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#sstream.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#stdexcept.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#streambuf.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#string.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#typeinfo.gcov
+./#Library#Developer#CommandLineTools#SDKs#MacOSX.sdk#usr#include#c++#v1#vector.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#proxy.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#api#meat#Rcpp_eval.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#as.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions_impl.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#exceptions.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#InputParameter.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#caster.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#Exporter.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#Proxy_Iterator.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#r_vector.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap_end.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#internal#wrap.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#iostream#Rstreambuf.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#Named.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#protection#Shelter.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#protection#Shield.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#proxy#AttributeProxy.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#r_cast.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#RNGScope.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#RObject.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#routines.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#storage#PreserveStorage.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#traits#named_object.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#unwindProtect.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#utils#tinyformat#tinyformat.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#converter.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#generic_proxy.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Matrix.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#string_proxy.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#traits.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#Rcpp#vector#Vector.h.gcov
+./#Users#bbuchsbaum#Library#R#arm64#4.5#library#Rcpp#include#RcppCommon.h.gcov
+./RcppExports.cpp.gcov
+$percent
+[1] 82.8125
+
+$R
+[1] "R version 4.5.1 (2025-06-13)"
+
+$source_commit
+[1] "ce4a553e728d83218b32e6720387cfd70712b8f6"
+
+$files
+ [1] "R/batch.R"        "R/geometry.R"     "R/images.R"       "R/io.R"          
+ [5] "R/labels.R"       "R/manipulation.R" "R/mat.R"          "R/objects.R"     
+ [9] "R/render.R"       "R/statistics.R"   "R/svg.R"          "src/kernels.cpp" 
+
+$instrumented_cpp
+[1] TRUE
+

@@ -2,7 +2,8 @@
 
 The cleanup and R implementation have now been carried out. See
 [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md), the bug register and
-docs/evidence for current results. The assessment below is retained as the
+[qualification](docs/QUALIFICATION.md) and [benchmarks](docs/BENCHMARKS.md)
+for current results (250 assertions, 92.61% coverage, check 0 errors / 0 warnings). The assessment below is retained as the
 historical design baseline; its no-implementation statements are superseded.
 
 # MLV Toolbox to R: assessment and porting plan

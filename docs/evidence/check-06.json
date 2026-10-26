@@ -1,0 +1,18 @@
+{
+  "stage": "check-06",
+  "args": [
+    "R",
+    "CMD",
+    "check",
+    "--as-cran",
+    "--no-manual",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/mlvtoolbox_0.1.0.tar.gz"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 41.14362062500004,
+  "peak_work_bytes": 9060743,
+  "limit_bytes": 209715200,
+  "source_commit": "141a4a44dcc6431faa53a6a4b8af31b06b306982",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/check-06.log"
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T00:17:52.877510+00:00",
+  "finished_utc": "2026-10-26T00:18:02.242082+00:00",
+  "duration_seconds": 9.364397,
+  "command": [
+    "Rscript",
+    "--vanilla",
+    "tools/benchmark_geometry.R",
+    ".agent-work/package-build/library",
+    "docs/evidence/benchmark-r-after.csv",
+    ".agent-work/geometry-after.Rprof"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/benchmark-r-geometry-final.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 180.0,
+  "log_bytes": 896
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T00:15:21.839398+00:00",
+  "finished_utc": "2026-10-26T00:16:11.376718+00:00",
+  "duration_seconds": 49.536944,
+  "command": [
+    "python3",
+    "tools/benchmark_octave.py"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/benchmark-octave-02.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 300.0,
+  "log_bytes": 1167
+}

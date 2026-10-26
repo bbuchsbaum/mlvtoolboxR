@@ -1,0 +1,15 @@
+{"stage": "aof", "size": 32, "cold_seconds": 1.040614128112793, "median_seconds": 1.0399491786956787, "min_seconds": 1.030933141708374, "max_seconds": 1.0493450164794922, "status": "completed", "runtime": "Octave 11.1.0; image 2.20.0", "source": "f12418a5e03c2f38e222fed1dffccf42b227cd29"}
+Traceback (most recent call last):
+  File "/Users/bbuchsbaum/code/mlvtoolbox/tools/benchmark_octave.py", line 34, in <module>
+    if p.returncode:raise RuntimeError(p.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: error: 'bwmorph' undefined near line 40, column 25
+
+The 'bwmorph' function belongs to the 'image' package indexed in Octave
+Packages at <https://packages.octave.org> which you have installed, but
+not loaded.  To load the package, type ‘pkg load image’ from the Octave
+prompt.
+error: called from
+    extract2DSkeletonFromBinaryImage at line 40 column 1
+    computeMAT at line 44 column 2
+

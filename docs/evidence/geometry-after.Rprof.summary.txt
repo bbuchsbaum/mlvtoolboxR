@@ -1,0 +1,13 @@
+                             total.time total.pct self.time self.pct
+"pmatch"                          0.001       100     0.001      100
+".deparseOpts"                    0.001       100     0.000        0
+".segment_table"                  0.001       100     0.000        0
+"as.data.frame.numeric"           0.001       100     0.000        0
+"as.data.frame"                   0.001       100     0.000        0
+"compute_contour_properties"      0.001       100     0.000        0
+"data.frame"                      0.001       100     0.000        0
+"deparse"                         0.001       100     0.000        0
+"deparse1"                        0.001       100     0.000        0
+"f"                               0.001       100     0.000        0
+"force"                           0.001       100     0.000        0
+"paste"                           0.001       100     0.000        0

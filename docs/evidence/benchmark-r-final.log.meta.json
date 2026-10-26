@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T00:17:37.493936+00:00",
+  "finished_utc": "2026-10-26T00:17:52.784421+00:00",
+  "duration_seconds": 15.290337,
+  "command": [
+    "Rscript",
+    "--vanilla",
+    "tools/benchmark.R",
+    ".agent-work/package-build/library",
+    "docs/evidence/benchmark-r.csv"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/benchmark-r-final.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 180.0,
+  "log_bytes": 1068
+}

@@ -1,0 +1,16 @@
+              stage size segments_per_contour cold_seconds median_seconds
+ contour_properties  100                    1        0.001   4.101562e-04
+ contour_properties 1000                    1        0.002   1.335937e-03
+ contour_properties    1                10000        0.001   1.093750e-03
+ distance_transform   32                    0        0.000   1.464844e-05
+ distance_transform   64                    0        0.000   4.980469e-05
+ distance_transform  128                    0        0.000   1.933594e-04
+ distance_transform  512                    0        0.003   3.296875e-03
+  min_seconds  max_seconds iterations
+ 4.023437e-04 4.121094e-04        512
+ 1.296875e-03 1.414063e-03        128
+ 1.039063e-03 1.195312e-03        128
+ 1.464844e-05 1.562500e-05       1024
+ 4.882812e-05 5.078125e-05       1024
+ 1.914063e-04 1.982422e-04       1024
+ 3.171875e-03 3.718750e-03         64

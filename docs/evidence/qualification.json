@@ -1,0 +1,96 @@
+{
+  "created_utc": "2026-10-26T00:22:33.540988+00:00",
+  "source_commit": "141a4a44dcc6431faa53a6a4b8af31b06b306982",
+  "benchmark_source_commit": "b26cb52340447cb3faf9d15773b029ee2768504a",
+  "benchmark_to_checked_diff": [
+    "tests/testthat/test-public-pipeline.R"
+  ],
+  "package": "mlvtoolbox_0.1.0.tar.gz",
+  "package_bytes": 107812,
+  "package_sha256": "ed7d49c60174011d80b299d1dda7f73be5cb8f049e26680034c9002f08cc30c7",
+  "source_manifest_matches_live_files": true,
+  "source_file_count": 91,
+  "R_CMD_check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": 1,
+    "note": "New submission",
+    "manual_pdf": "unexecuted"
+  },
+  "tests": {
+    "passed_assertions": 250,
+    "failed": 0,
+    "warnings": 0,
+    "skipped": 0
+  },
+  "coverage": {
+    "percent": 92.6117,
+    "R": "R version 4.5.1 (2025-06-13)",
+    "source_commit": "141a4a44dcc6431faa53a6a4b8af31b06b306982",
+    "files": [
+      "R/batch.R",
+      "R/geometry.R",
+      "R/images.R",
+      "R/io.R",
+      "R/labels.R",
+      "R/manipulation.R",
+      "R/mat.R",
+      "R/objects.R",
+      "R/render.R",
+      "R/statistics.R",
+      "R/svg.R",
+      "src/kernels.cpp"
+    ],
+    "instrumented_cpp": true
+  },
+  "reference_verification": {
+    "verified_utc": "2026-10-26T00:22:33.535519+00:00",
+    "sources": 159,
+    "data_files": 39,
+    "data_bytes": 698453722,
+    "failures": []
+  },
+  "check_monitor": {
+    "stage": "check-06",
+    "args": [
+      "R",
+      "CMD",
+      "check",
+      "--as-cran",
+      "--no-manual",
+      "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/mlvtoolbox_0.1.0.tar.gz"
+    ],
+    "exit_code": 0,
+    "reason": "exited",
+    "duration_seconds": 41.14362062500004,
+    "peak_work_bytes": 9060743,
+    "limit_bytes": 209715200,
+    "source_commit": "141a4a44dcc6431faa53a6a4b8af31b06b306982",
+    "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/check-06.log"
+  },
+  "coverage_monitor": {
+    "stage": "coverage-03",
+    "args": [
+      "Rscript",
+      "--vanilla",
+      "/Users/bbuchsbaum/code/mlvtoolbox/tools/coverage.R",
+      "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/package-source",
+      "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence"
+    ],
+    "exit_code": 0,
+    "reason": "exited",
+    "duration_seconds": 12.515326875000028,
+    "peak_work_bytes": 11787058,
+    "limit_bytes": 209715200,
+    "source_commit": "141a4a44dcc6431faa53a6a4b8af31b06b306982",
+    "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/coverage-03.log"
+  },
+  "hardware": "Apple M3 Max, arm64, 36 GiB RAM, macOS Sonoma 14.3",
+  "unexecuted": [
+    "MATLAB runtime comparison",
+    "Windows/Linux and hosted CI",
+    "natural-image scientific acceptance",
+    "manual PDF generation",
+    "external publication"
+  ]
+}

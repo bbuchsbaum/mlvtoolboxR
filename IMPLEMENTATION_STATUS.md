@@ -32,8 +32,22 @@ assessment's statements that no implementation exists.
 
 ## Qualification
 
-Source regression suite passes. Bounded R CMD check, optimized benchmarks and
-coverage are being finalized; results will be recorded in docs/evidence.
+Source candidate 141a4a44dcc6431faa53a6a4b8af31b06b306982 passes the installed
+250-assertion regression suite and R CMD check --as-cran --no-manual with
+0 errors, 0 warnings and one informational New submission NOTE. Coverage is
+92.6117% across R and instrumented C++, up from 82.8125%.
+
+Matched local benchmarks show 2.1-6.4x faster contour geometry and 44-50x faster
+EDT than the runnable Python paths. The MAT core is about 1,984-2,389x faster
+than the MATLAB source interpreted by Octave on the tested 32/64-pixel cases.
+These ratios do not describe MATLAB JIT performance or a complete image pipeline.
+Vectorized wrappers make the 1,000-contour R workload 184.9x faster than the
+earlier checked R candidate, preserving a mixed-contour result exactly.
+
+See [qualification](docs/QUALIFICATION.md), [benchmarks](docs/BENCHMARKS.md)
+and the machine-readable receipts in docs/evidence. The local installable archive
+is mlvtoolbox_0.1.0.tar.gz; it is ignored by Git and can be rebuilt with
+tools/bounded_check.py.
 
 Prepared CI covers macOS, Windows and Linux. Hosted CI and actual Windows/Linux
 runs are unexecuted. No CRAN/R-universe submission, site deployment or upstream

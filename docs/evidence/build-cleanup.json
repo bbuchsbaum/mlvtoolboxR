@@ -1,0 +1,18 @@
+{
+  "removed_utc": "2026-10-26T00:24:39.016504+00:00",
+  "removed_owned_paths": [
+    ".agent-work/package-build-first",
+    ".agent-work/package-build",
+    "src/RcppExports.o",
+    "src/kernels.o",
+    "src/mlvtoolbox.so"
+  ],
+  "logical_bytes": 11787752,
+  "artifact_sha256_verified": "ed7d49c60174011d80b299d1dda7f73be5cb8f049e26680034c9002f08cc30c7",
+  "preserved": [
+    "vendor",
+    "reference-data/mlv",
+    "docs/evidence",
+    "mlvtoolbox_0.1.0.tar.gz"
+  ]
+}
