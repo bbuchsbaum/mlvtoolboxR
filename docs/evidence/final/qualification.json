@@ -1,7 +1,7 @@
 {
   "candidate": "complete reliable-stimuli epic plus final fused-statistics safety fix",
   "source_base": "8f2c1f96827af245867c070873964b32e6f0188b",
-  "identity": "exact package-source manifest and archive; graph additions pending local checkpoint",
+  "identity": "all 394 checked package files match committed Git blobs; evidence-only follow-ups do not alter package source",
   "package_files": 394,
   "source_mismatches": [],
   "archive": "mlvtoolbox_0.2.1-final.tar.gz",
@@ -30,5 +30,6 @@
     "hosted CI",
     "PDF manual",
     "natural-image predictive validity"
-  ]
+  ],
+  "source_commit": "4d8d715d6c29ff7696e4b42f7df2a70a4e4d4846"
 }

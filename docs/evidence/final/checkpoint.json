@@ -1,8 +1,9 @@
 {
-  "state": "prepared",
-  "source_commit": null,
-  "source_manifest": "package-source-manifest.json",
+  "state": "committed",
+  "source_commit": "4d8d715d6c29ff7696e4b42f7df2a70a4e4d4846",
   "package_file_count": 394,
-  "expected_base": "8f2c1f96827af245867c070873964b32e6f0188b",
+  "git_blob_manifest_mismatches": [],
+  "source_manifest": "package-source-manifest.json",
+  "verification": "SHA256 of every package-source blob read from the committed Git tree equals the checked manifest",
   "publication": "none"
 }
