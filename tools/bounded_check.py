@@ -53,7 +53,10 @@ def run(stage,args,timeout=300):
     print(json.dumps(meta),flush=True)
     if proc.returncode or reason!='exited':raise SystemExit(proc.returncode or 125)
 if '--coverage-only' in sys.argv:
-    run('coverage-01',['Rscript','--vanilla',str(root/'tools/coverage.R'),str(staged),str(root/'docs/evidence')],timeout=240)
+    evidence=root/'docs/evidence'
+    if '--evidence-dir' in sys.argv:
+        evidence=root/sys.argv[sys.argv.index('--evidence-dir')+1]
+    run('coverage-01',['Rscript','--vanilla',str(root/'tools/coverage.R'),str(staged),str(evidence)],timeout=240)
     raise SystemExit(0)
 run('build-02',['R','CMD','build','--no-manual',str(staged)])
 version=re.search(r'^Version: (.+)$',(root/'DESCRIPTION').read_text(),re.M).group(1).strip()

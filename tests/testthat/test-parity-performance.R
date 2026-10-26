@@ -129,3 +129,8 @@ test_that("EDT and AOF agree with reference fields at multiple sampling radii", 
   }
  }
 })
+
+test_that("tangent hoisting preserves every saved floating-point sample exactly", {
+ cases<-readRDS(system.file("fixtures","tangents-before-optimization.rds",package="mlvtoolbox"))
+ for(case in cases)expect_identical(mlvtoolbox:::.tangent_points(case$branch),case$expected)
+})

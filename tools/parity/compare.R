@@ -69,7 +69,32 @@ for(i in seq_len(nrow(cases))) {
   }
  }
 }
-out<-do.call(rbind,rows);dir.create(dirname(args[2]),recursive=TRUE,showWarnings=FALSE)
+out<-do.call(rbind,rows)
+explain<-function(i) {
+ r<-out[i,]
+ if(r$status=="match")return(if(grepl("^adapted_",r$stage))"matched_with_python_shape_adapter" else if(grepl("^branch_",r$stage))"matched_with_fixed_movmean_adapter" else "matched")
+ if(r$status!="different")return("UNEXPLAINED")
+ if(r$backend=="octave") {
+  if(r$stage %in% c("mat_index","mat_aof","mat_skeleton")) {
+   witness<-out[out$case==r$case & out$backend=="octave" & out$stage %in%
+                  c("nearest_label_squared_distance","aof_common_fields","morphology_common_aof"),]
+   if(nrow(witness)==3&&all(witness$status=="match"))return("equidistant_label_policy")
+  }
+  if(r$stage=="branch_mirror"&&r$case %in% c("curved","terminal_bend"))return("MLV-M016_terminal_fit")
+  if(grepl("orientation13$",r$stage)&&grepl("^integer",r$case))return("MLV-M017_axial_boundary")
+ } else if(r$backend=="python") {
+  if(r$stage=="rotate37_ccw")return("MLV-P013_trigonometric_rounding")
+  if(grepl("^aof_common_fields",r$stage))return("MLV-P012_sampling")
+  if(r$case %in% c("subpixel","fractional")&&grepl("orientation|curvature",r$stage))return("MLV-P001_coordinate_truncation")
+  if(grepl("orientation13$",r$stage)&&grepl("^integer",r$case))return("MLV-P015_axial_boundary")
+ }
+ "UNEXPLAINED"
+}
+out$explanation<-vapply(seq_len(nrow(out)),explain,character(1))
+dir.create(dirname(args[2]),recursive=TRUE,showWarnings=FALSE)
+
 write.csv(out,args[2],row.names=FALSE)
 print(with(out,table(backend,status)))
 print(out[out$status!="match"&!grepl("orientation|curvature",out$stage),],row.names=FALSE)
+
+if(any(out$explanation=="UNEXPLAINED"))stop("unexplained parity discrepancy; see receipt")

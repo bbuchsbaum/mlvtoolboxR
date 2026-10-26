@@ -194,15 +194,16 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
  n<-nrow(branch)
  if(n<2L)return(list(points=matrix(numeric(),0,2),source=integer()))
  X<-branch$row;Y<-branch$column;R<-branch$radius
+ x1<-head(X,-1);y1<-head(Y,-1);x2<-tail(X,-1);y2<-tail(Y,-1)
+ base1<-head(R,-1);base2<-tail(R,-1)
+ d<-sqrt((x1-x2)^2+(y1-y2)^2)
+ mx<-(x1+x2)/2;my<-(y1+y2)/2;vx<-x1-mx;vy<-y1-my
  points<-list();sources<-integer()
  for(delta1 in c(-.1,0,.1))for(delta2 in c(-.1,0,.1)) {
-  x1<-head(X,-1);y1<-head(Y,-1);x2<-tail(X,-1);y2<-tail(Y,-1)
-  r1<-head(R,-1)+delta1;r2<-tail(R,-1)+delta2
-  d<-sqrt((x1-x2)^2+(y1-y2)^2)
+  r1<-base1+delta1;r2<-base2+delta2
   ca<-(r2-r1)/d
   bad<-abs(ca)>1;ca[bad]<-ca[bad]/(abs(ca[bad])+.00001)
-  sa<-sqrt(pmax(0,1-ca^2));mx<-(x1+x2)/2;my<-(y1+y2)/2;mr<-(r1+r2)/2
-  vx<-x1-mx;vy<-y1-my
+  sa<-sqrt(pmax(0,1-ca^2));mr<-(r1+r2)/2
   for(sign in c(1,-1)) {
    xx<-ca*vx+sign*sa*vy;yy<--sign*sa*vx+ca*vy
    norm<-sqrt(xx^2+yy^2);valid<-is.finite(norm)&norm>0&mr>=0

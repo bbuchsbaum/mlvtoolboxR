@@ -24,6 +24,7 @@ jobs<-list(features_1000x20=function()feature_table(many,properties,bins=16),
  junction_grid_19x19=function()detect_junctions(grid),
  mat_rings_256=function()analyse_mat(rings,min_branch_points=3),
  raster_rings_256=function()rasterize(rings,line_width=3))
+if(length(args)>=3)jobs<-jobs[grepl(args[3],names(jobs))]
 rows<-list();outputs<-list()
 for(name in names(jobs)) {
  f<-jobs[[name]]
