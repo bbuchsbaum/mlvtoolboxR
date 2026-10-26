@@ -1,0 +1,34 @@
+{
+  "candidate": "complete reliable-stimuli epic plus final fused-statistics safety fix",
+  "source_base": "8f2c1f96827af245867c070873964b32e6f0188b",
+  "identity": "exact package-source manifest and archive; graph additions pending local checkpoint",
+  "package_files": 394,
+  "source_mismatches": [],
+  "archive": "mlvtoolbox_0.2.1-final.tar.gz",
+  "archive_bytes": 352747,
+  "archive_sha256": "7be461b5ae8d2447a6ff37b22dc8d88114fc4e5c9b25d9f084130c7fb52a12fe",
+  "installed_tests": {
+    "pass": 1332,
+    "fail": 0,
+    "warnings": 0,
+    "skip": 0
+  },
+  "check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": [
+      "New submission",
+      "unable to verify current time"
+    ]
+  },
+  "coverage_percent": 95.0669,
+  "publication": "none",
+  "unexecuted": [
+    "Linux",
+    "Windows",
+    "MATLAB",
+    "hosted CI",
+    "PDF manual",
+    "natural-image predictive validity"
+  ]
+}

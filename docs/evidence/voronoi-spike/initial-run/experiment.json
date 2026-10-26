@@ -1,0 +1,14 @@
+{
+  "phase": "experiment",
+  "args": [
+    "Rscript",
+    "--vanilla",
+    "tools/voronoi/experiment.R"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "seconds": 1.4788897089965758,
+  "sampled_tree_peak_rss_bytes": 145162240,
+  "rss_cap_bytes": 2147483648,
+  "workspace_cap_bytes": 209715200
+}

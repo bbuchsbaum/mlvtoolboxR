@@ -1,0 +1,1 @@
+{"actor":"codex-mlv-impl","entity":"mlv-invariance-suite","kind":"reserve_open","mode":"exclusive","op":"20261026T125713.022748Z-p64519-c0000-r94e8-hc07bc1","paths":["tests/testthat/helper-invariance.R","tests/testthat/test-invariance-contract.R","docs/ESTIMATOR_ACCEPTANCE.md"],"reservation_id":"rv-01M5W4JM1YWDXK81KHQQP7A0DF","ts":"2026-10-26T12:57:13.022748Z","ttl_s":7200,"v":2}

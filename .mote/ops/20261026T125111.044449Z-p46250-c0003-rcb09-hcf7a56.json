@@ -1,0 +1,1 @@
+{"actor":"codex-mlv-impl","entity":"mlv-feature-spec","kind":"note","note_kind":"progress","op":"20261026T125111.044449Z-p46250-c0003-rcb09-hcf7a56","text":"Define immutable-by-validation measurement configuration, field units, calibration/provenance separation, and legacy estimator policy before numerical implementation.","ts":"2026-10-26T12:51:11.044449Z","v":1}

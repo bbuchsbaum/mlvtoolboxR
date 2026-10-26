@@ -1,0 +1,13 @@
+"case","status","reason","input_pieces","endpoint_error","primary_edges","selected_linear_edges","unsupported_curved","unsupported_infinite","max_equidistance_error","max_nearest_violation","axis_error","axis_length","native_construct_seconds","native_call_seconds","native_peak_rss_bytes","raster_mean_seconds","raster_skeleton_pixels","raster_corridor_pixels"
+"parallel","measured","",2,0,3,1,0,2,0,0,0,20,1.700875e-06,0.358,1343488,0.000920000000000001,21,17
+"shifted_subquantum","measured","",2,0.000565685424949804,3,1,0,2,0,0,0.000400000000000844,20,1.752541e-06,0.019,1343488,0.000880000000000001,21,17
+"shifted_quantum","measured","",2,0.000565685424950432,3,1,0,2,0,0,0.000399999999999068,20,1.741583e-06,0.0179999999999999,1540096,0.000840000000000001,21,17
+"shifted_tenth","measured","",2,0,3,1,0,2,0,0,0,20,1.670208e-06,0.018,1343488,0.000880000000000001,21,17
+"narrow","measured","",2,0,3,1,0,2,1.77635683940025e-15,1.77635683940025e-15,0,20,1.675333e-06,0.024,1343488,0.000719999999999996,0,0
+"rectangle","measured","",4,0,5,5,0,0,0,0,NA,NA,2.92075e-06,0.029,1343488,0.0066,44,NA
+"crossing","measured","",4,0,8,4,0,4,0,0,NA,NA,1.1702542e-05,0.05,1884160,0.00184,64,NA
+"curved","measured","",3,0,10,1,6,3,0,0,NA,NA,5.664208e-06,0.0290000000000001,1736704,0.00216,74,NA
+"collapse","rejected","collinear overlapping spans are unsupported (source segments 1 and 2)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"near_miss","rejected","quantization changes source-incidence topology",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"overlap","rejected","collinear overlapping spans are unsupported (source segments 1 and 2)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"overflow","rejected","quantized coordinates exceed int32 bounds",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA

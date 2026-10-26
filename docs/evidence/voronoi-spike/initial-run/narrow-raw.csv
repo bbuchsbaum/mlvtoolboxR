@@ -1,0 +1,8 @@
+site_a,site_b,category_a,category_b,primary,linear,finite,x1,y1,x2,y2
+1,2,1,1,1,1,0,NA,NA,NA,NA
+1,1,1,8,0,1,0,NA,NA,NA,NA
+2,2,1,8,0,1,0,NA,NA,NA,NA
+1,2,8,8,1,1,1,25000,10200,5000,10200
+1,1,8,2,0,1,0,NA,NA,NA,NA
+2,2,8,2,0,1,0,NA,NA,NA,NA
+1,2,2,2,1,1,0,NA,NA,NA,NA

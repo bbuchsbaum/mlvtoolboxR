@@ -1,0 +1,17 @@
+{
+  "prototype_sources": {
+    "tools/voronoi/plot.R": "570b0bdaeae87567d9118406927831e10d3aa06b91de73101ae37d7a4ecfe886",
+    "tools/voronoi/experiment.R": "c945face253bfbb3f7a16630ee8349e5374f1fe53f4df2c69fc05302a6c5017e",
+    "tools/voronoi/run.py": "bc2e1a3ad22a9327afde9c84fb2d007a3aa9454dfa7de7e06a73615889a45d68",
+    "tools/voronoi/preprocess.R": "b567240ec4bc53bf3d784f96e0e873cccc74186cd019e04dfa31bc310f194e9b",
+    "tools/voronoi/fixtures.R": "8dd90af75b6fb91b39c81a0e5d165d69deeacbc5d004892e451f3b1f6f900075",
+    "tools/voronoi/prototype.cpp": "984ced4e46e2fabe373b490348a626a23864d495449bbccc397db484195ab3cb"
+  },
+  "prototype_binary_sha256": "f118f59fbb61110159e31b6621028a5d31152be1c63e28b36ebe50562efba497",
+  "R_package_archive": "mlvtoolbox_0.2.1-graphs.tar.gz",
+  "R_package_archive_sha256": "de072ae04587283c3d2f5f49ac6d0e9101341282cac4aa1ac92524a8584d0283",
+  "fixture_manifest_unchanged": true,
+  "permanent_package_dependency_added": false,
+  "production_backend_added": false,
+  "decision": "go for a separate backend implementation study; not ready to replace or default over AOF"
+}

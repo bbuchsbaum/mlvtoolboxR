@@ -1,0 +1,2 @@
+"vertices","edges","components","cycles","endpoints","branch_nodes","closed_contours","simple_closed_contours","continuation_pairs","parallel_contour_pairs","parallel_shared_extent","mean_parallel_separation","enclosures","collapsed_spans"
+100,180,1,81,0,96,0,0,0,78,702,3.05128205128205,0,0

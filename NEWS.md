@@ -1,5 +1,16 @@
 # mlvtoolbox 0.2.0
 
+## Subsequent candidate: whole-contour stimulus design
+
+* Added a bounded exact subset designer with set-level matching, optional
+  per-drawing constraints, raw histogram L1 tolerances and explicit resource
+  limits. Optimal, feasible, infeasible and exhausted outcomes are distinct.
+* Results retain original contour identities, input geometry/calibration,
+  reconstructed conditions, independently recomputed constraints and optional
+  fresh junction/MAT diagnostics. A complete stimulus-design vignette is included.
+
+## Feature contracts and estimators
+
 * Prediction now requires the actual training feature schema and rejects bin,
   predictor, unit, and method mismatches before invoking a model. An explicit
   warning-emitting legacy bypass remains available.

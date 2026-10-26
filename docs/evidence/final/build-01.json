@@ -1,0 +1,18 @@
+{
+  "stage": "build-01",
+  "args": [
+    "R",
+    "CMD",
+    "build",
+    "--no-manual",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/final-build/package-source"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 9.22070945899759,
+  "peak_work_bytes": 6669092,
+  "limit_bytes": 209715200,
+  "source_commit": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "source_root": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/final-build-logs/build-01.log"
+}

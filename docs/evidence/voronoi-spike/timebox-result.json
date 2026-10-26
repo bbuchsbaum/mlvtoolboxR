@@ -1,0 +1,11 @@
+{
+  "start_epoch": 1793025391.8796191,
+  "start_utc": "2026-10-26T14:36:31.879620+00:00",
+  "limit_seconds": 14400,
+  "compiler_seconds_limit": 60,
+  "experiment_seconds_limit": 120,
+  "end_utc": "2026-10-26T14:48:50.566789+00:00",
+  "elapsed_seconds": 738.6873359680176,
+  "report_completed_utc": "2026-10-26T14:55:21.885913+00:00",
+  "elapsed_through_reporting_seconds": 1130.0063548088074
+}

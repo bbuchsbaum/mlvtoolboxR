@@ -1,0 +1,8 @@
+{
+  "frozen_at_utc": "2026-10-26T14:13:58.763035+00:00",
+  "implementation_exists": false,
+  "files": {
+    "inst/fixtures/graph-v1.R": "c2764b1975b7379244716ecd6d8d88e10767ed67a8b8156e084bdd1ecb4190bf",
+    "docs/GRAPH_ACCEPTANCE.md": "3c709d901a0c0e05ca5b8bdb45a6bcb5978290343449654eab8ab00024137e18"
+  }
+}

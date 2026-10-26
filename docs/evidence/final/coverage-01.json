@@ -1,0 +1,18 @@
+{
+  "stage": "coverage-01",
+  "args": [
+    "Rscript",
+    "--vanilla",
+    "/Users/bbuchsbaum/code/mlvtoolbox/tools/coverage.R",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/final-build/package-source",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/final"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 18.477064499995322,
+  "peak_work_bytes": 19467117,
+  "limit_bytes": 209715200,
+  "source_commit": "bf9f0796010c18c58168f518cdbbc35ca37a5a1c",
+  "source_root": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/final-build-logs/coverage-01.log"
+}

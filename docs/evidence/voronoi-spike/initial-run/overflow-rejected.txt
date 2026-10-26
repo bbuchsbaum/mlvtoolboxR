@@ -1,0 +1,1 @@
+quantized coordinates exceed int32 bounds

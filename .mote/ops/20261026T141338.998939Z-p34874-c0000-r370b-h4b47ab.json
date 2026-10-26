@@ -1,0 +1,1 @@
+{"actor":"codex-mlv-impl","entity":"mlv-graph-fixtures","kind":"reserve_open","mode":"exclusive","op":"20261026T141338.998939Z-p34874-c0000-r370b-h4b47ab","paths":["inst/fixtures/graph-v1.R","docs/GRAPH_ACCEPTANCE.md","docs/evidence/graph-v1"],"reservation_id":"rv-01M5W8YJHPZ94RT120PN7CRQVT","ts":"2026-10-26T14:13:38.998939Z","ttl_s":7200,"v":2}

@@ -1,0 +1,11 @@
+{
+  "files": {
+    "tools/voronoi/fixtures.R": "8dd90af75b6fb91b39c81a0e5d165d69deeacbc5d004892e451f3b1f6f900075"
+  },
+  "quantization_scale": 1000,
+  "per_coordinate_error_bound": 0.0005,
+  "euclidean_endpoint_bound": 0.0007071067811865476,
+  "domain": "closed canvas rectangle [1,width] x [1,height]",
+  "selection": "finite linear primary edges between distinct original source segments, clipped to canvas; curved/unbounded edges counted but unsupported",
+  "acceptance": "analytic parallel-axis extent20 and axis error <= quantization bound; site-pair stability under shifts; reject topology/overlap/overflow cases; record all outcomes before a research go/no-go decision"
+}

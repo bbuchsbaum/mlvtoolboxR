@@ -1,0 +1,7 @@
+{
+  "percent": 95.0669,
+  "R": "R version 4.5.1 (2025-06-13)",
+  "source_commit": "bf9f0796010c18c58168f518cdbbc35ca37a5a1c",
+  "files": ["R/batch.R", "R/branch-estimators.R", "R/curvature.R", "R/designer.R", "R/feature-schema.R", "R/feature-spec.R", "R/geometry.R", "R/graph.R", "R/images.R", "R/io.R", "R/labels.R", "R/manipulation.R", "R/mat.R", "R/measurement.R", "R/objects.R", "R/render.R", "R/statistics.R", "R/svg.R", "src/kernels.cpp", "src/statistics.cpp"],
+  "instrumented_cpp": true
+}

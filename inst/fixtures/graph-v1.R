@@ -1,0 +1,31 @@
+graph_v1_fixtures <- function() {
+ draw<-function(rows)mlv_drawing(lapply(rows,function(z)matrix(z,ncol=4,byrow=TRUE)),100,100)
+ polygon<-function(x,y,size) {
+  xy<-rbind(c(x,y),c(x+size,y),c(x+size,y+size),c(x,y+size),c(x,y))
+  cbind(xy[-5,,drop=FALSE],xy[-1,,drop=FALSE])
+ }
+ box<-draw(list(c(0,0,10,0),c(10,0,10,10),c(10,10,0,10),c(0,10,0,0)))
+ disconnected<-shift_contours(box,matrix(c(0,20,40,60,0,20,40,60),4))
+ continuation<-draw(list(c(0,0,10,0),c(12,0,22,0)))
+ staggered<-draw(list(c(0,0,10,0),c(12,5,22,5)))
+ near_parallel<-draw(list(c(0,0,10,0),c(0,5,10,5)))
+ far_parallel<-draw(list(c(0,0,10,0),c(0,20,10,20)))
+ nested<-mlv_drawing(list(polygon(0,0,20),polygon(5,5,5)),100,100)
+ separate<-mlv_drawing(list(polygon(0,0,20),polygon(30,5,5)),100,100)
+ bowtie<-draw(list(c(0,0,10,10,10,10,0,10,0,10,10,0,10,0,0,0)))
+ cross<-draw(list(c(0,0,10,10),c(0,10,10,0)))
+ tee<-draw(list(c(0,0,10,0),c(5,-5,5,0)))
+ overlap<-draw(list(c(0,0,10,0),c(5,0,15,0)))
+ close_gap<-draw(list(c(0,0,10,0),c(10.0005,0,20.0005,0)))
+ far_gap<-draw(list(c(0,0,10,0),c(10.002,0,20.002,0)))
+ list(spec=feature_spec(c("orientation","length","curvature"),bins=4,normalize=FALSE,
+  estimator="arclength",curvature_scale=1,length_range=c(0,100)),
+  settings=list(tolerance=.001,gap_max=3,angle_tolerance=5,parallel_distance=6,min_shared_extent=1),
+  pairs=list(connectivity=list(box,disconnected),continuation=list(continuation,staggered),
+   parallel=list(near_parallel,far_parallel),enclosure=list(nested,separate)),
+  topology=list(box=box,disconnected=disconnected,cross=cross,tee=tee,bowtie=bowtie,
+   close_gap=close_gap,far_gap=far_gap,empty=mlv_drawing(list(),100,100)),overlap=overlap,
+  expected=data.frame(case=c("box","disconnected","cross","tee","bowtie","close_gap","far_gap","empty"),
+   vertices=c(4,8,5,4,5,3,4,0),edges=c(4,4,4,3,6,2,2,0),components=c(1,4,1,1,1,1,2,0),
+   cycles=c(1,0,0,0,2,0,0,0),endpoints=c(0,8,4,3,0,2,4,0),branch_nodes=c(0,0,1,1,1,0,0,0)))
+}

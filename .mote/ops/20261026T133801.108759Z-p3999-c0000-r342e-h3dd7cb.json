@@ -1,0 +1,1 @@
+{"actor":"codex-mlv-impl","entity":"mlv-release-a","kind":"reserve_open","mode":"exclusive","op":"20261026T133801.108759Z-p3999-c0000-r342e-h3dd7cb","paths":["DESCRIPTION","NEWS.md","tools/bounded_check.py","docs/QUALIFICATION_0.2.0.md","docs/evidence/release-a"],"reservation_id":"rv-01M5W6XARM70A41JPHD4MWZ31N","ts":"2026-10-26T13:38:01.108759Z","ttl_s":7200,"v":2}

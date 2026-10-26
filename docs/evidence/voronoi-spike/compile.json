@@ -1,0 +1,18 @@
+{
+  "phase": "compile",
+  "args": [
+    "clang++",
+    "-std=c++17",
+    "-O2",
+    "-I/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/BH/include",
+    "tools/voronoi/prototype.cpp",
+    "-o",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/voronoi-spike/prototype"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "seconds": 1.7707508329986013,
+  "sampled_tree_peak_rss_bytes": 197066752,
+  "rss_cap_bytes": 2147483648,
+  "workspace_cap_bytes": 209715200
+}

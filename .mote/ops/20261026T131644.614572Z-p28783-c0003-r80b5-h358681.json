@@ -1,0 +1,1 @@
+{"actor":"codex-mlv-impl","entity":"mlv-feature-integration","kind":"note","note_kind":"progress","op":"20261026T131644.614572Z-p28783-c0003-r80b5-h358681","text":"Integrate spec-controlled physical contour/branch measurements and exact affine curvature histogram weights; validate stale cached geometry/spec and retain legacy defaults.","ts":"2026-10-26T13:16:44.614572Z","v":1}

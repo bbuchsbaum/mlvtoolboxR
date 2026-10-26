@@ -1,0 +1,35 @@
+{
+  "candidate": "Release A + designer + final fused statistics + graphs; local 0.2.1 snapshot",
+  "source_commit_at_build": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "identity": "source manifest and archive hash include uncommitted candidate",
+  "package_files": 394,
+  "source_mismatches": [],
+  "freeze_mismatches": [],
+  "archive": "mlvtoolbox_0.2.1-graphs.tar.gz",
+  "archive_bytes": 352771,
+  "archive_sha256": "de072ae04587283c3d2f5f49ac6d0e9101341282cac4aa1ac92524a8584d0283",
+  "installed_tests": {
+    "pass": 1332,
+    "fail": 0,
+    "warnings": 0,
+    "skip": 0
+  },
+  "check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": [
+      "New submission",
+      "unable to verify current time"
+    ]
+  },
+  "coverage_percent": 95.0669,
+  "unexecuted": [
+    "Linux",
+    "Windows",
+    "MATLAB",
+    "hosted CI",
+    "PDF manual",
+    "natural-image predictive validity"
+  ],
+  "publication": "none"
+}

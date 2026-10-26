@@ -1,0 +1,7 @@
+{
+  "start_epoch": 1793025391.8796191,
+  "start_utc": "2026-10-26T14:36:31.879620+00:00",
+  "limit_seconds": 14400,
+  "compiler_seconds_limit": 60,
+  "experiment_seconds_limit": 120
+}

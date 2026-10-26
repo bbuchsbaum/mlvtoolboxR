@@ -1,0 +1,1 @@
+collinear overlapping spans are unsupported (source segments 1 and 2)

@@ -1,0 +1,18 @@
+{
+  "BH_version": "1.90.0.1",
+  "BH_include": "/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/BH/include",
+  "BH_license": "BSL-1.0",
+  "header": "/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/BH/include/boost/polygon/voronoi.hpp",
+  "header_sha256": "06a414a6c591cdfb084c79e54d2ddea07ecfd8e64b1d9fd650232b69da408592",
+  "compiler": "Apple clang version 15.0.0 (clang-1500.1.0.2.5)\nTarget: arm64-apple-darwin23.3.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "package_license": "GPL (>= 3)",
+  "CGAL_component_docs_version": "6.2.1",
+  "CGAL_component_license": "GPL v3 per component reference/manual; not used or compiled for this spike",
+  "sources": [
+    "https://www.boost.org/doc/libs/latest/libs/polygon/doc/voronoi_main.htm",
+    "https://www.boost.org/LICENSE_1_0.txt",
+    "https://doc.cgal.org/latest/Segment_Delaunay_graph_2/group__PkgSegmentDelaunayGraph2Ref.html",
+    "https://doc.cgal.org/latest/Manual/license.html"
+  ],
+  "decision": "Prototype installed Boost headers without changing package dependencies. Preserve Boost license notices if any source is later redistributed."
+}

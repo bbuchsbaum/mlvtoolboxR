@@ -1,0 +1,8 @@
+{
+  "state": "prepared",
+  "source_commit": null,
+  "source_manifest": "package-source-manifest.json",
+  "package_file_count": 394,
+  "expected_base": "8f2c1f96827af245867c070873964b32e6f0188b",
+  "publication": "none"
+}

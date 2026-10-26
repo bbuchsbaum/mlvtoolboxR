@@ -1,0 +1,9 @@
+"case","vertices","edges","components","cycles","endpoints","branch_nodes"
+"box",4,4,1,1,0,0
+"disconnected",8,4,4,0,8,0
+"cross",5,4,1,0,4,1
+"tee",4,3,1,0,3,1
+"bowtie",5,6,1,2,0,1
+"close_gap",3,2,1,0,2,0
+"far_gap",4,2,2,0,4,0
+"empty",0,0,0,0,0,0
