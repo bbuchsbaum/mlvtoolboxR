@@ -1,0 +1,36 @@
+{
+  "baseline": ".agent-work/parity-perf/before/outputs.rds",
+  "candidate": ".agent-work/parity-perf/final/outputs.rds",
+  "inputs_identical": true,
+  "outputs": [
+    {
+      "workload": "features_1000x20",
+      "identical": true,
+      "_row": "features_1000x20"
+    },
+    {
+      "workload": "statistics_1000x20",
+      "identical": true,
+      "_row": "statistics_1000x20"
+    },
+    {
+      "workload": "junction_grid_19x19",
+      "identical": true,
+      "_row": "junction_grid_19x19"
+    },
+    {
+      "workload": "mat_rings_256",
+      "identical": true,
+      "_row": "mat_rings_256"
+    },
+    {
+      "workload": "raster_rings_256",
+      "identical": true,
+      "_row": "raster_rings_256"
+    }
+  ],
+  "baseline_sha256": "88f93a4f876d00c164149d41b430f5d1914c09d94e4ba761f211502aa94b5326",
+  "candidate_sha256": "f5e813bc8ac74288992045cb040731d04ecf748f951d660e33925f7b227df930",
+  "baseline_source": "0092e83c78dc9f357e781a355897d856747ef2cf",
+  "candidate_source": "d83ed952fdc9f639b98e849b0d8697259894de46"
+}

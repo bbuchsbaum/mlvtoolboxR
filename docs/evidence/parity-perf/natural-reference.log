@@ -1,0 +1,46 @@
+{
+  "cleaning": [
+    563.0,
+    562.0,
+    2072.0,
+    1.0
+  ],
+  "timings": [
+    {
+      "backend": "octave",
+      "stage": "geometry",
+      "first_seconds": 0.06571006774902344,
+      "median_seconds": 0.06362509727478027,
+      "min_seconds": 0.06283211708068848,
+      "max_seconds": 0.06470298767089844,
+      "schema_adapter": false
+    },
+    {
+      "backend": "octave",
+      "stage": "histogram",
+      "first_seconds": 0.08294987678527832,
+      "median_seconds": 0.08329200744628906,
+      "min_seconds": 0.08200693130493164,
+      "max_seconds": 0.08343696594238281,
+      "schema_adapter": false
+    },
+    {
+      "backend": "python",
+      "stage": "geometry",
+      "first_seconds": 0.0061883750022388995,
+      "median_seconds": 0.006060499999875901,
+      "min_seconds": 0.006013540998537792,
+      "max_seconds": 0.006148374999611406,
+      "schema_adapter": false
+    },
+    {
+      "backend": "python",
+      "stage": "histogram",
+      "first_seconds": 0.007362083000771236,
+      "median_seconds": 0.007471000000805361,
+      "min_seconds": 0.007371042000158923,
+      "max_seconds": 0.0076119160003145225,
+      "schema_adapter": true
+    }
+  ]
+}

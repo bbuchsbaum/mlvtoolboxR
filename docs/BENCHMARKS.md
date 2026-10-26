@@ -1,5 +1,7 @@
 # Local performance qualification
 
+Current follow-up: [0.1.1 performance](PERFORMANCE_0.1.1.md) and [expanded parity](PARITY.md). This page retains the 0.1.0 measurements.
+
 The R port is faster on the measured, correctness-checked stages below.
 These are synthetic local workloads, not an end-to-end natural-image study or
 a timing claim about MATLAB itself.

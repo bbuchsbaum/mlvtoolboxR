@@ -6,12 +6,17 @@ names<-c("rectangle","ring","cross","diagonal","sparse","isolated");results<-lis
 for(name in names) {
  mask<-read(paste0(name,".input.csv"))>0;m<-compute_mat(mask,trace_branches=FALSE)
  a<-read(paste0(name,".octave.aof.csv"));s<-read(paste0(name,".octave.skeleton.csv"))>0
+ aligned_aof<-average_outward_flux(m$distance_map,read(paste0(name,".octave.index.csv")))
+ aligned_skeleton<-skeletonize(aligned_aof>(2/pi*sin(28*pi/180))*60)
+ stopifnot(max(abs(aligned_aof-a))<1e-10,identical(aligned_skeleton,s))
  common<-m$skeleton&s;union<-m$skeleton|s
  rows[[name]]<-data.frame(case=name,R_skeleton_pixels=sum(m$skeleton),
   octave_skeleton_pixels=sum(s),different_skeleton_pixels=sum(m$skeleton!=s),
   intersection_over_union=if(any(union))sum(common)/sum(union) else 1,
   nearest_label_disagreements=sum(m$nearest_boundary!=read(paste0(name,".octave.index.csv"))),
   max_AOF_difference=max(abs(m$AOF-a)),
+  aligned_label_max_AOF_difference=max(abs(aligned_aof-a)),
+  aligned_label_different_skeleton_pixels=sum(aligned_skeleton!=s),
   max_distance_difference=max(abs(m$distance_map-read(paste0(name,".octave.distance.csv")))))
  results[[name]]<-list(mask=mask,mat=m,aof=a,skeleton=s)
 }

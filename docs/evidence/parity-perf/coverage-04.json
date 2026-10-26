@@ -1,0 +1,17 @@
+{
+  "stage": "coverage-04",
+  "args": [
+    "Rscript",
+    "--vanilla",
+    "/Users/bbuchsbaum/code/mlvtoolbox/tools/coverage.R",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/package-source",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/parity-perf"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 14.646258542001306,
+  "peak_work_bytes": 16994824,
+  "limit_bytes": 209715200,
+  "source_commit": "d83ed952fdc9f639b98e849b0d8697259894de46",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/coverage-04.log"
+}

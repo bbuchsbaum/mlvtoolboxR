@@ -1,0 +1,117 @@
+
+
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 522.30it/s]
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 824.35it/s]
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 562.19it/s]
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 826.59it/s]
+{
+  "cases": 18,
+  "files": 264,
+  "python_failures": [
+    {
+      "case": "integer0",
+      "stage": "length5",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer0",
+      "stage": "length8",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer0",
+      "stage": "length13",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer1",
+      "stage": "length5",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer1",
+      "stage": "length8",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer1",
+      "stage": "length13",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer2",
+      "stage": "length5",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer2",
+      "stage": "length8",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "integer2",
+      "stage": "length13",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "subpixel",
+      "stage": "length5",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "subpixel",
+      "stage": "length8",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "subpixel",
+      "stage": "length13",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "fractional",
+      "stage": "length5",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "fractional",
+      "stage": "length8",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    },
+    {
+      "case": "fractional",
+      "stage": "length13",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence.",
+      "location": "thisHist[b] = thisHist[b] + vecLD['contourLengths'][c]"
+    }
+  ]
+}

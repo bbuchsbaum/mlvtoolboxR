@@ -1,0 +1,7 @@
+{
+  "percent": 92.8989,
+  "R": "R version 4.5.1 (2025-06-13)",
+  "source_commit": "d83ed952fdc9f639b98e849b0d8697259894de46",
+  "files": ["R/batch.R", "R/geometry.R", "R/images.R", "R/io.R", "R/labels.R", "R/manipulation.R", "R/mat.R", "R/objects.R", "R/render.R", "R/statistics.R", "R/svg.R", "src/kernels.cpp"],
+  "instrumented_cpp": true
+}

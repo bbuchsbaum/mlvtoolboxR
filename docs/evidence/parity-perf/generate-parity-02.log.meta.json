@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T02:02:03.853829+00:00",
+  "finished_utc": "2026-10-26T02:02:08.861448+00:00",
+  "duration_seconds": 5.00747,
+  "command": [
+    "python3",
+    "tools/parity/generate.py"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/parity-perf/generate-parity-02.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 150.0,
+  "log_bytes": 4035
+}

@@ -1,6 +1,6 @@
 # Implementation status
 
-The local R package is version 0.1.0. This file supersedes the original
+The local R package is version 0.1.1. This file supersedes the original
 assessment's statements that no implementation exists.
 
 ## Implemented
@@ -20,44 +20,54 @@ assessment's statements that no implementation exists.
 
 ## Executed numerical evidence
 
-- Independent analytical/metamorphic geometry tests and exhaustive small EDT/KNN
-  witnesses, plus variable-field scalar AOF comparisons.
-- Exact Pratt agreement on three executed Octave fixtures (box, ring, noise).
-- On the 25-by-35 reference MAT fixture: skeletons match at every pixel
-  (44 pixels); maximum flux discrepancy about 1.1e-14.
-- Angle construction and one-based grid sampling order are tested explicitly:
-  mathematically equivalent reassociation can select different cells near ties.
-- R default and explicit 28-degree threshold share one rule. Degenerate masks,
-  short branches and valid-zero mappings have defined behavior.
+- The installed suite has 583 passing assertions, including independent geometry,
+  exhaustive EDT/nearest-search, metamorphic and public workflow tests.
+- Eighteen synthetic cases execute pinned Octave/Python references across
+  contours, histogram bins, rotations, MAT masks, AOF radii and branch shapes.
+  All 289 comparisons are retained: 226 match and 63 have documented explanations.
+- A retained forest drawing (562 contours / 2,072 segments after removing one
+  zero-length contour) matches reference geometry and histograms within explicit
+  tolerances. Python length histograms require a labeled shape adaptation.
+- Six MAT distance maps agree. Default skeletons differ on four masks at exact
+  nearest-boundary ties. Keeping R distances and substituting Octave labels
+  makes all six skeletons identical, with AOF error below 1.5e-14.
+- Analytical boundary and distance tests caught two R defects, now fixed:
+  odd-bin axial histogram boundaries and isolated-pixel signed distances.
+- Exact old-output witnesses cover grouped statistics and tangent samples;
+  filtered mapping agrees with exhaustive nearest-sample search.
+
+See [PARITY](docs/PARITY.md) for the stage matrix, plots, tolerances, adapters,
+natural drawing and reproduced upstream defects. Actual MATLAB was not executed.
 
 ## Qualification
 
-Source candidate 141a4a44dcc6431faa53a6a4b8af31b06b306982 passes the installed
-250-assertion regression suite and R CMD check --as-cran --no-manual with
-0 errors, 0 warnings and one informational New submission NOTE. Coverage is
-92.6117% across R and instrumented C++, up from 82.8125%.
+Source d83ed952fdc9f639b98e849b0d8697259894de46 passes R CMD check
+--as-cran --no-manual with 0 errors, 0 warnings and one informational
+New submission NOTE. R and instrumented C++ coverage is 92.8989%
+(previously 92.6117%). Examples and vignette rebuilds pass.
 
-Matched local benchmarks show 2.1-6.4x faster contour geometry and 44-50x faster
-EDT than the runnable Python paths. The MAT core is about 1,984-2,389x faster
-than the MATLAB source interpreted by Octave on the tested 32/64-pixel cases.
-These ratios do not describe MATLAB JIT performance or a complete image pipeline.
-Vectorized wrappers make the 1,000-contour R workload 184.9x faster than the
-earlier checked R candidate, preserving a mixed-contour result exactly.
+Paired local measurements improve the 1,000-contour feature table from 1.609 s
+to 30.875 ms (52.1x), the long statistics table 45.6x, and full MAT on four
+256x256 elliptical rings 1.91-1.92x. All five representative old/new workload
+outputs are identical. Forest histograms take 6.656 ms, versus 619 ms in R 0.1.0,
+83.292 ms in Octave and 7.471 ms in shape-adapted Python. These are local
+workload-specific observations, not MATLAB JIT or complete image-pipeline claims.
 
-See [qualification](docs/QUALIFICATION.md), [benchmarks](docs/BENCHMARKS.md)
-and the machine-readable receipts in docs/evidence. The local installable archive
-is mlvtoolbox_0.1.0.tar.gz; it is ignored by Git and can be rebuilt with
-tools/bounded_check.py.
+See [qualification](docs/QUALIFICATION_0.1.1.md),
+[performance](docs/PERFORMANCE_0.1.1.md) and receipts in
+docs/evidence/parity-perf. The local installable archive is
+mlvtoolbox_0.1.1.tar.gz; it is ignored by Git and can be rebuilt with
+tools/bounded_check.py. The 0.1.0 archive and historical evidence are preserved.
 
-Prepared CI covers macOS, Windows and Linux. Hosted CI and actual Windows/Linux
-runs are unexecuted. No CRAN/R-universe submission, site deployment or upstream
-issue submission has occurred.
+Prepared CI covers macOS, Windows and Linux; hosted and Windows/Linux execution
+remain unexecuted. No CRAN/R-universe submission, site deployment, repository push
+or upstream issue submission has occurred.
 
-MATLAB itself and the full Python image pipeline have not been run. Natural
-image scientific acceptance, general SVG paint effects, MAT v7.3/HDF5 adapters
-and bundled SAM extraction are outside this local qualification. Rasterization,
-graph tracing, EDT ties, taper smoothing and mean orientation have explicit
-method choices documented in UPSTREAM_BUGS.md.
+The full Python image pipeline and actual MATLAB have not run. Natural-image
+scientific acceptance, peak RSS, parallel scaling, general SVG paint effects,
+MAT v7.3/HDF5 and bundled SAM extraction remain outside this qualification.
+Rasterization, graph tracing, EDT ties, taper smoothing and axial mean orientation
+have explicit method choices documented in UPSTREAM_BUGS.md.
 
 ## Storage and provenance
 

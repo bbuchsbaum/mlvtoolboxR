@@ -1,0 +1,11 @@
+  backend     stage     n max_abs_error tolerance status
+1  octave  geometry  6216  5.684342e-14     1e-08  match
+2  octave histogram 13488  1.818989e-12     1e-08  match
+3  python  geometry  6216  2.168697e-09     3e-08  match
+4  python histogram 13488  2.728484e-12     1e-08  match
+      stage first_seconds median_seconds min_seconds max_seconds iterations
+1  geometry         0.002     0.00103125 0.000984375 0.001046875        128
+2 histogram         0.006     0.00659375 0.006406250 0.006750000         32
+                             source_commit package_version
+1 d83ed952fdc9f639b98e849b0d8697259894de46           0.1.1
+2 d83ed952fdc9f639b98e849b0d8697259894de46           0.1.1

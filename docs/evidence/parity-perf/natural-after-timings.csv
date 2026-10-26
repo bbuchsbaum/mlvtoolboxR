@@ -1,0 +1,3 @@
+"stage","first_seconds","median_seconds","min_seconds","max_seconds","iterations"
+"geometry",0.001,0.000999999999999999,0.0009921875,0.0010390625,128
+"histogram",0.006,0.00656250000000001,0.00646875000000001,0.00678125,32

@@ -1,10 +1,14 @@
 # Current execution status
 
-The cleanup and R implementation have now been carried out. See
-[IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md), the bug register and
-[qualification](docs/QUALIFICATION.md) and [benchmarks](docs/BENCHMARKS.md)
-for current results (250 assertions, 92.61% coverage, check 0 errors / 0 warnings). The assessment below is retained as the
-historical design baseline; its no-implementation statements are superseded.
+The cleanup and R implementation are complete, with a qualified 0.1.1
+performance/parity follow-up. See [IMPLEMENTATION_STATUS](IMPLEMENTATION_STATUS.md),
+[qualification](docs/QUALIFICATION_0.1.1.md),
+[performance](docs/PERFORMANCE_0.1.1.md), [parity](docs/PARITY.md) and the
+[bug register](UPSTREAM_BUGS.md). Current evidence: 583 assertions, 92.8989%
+R/C++ coverage, check 0 errors / 0 warnings, 18 synthetic reference cases and
+a retained forest drawing. Default MAT tie differences are explicitly retained.
+The assessment below is the historical design baseline; its no-implementation
+statements are superseded.
 
 # MLV Toolbox to R: assessment and porting plan
 

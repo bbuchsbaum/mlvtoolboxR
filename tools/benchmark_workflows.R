@@ -42,7 +42,8 @@ for(name in names(jobs)) {
                 file=file.path(args[2],paste0(name,"-profile.txt")))
  cat(name,median(times),"seconds\n")
 }
-out<-do.call(rbind,rows);out$source_commit<-system2("git",c("rev-parse","HEAD"),stdout=TRUE)
+out<-do.call(rbind,rows);out$source_commit<-if(length(args)>=4)args[4] else system2("git",c("rev-parse","HEAD"),stdout=TRUE)
+out$package_version<-as.character(utils::packageVersion("mlvtoolbox"))
 out$R<-R.version.string
 write.csv(out,file.path(args[2],"timings.csv"),row.names=FALSE)
 saveRDS(list(inputs=list(many=many,grid=grid,rings=rings),outputs=outputs),

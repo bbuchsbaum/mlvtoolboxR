@@ -121,5 +121,6 @@ six-mask comparison have the same exact squared distance after MLV-R001 is fixed
 but their directions can change AOF and the final skeleton. Tests therefore
 establish full distance parity, AOF parity with identical distance/label fields,
 and morphology parity with identical flux fields. They do not label the differing
-default end-to-end skeletons as matches. See the complete parity report for counts
-and images. Actual MATLAB's distance/morphology tie behavior remains unexecuted.
+default end-to-end skeletons as matches. See [the complete parity report](docs/PARITY.md) for counts
+and images. Keeping R distances but substituting Octave nearest labels makes all
+six skeletons identical, with maximum AOF error below 1.5e-14. Actual MATLAB's distance/morphology tie behavior remains unexecuted.

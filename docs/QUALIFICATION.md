@@ -1,5 +1,7 @@
 # Local qualification receipt
 
+Current follow-up: [0.1.1 qualification](QUALIFICATION_0.1.1.md). This page retains the 0.1.0 receipt.
+
 The local R package `mlvtoolbox` 0.1.0 was built, installed and checked at
 source commit `141a4a44dcc6431faa53a6a4b8af31b06b306982`.
 The final source archive is [mlvtoolbox_0.1.0.tar.gz](../mlvtoolbox_0.1.0.tar.gz)

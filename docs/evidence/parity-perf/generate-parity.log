@@ -1,0 +1,38 @@
+Matplotlib is building the font cache; this may take a moment.
+
+
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 557.66it/s]
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 834.24it/s]
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 566.60it/s]
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 847.86it/s]
+{
+  "cases": 18,
+  "files": 168,
+  "python_failures": [
+    {
+      "case": "integer0",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence."
+    },
+    {
+      "case": "integer1",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence."
+    },
+    {
+      "case": "integer2",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence."
+    },
+    {
+      "case": "subpixel",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence."
+    },
+    {
+      "case": "fractional",
+      "exception": "ValueError",
+      "message": "setting an array element with a sequence."
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+"workload","first_seconds","median_seconds","min_seconds","max_seconds","iterations","output_bytes","source_commit","package_version","R"
+"features_1000x20",0.034,0.030875,0.0305,0.032125,8,585184,"d83ed952fdc9f639b98e849b0d8697259894de46","0.1.1","R version 4.5.1 (2025-06-13)"
+"statistics_1000x20",0.0329999999999999,0.033375,0.032125,0.03375,8,4413976,"d83ed952fdc9f639b98e849b0d8697259894de46","0.1.1","R version 4.5.1 (2025-06-13)"

@@ -1,0 +1,60 @@
+        status
+backend  different match
+  octave        22   151
+  python        41    75
+            case backend                stage   n max_abs_error    tolerance
+        integer0  python         rotate37_ccw 528  8.949640e-04 2.243878e-10
+        integer1  python         rotate37_ccw 528  7.967798e-04 2.313106e-10
+        integer2  python         rotate37_ccw 528  8.821968e-04 2.359624e-10
+        subpixel  python         rotate37_ccw 260  7.196839e-04 2.118121e-10
+      fractional  python         rotate37_ccw 260  7.239893e-04 2.187611e-10
+       rectangle  octave            mat_index 775  1.680000e+02 0.000000e+00
+       rectangle  octave              mat_aof 775  1.762977e+01 1.494509e-10
+       rectangle  octave         mat_skeleton 775  1.000000e+00 0.000000e+00
+            ring  octave            mat_index 775  4.800000e+01 0.000000e+00
+            ring  octave              mat_aof 775  2.133831e+01 1.553675e-10
+            ring  octave         mat_skeleton 775  1.000000e+00 0.000000e+00
+           cross  octave            mat_index 775  1.920000e+02 0.000000e+00
+           cross  octave              mat_aof 775  1.782129e+01 1.515908e-10
+           cross  octave         mat_skeleton 775  1.000000e+00 0.000000e+00
+        diagonal  octave            mat_index 775  2.600000e+01 0.000000e+00
+        diagonal  octave              mat_aof 775  6.412147e+00 1.515908e-10
+          sparse  octave            mat_index 775  1.440000e+02 0.000000e+00
+          sparse  octave              mat_aof 775  2.643701e+01 1.534693e-10
+          sparse  octave         mat_skeleton 775  1.000000e+00 0.000000e+00
+        isolated  octave            mat_index 775  2.400000e+01 0.000000e+00
+        isolated  octave              mat_aof 775  6.867987e+00 1.534693e-10
+ features_random  python aof_common_fields_e1 221  4.525219e+01 1.515908e-10
+ features_random  python aof_common_fields_e2 221  3.750128e+01 1.515908e-10
+   features_ties  python aof_common_fields_e1 221  5.334336e+01 1.515908e-10
+   features_ties  python aof_common_fields_e2 221  4.715017e+01 1.515908e-10
+          curved  octave        branch_mirror  21  4.756225e-01 1.004766e-10
+   terminal_bend  octave        branch_mirror  21  6.129367e-01 1.006139e-10
+ disagreements    status
+           528 different
+           528 different
+           528 different
+           260 different
+           260 different
+            18 different
+            63 different
+            10 different
+            15 different
+            65 different
+            11 different
+             8 different
+            34 different
+            14 different
+           125 different
+           241 different
+            29 different
+           143 different
+            12 different
+             2 different
+            12 different
+           135 different
+            96 different
+            65 different
+            96 different
+            15 different
+            21 different

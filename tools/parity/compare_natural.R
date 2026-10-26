@@ -12,9 +12,10 @@ for(backend in c("octave","python"))for(stage in c("geometry","histogram")) {
  a<-if(stage=="geometry")actual_g else actual_h;b<-read(paste0(backend,"-",stage,".csv"))
  tolerance<-if(stage=="geometry"&&backend=="python")3e-8 else 1e-8
  rows[[length(rows)+1L]]<-data.frame(backend,stage,n=length(a),max_abs_error=max(abs(a-b)),
-  tolerance,status=if(max(abs(a-b))<=tolerance)"match" else "different")
+  tolerance,status=if(identical(dim(a),dim(b)) && all(is.finite(a)) && all(is.finite(b)) && max(abs(a-b))<=tolerance)"match" else "different")
 }
 write.csv(do.call(rbind,rows),file.path(base,paste0(args[2],"-comparison.csv")),row.names=FALSE)
+stopifnot(all(vapply(rows,function(row)row$status=="match",logical(1))))
 timer<-function(f) {
  first<-unname(system.time(f())[3]);number<-1L
  repeat {elapsed<-unname(system.time(for(i in seq_len(number))f())[3]);if(elapsed>=.15||number>=128)break;number<-number*2L}
@@ -25,5 +26,7 @@ geometry<-function()compute_contour_properties(d,c("length","orientation","curva
 histogram<-function()feature_table(g,c("orientation","length","curvature"))
 times<-rbind(data.frame(stage="geometry",as.list(timer(geometry))),
              data.frame(stage="histogram",as.list(timer(histogram))))
+times$source_commit<-if(length(args)>=3)args[3] else system2("git",c("rev-parse","HEAD"),stdout=TRUE)
+times$package_version<-as.character(utils::packageVersion("mlvtoolbox"))
 write.csv(times,file.path(base,paste0(args[2],"-timings.csv")),row.names=FALSE)
 print(do.call(rbind,rows));print(times)

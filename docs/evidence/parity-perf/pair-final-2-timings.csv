@@ -1,0 +1,3 @@
+"workload","first_seconds","median_seconds","min_seconds","max_seconds","iterations","output_bytes","source_commit","package_version","R"
+"mat_rings_256",0.346,0.334,0.332,0.337,1,6737752,"d83ed952fdc9f639b98e849b0d8697259894de46","0.1.1","R version 4.5.1 (2025-06-13)"
+"raster_rings_256",0,0.000351562499999999,0.000351562499999999,0.000375,128,262360,"d83ed952fdc9f639b98e849b0d8697259894de46","0.1.1","R version 4.5.1 (2025-06-13)"

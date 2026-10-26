@@ -1,0 +1,5 @@
+features_1000x20 1.061 seconds
+statistics_1000x20 1.103 seconds
+junction_grid_19x19 0.109 seconds
+mat_rings_256 0.463 seconds
+raster_rings_256 0.0002421875 seconds

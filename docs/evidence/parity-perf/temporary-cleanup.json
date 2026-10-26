@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-26T02:55:12.984096+00:00",
+  "removed_regenerable_owned_paths": [
+    {
+      "path": ".agent-work/package-build",
+      "logical_bytes": 6690738
+    },
+    {
+      "path": ".agent-work/parity-perf",
+      "logical_bytes": 4985590
+    },
+    {
+      "path": "src/RcppExports.o",
+      "logical_bytes": 710784
+    },
+    {
+      "path": "src/kernels.o",
+      "logical_bytes": 1442560
+    },
+    {
+      "path": "src/mlvtoolbox.so",
+      "logical_bytes": 782560
+    }
+  ],
+  "total_logical_bytes": 14612232,
+  "archives_preserved": [
+    "mlvtoolbox_0.1.0.tar.gz",
+    "mlvtoolbox_0.1.1.tar.gz"
+  ],
+  "canonical_data_and_vendor_preserved": true
+}

@@ -1,0 +1,27 @@
+{
+  "source": {
+    "source_repository": "MLV_toolbox",
+    "source_commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+    "source_path": "demos/Forest_DBW.mat",
+    "destination": "/Users/bbuchsbaum/code/mlvtoolbox/reference-data/mlv/examples/Forest_DBW.mat",
+    "bytes": 8115271,
+    "sha256": "da1f7ed1a1e512913b0210f8aefcb83f8ef673b82fdcb7e1c5d62da2bd778fb5"
+  },
+  "cleaning": [
+    563.0,
+    562.0,
+    2072.0,
+    1.0
+  ],
+  "cleaning_fields": [
+    "original_contours",
+    "retained_contours",
+    "retained_segments",
+    "zero_segments_removed"
+  ],
+  "python_histogram_adapter": "reshape contourLengths from (n,1) to (n,); numerical functions unchanged",
+  "reference_commits": {
+    "MLV_toolbox": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+    "pyMLV": "14b3183b91146b1021eb7ef97db75ad703b06832"
+  }
+}

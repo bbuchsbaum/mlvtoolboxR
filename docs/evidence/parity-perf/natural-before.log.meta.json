@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T02:18:29.768132+00:00",
+  "finished_utc": "2026-10-26T02:18:36.517083+00:00",
+  "duration_seconds": 6.748724,
+  "command": [
+    "Rscript",
+    "--vanilla",
+    "tools/parity/compare_natural.R",
+    ".agent-work/parity-perf/baseline",
+    "before"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/parity-perf/natural-before.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 120.0,
+  "log_bytes": 513
+}

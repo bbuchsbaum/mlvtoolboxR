@@ -1,0 +1,79 @@
+{
+  "version": "0.1.1",
+  "source_commit": "d83ed952fdc9f639b98e849b0d8697259894de46",
+  "baseline_source_commit": "0092e83c78dc9f357e781a355897d856747ef2cf",
+  "artifacts": {
+    "mlvtoolbox_0.1.0.tar.gz": {
+      "bytes": 107812,
+      "sha256": "ed7d49c60174011d80b299d1dda7f73be5cb8f049e26680034c9002f08cc30c7"
+    },
+    "mlvtoolbox_0.1.1.tar.gz": {
+      "bytes": 270147,
+      "sha256": "1860a64ac5ac92284972f2e9ba76b8f78e97064e3634dd1fedc79d42e11b668d"
+    }
+  },
+  "test_assertions": 583,
+  "test_failures": 0,
+  "test_warnings": 0,
+  "test_skips": 0,
+  "R_CMD_check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": [
+      "New submission"
+    ],
+    "args": [
+      "--as-cran",
+      "--no-manual"
+    ]
+  },
+  "coverage_percent": 92.8989,
+  "instrumented_cpp": true,
+  "verification": {
+    "utc": "2026-10-26T02:44:50.433910+00:00",
+    "source_files": 359,
+    "source_mismatches": [],
+    "fixture_files": 264,
+    "fixture_mismatches": []
+  },
+  "synthetic_parity": {
+    "cases": 18,
+    "comparisons": 289,
+    "results": {
+      "octave": {
+        "match": 151,
+        "different": 22
+      },
+      "python": {
+        "match": 75,
+        "different": 41
+      }
+    },
+    "unexplained": 0
+  },
+  "natural_drawing": {
+    "retained_contours": 562,
+    "retained_segments": 2072,
+    "matches": 4
+  },
+  "default_mat_skeletons_different": 4,
+  "default_mat_masks": 6,
+  "plot_inspected": true,
+  "workspace_limit_bytes": 209715200,
+  "check_peak_work_bytes": 11822896,
+  "coverage_peak_work_bytes": 16994824,
+  "unexecuted": [
+    "Actual MATLAB",
+    "Windows and Linux",
+    "Hosted CI",
+    "Full Python image pipeline",
+    "Natural-image scientific acceptance",
+    "Peak RSS",
+    "Parallel scaling",
+    "PDF manual"
+  ],
+  "published": false,
+  "aligned_label_mat_skeletons_match": 6,
+  "aligned_label_max_AOF_error_bound": 1.5e-14,
+  "temporary_cleanup_receipt": "temporary-cleanup.json"
+}
