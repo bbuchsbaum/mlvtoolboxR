@@ -12,7 +12,9 @@ the completed feature-schema, estimator and designer additions. Subsequent
 graph work in the shared checkout is outside this snapshot. The check ran
 before the combined Git checkpoint existed; the
 [source manifest](evidence/fused-statistics/package-source-manifest.json) binds
-the actual tested bytes. The retained archive is
+the actual tested bytes. All 388 package files at local source commit
+`bf9f0796010c18c58168f518cdbbc35ca37a5a1c` match that manifest exactly
+([checkpoint receipt](evidence/fused-statistics/checkpoint.json)). The retained archive is
 [mlvtoolbox_0.2.1-fused.tar.gz](../mlvtoolbox_0.2.1-fused.tar.gz), 344,689 bytes,
 SHA-256 `36adfe06494da8a2e6a07ffc6c325007374ab14225356bd6889695e19885fee1`.
 The separate designer archive and its earlier evidence remain unchanged.

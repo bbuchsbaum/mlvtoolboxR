@@ -1,0 +1,13 @@
+{
+  "source_commit": "bf9f0796010c18c58168f518cdbbc35ca37a5a1c",
+  "parent_commit": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "package_files": 388,
+  "all_package_sha256_match_tested_manifest": true,
+  "manifest": "package-source-manifest.json",
+  "qualification": "Executed before commit; every package input in this commit matches the frozen checked bytes.",
+  "archive_sha256": "36adfe06494da8a2e6a07ffc6c325007374ab14225356bd6889695e19885fee1",
+  "normal_index_synchronized_without_working_tree_changes": true,
+  "subsequent_graph_work_excluded": true,
+  "remote_action": "none",
+  "whitespace_review": "Raw tool logs and machine-generated evidence retain original whitespace. All source, tests, tools and narrative documentation pass diff --check."
+}
