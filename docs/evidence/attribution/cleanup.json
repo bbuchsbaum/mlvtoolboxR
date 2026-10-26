@@ -1,0 +1,15 @@
+{
+  "completed_utc": "2026-10-26T18:59:54.072896+00:00",
+  "removed_owned_idle_builds": [
+    {
+      "path": ".agent-work/attribution-source",
+      "bytes": 992900
+    },
+    {
+      "path": ".agent-work/attribution-build",
+      "bytes": 8951989
+    }
+  ],
+  "archive_and_evidence_retained": true,
+  "checked_committed_package_files": 400
+}

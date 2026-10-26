@@ -23,8 +23,8 @@ Archive: `mlvtoolbox_0.2.1-attribution.tar.gz`, SHA-256
 `7a4497651076d244319c1a83486148cc349ca8806c59d0a1c650efddc00038ca`.
 All package inputs are bound by [the source manifest](package-source-manifest.json).
 The check used a frozen package over `8a1452b3af4d8953c1edc6d7f53a49f771f2ab54`; that parent
-alone does not include these metadata changes. The later checkpoint receipt
-binds the tested input files to their committed blobs. Concurrent studio
+alone does not include these metadata changes. The [checkpoint receipt](checkpoint.json)
+binds the tested input files to commit ca7ceda7c85727c2d6baa511d16b789712cd983c. Concurrent studio
 housekeeping in the live .Rbuildignore was preserved separately.
 
 [Package inspection](packaging.json), [check log](00check.log),

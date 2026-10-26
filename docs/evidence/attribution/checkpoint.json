@@ -1,0 +1,12 @@
+{
+  "source_commit": "ca7ceda7c85727c2d6baa511d16b789712cd983c",
+  "parent_commit": "8a1452b3af4d8953c1edc6d7f53a49f771f2ab54",
+  "package_input_files": 400,
+  "all_committed_package_hashes_match_checked_inputs": true,
+  "manifest": "package-source-manifest.json",
+  "archive": "mlvtoolbox_0.2.1-attribution.tar.gz",
+  "archive_sha256": "7a4497651076d244319c1a83486148cc349ca8806c59d0a1c650efddc00038ca",
+  "normal_index_synchronized_without_working_file_changes": true,
+  "other_agent_Rbuildignore_additions_preserved_unstaged": true,
+  "published": false
+}
