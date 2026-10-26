@@ -1,0 +1,26 @@
+{
+  "files": 159,
+  "all_snapshot_hashes_match": true,
+  "repositories": {
+    "MLV_toolbox": {
+      "url": "https://github.com/bwlabToronto/MLV_toolbox",
+      "commit": "f12418a5e03c2f38e222fed1dffccf42b227cd29"
+    },
+    "pyMLV": {
+      "url": "https://github.com/bwlabToronto/pyMLV",
+      "commit": "14b3183b91146b1021eb7ef97db75ad703b06832"
+    }
+  },
+  "classifications": {
+    "MLV_toolbox": {
+      "NOASSERTION": 82,
+      "GPL-3.0-or-later": 5,
+      "LicenseRef-Kovesi-permissive": 6
+    },
+    "pyMLV": {
+      "MIT-root": 63,
+      "GPL-3.0-or-later": 3
+    }
+  },
+  "limitation": "Notice inventory only. NOASSERTION requires permission/lineage review before redistribution or further code reuse; acknowledgments do not supply permission."
+}

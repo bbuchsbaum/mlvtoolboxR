@@ -1,0 +1,13 @@
+These are pinned, source-only reference snapshots, not the R package.
+They retain their original per-file notices and have mixed or unresolved licenses.
+Do not apply the R implementation's GPL declaration to all vendored files.
+
+MLV_toolbox: https://github.com/bwlabToronto/MLV_toolbox
+commit f12418a5e03c2f38e222fed1dffccf42b227cd29
+pyMLV: https://github.com/bwlabToronto/pyMLV
+commit 14b3183b91146b1021eb7ef97db75ad703b06832
+
+See LICENSING.md for the per-file inventory and unresolved grants.
+SOURCES.json binds all 159 retained files to their snapshot hashes.
+Original license texts/notices are also preserved under ../inst/LICENSES/.
+No vendored source files were changed by the attribution audit.

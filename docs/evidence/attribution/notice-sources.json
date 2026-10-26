@@ -1,0 +1,14 @@
+{
+  "GPL_text_source": "/Library/Frameworks/R.framework/Resources/share/licenses/GPL-3",
+  "GPL_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+  "Octave_source": "/Users/bbuchsbaum/.local/share/octave/api-v61/packages/image-2.20.0/bwmorph.m",
+  "Octave_bwmorph_sha256": "226734dfdbba5f34376267d310b6df90539d88d7148bc3d34fe2987ac8c20f1c",
+  "license_files": {
+    "MLV-GPL-notices.txt": "9e8d308110ebbc47462b0d006df45d6df5b50ddd0a546c05c19d07f09049978f",
+    "GPL-3.0.txt": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "Kovesi-notices.txt": "b77fd0ee118320b84903ba0ab012bcc29fe550dc215debdbff5078e08baf7a0e",
+    "Octave-image-notice.txt": "86b1e1d4084608856b52f59ccd2da755016fa6f7d4dd4878182219375b2893ca",
+    "pyMLV-MIT.txt": "b2dd91873eaa83dd1b9f1f7a3999eb65896ad8e7c02a772b1e8c8fd4c62a513b",
+    "Vendored-copyrights.txt": "91eb548dbb2b507b44a2151884b44d1763264e04a1afee50f5798bc4929b8812"
+  }
+}

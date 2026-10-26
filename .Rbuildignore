@@ -16,3 +16,4 @@
 ^\.gitignore$
 ^\.github$
 ^mlvtoolbox_.*\.tar\.gz$
+^COPYING$

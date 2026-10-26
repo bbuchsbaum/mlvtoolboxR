@@ -2,13 +2,24 @@ Package: mlvtoolbox
 Type: Package
 Title: Contour Geometry and Mid-Level Vision Analysis
 Version: 0.2.1
-Authors@R: person("Bradley", "Buchsbaum", email = "brad.buchsbaum@gmail.com",
-    role = c("aut", "cre"))
+Authors@R: c(
+    person("Bradley", "Buchsbaum", email = "brad.buchsbaum@gmail.com",
+           role = c("aut", "cre", "cph")),
+    person("Dirk", "Bernhardt-Walther", role = "ctb",
+           comment = "Original MLV Toolbox and scientific methods"),
+    person("Morteza", "Rezanejad", role = c("ctb", "cph"),
+           comment = "Original MLV and GPL-licensed AOF formulation"),
+    person("Josep", "Mones i Teixidor", role = c("ctb", "cph"),
+           comment = "GNU Octave image morphology lookup tables"),
+    person("Carnë", "Draug", role = c("ctb", "cph"),
+           comment = "GNU Octave image morphology lookup tables"))
 Description: Analyses vectorized line drawings using contour orientation, length,
     curvature, junctions, and average-outward-flux medial-axis representations.
     Includes image tracing, stimulus manipulation, reproducible feature tables,
     and explicit handling of degenerate geometry. Implements methods described
-    by Walther et al. (2023) <doi:10.3389/fcomp.2023.1140723>.
+    by Walther et al. (2023) <doi:10.3389/fcomp.2023.1140723> as an independently
+    maintained R port and extension of the Mid-Level Vision Toolbox, with
+    explicit estimator choices and documented departures from reference outputs.
 License: GPL (>= 3)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)

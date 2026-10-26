@@ -1,0 +1,469 @@
+Copyright/author lines retained in pinned reference files.
+Copyright-only entries do not imply a license grant. See vendor/LICENSING.md in the repository.
+
+MLV_toolbox/MLVcode/renderLinedrawingProperty.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/cleanupJunctions.m
+% Copyright Dirk Bernhardt-Walther
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/drawAllProperties.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeAOF.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/computeJunctions.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeJunctionAnglesTypes.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/getMATpropertyStats.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/fitLineSegments.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/splitLDbyStatsModel.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/drawLinedrawing.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeMATproperty.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/getHorizontalVerticalStats.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/renderJunctions.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/getOrientationStats.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeAllMATproperties.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/drawJunctions.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeAllMATfromVecLD.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/MATpropertiesToContours.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/getContourPropertiesStats.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/randomlyShiftContours.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/traceLineDrawingFromRGB.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/splitLDbyHistogramWeights.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeOrientation.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/segmentContoursAtJunctions.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/importSVG.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/mapMATtoContour.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/drawContoursByStatsModel.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/getCurvatureStats.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/renderLinedrawing.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/saveSceneLDsToTable.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/extract2DSkeletonFromBinaryImage.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/splitLDmiddleSegmentsVsJunctions.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/drawLinedrawingProperty.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/InitializeNeighborhoods.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/computeCurvature.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeMAT.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/lineIntersection.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/predictContoursByStatsModel.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/allLDHistogramsToTable.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeMATpropertyPerBranch.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/traceLinedrawingFromEdgeMap.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/computeContourProperties.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/getDistanceFromLineSegment.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/computeLength.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/getLengthStats.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/renderContoursByStatsModel.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/histogramToTable.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/computeGradientVectorField.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/rotateLinedrawing.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/detectJunctions.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/splitLDbyProperties.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/generateFeatureDensityMap.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/renderMATproperty.m
+% Copyright Dirk Bernhardt-Walther and Morteza Rezanejad
+
+MLV_toolbox/MLVcode/traceSkeleton.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/computeColorIndex.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/drawMATproperty.m
+% Copyright Morteza Rezanejad and Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/removeZeroLengthContours.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/applyCircularAperture.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/getJunctionStats.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/MLVcode/mergeLineSegments.m
+% Copyright Morteza Rezanejad
+
+MLV_toolbox/MLVcode/averageProperty.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/demos/Frontiers2023_Figures.m
+% Copyright Dirk Bernhardt-Walther
+
+MLV_toolbox/3rdParty/contour_tracing/edge_linking/edgelink.m
+% Copyright (c) 2001-2007 Peter Kovesi
+% The above copyright notice and this permission notice shall be included in
+
+MLV_toolbox/3rdParty/contour_tracing/edge_linking/findendsjunctions.m
+% Copyright (c) 2006 Peter Kovesi
+% The above copyright notice and this permission notice shall be included in
+
+MLV_toolbox/3rdParty/contour_tracing/edge_linking/drawedgelist.m
+% Copyright (c) 2003-2011 Peter Kovesi
+% The above copyright notice and this permission notice shall be included in
+
+MLV_toolbox/3rdParty/contour_tracing/edge_linking/lineseg.m
+% Copyright (c) 2000-2006 Peter Kovesi
+% The above copyright notice and this permission notice shall be included in
+
+MLV_toolbox/3rdParty/contour_tracing/edge_linking/cleanedgelist.m
+% Copyright (c) 2006-2007 Peter Kovesi
+% The above copyright notice and this permission notice shall be included in
+
+MLV_toolbox/3rdParty/contour_tracing/edge_linking/edgelist2image.m
+% Copyright (c) 2007 Peter Kovesi
+% The above copyright notice and this permission notice shall be included in
+
+MLV_toolbox/3rdParty/contour_tracing/edge_linking/maxlinedev.m
+% Peter Kovesi
+
+pyMLV/LICENSE
+Copyright (c) 2024 Bernhardt-Walther Lab
+The above copyright notice and this permission notice shall be included in all
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+
+pyMLV/mainpage.py
+## pyMLV is the Python version of the Mid-level Vision Toolbox (MLVToolbox), created by the Aravind Narayanan in BWLab at the University of Toronto.
+
+pyMLV/MLVcode/getDistanceFromLineSegment.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/segmentContoursAtJunctions.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeAllMATproperties.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/detectJunctions.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeJunctionAnglesTypes.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/cleanupJunctions.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/sample_sphere_2D.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/splitLDbyStatsModel.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/randomlyShiftContours.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeGradientVectorField.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/extract2DSkeletonFromBinaryImage.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeColorIndex.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/load_mat.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/predictContoursByStatsModel.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getBranchDerivative.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/removeZeroLengthContours.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getJunctionStats.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getLengthStats.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeJunctions.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getHorizontalVerticalStats.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeMAT.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/generateFeatureDensityMap.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/unique.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeAllMATfromVecLD.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/drawThisProperty.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/allLDHistogramsToTable.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/applyCircularAperture.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/saveSceneLDsToTable.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeContourProperties.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeCurvature.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/histogramToTable.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/is_outer_border_point.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getOrientationStats.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/MATpropertiesToContours.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getContourPropertiesStats.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/mergeLineSegments.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/drawLinedrawingProperty.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/bwdist.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getMATpropertyStats.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/getCurvatureStats.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/InitializeNeighborhoods.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeMATproperty.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/splitLDmiddleSegmentsVsJunctions.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/lineIntersection.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/drawJunctions.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/averageProperty.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeMATpropertyPerBranch.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/traceSkeleton.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/splitLDbyHistogramWeights.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/mapMATtoContour.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/drawMATproperty.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeLength.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeAOF.py
+Aravind Narayanan
+
+pyMLV/MLVcode/getOuterBoundary.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/drawContoursByStatsModel.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/drawLinedrawing.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/rotateLinedrawing.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/computeOrientation.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/drawAllProperties.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther
+
+pyMLV/MLVcode/splitLDbyProperties.py
+Python Implementation: Aravind Narayanan
+Copyright: Dirk Bernhardt-Walther

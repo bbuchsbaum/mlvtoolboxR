@@ -1,0 +1,19 @@
+{
+  "stage": "check-01",
+  "args": [
+    "R",
+    "CMD",
+    "check",
+    "--as-cran",
+    "--no-manual",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/attribution-build/mlvtoolbox_0.2.1.tar.gz"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 63.97116795900365,
+  "peak_work_bytes": 15313494,
+  "limit_bytes": 209715200,
+  "source_commit": "8a1452b3af4d8953c1edc6d7f53a49f771f2ab54",
+  "source_root": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/attribution-source",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/attribution-build-logs/check-01.log"
+}

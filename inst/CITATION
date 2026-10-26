@@ -1,6 +1,24 @@
+citHeader("Please cite the R implementation and the original MLV methods paper. For medial-axis salience methods, also cite Rezanejad et al. (2019).")
+
+bibentry(bibtype = "Manual",
+  title = "mlvtoolbox: R Implementation and Extensions of the Mid-Level Vision Toolbox",
+  author = person("Bradley", "Buchsbaum"), year = "2026",
+  note = paste("R package version", meta$Version,
+               "(independent R port; original methods credited separately)"))
+
 bibentry(bibtype = "Article",
   title = "The mid-level vision toolbox for computing structural properties of real-world images",
   author = c(person("Dirk B.", "Walther"), person("Delaram", "Farzanfar"),
              person("Seohee", "Han"), person("Morteza", "Rezanejad")),
   year = "2023", journal = "Frontiers in Computer Science", volume = "5",
   pages = "1140723", doi = "10.3389/fcomp.2023.1140723")
+
+bibentry(bibtype = "InProceedings",
+  title = "Scene Categorization from Contours: Medial Axis Based Salience Measures",
+  author = c(person("Morteza", "Rezanejad"), person("Gabriel", "Downs"),
+             person("John", "Wilder"), person("Dirk B.", "Walther"),
+             person("Allan", "Jepson"), person("Sven", "Dickinson"),
+             person("Kaleem", "Siddiqi")),
+  year = "2019",
+  booktitle = "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+  url = "https://openaccess.thecvf.com/content_CVPR_2019/papers/Rezanejad_Scene_Categorization_From_Contours_Medial_Axis_Based_Salience_Measures_CVPR_2019_paper.pdf")

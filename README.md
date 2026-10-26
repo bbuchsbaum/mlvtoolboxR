@@ -1,12 +1,21 @@
 # mlvtoolbox
 
-An R package for measuring and manipulating contours in vectorized line
-drawings. It computes orientation, length, curvature, junctions and AOF-based
-medial-axis properties, with explicit image-coordinate and numerical conventions.
+`mlvtoolbox` is an R package for measuring contour geometry and constructing
+reproducible visual stimuli from line drawings. It is an independently
+maintained R port and extension of the Bernhardt-Walther Lab's
+[Mid-Level Vision Toolbox](https://github.com/bwlabToronto/MLV_toolbox), with
+[pyMLV](https://github.com/bwlabToronto/pyMLV) as an additional reference.
 
-The implementation follows the [MLV methods paper](https://doi.org/10.3389/fcomp.2023.1140723).
-It corrects demonstrated boundary, geometry and missingness defects; historical
-outputs are comparison evidence rather than the definition of correctness.
+The aim is to make the [original MLV methods](https://doi.org/10.3389/fcomp.2023.1140723)
+usable in R with explicit measurement choices, documented bug fixes, tested
+native performance improvements, and tools for matching stimulus sets.
+The published estimator remains available as `mlv2023`; new estimators and
+graph/design workflows are named extensions. Numerical equivalence is qualified
+against specific fixtures, not promised for every upstream output.
+
+[Purpose and differences](docs/ATTRIBUTION.md) ·
+[Credits and license audit](vendor/LICENSING.md) ·
+[Measurement contract](docs/FEATURE_SPEC.md)
 
 ## Install locally
 
@@ -46,6 +55,25 @@ Histogram weighting and normalization are explicit: orientation/curvature
 collect segment length; length collects whole-contour length; junctions count
 events. Normalized values are per 10,000 contour pixels. Valid zero scores
 remain distinct from missing scores.
+
+## How this port differs
+
+- **An R workflow:** drawing objects, feature tables and model compatibility
+  metadata; Python and MATLAB serve as references.
+- **Explicit methods and corrections:** subpixel geometry, validated
+  degeneracies and missingness, opt-in turning/arc-length estimators and
+  physical calibration. `mlv2023` retains the published estimator family with
+  documented corrections.
+- **Additional stimulus tools:** constrained subset design and contour graph
+  descriptors for closure, continuation and enclosure.
+- **Measured implementation changes:** compiled geometry and fused histograms,
+  with [performance and equality evidence](docs/FUSED_STATISTICS.md).
+- **Known differences and limits:** an explicit Octave-derived morphology
+  backend and tie rule; no bundled SAM weights or MATLAB serialized models.
+  Actual MATLAB equivalence has not been established.
+
+See the [comparison with the originals](docs/ATTRIBUTION.md) for scope, source
+lineage and qualification boundaries.
 
 ## Medial-axis analysis
 
@@ -142,9 +170,28 @@ metadata, and the limits of raster resolution invariance.
   new destination. Large reference data and vendor snapshots are excluded from
   the R package tarball.
 
-The package and attributed Pratt/AOF-derived code use GPL-3.0-or-later. Original
-reference snapshots retain their own notices. Dataset redistribution is not
-asserted; package tests use synthetic inputs.
+## Credits, citation and licenses
+
+The original toolbox and methods are by **Dirk Bernhardt-Walther, Delaram
+Farzanfar, Seohee Han, Morteza Rezanejad and the Bernhardt-Walther Lab**.
+The R implementation and extensions are by **Bradley Buchsbaum**.
+We also credit **Aravind Narayanan** for the Python AOF reference,
+**Josep Mones i Teixidor and Carnë Draug** for the Octave morphology tables,
+and **Peter Kovesi** for retained edge-linking reference helpers.
+[Full source and contribution details](docs/ATTRIBUTION.md) distinguish these roles.
+
+Run `citation("mlvtoolbox")` to cite the R implementation and original methods.
+The R implementation is declared **GPL-3.0-or-later**; see [COPYING](COPYING).
+[Upstream notices](inst/LICENSES) and [credits](inst/COPYRIGHTS) are also included
+in the installed package.
+
+Vendored sources retain their own terms: Python has an MIT root license with
+GPL notices in three files, while many MATLAB files have **no explicit license
+grant**. [The audit](vendor/LICENSING.md) records this unresolved permission
+issue; our GPL declaration does not relicense those files. Dataset and model
+redistribution rights are separate, and neither is asserted here.
+
+## Development
 
 Run testthat::test_local() for behavior/numerical checks. The reference generation
 and upstream reproducer scripts are in tools/reference and tools/upstream.

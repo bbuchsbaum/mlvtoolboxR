@@ -1,0 +1,32 @@
+{
+  "source_parent": "8a1452b3af4d8953c1edc6d7f53a49f771f2ab54",
+  "archive_sha256": "7a4497651076d244319c1a83486148cc349ca8806c59d0a1c650efddc00038ca",
+  "archive_bytes": 371517,
+  "verified_notice_files": {
+    "mlvtoolbox/inst/LICENSES/MLV-GPL-notices.txt": "9e8d308110ebbc47462b0d006df45d6df5b50ddd0a546c05c19d07f09049978f",
+    "mlvtoolbox/inst/LICENSES/GPL-3.0.txt": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "mlvtoolbox/inst/LICENSES/Kovesi-notices.txt": "b77fd0ee118320b84903ba0ab012bcc29fe550dc215debdbff5078e08baf7a0e",
+    "mlvtoolbox/inst/LICENSES/Octave-image-notice.txt": "86b1e1d4084608856b52f59ccd2da755016fa6f7d4dd4878182219375b2893ca",
+    "mlvtoolbox/inst/LICENSES/pyMLV-MIT.txt": "b2dd91873eaa83dd1b9f1f7a3999eb65896ad8e7c02a772b1e8c8fd4c62a513b",
+    "mlvtoolbox/inst/LICENSES/Vendored-copyrights.txt": "91eb548dbb2b507b44a2151884b44d1763264e04a1afee50f5798bc4929b8812",
+    "mlvtoolbox/inst/CITATION": "9fe35133f250c1c907efdd5d28b0cef2cea4fd463b202132d7a533f56b7faab1",
+    "mlvtoolbox/inst/COPYRIGHTS": "c98efc7a4711cd099864531cf4949d6cffb13b79b5324d5cfb60ea9a002a5e1f"
+  },
+  "archive_notices_exact": true,
+  "installed_notices_exact": true,
+  "vendor_and_reference_data_excluded": true,
+  "runtime_code_changed": false,
+  "scope": "License, contributor, citation and project-purpose documentation only; unresolved permission findings are not legal clearance.",
+  "archive": "mlvtoolbox_0.2.1-attribution.tar.gz",
+  "assertions": 1332,
+  "check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": [
+      "New submission",
+      "Unable to verify current time"
+    ]
+  },
+  "citation_entries": 3,
+  "readme_example_passed": true
+}

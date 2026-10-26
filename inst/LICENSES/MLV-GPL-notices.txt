@@ -1,0 +1,266 @@
+Original per-file notices from the pinned reference snapshots.
+These notices retain their individual scope; they are not a blanket license.
+
+Source: vendor/MLV_toolbox/MLVcode/computeAOF.m
+
+% Copyright Morteza Rezanejad
+% McGill University, Montreal, QC 2019
+%
+% Contact: morteza [at] cim [dot] mcgill [dot] ca 
+% -------------------------------------------------------------------------
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+% -------------------------------------------------------------------------
+% Skeletonization package from earlier work of Morteza Rezanejad
+% Check the https://github.com/mrezanejad/AOFSkeletons
+
+
+%initialize Q
+
+Source: vendor/MLV_toolbox/MLVcode/mapMATtoContour.m
+
+% Copyright Morteza Rezanejad
+% University of Toronto, Toronto, Ontario, Canada, 2022
+%
+% Contact: Morteza.Rezanejad@gmail.com
+%------------------------------------------------------
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+% -------------------------------------------------------------------------
+
+
+Source: vendor/MLV_toolbox/MLVcode/extract2DSkeletonFromBinaryImage.m
+
+% Copyright Morteza Rezanejad
+% McGill University, Montreal, QC 2019
+%
+% Contact: morteza [at] cim [dot] mcgill [dot] ca 
+% -------------------------------------------------------------------------
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+% -------------------------------------------------------------------------
+% Skeletonization package from earlier work of Morteza Rezanejad
+% Check the https://github.com/mrezanejad/AOFSkeletons
+
+
+
+Source: vendor/MLV_toolbox/MLVcode/InitializeNeighborhoods.m
+
+% Copyright Morteza Rezanejad
+% McGill University, Montreal, QC 2019
+%
+% Contact: morteza [at] cim [dot] mcgill [dot] ca 
+% -------------------------------------------------------------------------
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+% -------------------------------------------------------------------------
+% Skeletonization package from earlier work of Morteza Rezanejad
+% Check the https://github.com/mrezanejad/AOFSkeletons
+
+
+
+Source: vendor/MLV_toolbox/MLVcode/computeGradientVectorField.m
+
+% Copyright Morteza Rezanejad
+% McGill University, Montreal, QC 2019
+%
+% Contact: morteza [at] cim [dot] mcgill [dot] ca 
+% -------------------------------------------------------------------------
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+% -------------------------------------------------------------------------
+% Skeletonization package from earlier work of Morteza Rezanejad
+% Check the https://github.com/mrezanejad/AOFSkeletons
+
+
+
+
+Source: vendor/pyMLV/MLVcode/extract2DSkeletonFromBinaryImage.py
+
+"""
+    Extracts a 2D skeleton from a binary image.
+
+    This function performs skeletonization on a binary image, yielding the average 
+    outward flux image, the skeleton image, a distance-transformed image, and a thinned 
+    binary image. The skeletonization process is influenced by the specified threshold.
+
+    Args:
+        binaryImage (numpy.ndarray): A binary image where the objects are marked with 1's and 
+        the background is marked with 0's.
+        threshold (float): A threshold value used in the skeletonization process.
+
+    Returns:
+        tuple: A tuple (fluxImage, skeletonImage, distImage, thin_boundary) where:
+            fluxImage (numpy.ndarray): Average outward flux image computed from the distance transform.
+            skeletonImage (numpy.ndarray): A binary image of the same size as binaryImage, 
+            with 1's representing the skeleton.
+            distImage (numpy.ndarray): A distance-transformed image of the same size as binaryImage.
+            thin_boundary (numpy.ndarray): A thinned version of the binary image.
+
+    -----------------------------------------------------
+    This function is part of the Mid Level Vision Toolbox:
+    http://www.mlvtoolbox.org
+
+    Python Implementation: Aravind Narayanan
+    Original MATLAB Implementation: Dirk Bernhardt-Walther
+    Copyright: Dirk Bernhardt-Walther
+    University of Toronto, Toronto, Ontario, Canada, 2024
+
+    Contact: dirk.walther@gmail.com
+    -----------------------------------------------------
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    Skeletonization package from earlier work of Morteza Rezanejad
+    Check the https://github.com/mrezanejad/AOFSkeletons
+    """
+
+Source: vendor/pyMLV/MLVcode/mapMATtoContour.py
+
+"""
+    Maps property scores computed on the Medial Axis Transform (MAT) back to a line drawing image.
+
+    This function takes scores computed on the MAT and maps them back to the corresponding contours
+    in a line drawing image. If a line drawing contour corresponds to two medial axis branches, the 
+    function computes the maximum of the two scores for mapping.
+
+    Args:
+        skeletalBranches: Branches traced from the skeleton representation.
+        imgLD (numpy.ndarray): The binary line drawing image.
+        skeletonImageWithRating (numpy.ndarray): The 2D matrix of the skeleton image with MAT-based scores.
+
+    Returns:
+        numpy.ndarray: A binary line drawing image with property scores mapped from the skeleton image 
+                       with MAT-based scores.
+
+    Notes:
+    - The function is designed to work with properties computed on the Medial Axis Transform (MAT) 
+      of a line drawing.
+    - If there are two medial axis branches around a line drawing contour, the function chooses the 
+      maximum score between the two for mapping.
+
+    -----------------------------------------------------
+    This function is part of the Mid Level Vision Toolbox:
+    http://www.mlvtoolbox.org
+
+    Python Implementation: Aravind Narayanan
+    Original MATLAB Implementation: Dirk Bernhardt-Walther
+    Copyright: Dirk Bernhardt-Walther
+    University of Toronto, Toronto, Ontario, Canada, 2024
+
+    Contact: dirk.walther@gmail.com
+    -----------------------------------------------------
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
+    """
+
+Source: vendor/pyMLV/MLVcode/computeAOF.py
+
+"""
+    This function computes the gradient vector field with regard to a distance function.
+
+    Parameters:
+    D (array_like): Distance map computed with respect to the binary image.
+    IDX (array_like): The index of the closest point to the boundary.
+    sphere_points (array_like): Points on a sphere, used in the computation.
+    epsilon (float): A small value used to stabilize computations.
+
+    Returns:
+    array_like: Flux image, a 2D matrix with average outward flux values computed 
+    from the gradient vector field of a binary image.
+
+    -----------------------------------------------------
+    Notes:
+    This function is part of the skeletonization package based on earlier work by Morteza Rezanejad.
+    Check the GitHub repository at https://github.com/mrezanejad/AOFSkeletons for more details.
+
+    License:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+    Author:
+    Aravind Narayanan
+    University of Toronto, Toronto, ON, 2024
+    Contact: aravind [dot] narayanan [at] utoronto [dot] ca
+    -----------------------------------------------------
+    """

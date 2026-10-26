@@ -1,24 +1,74 @@
-mlvtoolbox R implementation: Bradley Buchsbaum, 2026, GPL-3.0-or-later.
+mlvtoolbox: R implementation and extensions of the Mid-Level Vision Toolbox
 
-Scientific definitions and reference sources:
-Dirk Bernhardt-Walther, Morteza Rezanejad, Delaram Farzanfar, Seohee Han,
-and the Bernhardt-Walther Lab, Mid-Level Vision Toolbox.
+R implementation and new extensions
+Copyright (C) 2026 Bradley Buchsbaum
+License: GNU General Public License version 3 or later (GPL-3.0-or-later).
+Full text: LICENSES/GPL-3.0.txt in the installed package; COPYING in this repository.
+This declaration covers this implementation and its explicitly licensed
+adaptations. It does not relicense the upstream snapshots or datasets.
+
+Original MLV Toolbox and scientific methods
+Dirk Bernhardt-Walther (published as Dirk B. Walther), Morteza Rezanejad,
+Delaram Farzanfar, Seohee Han, and the Bernhardt-Walther Lab,
+University of Toronto.
 Walther et al. (2023), doi:10.3389/fcomp.2023.1140723.
-Pinned reference provenance and file notices: vendor/SOURCES.json.
+Original MATLAB repository: https://github.com/bwlabToronto/MLV_toolbox
+Reference commit: f12418a5e03c2f38e222fed1dffccf42b227cd29.
+The R package follows and extends these methods; upstream authors are credited
+for their work, not represented as maintainers or endorsers of this R port.
 
-AOF/signed-distance formulation follows Morteza Rezanejad's AOFSkeletons/MLV
-work (2019-2022), with GPL-3.0-or-later notices in the original source.
+Python reference implementation
+Bernhardt-Walther Lab; https://github.com/bwlabToronto/pyMLV
+Reference commit: 14b3183b91146b1021eb7ef97db75ad703b06832.
+Copyright (c) 2024 Bernhardt-Walther Lab (repository MIT license).
+Aravind Narayanan is specifically credited in computeAOF.py (Toronto, 2024).
+Three retained Python files carry explicit GPL-3.0-or-later notices; the root
+MIT license must not erase those notices. See LICENSES/pyMLV-MIT.txt and
+LICENSES/MLV-GPL-notices.txt. Python is a reference, not a runtime dependency.
 
-Pratt morphology lookup tables in src/pratt_lut.h are derived from GNU Octave
-image package 2.20.0 bwmorph.m:
+AOF / medial-axis methods
+Morteza Rezanejad's AOFSkeletons and MLV work supplies the AOF formulation
+adapted in src/kernels.cpp and the signed-distance/skeleton reference methods.
+Original notice: Copyright Morteza Rezanejad, McGill University, 2019.
+https://github.com/mrezanejad/AOFSkeletons
+Explicitly licensed original files use GPL-3.0-or-later. Their notices are
+retained in LICENSES/MLV-GPL-notices.txt; see also Rezanejad et al. (2019),
+Scene Categorization from Contours: Medial Axis Based Salience Measures.
+The R implementation changes indexing, validation and native execution;
+comparison details and intentional departures are recorded in docs/PARITY.md.
+
+GNU Octave image package
+Pratt morphology tables in src/pratt_lut.h are adapted from bwmorph.m,
+GNU Octave image 2.20.0, https://gnu-octave.github.io/packages/image/
 Copyright (C) 2004 Josep Mones i Teixidor
-Copyright (C) 2013 Carne Draug
-GNU General Public License, version 3 or later; no warranty.
-The lookup-table implementation is adapted to compiled R kernels and tested
-against the pinned installed Octave image backend. It is not claimed to be
-MATLAB's proprietary skeletonization.
+Copyright (C) 2013 Carnë Draug
+GPL-3.0-or-later; no warranty. Original notice: LICENSES/Octave-image-notice.txt.
+The tables are used by compiled R kernels; the backend does not claim
+equivalence to MATLAB's proprietary morphology.
 
-The source-only reference snapshots retain original per-file notices.
-MATLAB core files with only copyright notices and mixed Python root/per-file
-notices remain identified in the rights inventory. No blanket relicensing of
-upstream snapshots or redistribution of their image datasets is asserted.
+Other retained reference helpers
+Peter Kovesi, University of Western Australia: contour edge-linking helpers.
+Six retained files include an abbreviated permissive license, reproduced
+verbatim in LICENSES/Kovesi-notices.txt. Other helpers without an explicit
+grant remain unresolved. These MATLAB helpers are excluded from the R
+package; the R pixel-graph tracer is a separate implementation.
+LICENSES/Vendored-copyrights.txt lists file-level copyright/author lines.
+
+Dependencies and data
+R and Rcpp, and optional R packages, are installed separately under their
+respective licenses. No MATLAB runtime, SAM weights or image datasets are
+included. The Boost.Polygon Voronoi experiment uses separately installed
+Boost/BH headers and remains tools-only, outside the R package.
+
+Unresolved permissions
+The MATLAB snapshot has no root license at the pinned commit. 82 retained
+files (including 77 .m files) have no explicit license grant identified by
+this audit. This includes much of the core and some third-party helpers.
+Public availability, an article's open-access status, attribution, and this
+package's GPL declaration do not supply the missing permissions.
+Before public redistribution of those files or code derived from them,
+obtain an applicable grant or complete a documented replacement/lineage
+review. This audit is not blanket legal clearance for the R port.
+All 159 retained reference files remain unchanged and excluded from the
+package. Repository details: vendor/LICENSING.md, vendor/SOURCES.json and
+docs/evidence/attribution/vendor-license-inventory.csv.

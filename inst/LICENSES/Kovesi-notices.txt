@@ -1,0 +1,133 @@
+Original per-file notices from the pinned reference snapshots.
+These notices retain their individual scope; they are not a blanket license.
+
+Source: vendor/MLV_toolbox/3rdParty/contour_tracing/edge_linking/edgelink.m
+
+% Copyright (c) 2001-2007 Peter Kovesi
+% School of Computer Science & Software Engineering
+% The University of Western Australia
+% http://www.csse.uwa.edu.au/
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in 
+% all copies or substantial portions of the Software.
+%
+% The Software is provided "as is", without warranty of any kind.
+
+% February  2001 - Original version
+% September 2004 - Revised to allow subpixel edge data to be used
+% November  2006 - Changed so that edgelists start and stop at every junction 
+% January   2007 - Prefiltering to to discard isolated pixels and the
+%                  problems they cause(thanks to Jeff Copeland)
+% January   2007 - Fixes to ensure closed loops are closed, and a few other
+%                  cases are handled better
+
+
+
+Source: vendor/MLV_toolbox/3rdParty/contour_tracing/edge_linking/findendsjunctions.m
+
+% Copyright (c) 2006 Peter Kovesi
+% School of Computer Science & Software Engineering
+% The University of Western Australia
+% pk at csse uwa edu au
+% http://www.csse.uwa.edu.au/
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in 
+% all copies or substantial portions of the Software.
+%
+% The Software is provided "as is", without warranty of any kind.
+
+% November 2006
+
+
+Source: vendor/MLV_toolbox/3rdParty/contour_tracing/edge_linking/drawedgelist.m
+
+% Copyright (c) 2003-2011 Peter Kovesi
+% School of Computer Science & Software Engineering
+% The University of Western Australia
+% http://www.csse.uwa.edu.au/
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in 
+% all copies or substantial portions of the Software.
+%
+% The Software is provided "as is", without warranty of any kind.
+
+% February  2003 - Original version
+% September 2004 - Revised and updated
+% December  2006 - Colour and linewidth specification updated
+% January   2011 - Axis setting corrected (thanks to Stzpz)
+
+
+Source: vendor/MLV_toolbox/3rdParty/contour_tracing/edge_linking/lineseg.m
+
+% Copyright (c) 2000-2006 Peter Kovesi
+% School of Computer Science & Software Engineering
+% The University of Western Australia
+% http://www.csse.uwa.edu.au/
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in 
+% all copies or substantial portions of the Software.
+%
+% The Software is provided "as is", without warranty of any kind.
+
+% December 2000 - Original version
+% February 2003 - Added the returning of nedgelist data.
+% December 2006 - Changed so that separate cell arrays of line segments are
+%                 formed, in the same format used for edgelists
+
+
+
+Source: vendor/MLV_toolbox/3rdParty/contour_tracing/edge_linking/cleanedgelist.m
+
+% Copyright (c) 2006-2007 Peter Kovesi
+% School of Computer Science & Software Engineering
+% The University of Western Australia
+% pk at csse uwa edu au
+% http://www.csse.uwa.edu.au/
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in 
+% all copies or substantial portions of the Software.
+%
+% The Software is provided "as is", without warranty of any kind.
+%
+% December 2006  Original version
+% February 2007  A major rework to fix several problems, hope they really are
+%                fixed!
+
+
+
+Source: vendor/MLV_toolbox/3rdParty/contour_tracing/edge_linking/edgelist2image.m
+
+% Copyright (c) 2007 Peter Kovesi
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in 
+% all copies or substantial portions of the Software.
+%
+% The Software is provided "as is", without warranty of any kind.
+
+% September 2007
+
+

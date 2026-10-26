@@ -1,0 +1,22 @@
+Please cite the R implementation and the original MLV methods paper.
+For medial-axis salience methods, also cite Rezanejad et al. (2019).
+
+  Buchsbaum B (2026). _mlvtoolbox: R Implementation and Extensions of
+  the Mid-Level Vision Toolbox_. R package version 0.2.1 (independent R
+  port; original methods credited separately).
+
+  Walther D, Farzanfar D, Han S, Rezanejad M (2023). “The mid-level
+  vision toolbox for computing structural properties of real-world
+  images.” _Frontiers in Computer Science_, *5*, 1140723.
+  doi:10.3389/fcomp.2023.1140723
+  <https://doi.org/10.3389/fcomp.2023.1140723>.
+
+  Rezanejad M, Downs G, Wilder J, Walther D, Jepson A, Dickinson S,
+  Siddiqi K (2019). “Scene Categorization from Contours: Medial Axis
+  Based Salience Measures.” In _Proceedings of the IEEE/CVF Conference
+  on Computer Vision and Pattern Recognition_.
+  <https://openaccess.thecvf.com/content_CVPR_2019/papers/Rezanejad_Scene_Categorization_From_Contours_Medial_Axis_Based_Salience_Measures_CVPR_2019_paper.pdf>.
+
+To see these entries in BibTeX format, use 'print(<citation>,
+bibtex=TRUE)', 'toBibtex(.)', or set
+'options(citation.bibtex.max=999)'.

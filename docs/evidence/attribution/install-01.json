@@ -1,0 +1,19 @@
+{
+  "stage": "install-01",
+  "args": [
+    "R",
+    "CMD",
+    "INSTALL",
+    "--preclean",
+    "--library=/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/attribution-build/library",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/attribution-build/mlvtoolbox_0.2.1.tar.gz"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 6.7985476670000935,
+  "peak_work_bytes": 8891755,
+  "limit_bytes": 209715200,
+  "source_commit": "8a1452b3af4d8953c1edc6d7f53a49f771f2ab54",
+  "source_root": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/attribution-source",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/attribution-build-logs/install-01.log"
+}
