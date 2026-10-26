@@ -37,5 +37,8 @@ Uses the MLV signed-distance construction and 60-angle AOF by default.
 Pratt thinning is the explicitly identified Octave image backend, not a
 claim of equivalence to MATLAB's proprietary skeletonization. Empty ink
 sets have Inf distances and no skeleton; an all-ink image has no valid
-medial axis under this contour-background definition.
+medial axis under this contour-background definition. Isolated ink pixels
+retain signed distance -1. Nearest-boundary ties use the lowest R linear index;
+other backends can choose different tied pixels and consequently different
+flux and skeleton values.
 }

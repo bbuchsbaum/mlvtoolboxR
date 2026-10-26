@@ -31,7 +31,10 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #' Pratt thinning is the explicitly identified Octave image backend, not a
 #' claim of equivalence to MATLAB's proprietary skeletonization. Empty ink
 #' sets have Inf distances and no skeleton; an all-ink image has no valid
-#' medial axis under this contour-background definition.
+#' medial axis under this contour-background definition. Isolated ink pixels
+#' retain signed distance -1. Nearest-boundary ties use the lowest R linear index;
+#' other backends can choose different tied pixels and consequently different
+#' flux and skeleton values.
 #' @param mask Binary matrix, TRUE for ink; or a drawing.
 #' @param threshold_angle Object angle in degrees, in [0,90].
 #' @param samples,epsilon AOF sampling parameters. Angles use alpha=(2*pi)/samples followed by alpha*k;
@@ -65,11 +68,13 @@ compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
  }
  thin_ink<-skeletonize(mask)
  white<-!thin_ink
- outer<-matrix(FALSE,h,w)
+ outer<-matrix(FALSE,h,w);ink_neighbor<-matrix(FALSE,h,w)
  if(h>=3L&&w>=3L)for(dc in -1:1)for(dr in -1:1)if(dr!=0L||dc!=0L) {
   rows<-2:(h-1L);cols<-2:(w-1L)
   outer[rows,cols]<-outer[rows,cols] | (thin_ink[rows,cols]&white[rows+dr,cols+dc])
+  ink_neighbor[rows,cols]<-ink_neighbor[rows,cols] | thin_ink[rows+dr,cols+dc]
  }
+ outer<-outer&ink_neighbor
  d1<-distance_transform(thin_ink)
  d2<-distance_transform(white|outer)
  D<-d1$distance-d2$distance
@@ -227,10 +232,15 @@ map_mat_properties <- function(x,mat,radius=4) {
  props<-names(mat$score_images);images<-lapply(props,function(p)rep(NA_real_,length(ink)));names(images)<-props
  for(branch in mat$branches) {
   fp<-.tangent_points(branch);if(!nrow(fp$points)||!length(ink))next
-  nn<-cpp_nearest(fp$points,rc)
-  ok<-which(nn$distance<radius)
-  if(!length(ok))next
-  source<-fp$source[nn$index[ok]]
+  # A point outside this expanded bounding box cannot be within radius of
+  # any tangent sample. Keep equality here; the final predicate remains strict.
+  near<-which(rc[,1]>=min(fp$points[,1])-radius & rc[,1]<=max(fp$points[,1])+radius &
+              rc[,2]>=min(fp$points[,2])-radius & rc[,2]<=max(fp$points[,2])+radius)
+  if(!length(near))next
+  nn<-cpp_nearest(fp$points,rc[near,,drop=FALSE])
+  within<-which(nn$distance<radius)
+  if(!length(within))next
+  ok<-near[within];source<-fp$source[nn$index[within]]
   for(prop in props) {
    value<-branch[[prop]][source];valid<-is.finite(value);at<-ok[valid];value<-value[valid]
    old<-images[[prop]][at];images[[prop]][at]<-ifelse(is.na(old),value,pmax(old,value))

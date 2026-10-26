@@ -36,5 +36,6 @@ Orientation, curvature and horizontal/vertical histograms are weighted by
 segment length. Length histograms collect total contour length. Junctions
 count events; per-contour junctions count each participating contour once.
 MAT histograms count mapped pixels, including valid zero scores. Values
-outside the logarithmic range enter the first/last bin.
+outside the logarithmic range enter the first/last bin. Orientation is axial;
+exact bin boundaries enter the upper bin, including odd bin counts.
 }

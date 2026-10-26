@@ -83,3 +83,43 @@ maintainer's current revision and, where the observation is Octave-specific,
 confirm whether it also occurs in MATLAB. Attach source SHA, runtime,
 minimal input, observed/expected result, and the scientific consequence.
 Do not turn source-only concerns into claims of executed full-pipeline failures.
+
+## Findings from the expanded parity suite (0.1.1)
+
+The fixtures in `inst/fixtures/parity` and `tools/parity/generate.py` execute
+the pinned sources on curved, integer and subpixel contours, several bin counts,
+varying-radius branches and six image topologies. Temporary adapters are recorded
+in the fixture manifest. `tools/parity/compare.R` retains differences explicitly.
+
+| ID | Status and trigger | Finding and R treatment |
+|---|---|---|
+| MLV-M016 | Executed terminal-bend branch; points (1,0) through (20,0), then (21,100) | fitLineSegments forces the last one/two points into the final span even when their mean perpendicular error exceeds its threshold of 1. The returned all-point span has mean interior error about 9.81. This also changes mirror scores on curved branches. R stops before the failing endpoint and tests every returned chord against an independent projection calculation. |
+| MLV-M017 | Executed 13-bin axial histogram, orientations 90 and 270 degrees | getOrientationStats shifts, wraps and subtracts a half-bin; rounding puts axial-equivalent vertical directions into different bins. R scales the axial angle directly and assigns an exact boundary to its upper bin. Agreement is retained on ordinary 5/8-bin fixtures; the 13-bin boundary divergence is intentional and tested analytically. |
+| MLV-P012 | Executed AOF on spatially varying nearest labels, radii 1 and 2 | computeAOF indexes IDX at int(px-1), int(py-1) after constructing zero-based sampling coordinates; this selects the preceding grid cell. It also omits epsilon from the sampling displacement. With the same distance/label fields, flux errors exceed 45 at radius 1. R agrees with the MATLAB source within 1e-10 on both radii. |
+| MLV-P013 | Executed 37-degree rotation | rotateLinedrawing rounds sine and cosine to five decimal places. Synthetic coordinate errors reach approximately 0.000895 pixels and the transform is no longer exactly length-preserving. R uses full precision; its counterclockwise image-coordinate angle corresponds to the negative upstream angle. |
+| MLV-P014 | Executed raw getLengthStats after computeLength; NumPy 2.4.3 | computeLength produces contourLengths with shape (n,1), but getLengthStats adds its one-element arrays into scalar histogram cells. Current NumPy raises ValueError: setting an array element with a sequence. The harness records the raw failure and separately labels an adapted comparison that reshapes only this field to (n,). |
+| MLV-P015 | Executed 13-bin histograms; shared formula with MLV-M017 | Python retains the axial boundary instability of the MATLAB half-bin shift/subtraction formula. R's explicit upper-bin rule applies consistently after reversing segment direction. |
+
+The retained Forest_DBW demonstration contains one zero-length contour. The
+optional natural-drawing harness removes that one segment/contour explicitly
+and identically for all three implementations, retaining 562 contours and
+2,072 segments. This is a real-data witness for the already recorded MLV-M015
+degenerate-input issue; no source snapshot or canonical data file is changed.
+
+## R-port defects found and fixed in 0.1.1
+
+| ID | Executed failure | Fix and regression |
+|---|---|---|
+| MLV-R001 | Sparse/isolated masks: the original R port assigned distance 0 instead of -1 to isolated interior ink pixels. Its outer-boundary predicate checked only for a white neighbor. | Require both an ink and white neighbor, matching the signed-distance construction. Six diverse masks now agree on distances within the single-precision reference tolerance; isolated pixels have analytical distance -1. |
+| MLV-R002 | The original R port placed an exact vertical 13-bin boundary in the lower bin because its half-bin shift rounded downward. | Use the axial angle scaled by the bin count before rounding to a centered bin. Tests cover reversed vertical directions and odd bin counts 1, 3, 5, 7, 13 and 31. |
+
+## Observed method differences, not numerical parity
+
+Equidistant nearest-boundary pixels need not have the same label in R and Octave.
+The R EDT selects the lowest column-major index. All differing labels in the
+six-mask comparison have the same exact squared distance after MLV-R001 is fixed,
+but their directions can change AOF and the final skeleton. Tests therefore
+establish full distance parity, AOF parity with identical distance/label fields,
+and morphology parity with identical flux fields. They do not label the differing
+default end-to-end skeletons as matches. See the complete parity report for counts
+and images. Actual MATLAB's distance/morphology tie behavior remains unexecuted.

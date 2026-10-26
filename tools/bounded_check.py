@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build/install/check this package with an owned 200 MiB work-directory cap."""
 from pathlib import Path
-import os,subprocess,signal,time,json,sys,tarfile,shutil,hashlib
+import os,subprocess,signal,time,json,sys,tarfile,shutil,hashlib,re
 root=Path(__file__).resolve().parents[1]
 work=root/'.agent-work/package-build';work.mkdir(parents=True,exist_ok=True)
 tmp=work/'tmp';tmp.mkdir(exist_ok=True)
@@ -56,7 +56,8 @@ if '--coverage-only' in sys.argv:
     run('coverage-01',['Rscript','--vanilla',str(root/'tools/coverage.R'),str(staged),str(root/'docs/evidence')],timeout=240)
     raise SystemExit(0)
 run('build-02',['R','CMD','build','--no-manual',str(staged)])
-tarball=work/'mlvtoolbox_0.1.0.tar.gz'
+version=re.search(r'^Version: (.+)$',(root/'DESCRIPTION').read_text(),re.M).group(1).strip()
+tarball=work/f'mlvtoolbox_{version}.tar.gz'
 with tarfile.open(tarball) as archive:
     names=archive.getnames()
     assert not any('/vendor/' in x or '/reference-data/' in x or '/.git/' in x or '/.mote/' in x for x in names)

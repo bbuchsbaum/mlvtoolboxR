@@ -67,7 +67,10 @@ Euclidean distance transforms, a deterministic nearest-boundary tie rule,
 Octave-image Pratt morphology and a pixel-graph tracing method. The Pratt LUTs
 and AOF have small executed Octave comparison fixtures. These checks do not
 establish equivalence to MATLAB's proprietary morphology or rasterizer, nor
-broad natural-image scientific acceptance. Taper uses documented explicit
+broad natural-image scientific acceptance. Executed comparisons show that
+equidistant nearest-boundary choices can change flux and skeleton pixels between
+R and Octave, despite identical distances; see [parity evidence](docs/PARITY.md).
+Taper uses documented explicit
 smoothing. See [implementation status](IMPLEMENTATION_STATUS.md).
 
 ## Manipulate and import
