@@ -13,7 +13,7 @@ for n in [32,64]:
    text=(source/'computeGradientVectorField.m').read_text()
    assert text.count('jj++m_Neighbors8')==2
    (Path(td)/'computeGradientVectorField.m').write_text(text.replace('jj++m_Neighbors8','jj + m_Neighbors8'))
-   setup=f"addpath('{source}');addpath('{td}','-begin');"
+   setup=f"pkg load image;addpath('{source}');addpath('{td}','-begin');"
    if stage=='aof':
     setup+=f"""[rr,cc]=ndgrid(1:{n},1:{n});r=round({n}/2);c=round({n}/2);
 D=sqrt((rr-r).^2+(cc-c).^2);IDX=repmat(sub2ind(size(D),r,c),size(D));

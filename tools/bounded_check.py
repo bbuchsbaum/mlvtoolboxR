@@ -49,6 +49,9 @@ def run(stage,args,timeout=300):
     (logs/f'{stage}.json').write_text(json.dumps(meta,indent=2)+'\n')
     print(json.dumps(meta),flush=True)
     if proc.returncode or reason!='exited':raise SystemExit(proc.returncode or 125)
+if '--coverage-only' in sys.argv:
+    run('coverage-01',['Rscript','--vanilla',str(root/'tools/coverage.R'),str(staged),str(root/'docs/evidence')],timeout=240)
+    raise SystemExit(0)
 run('build-02',['R','CMD','build','--no-manual',str(staged)])
 tarball=work/'mlvtoolbox_0.1.0.tar.gz'
 with tarfile.open(tarball) as archive:

@@ -1,0 +1,12 @@
+args<-commandArgs(trailingOnly=TRUE)
+if(length(args)<2L)stop("supply staged package and evidence directory")
+dir.create(args[2],recursive=TRUE,showWarnings=FALSE)
+cov<-covr::package_coverage(args[1],type=c("tests","examples"),quiet=FALSE)
+summary<-list(percent=covr::percent_coverage(cov),
+              R=R.version.string,source_commit=system2("git",c("rev-parse","HEAD"),stdout=TRUE))
+df<-as.data.frame(cov)
+summary$files<-unique(df$filename)
+summary$instrumented_cpp<-any(grepl("\\.cpp$",df$filename))
+jsonlite::write_json(summary,file.path(args[2],"coverage.json"),pretty=TRUE,auto_unbox=TRUE)
+utils::write.csv(df,file.path(args[2],"coverage-lines.csv"),row.names=FALSE)
+print(summary)
