@@ -1,5 +1,8 @@
 # Remaining histogram performance headroom
 
+Integrated follow-up: [qualified fused statistics in 0.2.1](FUSED_STATISTICS.md).
+The measurements below preserve the original 0.1.1 prototype experiment.
+
 This is an isolated prototype, **not a new package release**. It answers whether
 the earlier 1.12× Python histogram advantage is a practical limit. It is not:
 two small Rcpp kernels bring the measured forest workload to about **5.4×

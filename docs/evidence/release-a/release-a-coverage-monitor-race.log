@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/bbuchsbaum/code/mlvtoolbox/tools/bounded_check.py", line 59, in <module>
+    run('coverage-01',['Rscript','--vanilla',str(root/'tools/coverage.R'),str(staged),str(evidence)],timeout=240)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bbuchsbaum/code/mlvtoolbox/tools/bounded_check.py", line 41, in run
+    peak=max(peak,usage())
+                  ~~~~~^^
+  File "/Users/bbuchsbaum/code/mlvtoolbox/tools/bounded_check.py", line 32, in usage
+    return sum(p.stat().st_size for p in work.rglob('*') if p.is_file())
+  File "/Users/bbuchsbaum/code/mlvtoolbox/tools/bounded_check.py", line 32, in <genexpr>
+    return sum(p.stat().st_size for p in work.rglob('*') if p.is_file())
+               ~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 654, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/tmp/RtmpprsQch/R_LIBS3c3c6ed15250/mlvtoolbox/fixtures/parity/integer0.octave.norm_length5.csv'

@@ -41,3 +41,15 @@ cpp_fit_lines <- function(xy, tolerance) {
     .Call(`_mlvtoolbox_cpp_fit_lines`, xy, tolerance)
 }
 
+cpp_grouped_sums <- function(weights, groups, bins, ng, nb) {
+    .Call(`_mlvtoolbox_cpp_grouped_sums`, weights, groups, bins, ng, nb)
+}
+
+cpp_contour_lengths <- function(contours) {
+    .Call(`_mlvtoolbox_cpp_contour_lengths`, contours)
+}
+
+cpp_geometry_histograms <- function(contours, codes, edge_list, by_drawing, scale) {
+    .Call(`_mlvtoolbox_cpp_geometry_histograms`, contours, codes, edge_list, by_drawing, scale)
+}
+

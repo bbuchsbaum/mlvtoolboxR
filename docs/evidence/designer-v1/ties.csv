@@ -1,0 +1,2 @@
+"case","status","objective","upper_bound","gap","nodes","search_seconds","total_seconds","working_data_bytes","ranked_feasible","ranked_objective","ranked_seconds","oracle_optimum","required_win","win"
+"ties","optimal",0,0,0,13,0,0.029,31264,TRUE,0,0.043,0,FALSE,FALSE

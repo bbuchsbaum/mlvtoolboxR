@@ -1,0 +1,36 @@
+args<-commandArgs(trailingOnly=TRUE)
+stopifnot(length(args)==2)
+library(mlvtoolbox)
+source(system.file("fixtures","designer-v1.R",package="mlvtoolbox"))
+source("tools/designer/reference.R")
+name<-args[1];destination<-args[2];dir.create(destination,recursive=TRUE,showWarnings=FALSE)
+case<-designer_v1_fixtures()[[name]];stopifnot(!is.null(case))
+started<-proc.time()[['elapsed']]
+result<-do.call(design_subsets,c(list(drawings=case$drawings),case$arguments))
+elapsed<-proc.time()[['elapsed']]-started
+ranked_start<-proc.time()[['elapsed']]
+ranked<-reference_ranked(case$drawings,case$arguments)
+ranked_elapsed<-proc.time()[['elapsed']]-ranked_start
+oracle<-reference_exhaustive(case$drawings,case$arguments)
+verified<-NULL
+if(!is.null(result$conditions)) {
+ assignment<-match(result$selection$condition,c("unassigned","A","B"))-1L
+ verified<-reference_evaluate(case$drawings,case$arguments,assignment)
+ stopifnot(verified$feasible,abs(verified$objective-result$solver$objective)<1e-8)
+ if(result$status=="optimal")stopifnot(abs(result$solver$objective-oracle$optimum)<1e-8)
+}
+win<-isTRUE(ranked$evaluation$feasible)&&!is.null(verified)&&verified$objective>ranked$evaluation$objective+1e-8
+if(case$required_win)stopifnot(win)
+if(name%in%c("ties","small_set"))stopifnot(!is.null(verified),verified$objective>=ranked$evaluation$objective-1e-8)
+if(!is.null(case$expected$status))stopifnot(result$status==case$expected$status)
+summary<-data.frame(case=name,status=result$status,objective=result$solver$objective,
+ upper_bound=result$solver$upper_bound,gap=result$solver$absolute_gap,
+ nodes=result$solver$nodes,search_seconds=result$solver$search_seconds,total_seconds=elapsed,
+ working_data_bytes=result$solver$working_data_bytes,
+ ranked_feasible=ranked$evaluation$feasible,ranked_objective=ranked$evaluation$objective,
+ ranked_seconds=ranked_elapsed,oracle_optimum=oracle$optimum,required_win=case$required_win,win=win)
+write.csv(summary,file.path(destination,paste0(name,".csv")),row.names=FALSE)
+saveRDS(list(result=result,ranked=ranked,oracle=oracle,independent_check=verified),file.path(destination,paste0(name,".rds")))
+dput(list(request=case$arguments,diagnostics=result$diagnostics,ranked=ranked$evaluation),
+     file=file.path(destination,paste0(name,"-diagnostics.txt")))
+print(summary)

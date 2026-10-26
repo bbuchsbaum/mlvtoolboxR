@@ -1,0 +1,25 @@
+list(request = list(spec = structure(list(version = 1L, definitions = c(contour = "tent-source-normalized-1", 
+branch = "mlv2023-port-0.1.1", histogram = "1", morphology = "octave_image_pratt_2.20.0", 
+tracing = "pixel_graph_no_corner_cut"), settings = list(properties = c("length", 
+"orientation", "curvature"), bins = 2L, normalize = FALSE, length_range = c(0, 
+100), curvature_range = c(0, 90), units = "pixels", pixels_per_degree = NULL, 
+    estimator = "arclength", curvature_scale = 0.1, branch_estimator = "mlv2023", 
+    branch_window = 5L, branch_power = 10, reference_radius = 1, 
+    fit_tolerance = 1, junction = list(absolute_epsilon = 1, 
+        relative_epsilon = 0.3, merge_radius = 2, endpoint_radius = 2, 
+        method = "sweep"), mat = list(threshold_angle = 28, samples = 60L, 
+        epsilon = 1, min_component = NULL, min_branch_points = 10L), 
+    mapping_radius = 4, raster_line_width = 1, extraction = list(
+        method = "pixel_graph_no_corner_cut", threshold = 0.5, 
+        thin = TRUE, min_points = 2L, simplify = NULL, provider = NULL, 
+        provider_version = NULL))), class = "mlv_feature_spec"), 
+    target = "integrated_curvature", length_bounds = c(5, 5), 
+    count_bounds = c(1, 1), nuisance = c(length = 0, orientation = 10
+    ), count_imbalance = 0, mode = "per_drawing", time_limit = 5, 
+    max_nodes = 1e+05), diagnostics = NULL, ranked = list(feasible = FALSE, 
+    objective = 90.0000000000001, groups = list(`1` = list(feasible = FALSE, 
+        length_A = 5, length_B = 0, count_A = 1L, count_B = 0L, 
+        residual = c(length = 5, orientation = 5)), `2` = list(
+        feasible = FALSE, length_A = 5, length_B = 0, count_A = 1L, 
+        count_B = 0L, residual = c(length = 5, orientation = 5
+        )))))

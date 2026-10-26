@@ -160,11 +160,11 @@ split_junction_regions <- function(x) {
       junction=.piece_drawing(x,ends,rep(x$ids,each=2),"end_quarters"))
 }
 .contour_criterion <- function(x,property) {
- st<-.segment_table(x)
- ends<-cumsum(vapply(x$contours,nrow,integer(1)))
+ st<-.measurement_table(x,x$feature_spec)
+ ends<-cumsum(tabulate(st$contour_index,nbins=length(x$ids)))
  starts<-c(1L,head(ends,-1L)+1L)
  junctions<-if(property=="junctions") {
-  if(is.null(x$junctions))detect_junctions(x) else x$junctions
+  .measurement_junctions(x,x$feature_spec)
  } else NULL
  vapply(seq_along(x$ids),function(i) {
   s<-st[starts[i]:ends[i],,drop=FALSE];ll<-sum(s$length)
@@ -174,7 +174,7 @@ split_junction_regions <- function(x) {
    orientation=sum((abs(cos(s$orientation*pi/180))-abs(sin(s$orientation*pi/180)))*s$length)/ll,
    junctions=sum(vapply(junctions$members,function(m)i %in% m$contour_index,logical(1))),
    random=stats::runif(1),
-   {z<-x$mat_properties[[property]][[i]]
+   {.checked_mat_measurements(x,x$feature_spec);z<-x$mat_properties[[property]][[i]]
     if(is.null(z)||!any(is.finite(z)))stop("missing contour criterion: ",property,call.=FALSE)
     mean(z[is.finite(z)])})
  },double(1))

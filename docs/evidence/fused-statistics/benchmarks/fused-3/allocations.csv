@@ -1,0 +1,6 @@
+"workload","method","iterations","R_allocated_bytes_per_call","R_allocations_per_call"
+"forest","fused-0.2.1-final",5,627144,81
+"many_contours","fused-0.2.1-final",5,1110696,81
+"one_long_contour","fused-0.2.1-final",5,3696,15
+"physical_forest","fused-0.2.1-final",5,631328,102
+"arclength","fused-0.2.1-final",5,1417256,1926

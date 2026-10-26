@@ -1,0 +1,18 @@
+{
+  "stage": "install-01",
+  "args": [
+    "R",
+    "CMD",
+    "INSTALL",
+    "--preclean",
+    "--library=/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/designer-build/library",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/designer-build/mlvtoolbox_0.2.1.tar.gz"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 6.091188375001366,
+  "peak_work_bytes": 7070408,
+  "limit_bytes": 209715200,
+  "source_commit": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/designer-build-logs/install-01.log"
+}

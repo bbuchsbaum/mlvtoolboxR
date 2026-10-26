@@ -9,7 +9,14 @@ predict_contours(
   model,
   properties = c("orientation", "length", "curvature", "junction_type"),
   bins = 8,
-  ...
+  ...,
+  expected_spec = NULL,
+  check_spec = TRUE,
+  normalize = TRUE,
+  length_range = c(2, max(3, x$width + x$height)),
+  curvature_range = c(0, 90),
+  spec = x$feature_spec,
+  pixels_per_degree = NULL
 )
 }
 \arguments{
@@ -20,6 +27,18 @@ predict_contours(
 \item{properties, bins}{Feature-table settings.}
 
 \item{...}{Additional model prediction arguments.}
+
+\item{expected_spec}{Training schema, from `feature_schema()`. Required unless
+the model was bound with `bind_feature_model()`.}
+
+\item{check_spec}{Check training/actual measurement compatibility. Setting
+FALSE is an explicit, warning-emitting legacy bypass.}
+
+\item{normalize, length_range, curvature_range}{Feature-table settings.}
+
+\item{spec}{Optional feature specification, exclusive of individual settings.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 A finite numeric vector in contour order.

@@ -1,0 +1,17 @@
+{
+  "case": "exhausted",
+  "args": [
+    "/usr/bin/time",
+    "-l",
+    "Rscript",
+    "--vanilla",
+    "tools/designer/run_benchmark.R",
+    "exhausted",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/designer-v1"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "process_seconds": 0.5965309169987449,
+  "sampled_tree_rss_bytes": 103153664,
+  "maximum_resident_set_size_bytes": 101908480
+}

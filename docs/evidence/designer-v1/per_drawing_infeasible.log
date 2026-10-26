@@ -1,0 +1,24 @@
+                    case     status objective upper_bound gap nodes
+1 per_drawing_infeasible infeasible        NA          NA  NA     4
+  search_seconds total_seconds working_data_bytes ranked_feasible
+1              0         0.017              43608           FALSE
+  ranked_objective ranked_seconds oracle_optimum required_win   win
+1               90          0.041             NA        FALSE FALSE
+        0.27 real         0.20 user         0.02 sys
+            94404608  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                7813  page reclaims
+                  18  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  10  voluntary context switches
+                  94  involuntary context switches
+          2908225298  instructions retired
+           799837295  cycles elapsed
+            79808704  peak memory footprint

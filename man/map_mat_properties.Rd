@@ -4,7 +4,13 @@
 \alias{map_mat_properties}
 \title{Map branch ratings back to drawing contours}
 \usage{
-map_mat_properties(x, mat, radius = 4)
+map_mat_properties(
+  x,
+  mat,
+  radius = 4,
+  spec = mat$feature_spec,
+  pixels_per_degree = NULL
+)
 }
 \arguments{
 \item{x}{A drawing.}
@@ -12,6 +18,10 @@ map_mat_properties(x, mat, radius = 4)
 \item{mat}{An mlv_mat with computed branch properties.}
 
 \item{radius}{Maximum tangent mapping distance in pixels.}
+
+\item{spec}{Optional feature specification retained by the scored MAT.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 A drawing with per-contour MAT scores, score images and mapping masks.

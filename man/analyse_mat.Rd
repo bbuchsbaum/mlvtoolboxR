@@ -4,7 +4,13 @@
 \alias{analyse_mat}
 \title{Complete vector drawing to medial-axis feature workflow}
 \usage{
-analyse_mat(x, properties = c("parallelism", "separation", "mirror"), ...)
+analyse_mat(
+  x,
+  properties = c("parallelism", "separation", "mirror"),
+  ...,
+  spec = x$feature_spec,
+  pixels_per_degree = NULL
+)
 }
 \arguments{
 \item{x}{A drawing.}
@@ -12,6 +18,10 @@ analyse_mat(x, properties = c("parallelism", "separation", "mirror"), ...)
 \item{properties}{MAT property names.}
 
 \item{...}{Arguments to compute_mat.}
+
+\item{spec}{Optional feature specification, exclusive of properties and dots.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 List containing the enriched drawing and medial-axis representation.

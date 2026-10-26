@@ -1,0 +1,31 @@
+list(request = list(spec = structure(list(version = 1L, definitions = c(contour = "tent-source-normalized-1", 
+branch = "mlv2023-port-0.1.1", histogram = "1", morphology = "octave_image_pratt_2.20.0", 
+tracing = "pixel_graph_no_corner_cut"), settings = list(properties = c("length", 
+"orientation", "curvature"), bins = 2L, normalize = FALSE, length_range = c(0, 
+100), curvature_range = c(0, 90), units = "pixels", pixels_per_degree = NULL, 
+    estimator = "arclength", curvature_scale = 0.1, branch_estimator = "mlv2023", 
+    branch_window = 5L, branch_power = 10, reference_radius = 1, 
+    fit_tolerance = 1, junction = list(absolute_epsilon = 1, 
+        relative_epsilon = 0.3, merge_radius = 2, endpoint_radius = 2, 
+        method = "sweep"), mat = list(threshold_angle = 28, samples = 60L, 
+        epsilon = 1, min_component = NULL, min_branch_points = 10L), 
+    mapping_radius = 4, raster_line_width = 1, extraction = list(
+        method = "pixel_graph_no_corner_cut", threshold = 0.5, 
+        thin = TRUE, min_points = 2L, simplify = NULL, provider = NULL, 
+        provider_version = NULL))), class = "mlv_feature_spec"), 
+    target = "integrated_curvature", length_bounds = c(8, 12), 
+    count_bounds = c(1, 3), nuisance = c(length = 2, orientation = 12
+    ), count_imbalance = 2, mode = "set", time_limit = 5, max_nodes = 1e+05), 
+    diagnostics = list(feasible = TRUE, objective = 270, groups = list(
+        list(group = "set", feasible = TRUE, length_A = 12, length_B = 10, 
+            count_A = 3L, count_B = 1L, objective = 270, residual = c(length = 2, 
+            orientation = 10))), per_drawing = list(list(group = "first", 
+        feasible = FALSE, length_A = 4, length_B = 10, count_A = 1L, 
+        count_B = 1L, objective = 90.0000000000001, residual = c(length = 6, 
+        orientation = 10)), list(group = "second", feasible = FALSE, 
+        length_A = 8, length_B = 0, count_A = 2L, count_B = 0L, 
+        objective = 180, residual = c(length = 8, orientation = 8
+        )))), ranked = list(feasible = TRUE, objective = 100.000000000017, 
+        groups = list(list(feasible = TRUE, length_A = 10, length_B = 10, 
+            count_A = 1L, count_B = 1L, residual = c(length = 0, 
+            orientation = 10)))))

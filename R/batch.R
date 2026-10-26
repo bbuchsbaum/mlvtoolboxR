@@ -28,8 +28,14 @@ batch_statistics <- function(drawings,image_ids=names(drawings),...) {
   stop("invalid image_ids",call.=FALSE)
  out<-lapply(seq_along(drawings),function(i) {
   z<-contour_statistics(drawings[[i]],...)
-  data.frame(image_id=rep(image_ids[i],nrow(z)),z)
+  result<-data.frame(image_id=rep(image_ids[i],nrow(z)),z)
+  attr(result,"measurement_metadata")<-attr(z,"measurement_metadata",exact=TRUE)
+  result
  })
  if(!length(out))return(data.frame(image_id=character(),contour_statistics(mlv_drawing(list(),1,1),properties=character())))
- do.call(rbind,out)
+ metadata<-lapply(out,attr,which="measurement_metadata",exact=TRUE)
+ for(i in seq_along(metadata)).compare_feature_schemas(metadata[[1]]$schema,metadata[[i]]$schema)
+ result<-do.call(rbind,out)
+ attr(result,"measurement_metadata")<-list(schema=metadata[[1]]$schema,inputs=stats::setNames(metadata,image_ids))
+ result
 }

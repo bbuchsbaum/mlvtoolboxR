@@ -1,0 +1,36 @@
+{
+  "candidate": "0.2.0 Release A",
+  "base_commit": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "source_state": "uncommitted package changes; exact identity is manifest and archive hash, not base_commit",
+  "source_manifest": "package-source-manifest.json",
+  "package_files": 378,
+  "source_mismatches": [],
+  "archive_bytes": 295163,
+  "archive_sha256": "7c2d7e20e95d7b61991bcfe09e8372878d90a140b59c49d55049d1fb51954954",
+  "installed_tests": {
+    "pass": 901,
+    "fail": 0,
+    "warnings": 0,
+    "skip": 0
+  },
+  "R_CMD_check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": [
+      "New submission",
+      "unable to verify current time"
+    ]
+  },
+  "coverage_percent": 93.6716,
+  "curvature_tracing_cases": 16,
+  "unexecuted": [
+    "MATLAB",
+    "Linux",
+    "Windows",
+    "hosted CI",
+    "PDF manual",
+    "peak RSS",
+    "natural-image predictive validity"
+  ],
+  "publication": "none"
+}

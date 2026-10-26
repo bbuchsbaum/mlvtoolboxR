@@ -11,7 +11,8 @@ compute_mat(
   epsilon = 1,
   min_component = NULL,
   min_branch_points = 10L,
-  trace_branches = TRUE
+  trace_branches = TRUE,
+  spec = NULL
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ the order matters when samples are mapped to discrete grid cells.}
 \item{min_branch_points}{Minimum points retained in traced branches.}
 
 \item{trace_branches}{Trace branches now; FALSE defers this work until scoring.}
+
+\item{spec}{Optional feature specification for raster and MAT settings.}
 }
 \value{
 An `mlv_mat` with distance_map, nearest_boundary, AOF, skeleton,

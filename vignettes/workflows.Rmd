@@ -78,3 +78,43 @@ Their dependencies are optional. SVG curves are sampled; unsupported visible
 elements error by default. MAT v5 structures are supported. RGB extraction uses
 an explicitly supplied trace_rgb() provider; model weights and preprocessing
 remain the provider's responsibility.
+
+## Versioned measurements and checked prediction
+
+The published estimator remains the default for one release. Select the new
+arc-length estimator explicitly and use a fixed recipe across drawings. Here
+the target values are synthetic, solely to demonstrate training and prediction.
+
+```{r specification}
+spec <- feature_spec(c("length", "curvature"), bins = 1, normalize = FALSE,
+                     estimator = "arclength", curvature_scale = 2)
+measured <- compute_contour_properties(drawing, spec = spec)
+training <- feature_table(measured)
+training$target <- c(1, 2, 3)
+fit <- lm(target ~ length_1, data = training)
+# Bind the unchanged predictor table actually used for training.
+bound <- bind_feature_model(fit, feature_table(measured))
+predict_contours(drawing, bound, spec = spec)
+sum(contour_turning(drawing)$absolute_turn)
+average_property(measured, "curvature")
+```
+
+`contour_turning()` returns unsmoothed vertex turns. The arc-length profile
+smooths signed turns with a tent kernel; opposite turns can cancel within its
+physical support. Its histograms integrate the local density exactly along each
+affine interval. Geometric degrees of turning differ from degrees of visual
+angle, which are spatial units requiring calibration:
+
+```{r physical-specification}
+physical <- feature_spec(c("length", "curvature"),
+  estimator = "arclength", curvature_scale = .1,
+  units = "visual_degrees", pixels_per_degree = 20)
+feature_table(drawing, spec = physical)
+```
+
+An input at another resolution can supply its own `pixels_per_degree` to
+`feature_table()` or `predict_contours()`. Compatible physical definitions retain
+the same schema. Raster MAT extraction and mapped-pixel histograms remain
+resolution-sensitive. Use `branch_estimator = "arclength"` for physical branch
+windows; `analyse_mat(drawing, spec = recipe)$drawing` retains the resolved
+recipe and mapping coverage. CSV exports write a companion `.schema.rds` file.

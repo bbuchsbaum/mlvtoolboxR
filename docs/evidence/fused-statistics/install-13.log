@@ -1,0 +1,24 @@
+* installing *source* package ‘mlvtoolbox’ ...
+** this is package ‘mlvtoolbox’ version ‘0.2.1’
+** using staged installation
+** libs
+using C++ compiler: ‘Apple clang version 15.0.0 (clang-1500.1.0.2.5)’
+using C++17
+using SDK: ‘MacOSX14.2.sdk’
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -I/opt/homebrew/opt/gettext/include    -fPIC  -falign-functions=64 -Wall -g -O2   -c RcppExports.cpp -o RcppExports.o
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -I/opt/homebrew/opt/gettext/include    -fPIC  -falign-functions=64 -Wall -g -O2   -c kernels.cpp -o kernels.o
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -I/opt/homebrew/opt/gettext/include    -fPIC  -falign-functions=64 -Wall -g -O2   -c statistics.cpp -o statistics.o
+clang++ -arch arm64 -std=gnu++17 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -L/Library/Frameworks/R.framework/Resources/lib -L/opt/R/arm64/lib -lomp -L/opt/homebrew/opt/gettext/lib -o mlvtoolbox.so RcppExports.o kernels.o statistics.o -F/Library/Frameworks/R.framework/.. -framework R
+installing to /Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/library/00LOCK-mlvtoolbox/00new/mlvtoolbox/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (mlvtoolbox)

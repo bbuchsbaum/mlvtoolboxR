@@ -135,6 +135,47 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_grouped_sums
+NumericMatrix cpp_grouped_sums(NumericVector weights, IntegerVector groups, IntegerVector bins, int ng, int nb);
+RcppExport SEXP _mlvtoolbox_cpp_grouped_sums(SEXP weightsSEXP, SEXP groupsSEXP, SEXP binsSEXP, SEXP ngSEXP, SEXP nbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type groups(groupsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type bins(binsSEXP);
+    Rcpp::traits::input_parameter< int >::type ng(ngSEXP);
+    Rcpp::traits::input_parameter< int >::type nb(nbSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_grouped_sums(weights, groups, bins, ng, nb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_contour_lengths
+NumericVector cpp_contour_lengths(List contours);
+RcppExport SEXP _mlvtoolbox_cpp_contour_lengths(SEXP contoursSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type contours(contoursSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_contour_lengths(contours));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_geometry_histograms
+List cpp_geometry_histograms(List contours, IntegerVector codes, List edge_list, bool by_drawing, double scale);
+RcppExport SEXP _mlvtoolbox_cpp_geometry_histograms(SEXP contoursSEXP, SEXP codesSEXP, SEXP edge_listSEXP, SEXP by_drawingSEXP, SEXP scaleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type contours(contoursSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type codes(codesSEXP);
+    Rcpp::traits::input_parameter< List >::type edge_list(edge_listSEXP);
+    Rcpp::traits::input_parameter< bool >::type by_drawing(by_drawingSEXP);
+    Rcpp::traits::input_parameter< double >::type scale(scaleSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_geometry_histograms(contours, codes, edge_list, by_drawing, scale));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mlvtoolbox_cpp_intersections", (DL_FUNC) &_mlvtoolbox_cpp_intersections, 5},
@@ -147,6 +188,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mlvtoolbox_cpp_trace_graph", (DL_FUNC) &_mlvtoolbox_cpp_trace_graph, 2},
     {"_mlvtoolbox_cpp_nearest", (DL_FUNC) &_mlvtoolbox_cpp_nearest, 2},
     {"_mlvtoolbox_cpp_fit_lines", (DL_FUNC) &_mlvtoolbox_cpp_fit_lines, 2},
+    {"_mlvtoolbox_cpp_grouped_sums", (DL_FUNC) &_mlvtoolbox_cpp_grouped_sums, 5},
+    {"_mlvtoolbox_cpp_contour_lengths", (DL_FUNC) &_mlvtoolbox_cpp_contour_lengths, 1},
+    {"_mlvtoolbox_cpp_geometry_histograms", (DL_FUNC) &_mlvtoolbox_cpp_geometry_histograms, 5},
     {NULL, NULL, 0}
 };
 

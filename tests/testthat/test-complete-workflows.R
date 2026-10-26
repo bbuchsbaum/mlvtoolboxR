@@ -14,7 +14,7 @@ test_that("nonempty event histograms count each contour participation once", {
  expect_type(criterion$scores,"double")
  f<-feature_table(d,"orientation",bins=4)
  model<-stats::lm(response~orientation_1,data=data.frame(f,response=f$orientation_1/10000))
- expect_equal(predict_contours(d,model,properties="orientation",bins=4),f$orientation_1/10000,tolerance=1e-10)
+ expect_equal(predict_contours(d,bind_feature_model(model,f),properties="orientation",bins=4),f$orientation_1/10000,tolerance=1e-10)
  hist<-feature_table(d,"length",bins=2,normalize=FALSE)
  result<-split_by_histogram(d,c(length_1=1,length_2=0),properties="length",bins=2)
  expect_lte(sum(as.data.frame(result$top)$length),7.5)

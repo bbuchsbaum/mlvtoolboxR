@@ -1,0 +1,17 @@
+{
+  "case": "small_set",
+  "args": [
+    "/usr/bin/time",
+    "-l",
+    "Rscript",
+    "--vanilla",
+    "tools/designer/run_benchmark.R",
+    "small_set",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/designer-v1"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "process_seconds": 0.6143393750026007,
+  "sampled_tree_rss_bytes": 97763328,
+  "maximum_resident_set_size_bytes": 96714752
+}

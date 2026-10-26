@@ -41,9 +41,17 @@ test_that("odd orientation bins obey axial reversal and a defined upper-edge rul
 })
 test_that("grouped statistics preserve the checked non-boundary output exactly", {
  w<-readRDS(system.file("fixtures","statistics-before-optimization.rds",package="mlvtoolbox"))
- for(case in w$cases)
-  expect_identical(do.call(contour_statistics,c(list(w$drawing),case$args)),case$expected)
- expect_identical(feature_table(w$drawing,c("length","orientation","curvature","parallelism"),13),w$features)
+ for(case in w$cases) {
+  actual<-do.call(contour_statistics,c(list(w$drawing),case$args))
+  expect_s3_class(attr(actual,"measurement_metadata")$schema,"mlv_feature_schema")
+  attr(actual,"measurement_metadata")<-NULL
+  expect_identical(actual,case$expected)
+ }
+ features<-feature_table(w$drawing,c("length","orientation","curvature","parallelism"),13)
+ expect_s3_class(feature_schema(features),"mlv_feature_schema")
+ attr(features,"feature_schema")<-NULL
+ attr(features,"measurement_metadata")<-NULL
+ expect_identical(features,w$features)
  expect_identical(feature_table(w$drawing,c("length","length","curvature")),
                   feature_table(w$drawing,c("length","curvature")))
  expect_equal(nrow(contour_statistics(mlv_drawing(list(),10,10),"length")),8)

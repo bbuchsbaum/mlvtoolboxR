@@ -1,0 +1,6 @@
+"workload","method","median_seconds","min_seconds","max_seconds","iterations","package_version"
+"forest","grouping-prototype",0.0017421875,0.0016796875,0.00178125,128,"0.2.0"
+"many_contours","grouping-prototype",0.003328125,0.00328125,0.00349999999999999,64,"0.2.0"
+"one_long_contour","grouping-prototype",0.002453125,0.0024375,0.002625,64,"0.2.0"
+"physical_forest","grouping-prototype",0.0020625,0.002046875,0.00209375000000001,64,"0.2.0"
+"arclength","grouping-prototype",0.00800000000000001,0.00768749999999996,0.00812499999999994,16,"0.2.0"

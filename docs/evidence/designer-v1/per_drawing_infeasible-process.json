@@ -1,0 +1,17 @@
+{
+  "case": "per_drawing_infeasible",
+  "args": [
+    "/usr/bin/time",
+    "-l",
+    "Rscript",
+    "--vanilla",
+    "tools/designer/run_benchmark.R",
+    "per_drawing_infeasible",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/designer-v1"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "process_seconds": 0.29198695800005225,
+  "sampled_tree_rss_bytes": 1277952,
+  "maximum_resident_set_size_bytes": 94404608
+}

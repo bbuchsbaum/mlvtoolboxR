@@ -1,0 +1,18 @@
+{
+  "stage": "coverage-07",
+  "args": [
+    "Rscript",
+    "--vanilla",
+    "/Users/bbuchsbaum/code/mlvtoolbox/tools/coverage.R",
+    "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/package-build/package-source",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/fused-statistics"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "duration_seconds": 16.64202879199729,
+  "peak_work_bytes": 21233799,
+  "limit_bytes": 209715200,
+  "source_commit": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "source_root": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/fused-statistics/frozen-source",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/coverage-07.log"
+}

@@ -1,0 +1,2 @@
+"case","status","objective","upper_bound","gap","nodes","search_seconds","total_seconds","working_data_bytes","ranked_feasible","ranked_objective","ranked_seconds","oracle_optimum","required_win","win"
+"smaller_budget","optimal",178,178,0,148,0.001,0.049,40632,FALSE,0,0.054,178,FALSE,FALSE

@@ -1,0 +1,6 @@
+"workload","method","median_seconds","min_seconds","max_seconds","iterations","package_version"
+"forest","fused-0.2.1-final",0.001390625,0.001375,0.0014140625,128,"0.2.1"
+"many_contours","fused-0.2.1-final",0.00199999999999999,0.001921875,0.002,64,"0.2.1"
+"one_long_contour","fused-0.2.1-final",0.0015546875,0.0015390625,0.001640625,128,"0.2.1"
+"physical_forest","fused-0.2.1-final",0.00161718750000001,0.0015859375,0.00165625,128,"0.2.1"
+"arclength","fused-0.2.1-final",0.00868749999999996,0.00843749999999999,0.00968750000000002,16,"0.2.1"

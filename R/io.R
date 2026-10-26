@@ -53,10 +53,12 @@ read_mlv_mat <- function(file,variable="vecLD",zero_length=c("error","drop")) {
 #' @param x A drawing.
 #' @param file CSV destination.
 #' @param ... Arguments to contour_statistics.
-#' @return The written data frame invisibly.
+#' @return The written data frame invisibly. A companion file named
+#'   `<file>.schema.rds` preserves the measurement schema, calibration and provenance.
 #' @export
 write_feature_csv <- function(x,file,...) {
  result<-contour_statistics(x,...)
  utils::write.csv(result,file,row.names=FALSE,na="")
+ saveRDS(attr(result,"measurement_metadata",exact=TRUE),paste0(file,".schema.rds"))
  invisible(result)
 }

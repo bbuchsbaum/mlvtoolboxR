@@ -4,7 +4,7 @@
 \alias{trace_rgb}
 \title{Trace RGB images with an explicit extraction provider}
 \usage{
-trace_rgb(image, backend, ..., min_points = 2L)
+trace_rgb(image, backend, ..., min_points = 2L, spec = NULL)
 }
 \arguments{
 \item{image}{Numeric RGB array or image filename.}
@@ -14,6 +14,8 @@ trace_rgb(image, backend, ..., min_points = 2L)
 \item{...}{Arguments passed to the provider.}
 
 \item{min_points}{Minimum traced path size.}
+
+\item{spec}{Optional specification, including explicit provider name/version.}
 }
 \value{
 A drawing. Model weights and preprocessing belong to the provider.

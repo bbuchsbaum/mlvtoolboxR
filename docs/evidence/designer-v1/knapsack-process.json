@@ -1,0 +1,17 @@
+{
+  "case": "knapsack",
+  "args": [
+    "/usr/bin/time",
+    "-l",
+    "Rscript",
+    "--vanilla",
+    "tools/designer/run_benchmark.R",
+    "knapsack",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/designer-v1"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "process_seconds": 0.5913230410005781,
+  "sampled_tree_rss_bytes": 93716480,
+  "maximum_resident_set_size_bytes": 96141312
+}

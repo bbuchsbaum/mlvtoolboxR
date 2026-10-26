@@ -124,3 +124,16 @@ and morphology parity with identical flux fields. They do not label the differin
 default end-to-end skeletons as matches. See [the complete parity report](docs/PARITY.md) for counts
 and images. Keeping R distances but substituting Octave nearest labels makes all
 six skeletons identical, with maximum AOF error below 1.5e-14. Actual MATLAB's distance/morphology tie behavior remains unexecuted.
+
+## Pre-release native integration review (0.2.1)
+
+These are defects found and fixed in the new R implementation during review,
+not bugs attributed to either vendored library.
+
+| ID | Evidence and boundary | Fix |
+|---|---|---|
+| MLV-R003 | Source review: native contour-column offsets used an integer row stride; sufficiently large matrices could overflow the multiplied offset. No huge-memory or crash reproduction was executed. | Use R_xlen_t for pointer strides and offsets. Ordinary integer/double contour and scale cases execute in the native regression suite; the huge allocation remains unexecuted. |
+| MLV-R004 | Source review: malformed manually edited S3 contour geometry could produce nonfinite lengths/orientations before native bin indexing. Normal constructors already reject these inputs. No pre-fix crash was executed. | Reject zero, NA and infinite segment lengths before bin indexing. Executed public-API regression tests confirm all three edited inputs fail with an explicit diagnostic. |
+
+See [the integrated performance report](docs/FUSED_STATISTICS.md) for the exact
+qualified archive, numerical witnesses and check evidence.

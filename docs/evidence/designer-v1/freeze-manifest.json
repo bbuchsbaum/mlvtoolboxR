@@ -1,0 +1,9 @@
+{
+  "frozen_at_utc": "2026-10-26T13:48:49.667862+00:00",
+  "optimizer_exists": false,
+  "files": {
+    "inst/fixtures/designer-v1.R": "27faec52fbac2622f303eeb331ed9b24f824244f60661e9ec810a64eb70b51c5",
+    "tools/designer/reference.R": "d36c76b1e0b04923b4af92f97c022cd0cbb23cc8103ba7c5fc13639e5b8d5bee",
+    "docs/DESIGNER_ACCEPTANCE.md": "7fe726ea2f2e85b5fca5654c072763bb330f3da743228aad14d8cd0610bfb809"
+  }
+}

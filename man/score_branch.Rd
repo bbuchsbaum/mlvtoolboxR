@@ -8,7 +8,12 @@ score_branch(
   branch,
   property = c("parallelism", "separation", "mirror", "taper"),
   window = 5L,
-  power = 10
+  power = 10,
+  estimator = c("mlv2023", "arclength"),
+  reference_radius = 1,
+  fit_tolerance = 1,
+  units = c("pixels", "visual_degrees"),
+  pixels_per_degree = NULL
 )
 }
 \arguments{
@@ -19,6 +24,16 @@ score_branch(
 \item{window}{Local derivative integration half-window.}
 
 \item{power}{Final score exponent.}
+
+\item{estimator}{Published sample-based scores or physical arc-length scores.}
+
+\item{reference_radius}{Positive reference radius for new separation scores.}
+
+\item{fit_tolerance}{Positive geometric residual scale for new mirror scores.}
+
+\item{units}{Spatial units for the new estimator's window and references.}
+
+\item{pixels_per_degree}{Required calibration for visual-degree units.}
 }
 \value{
 One numeric score per branch point.
@@ -28,4 +43,17 @@ The taper method uses explicit moving means of width three for both
 derivative stages; this replaces the upstream unspecified adaptive smoothing.
 Final scores use a width-three moving mean and power ten. Separation radii
 below one pixel are undefined and return NA.
+}
+\details{
+The arclength estimator integrates the piecewise-linear axis and
+radius exactly over clipped physical windows. Parallelism is axis arc length
+divided by the joint axis/radius arc length. Mirror is chord/arc straightness
+divided by one plus mean squared perpendicular error / fit_tolerance squared.
+Taper is consistency with the best affine radius, using a dimensionless RMS
+residual divided by window length. Separation is mean radius divided by
+(mean radius + reference_radius). The exponent applies afterward. These are
+versioned geometric descriptors, not claims of perceptual equivalence. A
+zero-length window is undefined (NA); inconsistent radii at duplicate points
+fail. The published estimator ignores none of these options: nondefault new
+unit/reference settings require explicit arclength selection.
 }

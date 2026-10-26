@@ -1,0 +1,24 @@
+      case  status objective upper_bound gap nodes search_seconds total_seconds
+1 knapsack optimal       270         270   0   259          0.002         0.046
+  working_data_bytes ranked_feasible ranked_objective ranked_seconds
+1              40632            TRUE              100          0.051
+  oracle_optimum required_win  win
+1            270         TRUE TRUE
+        0.36 real         0.27 user         0.03 sys
+            96141312  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                7908  page reclaims
+                  28  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  34  voluntary context switches
+                  72  involuntary context switches
+          3881001048  instructions retired
+          1084425678  cycles elapsed
+            79841024  peak memory footprint

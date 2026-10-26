@@ -9,7 +9,8 @@ trace_contours(
   threshold = 0.5,
   min_points = 2L,
   thin = TRUE,
-  simplify = NULL
+  simplify = NULL,
+  spec = NULL
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ trace_contours(
 \item{thin}{Thin the mask before tracing.}
 
 \item{simplify}{Optional nonnegative line-fit distance tolerance.}
+
+\item{spec}{Optional feature/extraction specification, exclusive of individual
+extraction settings. The resulting drawing retains the specification.}
 }
 \value{
 A drawing with extraction provenance.

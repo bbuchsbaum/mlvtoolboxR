@@ -1,0 +1,16 @@
+"candidate","workload","identical"
+"fused-2","forest",TRUE
+"fused-2","many_contours",TRUE
+"fused-2","one_long_contour",TRUE
+"fused-2","physical_forest",TRUE
+"fused-2","arclength",TRUE
+"fused-3","forest",TRUE
+"fused-3","many_contours",TRUE
+"fused-3","one_long_contour",TRUE
+"fused-3","physical_forest",TRUE
+"fused-3","arclength",TRUE
+"prototype-2","forest",TRUE
+"prototype-2","many_contours",TRUE
+"prototype-2","one_long_contour",TRUE
+"prototype-2","physical_forest",TRUE
+"prototype-2","arclength",TRUE

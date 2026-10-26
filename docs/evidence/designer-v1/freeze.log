@@ -1,0 +1,19 @@
+ℹ Loading mlvtoolbox
+Warning message:
+package ‘testthat’ was built under R version 4.5.2 
+                    case feasible_assignments optimum ranked_feasible
+1               knapsack                  252     270            TRUE
+2           set_knapsack                  252     270            TRUE
+3                   ties                   12       0            TRUE
+4              small_set                    2      90            TRUE
+5 per_drawing_infeasible                    0      NA           FALSE
+6         smaller_budget                   90     178           FALSE
+7              exhausted                  252     270            TRUE
+  ranked_objective
+1              100
+2              100
+3                0
+4               90
+5               90
+6                0
+7              100

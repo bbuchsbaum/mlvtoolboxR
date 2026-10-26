@@ -12,7 +12,9 @@ contour_statistics(
   by = c("drawing", "contour"),
   normalize = FALSE,
   length_range = c(2, max(3, x$width + x$height)),
-  curvature_range = c(0, 90)
+  curvature_range = c(0, 90),
+  spec = x$feature_spec,
+  pixels_per_degree = NULL
 )
 }
 \arguments{
@@ -27,6 +29,11 @@ contour_statistics(
 \item{normalize}{Scale by contour length to units per 10,000 pixels.}
 
 \item{length_range, curvature_range}{Increasing nonnegative log-bin ranges.}
+
+\item{spec}{Optional feature specification, exclusive of individual feature
+settings. Enriched drawings use their saved specification by default.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 A long data frame with bin boundaries, centers, values and units.

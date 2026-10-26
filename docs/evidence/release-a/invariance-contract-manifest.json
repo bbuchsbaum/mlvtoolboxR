@@ -1,0 +1,5 @@
+{
+  "tests/testthat/helper-invariance.R": "3e5fa888ace40d9708180b3c63ecf19e428cbc9de188c9118136cd0eb51989e5",
+  "tests/testthat/test-invariance-contract.R": "af946a056cdc0ff725f51f988549b32a61cefaf4ed5bd8057886774443cf84ee",
+  "docs/ESTIMATOR_ACCEPTANCE.md": "db222488ddbb9a2917d9099171b012bca610b7b0cc1a8ee7c1eca674f459535c"
+}

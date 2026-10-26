@@ -1,0 +1,2 @@
+"case","status","objective","upper_bound","gap","nodes","search_seconds","total_seconds","working_data_bytes","ranked_feasible","ranked_objective","ranked_seconds","oracle_optimum","required_win","win"
+"exhausted","budget_exhausted",NA,373.000000000017,NA,1,0,0.031,40632,TRUE,100.000000000017,0.051,270,FALSE,FALSE

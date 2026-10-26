@@ -95,9 +95,18 @@ write_mlv_png <- function(x,file,...) {
 #' @param min_points Minimum traced path size.
 #' @param thin Thin the mask before tracing.
 #' @param simplify Optional nonnegative line-fit distance tolerance.
+#' @param spec Optional feature/extraction specification, exclusive of individual
+#'   extraction settings. The resulting drawing retains the specification.
 #' @return A drawing with extraction provenance.
 #' @export
-trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=NULL) {
+trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=NULL,spec=NULL) {
+ if(!is.null(spec)) {
+  validate_feature_spec(spec)
+  if(!missing(threshold)||!missing(min_points)||!missing(thin)||!missing(simplify))stop("use spec or individual extraction settings, not both",call.=FALSE)
+  s<-spec$settings$extraction
+  if(s$method!="pixel_graph_no_corner_cut")stop("unsupported extraction method",call.=FALSE)
+  threshold<-s$threshold;min_points<-s$min_points;thin<-s$thin;simplify<-s$simplify
+ }
  source <- NULL
  if(is.character(image)){source<-image;image<-read_mlv_image(image)}
  if(length(min_points)!=1L || !is.finite(min_points)||min_points<2 ||
@@ -118,9 +127,10 @@ trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=
   cbind(xy[-n,,drop=FALSE],xy[-1,,drop=FALSE])
  })
  x<-mlv_drawing(contours,ncol(mask),nrow(mask),
-    source=list(image=source,method="pixel_graph_no_corner_cut",thin=thin,
-                morphology="octave_image_pratt_2.20.0",min_points=min_points))
+    source=list(image=source,method="pixel_graph_no_corner_cut",thin=thin,threshold=threshold,
+                morphology="octave_image_pratt_2.20.0",min_points=min_points,simplify=simplify))
  if(!is.null(simplify))x<-simplify_contours(x,simplify)
+ if(!is.null(spec))x$feature_spec<-spec
  x
 }
 #' Trace RGB images with an explicit extraction provider
@@ -128,17 +138,25 @@ trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=
 #' @param backend Function returning a logical ink mask from the image.
 #' @param ... Arguments passed to the provider.
 #' @param min_points Minimum traced path size.
+#' @param spec Optional specification, including explicit provider name/version.
 #' @return A drawing. Model weights and preprocessing belong to the provider.
 #' @export
-trace_rgb <- function(image,backend,...,min_points=2L) {
+trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
  if(!is.function(backend))stop("backend must be an explicitly supplied extraction function",call.=FALSE)
+ if(!is.null(spec)) {
+  validate_feature_spec(spec)
+  if(!missing(min_points))stop("use spec or min_points, not both",call.=FALSE)
+  if(is.null(spec$settings$extraction$provider))stop("RGB specification requires provider and provider_version",call.=FALSE)
+ }
  if(is.character(image))image<-read_mlv_image(image)
  if(length(dim(image))!=3L||dim(image)[3]<3L||any(!is.finite(image)))
   stop("image must be a finite RGB array",call.=FALSE)
  mask<-.check_mask(backend(image,...))
  if(!identical(dim(mask),dim(image)[1:2]))stop("backend mask dimensions must match the image",call.=FALSE)
- x<-trace_contours(mask,min_points=min_points)
- x$source$extraction_provider<-deparse(substitute(backend));x
+ x<-if(is.null(spec))trace_contours(mask,min_points=min_points) else trace_contours(mask,spec=spec)
+ x$source$extraction_provider<-if(is.null(spec))deparse(substitute(backend)) else spec$settings$extraction$provider
+ x$source$provider_version<-if(is.null(spec))NULL else spec$settings$extraction$provider_version
+ x
 }
 #' Plot vector contours or properties
 #' @param x A drawing.
@@ -153,7 +171,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...) {
  arguments<-utils::modifyList(list(x=NA_real_,xlim=c(0,x$width),ylim=c(x$height,0),
                                    asp=1,xlab="",ylab="",type="n"),list(...))
  do.call(graphics::plot,arguments)
- st<-.segment_table(x)
+ st<-.measurement_table(x,x$feature_spec)
  colors<-rep(col,nrow(st))
  if(!is.null(property)) {
   if(property %in% c("length","orientation","curvature")) {
@@ -164,11 +182,12 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...) {
     colors<-grDevices::hcl.colors(256,"Viridis")[1L+pmin(255L,as.integer(255*scaled))]
    }
   } else if(property=="junctions") {
-   j<-if(is.null(x$junctions))detect_junctions(x) else x$junctions
+   j<-.measurement_junctions(x,x$feature_spec)
    graphics::segments(st$x1,st$y1,st$x2,st$y2,col=colors,lwd=lwd)
    graphics::points(j$x,j$y,pch=21,bg="red")
    return(invisible(x))
   } else if(!is.null(x$mat_properties[[property]])) {
+   .checked_mat_measurements(x,x$feature_spec)
    image<-x$mat_images[[property]];where<-which(is.finite(image));rc<-arrayInd(where,dim(image))
    graphics::segments(st$x1,st$y1,st$x2,st$y2,col="gray70",lwd=lwd)
    palette<-grDevices::hcl.colors(256,"Viridis")
@@ -184,14 +203,16 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...) {
 #' @param x A drawing.
 #' @param property Segment property, junctions, or a mapped MAT property.
 #' @param sigma Gaussian smoothing standard deviation in pixels; zero disables.
-#' @return Numeric image matrix. Kernel boundaries are zero padded.
+#' @return Numeric image matrix. Kernel boundaries are zero padded. With a
+#'   specification, curvature distributes integrated absolute turning over
+#'   raster pixels; the historical path distributes segment curvature scores.
 #' @export
 feature_density <- function(x,property="length",sigma=0) {
  .check_drawing(x)
  if(length(sigma)!=1L||!is.finite(sigma)||sigma<0)stop("sigma must be nonnegative",call.=FALSE)
- out<-matrix(0,x$height,x$width);st<-.segment_table(x)
+ out<-matrix(0,x$height,x$width);st<-.measurement_table(x,x$feature_spec)
  if(property=="junctions") {
-  j<-detect_junctions(x)
+  j<-.measurement_junctions(x,x$feature_spec)
   if(nrow(j))for(k in seq_len(nrow(j))) {
    rr<-round(j$y[k]);cc<-round(j$x[k])
    if(rr>=1&&rr<=x$height&&cc>=1&&cc<=x$width)out[rr,cc]<-out[rr,cc]+1
@@ -199,9 +220,12 @@ feature_density <- function(x,property="length",sigma=0) {
  } else if(property %in% c("length","orientation","curvature")) {
   for(i in seq_len(nrow(st))) {
    index<-cpp_raster_indices(as.matrix(st[i,c("x1","y1","x2","y2")]),x$height,x$width,1)
-   if(length(index))out[index]<-out[index]+st[[property]][i]/length(index)
+   value<-st[[property]][i]
+   if(property=="curvature"&&!is.null(x$feature_spec))value<-value*st$length[i]
+   if(length(index))out[index]<-out[index]+value/length(index)
   }
  } else if(!is.null(x$mat_properties[[property]])) {
+  .checked_mat_measurements(x,x$feature_spec)
   for(i in seq_along(x$ids)) {
    index<-.raster_indices(x,i);v<-x$mat_properties[[property]][[i]]
    ok<-is.finite(v);out[index[ok]]<-pmax(out[index[ok]],v[ok])

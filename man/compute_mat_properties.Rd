@@ -8,7 +8,9 @@ compute_mat_properties(
   mat,
   properties = c("parallelism", "separation", "mirror"),
   window = 5L,
-  power = 10
+  power = 10,
+  spec = mat$feature_spec,
+  pixels_per_degree = NULL
 )
 }
 \arguments{
@@ -17,6 +19,10 @@ compute_mat_properties(
 \item{properties}{Requested branch score names.}
 
 \item{window, power}{Branch score parameters.}
+
+\item{spec}{Optional feature specification, exclusive of individual settings.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 An mlv_mat with branch scores and score images; unmapped pixels are NA.

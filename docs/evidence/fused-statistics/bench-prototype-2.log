@@ -1,0 +1,11 @@
+/Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB -o 'sourceCpp_2.so' 'histogram_candidates.cpp' 
+using C++ compiler: ‘Apple clang version 15.0.0 (clang-1500.1.0.2.5)’
+using C++17
+using SDK: ‘MacOSX14.2.sdk’
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Users/bbuchsbaum/Library/R/arm64/4.5/library/Rcpp/include" -I"/Users/bbuchsbaum/code/mlvtoolbox/tools/performance" -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -I/opt/homebrew/opt/gettext/include    -fPIC  -falign-functions=64 -Wall -g -O2   -c histogram_candidates.cpp -o histogram_candidates.o
+clang++ -arch arm64 -std=gnu++17 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -L/Library/Frameworks/R.framework/Resources/lib -L/opt/R/arm64/lib -lomp -L/opt/homebrew/opt/gettext/lib -o sourceCpp_2.so histogram_candidates.o -F/Library/Frameworks/R.framework/.. -framework R
+forest 0.001851563 seconds
+many_contours 0.00365625 seconds
+one_long_contour 0.002625 seconds
+physical_forest 0.002390625 seconds
+arclength 0.0085625 seconds

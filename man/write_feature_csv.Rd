@@ -14,7 +14,8 @@ write_feature_csv(x, file, ...)
 \item{...}{Arguments to contour_statistics.}
 }
 \value{
-The written data frame invisibly.
+The written data frame invisibly. A companion file named
+  `<file>.schema.rds` preserves the measurement schema, calibration and provenance.
 }
 \description{
 Export image or contour statistics

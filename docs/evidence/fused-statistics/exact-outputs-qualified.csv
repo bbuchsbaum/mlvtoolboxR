@@ -1,0 +1,6 @@
+"workload","comparison","exact"
+"forest","qualified 0.2.1 vs installed 0.2.0",TRUE
+"many_contours","qualified 0.2.1 vs installed 0.2.0",TRUE
+"one_long_contour","qualified 0.2.1 vs installed 0.2.0",TRUE
+"physical_forest","qualified 0.2.1 vs installed 0.2.0",TRUE
+"arclength","qualified 0.2.1 vs installed 0.2.0",TRUE

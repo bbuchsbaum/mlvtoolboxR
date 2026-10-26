@@ -1,0 +1,71 @@
+---
+title: "Matched conditions across a stimulus set"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Matched conditions across a stimulus set}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment="#>")
+library(mlvtoolbox)
+```
+
+Matching across a stimulus set can be feasible when each drawing is too small
+to split. This minimal example has a corner in one drawing and a straight
+contour in another, both ten pixels long.
+
+```{r input}
+drawings <- list(
+  corner = mlv_drawing(list(rbind(c(5,5,10,5), c(10,5,10,10))),20,20),
+  straight = mlv_drawing(list(matrix(c(5,5,15,5),1)),20,20))
+spec <- feature_spec(c("length","orientation","curvature"), bins=2,
+                     normalize=FALSE, estimator="arclength", curvature_scale=.5)
+result <- design_subsets(drawings,spec,length_bounds=c(10,10),
+  count_bounds=c(1,1),nuisance=c(length=0,orientation=10))
+result
+as.data.frame(result)
+result$diagnostics$groups
+result$diagnostics$per_drawing
+```
+
+The optimizer maximizes the difference in integrated absolute curvature at the
+selected scale. Orientation matching uses raw length-weighted bin masses:
+the tolerated L1 distance here is ten pixels. The resulting target difference
+is 90 geometric degrees. This is a geometric construction, not evidence of a
+perceptual effect. A and B are disjoint and contain only original whole contours.
+
+```{r infeasible}
+within_drawing <- design_subsets(drawings,spec,length_bounds=c(10,10),
+  count_bounds=c(1,1),nuisance=c(length=0,orientation=10),mode="per_drawing")
+within_drawing$status
+```
+
+Each source has only one contour, so it cannot provide two nonempty conditions.
+The result reports proven infeasibility. A time or node limit has a different
+meaning:
+
+```{r time-limit}
+limited <- design_subsets(drawings,spec,length_bounds=c(10,10),
+  count_bounds=c(1,1),nuisance=c(length=0,orientation=10),time_limit=0)
+limited$status
+limited$solver[c("upper_bound","nodes","search_seconds")]
+```
+
+Zero time performs no search. `budget_exhausted` makes no feasibility claim.
+If a limited run does find a solution, `feasible` retains its verified residuals
+and a conservative objective bound. Only completed searches certify optimality
+or infeasibility, within the declared numerical tolerance.
+
+```{r persistence}
+path <- tempfile(fileext=".rds")
+saveRDS(result,path)
+identical(readRDS(path)$selection,result$selection)
+unlink(path)
+```
+
+The result preserves input geometry, provenance, source/contour IDs, specification
+and reconstructed condition drawings. Physical measurements use visual degrees
+with explicit input calibration. MAT/junction features can be requested as fresh
+diagnostics after selection; they are not additive optimization constraints.

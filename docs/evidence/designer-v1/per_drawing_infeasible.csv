@@ -1,0 +1,2 @@
+"case","status","objective","upper_bound","gap","nodes","search_seconds","total_seconds","working_data_bytes","ranked_feasible","ranked_objective","ranked_seconds","oracle_optimum","required_win","win"
+"per_drawing_infeasible","infeasible",NA,NA,NA,4,0,0.017,43608,FALSE,90.0000000000001,0.041,NA,FALSE,FALSE

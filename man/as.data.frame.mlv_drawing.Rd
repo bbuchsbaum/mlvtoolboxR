@@ -4,12 +4,23 @@
 \alias{as.data.frame.mlv_drawing}
 \title{Drawing segment table}
 \usage{
-\method{as.data.frame}{mlv_drawing}(x, row.names = NULL, optional = FALSE, ...)
+\method{as.data.frame}{mlv_drawing}(
+  x,
+  row.names = NULL,
+  optional = FALSE,
+  ...,
+  spec = x$feature_spec,
+  pixels_per_degree = NULL
+)
 }
 \arguments{
 \item{x}{A drawing.}
 
 \item{row.names, optional, ...}{Standard data frame method arguments.}
+
+\item{spec}{Optional feature specification; defaults to an enriched drawing's recipe.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 A segment data frame with geometric measurements.

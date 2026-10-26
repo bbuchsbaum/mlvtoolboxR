@@ -1,0 +1,50 @@
+physical_score <- function(branch,property,...)score_branch(branch,property,estimator="arclength",power=1,...)
+test_that("physical-window branch scores match elementary independent solutions", {
+ s<-seq(-5,5,by=.5);straight<-data.frame(x=s,y=0,radius=2)
+ expect_equal(physical_score(straight,"mirror",window=2),rep(1,length(s)),tolerance=1e-12)
+ expect_equal(physical_score(straight,"parallelism",window=2),rep(1,length(s)),tolerance=1e-12)
+ expect_equal(physical_score(straight,"taper",window=2),rep(1,length(s)),tolerance=1e-12)
+ expect_equal(physical_score(straight,"separation",window=2),rep(2/3,length(s)),tolerance=1e-12)
+ affine<-straight;affine$radius<-10+2*s
+ expect_equal(physical_score(affine,"parallelism",window=2),rep(1/sqrt(5),length(s)),tolerance=1e-12)
+ expect_equal(physical_score(affine,"taper",window=2),rep(1,length(s)),tolerance=1e-12)
+ v<-data.frame(x=c(-1,0,1),y=0,radius=c(1,0,1))
+ expect_equal(physical_score(v,"taper",window=1)[2],1/sqrt(1+1/48),tolerance=1e-12)
+ expect_equal(physical_score(v,"parallelism",window=1)[2],1/sqrt(2),tolerance=1e-12)
+ expect_equal(physical_score(v,"separation",window=1)[2],1/3,tolerance=1e-12)
+ angle<-data.frame(x=c(0,1,1),y=c(0,0,1),radius=2)
+ expect_equal(physical_score(angle,"mirror",window=1)[2],sqrt(2)/2/(1+1/6),tolerance=1e-12)
+ expect_equal(score_branch(straight,"mirror",estimator="arclength"),rep(1,length(s)),tolerance=1e-12)
+})
+test_that("branch scores preserve geometry through subdivision, reversal and calibration", {
+ coarse<-data.frame(x=c(0,2,5,10),y=0,radius=c(1,3,1,4))
+ refined_s<-sort(unique(c(coarse$x,seq(0,10,by=.25))))
+ refined<-data.frame(x=refined_s,y=0,radius=approx(coarse$x,coarse$radius,xout=refined_s)$y)
+ for(prop in c("mirror","parallelism","taper","separation")) {
+  a<-physical_score(coarse,prop,window=2)
+  b<-physical_score(refined,prop,window=2)[match(coarse$x,refined_s)]
+  expect_equal(a,b,tolerance=1e-12)
+  expect_equal(a,rev(physical_score(coarse[4:1,],prop,window=2)),tolerance=1e-12)
+  expect_equal(a,physical_score(coarse*20,prop,window=2,units="visual_degrees",pixels_per_degree=20),tolerance=1e-12)
+  expect_equal(a,physical_score(coarse*3,prop,window=6,reference_radius=3,fit_tolerance=3),tolerance=1e-12)
+ }
+ shifted<-coarse;shifted$radius<-shifted$radius+1e8
+ expect_equal(physical_score(coarse,"taper",window=2),physical_score(shifted,"taper",window=2),tolerance=1e-8)
+})
+test_that("branch degeneracy and legacy behavior remain explicit", {
+ empty<-data.frame(x=numeric(),y=numeric(),radius=numeric())
+ expect_length(physical_score(empty,"mirror"),0)
+ one<-data.frame(x=1,y=1,radius=0)
+ expect_true(is.na(physical_score(one,"mirror")))
+ expect_true(all(is.na(physical_score(one[c(1,1),],"taper"))))
+ bad<-one[c(1,1),];bad$radius<-c(0,1)
+ expect_error(physical_score(bad,"parallelism"),"inconsistent")
+ b<-data.frame(x=0:10,y=0,radius=2)
+ expect_equal(score_branch(b,"mirror"),rep((1-1/11)^10,11))
+ expect_error(score_branch(b,"mirror",units="visual_degrees"),"arclength")
+ expect_error(physical_score(b,"mirror",window=0),"window")
+ expect_error(physical_score(b,"separation",reference_radius=0),"reference_radius")
+ expect_error(physical_score(b,"taper",units="visual_degrees"),"pixels_per_degree")
+ b$radius<-0
+ expect_identical(physical_score(b,"separation"),rep(0,11))
+})

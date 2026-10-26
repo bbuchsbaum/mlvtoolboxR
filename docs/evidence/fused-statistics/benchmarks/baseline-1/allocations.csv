@@ -1,0 +1,6 @@
+"workload","method","iterations","R_allocated_bytes_per_call","R_allocations_per_call"
+"forest","baseline-0.2.0",5,1710584,313
+"many_contours","baseline-0.2.0",5,9640208,3184
+"one_long_contour","baseline-0.2.0",5,7650960,77
+"physical_forest","baseline-0.2.0",5,1725608,354
+"arclength","baseline-0.2.0",5,1573376,2095

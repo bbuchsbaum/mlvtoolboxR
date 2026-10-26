@@ -7,7 +7,9 @@
 compute_contour_properties(
   x,
   properties = c("orientation", "length", "curvature", "junctions"),
-  ...
+  ...,
+  spec = x$feature_spec,
+  pixels_per_degree = NULL
 )
 }
 \arguments{
@@ -17,6 +19,10 @@ compute_contour_properties(
 computed together. Include "junctions" to detect contour intersections.}
 
 \item{...}{Arguments passed to `detect_junctions()`.}
+
+\item{spec}{Optional feature specification, exclusive of properties and dots.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 A drawing with segment and contour tables, and requested junctions.

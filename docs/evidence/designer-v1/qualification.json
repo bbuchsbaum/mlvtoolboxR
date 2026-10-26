@@ -1,0 +1,37 @@
+{
+  "candidate": "Release B plus concurrent fused-statistics candidate 0.2.1",
+  "base_commit": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "source_state": "uncommitted package candidate; content manifest and archive identify checked files",
+  "package_files": 388,
+  "source_mismatches": [],
+  "freeze_mismatches": [],
+  "archive": "mlvtoolbox_0.2.1-designer.tar.gz",
+  "archive_sha256": "18aebd0f8f7434d51f9417729408f54893db567aa526c262a4dd6da386cb6451",
+  "archive_bytes": 344296,
+  "installed_tests": {
+    "pass": 1214,
+    "fail": 0,
+    "warnings": 0,
+    "skip": 0
+  },
+  "R_CMD_check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": [
+      "New submission",
+      "unable to verify current time"
+    ]
+  },
+  "coverage_percent": 94.6411,
+  "comparative_gate": "both required 270 vs 100 wins; no losses on feasible tie/small-set controls",
+  "publication": "none",
+  "unexecuted": [
+    "Linux",
+    "Windows",
+    "MATLAB",
+    "hosted CI",
+    "PDF manual",
+    "natural-image usability",
+    "perceptual validity"
+  ]
+}

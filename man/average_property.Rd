@@ -7,13 +7,19 @@
 average_property(
   x,
   property = c("length", "curvature", "orientation", "junctions", "mirror",
-    "parallelism", "separation", "taper")
+    "parallelism", "separation", "taper"),
+  spec = x$feature_spec,
+  pixels_per_degree = NULL
 )
 }
 \arguments{
 \item{x}{A drawing, with medial-axis properties when requested.}
 
 \item{property}{Property name.}
+
+\item{spec}{Optional feature specification.}
+
+\item{pixels_per_degree}{Optional input calibration override.}
 }
 \value{
 One numeric summary, or NA when undefined.

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T14:26:12.559726+00:00",
+  "finished_utc": "2026-10-26T14:26:21.461085+00:00",
+  "duration_seconds": 8.901207,
+  "command": [
+    "Rscript",
+    "--vanilla",
+    "tools/performance/fused_statistics.R",
+    ".agent-work/package-build/library",
+    ".agent-work/fused-statistics/final",
+    "fused-0.2.1-qualified"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/fused-statistics/bench-final.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 90.0,
+  "log_bytes": 162
+}

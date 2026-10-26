@@ -1,0 +1,17 @@
+{
+  "case": "smaller_budget",
+  "args": [
+    "/usr/bin/time",
+    "-l",
+    "Rscript",
+    "--vanilla",
+    "tools/designer/run_benchmark.R",
+    "smaller_budget",
+    "/Users/bbuchsbaum/code/mlvtoolbox/docs/evidence/designer-v1"
+  ],
+  "exit_code": 0,
+  "reason": "exited",
+  "process_seconds": 0.588476749995607,
+  "sampled_tree_rss_bytes": 98648064,
+  "maximum_resident_set_size_bytes": 102596608
+}

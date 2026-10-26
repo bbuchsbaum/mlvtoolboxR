@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-26",
+  "parent_commit": "85363b4f45efe14303e37d590fa69dfb8c058937",
+  "source_binding": "388 frozen package inputs, SHA-256 bound by package-source-manifest.json; check ran before the combined checkpoint commit existed",
+  "baseline_archive": {
+    "path": "mlvtoolbox_0.2.0.tar.gz",
+    "sha256": "7c2d7e20e95d7b61991bcfe09e8372878d90a140b59c49d55049d1fb51954954"
+  },
+  "qualified_archive": {
+    "path": "mlvtoolbox_0.2.1-fused.tar.gz",
+    "bytes": 344689,
+    "sha256": "36adfe06494da8a2e6a07ffc6c325007374ab14225356bd6889695e19885fee1"
+  },
+  "source_manifest_sha256": "a75c532f4eff92b1616a000cb9c56686ee009bc0c78d3f4e836e67f2d5b3577a",
+  "matlab_source": "f12418a5e03c2f38e222fed1dffccf42b227cd29",
+  "python_source": "14b3183b91146b1021eb7ef97db75ad703b06832",
+  "forest_sha256": "da1f7ed1a1e512913b0210f8aefcb83f8ef673b82fdcb7e1c5d62da2bd778fb5",
+  "forest_preparation": "zero_length=drop: one zero-length contour/segment dropped consistently; 562 contours, 2072 segments",
+  "machine": "Apple M3 Max",
+  "environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "LC_ALL": "en_US.UTF-8",
+    "LANG": "en_US.UTF-8"
+  },
+  "assertions": 1224,
+  "focused_assertions": 210,
+  "baseline_public_output_witnesses": 122,
+  "coverage_percent": 94.6867,
+  "check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": 2,
+    "note_triage": [
+      "New submission: local package has not been submitted to CRAN",
+      "Unable to verify current time: environment time verification, not a package test failure"
+    ]
+  },
+  "parity_counts": {
+    "octave": {
+      "match": 151,
+      "different": 22
+    },
+    "python": {
+      "match": 75,
+      "different": 41
+    }
+  },
+  "benchmark_scope": "Three normalized per-contour geometric histograms. Physical feature specification and arclength workload are separate. Input reading, startup, compilation and image/MAT pipeline are excluded.",
+  "timing_protocol": "Five warmed batch averages per workload; median, min and max retained. Adaptive batch size targets >=0.12 seconds, maximum512 calls. Processes ran sequentially; not a globally isolated machine.",
+  "memory_scope": "Rprofmem allocated bytes and allocation counts per call over five calls; excludes native allocations and peak RSS.",
+  "python_timing_input": "fused-3 outputs, exactly identical to qualified and 0.2.0 outputs; (n,1) contour lengths reshaped to (n,) before timing",
+  "qualification_limits": [
+    "macOS arm64 only",
+    "Actual MATLAB was not run",
+    "Default MAT nearest-label tie and upstream formula differences remain explicit",
+    "Arclength estimator speed is essentially unchanged"
+  ],
+  "qualified_runs": {
+    "build": "build-14",
+    "install": "install-13",
+    "check": "check-13",
+    "coverage": "coverage-08",
+    "benchmark": "benchmarks/qualified",
+    "parity": "parity-qualified.csv"
+  },
+  "superseded_candidate": {
+    "archive": "mlvtoolbox_0.2.1-fused-pre-stride.tar.gz",
+    "provenance": "provenance-pre-stride.json",
+    "reason": "Final source audit completed the fused-loop R_xlen_t offset fix; earlier kernel had already been corrected. Retained for audit only."
+  }
+}

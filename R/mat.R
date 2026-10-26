@@ -42,12 +42,28 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #' @param min_component Minimum component size; default scales with image size.
 #' @param min_branch_points Minimum points retained in traced branches.
 #' @param trace_branches Trace branches now; FALSE defers this work until scoring.
+#' @param spec Optional feature specification for raster and MAT settings.
 #' @return An `mlv_mat` with distance_map, nearest_boundary, AOF, skeleton,
 #'   branches, mask and method parameters.
 #' @export
 compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
-                        min_component=NULL,min_branch_points=10L,trace_branches=TRUE) {
- if(inherits(mask,"mlv_drawing"))mask<-rasterize(mask)
+                        min_component=NULL,min_branch_points=10L,trace_branches=TRUE,spec=NULL) {
+ drawing<-if(inherits(mask,"mlv_drawing"))mask else NULL
+ if(!is.null(spec)) {
+  validate_feature_spec(spec)
+  if(!missing(threshold_angle)||!missing(samples)||!missing(epsilon)||!missing(min_component)||!missing(min_branch_points))
+   stop("use spec or individual MAT settings, not both",call.=FALSE)
+  s<-spec$settings$mat;threshold_angle<-s$threshold_angle;samples<-s$samples;epsilon<-s$epsilon
+  min_component<-s$min_component;min_branch_points<-s$min_branch_points
+ }
+ attach_spec<-function(out) {
+  if(!is.null(spec)) {
+   out$feature_spec<-spec
+   if(!is.null(drawing))out$source_geometry<-.geometry_snapshot(drawing)
+  }
+  out
+ }
+ if(!is.null(drawing))mask<-rasterize(mask,line_width=if(is.null(spec))1 else spec$settings$raster_line_width)
  mask<-.check_mask(mask); h<-nrow(mask);w<-ncol(mask)
  if(!is.logical(trace_branches)||length(trace_branches)!=1L||is.na(trace_branches))stop("trace_branches must be TRUE or FALSE",call.=FALSE)
  if(length(threshold_angle)!=1L||!is.finite(threshold_angle)||threshold_angle<0||threshold_angle>90)
@@ -60,11 +76,11 @@ compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
   sk<-skeletonize(matrix(FALSE,h,w),min_component)
   if(length(min_branch_points)!=1L||!is.finite(min_branch_points)||min_branch_points<2||min_branch_points!=floor(min_branch_points))
    stop("min_branch_points must be at least 2",call.=FALSE)
-  return(structure(list(distance_map=D,nearest_boundary=idx,AOF=flux,skeleton=sk,
+  return(attach_spec(structure(list(distance_map=D,nearest_boundary=idx,AOF=flux,skeleton=sk,
    mask=mask,branches=list(),parameters=list(threshold_angle=threshold_angle,
    threshold=2/pi*sin(threshold_angle*pi/180),samples=samples,epsilon=epsilon,
    min_component=min_component,min_branch_points=min_branch_points,
-   morphology="octave_image_pratt_2.20.0",tracing="pixel_graph_no_corner_cut")),class="mlv_mat"))
+   morphology="octave_image_pratt_2.20.0",tracing="pixel_graph_no_corner_cut")),class="mlv_mat")))
  }
  thin_ink<-skeletonize(mask)
  white<-!thin_ink
@@ -91,7 +107,7 @@ compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
    min_branch_points=min_branch_points,morphology="octave_image_pratt_2.20.0",
    tracing="pixel_graph_no_corner_cut")),class="mlv_mat")
  if(trace_branches)out$branches<-trace_skeleton(out,min_branch_points)
- out
+ attach_spec(out)
 }
 #' Trace ordered medial-axis branches
 #' @param mat An mlv_mat object.
@@ -130,11 +146,34 @@ fit_line_segments <- function(xy,tolerance=1) {
 #' @param property Parallelism, separation, mirror or taper.
 #' @param window Local derivative integration half-window.
 #' @param power Final score exponent.
+#' @param estimator Published sample-based scores or physical arc-length scores.
+#' @param reference_radius Positive reference radius for new separation scores.
+#' @param fit_tolerance Positive geometric residual scale for new mirror scores.
+#' @param units Spatial units for the new estimator's window and references.
+#' @param pixels_per_degree Required calibration for visual-degree units.
+#' @details The arclength estimator integrates the piecewise-linear axis and
+#' radius exactly over clipped physical windows. Parallelism is axis arc length
+#' divided by the joint axis/radius arc length. Mirror is chord/arc straightness
+#' divided by one plus mean squared perpendicular error / fit_tolerance squared.
+#' Taper is consistency with the best affine radius, using a dimensionless RMS
+#' residual divided by window length. Separation is mean radius divided by
+#' (mean radius + reference_radius). The exponent applies afterward. These are
+#' versioned geometric descriptors, not claims of perceptual equivalence. A
+#' zero-length window is undefined (NA); inconsistent radii at duplicate points
+#' fail. The published estimator ignores none of these options: nondefault new
+#' unit/reference settings require explicit arclength selection.
 #' @return One numeric score per branch point.
 #' @export
 score_branch <- function(branch,property=c("parallelism","separation","mirror","taper"),
-                         window=5L,power=10) {
+                         window=5L,power=10,estimator=c("mlv2023","arclength"),
+                         reference_radius=1,fit_tolerance=1,units=c("pixels","visual_degrees"),
+                         pixels_per_degree=NULL) {
  property<-match.arg(property)
+ estimator<-match.arg(estimator);units<-match.arg(units)
+ if(estimator=="arclength")return(.score_branch_arclength(branch,property,window,power,
+  reference_radius,fit_tolerance,units,pixels_per_degree))
+ if(units!="pixels"||!is.null(pixels_per_degree)||!identical(as.double(reference_radius),1)||
+    !identical(as.double(fit_tolerance),1))stop("new units/references require estimator='arclength'",call.=FALSE)
  X<-branch$x;Y<-branch$y;R<-branch$radius;n<-length(X)
  if(length(Y)!=n||length(R)!=n||any(!is.finite(c(X,Y,R)))||any(R<0))
   stop("branch coordinates/radii must be finite, nonnegative and equally sized",call.=FALSE)
@@ -167,11 +206,25 @@ score_branch <- function(branch,property=c("parallelism","separation","mirror","
 #' @param mat An mlv_mat object.
 #' @param properties Requested branch score names.
 #' @param window,power Branch score parameters.
+#' @param spec Optional feature specification, exclusive of individual settings.
+#' @param pixels_per_degree Optional input calibration override.
 #' @return An mlv_mat with branch scores and score images; unmapped pixels are NA.
 #' @export
 compute_mat_properties <- function(mat,properties=c("parallelism","separation","mirror"),
-                                   window=5L,power=10) {
+                                   window=5L,power=10,spec=mat$feature_spec,pixels_per_degree=NULL) {
  if(!inherits(mat,"mlv_mat"))stop("mat must be an mlv_mat",call.=FALSE)
+ if(!is.null(spec)) {
+  validate_feature_spec(spec)
+  if(!missing(properties)||!missing(window)||!missing(power))stop("use spec or individual branch settings, not both",call.=FALSE)
+  s<-spec$settings
+  properties<-intersect(s$properties,c("parallelism","separation","mirror","taper"))
+  window<-s$branch_window;power<-s$branch_power
+  actual<-mat$parameters[names(s$mat)];expected<-s$mat
+  if(is.null(expected$min_component))expected$min_component<-max(floor(.025*max(dim(mat$mask))),1L)
+  if(!isTRUE(all.equal(actual,expected,check.attributes=FALSE)))
+   stop("MAT raster specification mismatch; recompute compute_mat()",call.=FALSE)
+  if(!is.null(pixels_per_degree))spec$settings$pixels_per_degree<-.spec_number(pixels_per_degree,"pixels_per_degree",strict=TRUE)
+ }
  if(any(!properties %in% c("parallelism","separation","mirror","taper")))
   stop("unknown MAT property",call.=FALSE)
  if(!length(mat$branches)&&any(mat$skeleton))mat$branches<-trace_skeleton(mat,mat$parameters$min_branch_points)
@@ -179,7 +232,10 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
  for(prop in properties) {
   image<-matrix(NA_real_,nrow(mat$skeleton),ncol(mat$skeleton))
   for(i in seq_along(mat$branches)) {
-   b<-mat$branches[[i]];scores<-score_branch(b,prop,window,power)
+   b<-mat$branches[[i]]
+   scores<-if(is.null(spec))score_branch(b,prop,window,power) else score_branch(b,prop,window,power,
+    estimator=s$branch_estimator,reference_radius=s$reference_radius,fit_tolerance=s$fit_tolerance,
+    units=s$units,pixels_per_degree=if(s$branch_estimator=="mlv2023")NULL else spec$settings$pixels_per_degree)
    mat$branches[[i]][[prop]]<-scores
    idx<-cbind(b$row,b$column)
    image[idx]<-ifelse(is.na(image[idx]),scores,pmax(image[idx],scores,na.rm=TRUE))
@@ -188,6 +244,11 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
  }
  mat$parameters$window<-window;mat$parameters$power<-power
  mat$parameters$taper_smoothing<-"moving_mean_3"
+ if(!is.null(spec)) {
+  mat$feature_spec<-spec
+  mat$score_spec<-.mat_semantics(spec)
+  if(s$branch_estimator!="mlv2023")mat$parameters$taper_smoothing<-"exact_affine_radius_residual"
+ }
  mat
 }
 .tangent_points <- function(branch) {
@@ -222,11 +283,23 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
 #' @param x A drawing.
 #' @param mat An mlv_mat with computed branch properties.
 #' @param radius Maximum tangent mapping distance in pixels.
+#' @param spec Optional feature specification retained by the scored MAT.
+#' @param pixels_per_degree Optional input calibration override.
 #' @return A drawing with per-contour MAT scores, score images and mapping masks.
 #' @export
-map_mat_properties <- function(x,mat,radius=4) {
+map_mat_properties <- function(x,mat,radius=4,spec=mat$feature_spec,pixels_per_degree=NULL) {
  .check_drawing(x)
  if(!inherits(mat,"mlv_mat")||is.null(mat$score_images))stop("compute MAT properties first",call.=FALSE)
+ if(!is.null(spec)) {
+  validate_feature_spec(spec)
+  if(!missing(radius))stop("use spec or radius, not both",call.=FALSE)
+  radius<-spec$settings$mapping_radius
+  if(!is.null(pixels_per_degree))spec$settings$pixels_per_degree<-.spec_number(pixels_per_degree,"pixels_per_degree",strict=TRUE)
+  if(is.null(mat$score_spec)||!identical(mat$score_spec,.mat_semantics(spec)))
+   stop("MAT score specification mismatch; recompute compute_mat_properties()",call.=FALSE)
+  if(!is.null(mat$source_geometry)&&!identical(mat$source_geometry,.geometry_snapshot(x)))
+   stop("MAT source geometry mismatch; recompute analyse_mat()",call.=FALSE)
+ }
  if(!identical(dim(mat$mask),c(x$height,x$width)))stop("drawing and MAT image dimensions differ",call.=FALSE)
  if(length(radius)!=1L||!is.finite(radius)||radius<=0)stop("radius must be positive",call.=FALSE)
  ink<-which(rasterize(x));rc<-arrayInd(ink,dim(mat$mask))
@@ -255,15 +328,31 @@ map_mat_properties <- function(x,mat,radius=4) {
   x$mat_mapping_masks[[prop]]<-is.finite(image)
   x$mat_properties[[prop]]<-lapply(contour_indices,function(index)image[index])
  }
- x$mat_parameters<-mat$parameters;x
+ x$mat_parameters<-mat$parameters
+ if(!is.null(spec)) {
+  x$feature_spec<-spec;x$mat_feature_spec<-.mat_semantics(spec)
+  x$mat_geometry<-.geometry_snapshot(x)
+ }
+ x
 }
 #' Complete vector drawing to medial-axis feature workflow
 #' @param x A drawing.
 #' @param properties MAT property names.
 #' @param ... Arguments to compute_mat.
+#' @param spec Optional feature specification, exclusive of properties and dots.
+#' @param pixels_per_degree Optional input calibration override.
 #' @return List containing the enriched drawing and medial-axis representation.
 #' @export
-analyse_mat <- function(x,properties=c("parallelism","separation","mirror"),...) {
+analyse_mat <- function(x,properties=c("parallelism","separation","mirror"),...,
+                        spec=x$feature_spec,pixels_per_degree=NULL) {
+ if(!is.null(spec)) {
+  validate_feature_spec(spec)
+  if(!missing(properties)||length(list(...)))stop("use spec or individual MAT settings, not both",call.=FALSE)
+  if(!is.null(pixels_per_degree))spec$settings$pixels_per_degree<-.spec_number(pixels_per_degree,"pixels_per_degree",strict=TRUE)
+  mat<-compute_mat(x,spec=spec)
+  mat<-compute_mat_properties(mat,spec=spec)
+  return(list(drawing=map_mat_properties(x,mat,spec=spec),mat=mat))
+ }
  mat<-compute_mat(x,...)
  mat<-compute_mat_properties(mat,properties)
  list(drawing=map_mat_properties(x,mat),mat=mat)

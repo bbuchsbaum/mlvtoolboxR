@@ -3,19 +3,31 @@
 #' @param properties Requested properties; basic segment measures are cheap and
 #'   computed together. Include "junctions" to detect contour intersections.
 #' @param ... Arguments passed to `detect_junctions()`.
+#' @param spec Optional feature specification, exclusive of properties and dots.
+#' @param pixels_per_degree Optional input calibration override.
 #' @return A drawing with segment and contour tables, and requested junctions.
 #' @export
 compute_contour_properties <- function(x,
-  properties=c("orientation","length","curvature","junctions"), ...) {
+  properties=c("orientation","length","curvature","junctions"), ...,
+  spec=x$feature_spec,pixels_per_degree=NULL) {
   .check_drawing(x)
+  if(!is.null(spec)) {
+    validate_feature_spec(spec)
+    if(!missing(properties)||length(list(...)))stop("use spec or individual contour settings, not both",call.=FALSE)
+    if(!is.null(pixels_per_degree))spec$settings$pixels_per_degree<-.spec_number(pixels_per_degree,"pixels_per_degree",strict=TRUE)
+    properties<-c(intersect(spec$settings$properties,c("orientation","length","curvature")),
+                  if(any(grepl("^junction_",spec$settings$properties)))"junctions")
+  }
   if(any(!properties %in% c("orientation","length","curvature","junctions")))
     stop("unknown contour property",call.=FALSE)
-  x$segment_properties <- .segment_table(x)
+  x$segment_properties <- .measurement_table(x,spec,pixels_per_degree)
   st <- x$segment_properties
   x$contour_properties <- data.frame(contour_id=x$ids,
     length=if(length(x$ids))unname(vapply(split(st$length,
       factor(st$contour_index,levels=seq_along(x$ids))),sum,double(1))) else numeric())
-  if("junctions" %in% properties) x$junctions <- detect_junctions(x,...)
+  if("junctions" %in% properties) x$junctions <- if(is.null(spec))detect_junctions(x,...) else
+    .measurement_junctions(x,spec,pixels_per_degree)
+  if(!is.null(spec))x$feature_spec<-spec
   x
 }
 .empty_junctions <- function() {
@@ -99,15 +111,18 @@ detect_junctions <- function(x,absolute_epsilon=1,relative_epsilon=0.3,
 #' Mean geometric or medial-axis property
 #' @param x A drawing, with medial-axis properties when requested.
 #' @param property Property name.
+#' @param spec Optional feature specification.
+#' @param pixels_per_degree Optional input calibration override.
 #' @return One numeric summary, or NA when undefined.
 #' @export
 average_property <- function(x,property=c("length","curvature","orientation","junctions",
-                                         "mirror","parallelism","separation","taper")) {
+                                         "mirror","parallelism","separation","taper"),
+                             spec=x$feature_spec,pixels_per_degree=NULL) {
   .check_drawing(x); property <- match.arg(property)
-  st <- .segment_table(x); total <- sum(st$length)
+  st <- .measurement_table(x,spec,pixels_per_degree); total <- sum(st$length)
   if(property=="length") {
     if(!length(x$ids)) return(NA_real_)
-    return(mean(vapply(x$contours,function(z)sum(sqrt(rowSums((z[,3:4,drop=FALSE]-z[,1:2,drop=FALSE])^2))),double(1))))
+    return(total/length(x$ids))
   }
   if(total==0) return(NA_real_)
   if(property=="curvature") return(sum(st$curvature*st$length)/total)
@@ -118,7 +133,8 @@ average_property <- function(x,property=c("length","curvature","orientation","ju
     if(sqrt(sx^2+sy^2) <= 64*.Machine$double.eps*total) return(NA_real_)
     return((atan2(sy,sx)*90/pi)%%180)
   }
-  if(property=="junctions") return(nrow(detect_junctions(x))/total*10000)
+  if(property=="junctions") return(nrow(.measurement_junctions(x,spec,pixels_per_degree))/total*10000)
+  .checked_mat_measurements(x,spec,pixels_per_degree)
   values <- x$mat_properties[[property]]
   if(is.null(values)) stop("requested MAT property has not been mapped",call.=FALSE)
   values <- unlist(values,use.names=FALSE)

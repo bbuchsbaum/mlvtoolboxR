@@ -1,0 +1,7 @@
+{
+  "timestamp_utc": "2026-10-26T14:02:34.539540+00:00",
+  "rss_limit_bytes": 2147483648,
+  "process_wall_limit_seconds": 60,
+  "sample_seconds": 0.25,
+  "note": "Supplemental process cap declared before comparative benchmark. Frozen fixtures/objectives/tolerances unchanged. RSS includes R startup, optimizer, ranked comparator and exhaustive oracle."
+}

@@ -1,0 +1,6 @@
+"workload","method","iterations","R_allocated_bytes_per_call","R_allocations_per_call"
+"forest","grouping-prototype",5,1173496,133
+"many_contours","grouping-prototype",5,6121016,129
+"one_long_contour","grouping-prototype",5,4965424,51
+"physical_forest","grouping-prototype",5,1217872,169
+"arclength","grouping-prototype",5,1539496,2030

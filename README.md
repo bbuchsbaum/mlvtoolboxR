@@ -94,10 +94,41 @@ middle contour can remain unassigned. Curvature means and integrated curvature
 have separate names. Geometry-changing operations invalidate derived results.
 
 Model scoring accepts an R model/predict method or a function of a feature table.
+Bind the exact training table's measurement schema before prediction:
+
+```r
+features <- feature_table(drawing)
+model <- bind_feature_model(function(z) z$length_1, features)
+scores <- predict_contours(drawing, model)
+```
+
+The schema records predictor order, bin edges, weights, units and normalization.
+Prediction rejects missing or incompatible training metadata before calling the
+model. Use fixed `length_range` and `curvature_range` values when comparing
+drawings with different canvas sizes. A model can instead receive its training
+schema via `expected_spec = feature_schema(features)`. The explicit legacy
+option `check_spec = FALSE` warns that compatibility was not checked.
+
 trace_rgb() requires an explicitly supplied provider returning an ink mask.
 No SAM model/backend is bundled; arbitrary edge detectors are not silently
 substituted for SAM. MATLAB serialized regression models, general SVG paint
 effects and MAT v7.3/HDF5 import are outside the current adapters.
+
+For reproducible measurements, use a fixed specification:
+
+```r
+spec <- feature_spec(c("length", "curvature", "orientation"),
+                     estimator = "arclength", curvature_scale = 2)
+measured <- compute_contour_properties(drawing, spec = spec)
+features <- feature_table(measured)
+```
+
+`mlv2023` remains the default for compatibility. The new `turning` and
+`arclength` estimators count each vertex turn once and wrap closed contours.
+Physical measurement uses `units = "visual_degrees"` with an explicit
+`pixels_per_degree`. New branch scores use `branch_estimator = "arclength"`.
+See the [measurement contract](docs/FEATURE_SPEC.md) for definitions, migration,
+metadata, and the limits of raster resolution invariance.
 
 ## References, storage and bugs
 

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-26T13:55:17.948274+00:00",
+  "finished_utc": "2026-10-26T13:55:19.572824+00:00",
+  "duration_seconds": 1.624399,
+  "command": [
+    "Rscript",
+    "--vanilla",
+    "-e",
+    "testthat::test_local(filter=\"fused-statistics\", reporter=\"summary\", stop_on_failure=TRUE)"
+  ],
+  "cwd": "/Users/bbuchsbaum/code/mlvtoolbox",
+  "log": "/Users/bbuchsbaum/code/mlvtoolbox/.agent-work/fused-statistics/focused-01.log",
+  "exit_code": 0,
+  "child_returncode": 0,
+  "reason": "exited",
+  "detail": null,
+  "timeout_seconds": 120.0,
+  "log_bytes": 522
+}

@@ -61,8 +61,10 @@ mlv_drawing <- function(contours = list(), width, height, ids = NULL,
   x
 }
 .rebuild <- function(x, contours=x$contours, ids=x$ids, operation=NULL) {
-  mlv_drawing(contours, x$width, x$height, ids,
+  out<-mlv_drawing(contours, x$width, x$height, ids,
               source=list(parent=x$source, operation=operation), zero_length="drop")
+  if(!is.null(x$feature_spec))out$feature_spec<-x$feature_spec
+  out
 }
 .empty_segments <- function() data.frame(contour_id=character(), contour_index=integer(),
   segment_index=integer(), x1=double(), y1=double(), x2=double(), y2=double(),
@@ -96,10 +98,13 @@ print.mlv_drawing <- function(x, ...) {
 #' Drawing segment table
 #' @param x A drawing.
 #' @param row.names,optional,... Standard data frame method arguments.
+#' @param spec Optional feature specification; defaults to an enriched drawing's recipe.
+#' @param pixels_per_degree Optional input calibration override.
 #' @return A segment data frame with geometric measurements.
 #' @export
-as.data.frame.mlv_drawing <- function(x, row.names=NULL, optional=FALSE, ...) {
-  .segment_table(x)
+as.data.frame.mlv_drawing <- function(x, row.names=NULL, optional=FALSE, ...,
+                                    spec=x$feature_spec,pixels_per_degree=NULL) {
+  .measurement_table(x,spec,pixels_per_degree)
 }
 #' Select contours and invalidate derived properties
 #' @param x A drawing.

@@ -1,0 +1,139 @@
+.spec_number <- function(x,name,lower=0,strict=FALSE,integer=FALSE,upper=Inf) {
+ if(integer)upper<-min(upper,.Machine$integer.max)
+ if(!is.numeric(x)||length(x)!=1L||!is.finite(x)||
+    (if(strict)x<=lower else x<lower)||x>upper||(integer&&x!=floor(x)))
+  stop("invalid ",name,call.=FALSE)
+ if(integer)as.integer(x) else as.double(x)
+}
+.spec_options <- function(x,defaults,name) {
+ if(!is.list(x)||is.null(names(x))&&length(x)||anyDuplicated(names(x))||
+    any(!names(x)%in%names(defaults)))stop("invalid ",name," fields",call.=FALSE)
+ defaults[names(x)]<-x
+ defaults
+}
+#' Declare a reusable measurement specification
+#'
+#' Explicit specifications use fixed ranges, independent of the canvas. The
+#' published estimator remains the default for one release. New estimators are
+#' selected explicitly; their definitions are versioned separately from this
+#' specification's serialization format. Calibration is input-specific and is
+#' excluded from semantic compatibility after conversion to the target units.
+#' @param properties Ordered feature names.
+#' @param bins Histogram bin count; junction types always use five categories.
+#' @param normalize Normalize length/count weights per 10,000 target length units.
+#' @param length_range,curvature_range Fixed increasing nonnegative bin ranges.
+#'   NULL length range means c(2,400) pixels or c(0,20) visual degrees.
+#' @param units Spatial unit: pixels or degrees of visual angle. Tangent/turning
+#'   angles are always measured in geometric degrees.
+#' @param pixels_per_degree Positive calibration required for visual degrees.
+#' @param estimator Contour curvature definition: published, vertex turning,
+#'   or arc-length-scale curvature.
+#' @param curvature_scale Half-width of the arc-length curvature support, in
+#'   target spatial units. Applies only to the arclength estimator.
+#' @param branch_estimator Published sample-based or arc-length-based scores.
+#' @param branch_window Half-window: samples for mlv2023, target spatial units
+#'   for arclength.
+#' @param branch_power Positive score exponent.
+#' @param reference_radius Reference radius in target spatial units for the
+#'   new separation score; published separation retains its one-pixel reference.
+#' @param fit_tolerance Straightness tolerance in target spatial units for the
+#'   new branch estimator; published mirror fitting retains its one-pixel rule.
+#' @param junction Named overrides of absolute_epsilon, relative_epsilon,
+#'   merge_radius, endpoint_radius and method. Spatial tolerances use target units.
+#' @param mat Named overrides of threshold_angle, samples, epsilon,
+#'   min_component and min_branch_points. Epsilon and component/point counts
+#'   describe the raster method and remain in pixels/samples.
+#' @param mapping_radius,raster_line_width Raster mapping distance and ink width
+#'   in pixels; rasterization is explicitly a pixel-grid operation.
+#' @param extraction Named extraction settings: method, threshold, thin,
+#'   min_points, simplify, provider, provider_version. Simplification is in pixels.
+#' @return A validated `mlv_feature_spec`. It declares methods; constructing it
+#'   does not calculate features or infer extraction provenance for existing data.
+#' @export
+feature_spec <- function(properties=c("orientation","length","curvature","junction_type"),
+ bins=8,normalize=TRUE,length_range=NULL,curvature_range=c(0,90),
+ units=c("pixels","visual_degrees"),pixels_per_degree=NULL,
+ estimator=c("mlv2023","turning","arclength"),curvature_scale=1,
+ branch_estimator=c("mlv2023","arclength"),branch_window=5,branch_power=10,
+ reference_radius=1,fit_tolerance=1,junction=list(),mat=list(),mapping_radius=4,
+ raster_line_width=1,extraction=list()) {
+ units<-match.arg(units);estimator<-match.arg(estimator);branch_estimator<-match.arg(branch_estimator)
+ allowed<-c("orientation","length","curvature","horizontal_vertical","junction_type","junction_angle",
+            "mirror","parallelism","separation","taper")
+ if(!is.character(properties)||anyNA(properties)||anyDuplicated(properties)||any(!properties%in%allowed))
+  stop("invalid or repeated properties",call.=FALSE)
+ bins<-.bins_count(bins)
+ if(!is.logical(normalize)||length(normalize)!=1L||is.na(normalize))stop("invalid normalize",call.=FALSE)
+ if(is.null(length_range))length_range<-if(units=="pixels")c(2,400) else c(0,20)
+ for(r in list(length_range,curvature_range))
+  if(!is.numeric(r)||length(r)!=2L||any(!is.finite(r))||r[1]<0||r[2]<=r[1])
+   stop("invalid histogram range",call.=FALSE)
+ if(units=="visual_degrees"&&is.null(pixels_per_degree))stop("visual_degrees requires pixels_per_degree",call.=FALSE)
+ if(!is.null(pixels_per_degree))pixels_per_degree<-.spec_number(pixels_per_degree,"pixels_per_degree",strict=TRUE)
+ curvature_scale<-.spec_number(curvature_scale,"curvature_scale",strict=TRUE)
+ branch_window<-.spec_number(branch_window,"branch_window",strict=TRUE,integer=branch_estimator=="mlv2023")
+ branch_power<-.spec_number(branch_power,"branch_power",strict=TRUE)
+ reference_radius<-.spec_number(reference_radius,"reference_radius",strict=TRUE)
+ fit_tolerance<-.spec_number(fit_tolerance,"fit_tolerance",strict=TRUE)
+ if(branch_estimator=="mlv2023" && (reference_radius!=1||fit_tolerance!=1))
+  stop("mlv2023 branch scores require reference_radius=1 and fit_tolerance=1",call.=FALSE)
+ if(units=="visual_degrees"&&branch_estimator=="mlv2023"&&any(properties%in%c("mirror","parallelism","separation","taper")))
+  stop("physical branch scores require branch_estimator='arclength'",call.=FALSE)
+ junction<-.spec_options(junction,list(absolute_epsilon=1,relative_epsilon=.3,merge_radius=2,
+  endpoint_radius=2,method="sweep"),"junction")
+ for(k in setdiff(names(junction),"method"))junction[[k]]<-.spec_number(junction[[k]],paste0("junction.",k))
+ junction$method<-match.arg(junction$method,c("sweep","exhaustive"))
+ mat<-.spec_options(mat,list(threshold_angle=28,samples=60L,epsilon=1,min_component=NULL,min_branch_points=10L),"mat")
+ mat$threshold_angle<-.spec_number(mat$threshold_angle,"threshold_angle",upper=90)
+ mat$samples<-.spec_number(mat$samples,"samples",lower=4,upper=100000,integer=TRUE)
+ mat$epsilon<-.spec_number(mat$epsilon,"epsilon",strict=TRUE)
+ if(!is.null(mat$min_component))mat$min_component<-.spec_number(mat$min_component,"min_component",lower=1,integer=TRUE,upper=.Machine$integer.max)
+ mat$min_branch_points<-.spec_number(mat$min_branch_points,"min_branch_points",lower=2,integer=TRUE,upper=.Machine$integer.max)
+ mapping_radius<-.spec_number(mapping_radius,"mapping_radius",strict=TRUE)
+ raster_line_width<-.spec_number(raster_line_width,"raster_line_width",strict=TRUE)
+ extraction<-.spec_options(extraction,list(method="pixel_graph_no_corner_cut",threshold=.5,
+  thin=TRUE,min_points=2L,simplify=NULL,provider=NULL,provider_version=NULL),"extraction")
+ extraction$threshold<-.spec_number(extraction$threshold,"threshold",lower=-Inf)
+ extraction$min_points<-.spec_number(extraction$min_points,"min_points",lower=2,integer=TRUE,upper=.Machine$integer.max)
+ if(!is.null(extraction$simplify))extraction$simplify<-.spec_number(extraction$simplify,"simplify")
+ if(!is.logical(extraction$thin)||length(extraction$thin)!=1L||is.na(extraction$thin))stop("invalid thin",call.=FALSE)
+ for(k in c("method","provider","provider_version")) {
+  v<-extraction[[k]]
+  if((k=="method"||!is.null(v))&&(!is.character(v)||length(v)!=1L||is.na(v)||!nzchar(v)))stop("invalid extraction.",k,call.=FALSE)
+ }
+ if(xor(is.null(extraction$provider),is.null(extraction$provider_version)))stop("provider and provider_version must be supplied together",call.=FALSE)
+ args<-list(properties=properties,bins=bins,normalize=normalize,length_range=as.double(length_range),
+  curvature_range=as.double(curvature_range),units=units,pixels_per_degree=pixels_per_degree,
+  estimator=estimator,curvature_scale=curvature_scale,branch_estimator=branch_estimator,
+  branch_window=branch_window,branch_power=branch_power,reference_radius=reference_radius,
+  fit_tolerance=fit_tolerance,junction=junction,mat=mat,mapping_radius=mapping_radius,
+  raster_line_width=raster_line_width,extraction=extraction)
+ structure(list(version=1L,definitions=c(contour=switch(estimator,mlv2023="mlv2023-port-0.1.1",
+  turning="vertex-dual-1",arclength="tent-source-normalized-1"),
+  branch=if(branch_estimator=="mlv2023")"mlv2023-port-0.1.1" else "physical-integrals-1",histogram="1",
+  morphology="octave_image_pratt_2.20.0",tracing="pixel_graph_no_corner_cut"),settings=args),class="mlv_feature_spec")
+}
+#' Validate a feature specification
+#' @param spec A feature specification.
+#' @return The specification invisibly; malformed or unsupported definitions fail.
+#' @export
+validate_feature_spec <- function(spec) {
+ if(!inherits(spec,"mlv_feature_spec")||!identical(names(spec),c("version","definitions","settings"))||
+    !identical(spec$version,1L)||!is.list(spec$settings))stop("invalid or unsupported feature specification",call.=FALSE)
+ expected_names<-names(formals(feature_spec))
+ if(!identical(names(spec$settings),expected_names))stop("missing, reordered or unknown specification fields",call.=FALSE)
+ rebuilt<-do.call(feature_spec,spec$settings)
+ if(!identical(spec,rebuilt))stop("noncanonical or unsupported feature specification definitions",call.=FALSE)
+ invisible(spec)
+}
+.spec_semantics <- function(spec) {
+ validate_feature_spec(spec)
+ spec$settings$pixels_per_degree<-NULL
+ spec
+}
+.spec_scale <- function(spec,pixels_per_degree=NULL) {
+ validate_feature_spec(spec)
+ if(spec$settings$units=="pixels")return(1)
+ ppd<-if(is.null(pixels_per_degree))spec$settings$pixels_per_degree else pixels_per_degree
+ 1/.spec_number(ppd,"pixels_per_degree",strict=TRUE)
+}
