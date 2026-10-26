@@ -13,7 +13,8 @@ compute_contour_properties <- function(x,
   x$segment_properties <- .segment_table(x)
   st <- x$segment_properties
   x$contour_properties <- data.frame(contour_id=x$ids,
-    length=vapply(seq_along(x$ids),function(i)sum(st$length[st$contour_index==i]),double(1)))
+    length=if(length(x$ids))unname(vapply(split(st$length,
+      factor(st$contour_index,levels=seq_along(x$ids))),sum,double(1))) else numeric())
   if("junctions" %in% properties) x$junctions <- detect_junctions(x,...)
   x
 }

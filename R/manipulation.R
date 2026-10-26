@@ -161,13 +161,18 @@ split_junction_regions <- function(x) {
 }
 .contour_criterion <- function(x,property) {
  st<-.segment_table(x)
+ ends<-cumsum(vapply(x$contours,nrow,integer(1)))
+ starts<-c(1L,head(ends,-1L)+1L)
+ junctions<-if(property=="junctions") {
+  if(is.null(x$junctions))detect_junctions(x) else x$junctions
+ } else NULL
  vapply(seq_along(x$ids),function(i) {
-  s<-st[st$contour_index==i,,drop=FALSE];ll<-sum(s$length)
+  s<-st[starts[i]:ends[i],,drop=FALSE];ll<-sum(s$length)
   switch(property,
    length=ll,curvature=sum(s$curvature*s$length)/ll,
    integrated_curvature=sum(s$curvature*s$length),
    orientation=sum((abs(cos(s$orientation*pi/180))-abs(sin(s$orientation*pi/180)))*s$length)/ll,
-   junctions={j<-if(is.null(x$junctions))detect_junctions(x) else x$junctions;sum(vapply(j$members,function(m)i %in% m$contour_index,logical(1)))},
+   junctions=sum(vapply(junctions$members,function(m)i %in% m$contour_index,logical(1))),
    random=stats::runif(1),
    {z<-x$mat_properties[[property]][[i]]
     if(is.null(z)||!any(is.finite(z)))stop("missing contour criterion: ",property,call.=FALSE)

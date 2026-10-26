@@ -70,20 +70,21 @@ mlv_drawing <- function(contours = list(), width, height, ids = NULL,
 .segment_table <- function(x) {
   .check_drawing(x)
   if (!length(x$contours)) return(.empty_segments())
-  rows <- lapply(seq_along(x$contours), function(i) {
-    z <- x$contours[[i]]; n <- nrow(z)
-    dx <- z[,3]-z[,1]; dy <- z[,4]-z[,2]
-    lens <- sqrt(dx^2+dy^2)
-    ori <- (atan2(-dy,dx)*180/pi) %% 360
-    curv <- numeric(n)
-    if(n>1L) {
-      delta <- abs(ori - ori[c(2:n,n-1L)])
-      curv <- pmin(delta,360-delta)/lens
-    }
-    data.frame(contour_id=x$ids[i],contour_index=i,segment_index=seq_len(n),
-               z,length=lens,orientation=ori,curvature=curv,row.names=NULL)
-  })
-  do.call(rbind,rows)
+  sizes <- vapply(x$contours,nrow,integer(1))
+  z <- do.call(rbind,x$contours)
+  dx <- z[,3]-z[,1]; dy <- z[,4]-z[,2]
+  lens <- sqrt(dx^2+dy^2)
+  ori <- (atan2(-dy,dx)*180/pi) %% 360
+  n <- nrow(z); ends <- cumsum(sizes)
+  neighbor <- seq_len(n)+1L
+  neighbor[ends] <- pmax(ends-1L,1L)
+  neighbor[ends[sizes==1L]] <- ends[sizes==1L]
+  delta <- abs(ori-ori[neighbor])
+  curv <- pmin(delta,360-delta)/lens
+  data.frame(contour_id=x$ids[rep.int(seq_along(sizes),sizes)],
+             contour_index=rep.int(seq_along(sizes),sizes),
+             segment_index=sequence(sizes),z,length=lens,orientation=ori,
+             curvature=curv,row.names=NULL)
 }
 #' @export
 print.mlv_drawing <- function(x, ...) {

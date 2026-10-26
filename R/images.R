@@ -1,9 +1,14 @@
 .check_mask <- function(mask) {
- if(!is.matrix(mask) || !(is.logical(mask)||is.numeric(mask)) ||
-    any(!is.finite(mask)) || any(!mask %in% c(0,1)) || any(dim(mask)<1L))
+ if(!is.matrix(mask) || !(is.logical(mask)||is.numeric(mask)) || any(dim(mask)<1L))
   stop("mask must be a nonempty binary matrix; TRUE means ink",call.=FALSE)
  if(prod(as.double(dim(mask)))>.Machine$integer.max)
   stop("image exceeds the supported integer index capacity",call.=FALSE)
+ if(is.logical(mask)) {
+  if(anyNA(mask))stop("mask must be a nonempty binary matrix; TRUE means ink",call.=FALSE)
+  return(unname(mask))
+ }
+ if(any(!is.finite(mask)) || any(!mask %in% c(0,1)))
+  stop("mask must be a nonempty binary matrix; TRUE means ink",call.=FALSE)
  matrix(as.logical(mask),nrow(mask),ncol(mask))
 }
 #' Exact Euclidean distance to the nearest feature pixel

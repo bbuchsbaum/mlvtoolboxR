@@ -114,3 +114,11 @@ test_that("deferred branch tracing preserves scoring results", {
  expect_equal(compute_mat_properties(lazy)$score_images,
               compute_mat_properties(eager)$score_images)
 })
+
+test_that("wrapper optimization preserves the checked mixed-contour output exactly", {
+ witness<-readRDS(system.file("fixtures","geometry-before-optimization.rds",package="mlvtoolbox"))
+ expect_identical(compute_contour_properties(witness$drawing,c("length","orientation","curvature")),
+                  witness$expected)
+ expect_identical(distance_transform(matrix(TRUE,5,7)),
+                  distance_transform(matrix(1,5,7)))
+})

@@ -12,7 +12,10 @@ env=os.environ.copy()
 env.update({'LC_ALL':'en_US.UTF-8','LANG':'en_US.UTF-8','TMPDIR':str(tmp),
             'R_PROFILE_USER':'/dev/null','R_ENVIRON_USER':'/dev/null'})
 commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
-staged=work/'package-source';staged.mkdir(exist_ok=True)
+staged=work/'package-source'
+# Owned staging only: remove stale files before copying the tracked allowlist.
+if staged.exists():shutil.rmtree(staged)
+staged.mkdir()
 tracked=subprocess.check_output(['git','ls-files','-z']).decode().split(chr(0))
 manifest={}
 for rel in tracked:

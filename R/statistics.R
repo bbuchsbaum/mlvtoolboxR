@@ -37,12 +37,13 @@ contour_statistics <- function(x,properties=c("orientation","length","curvature"
   if(length(r)!=2L || any(!is.finite(r)) || r[1]<0 || r[2]<=r[1])
    stop("log-bin ranges must be finite and increasing",call.=FALSE)
  st <- .segment_table(x)
+ sizes<-vapply(x$contours,nrow,integer(1));ends<-cumsum(sizes);starts<-c(1L,head(ends,-1L)+1L)
  lens <- vapply(x$contours,function(z)sum(sqrt(rowSums((z[,3:4,drop=FALSE]-z[,1:2,drop=FALSE])^2))),double(1))
  j <- if(any(grepl("^junction_",properties))) {if(is.null(x$junctions))detect_junctions(x) else x$junctions} else NULL
  groups <- if(by=="drawing") list(seq_along(x$ids)) else lapply(seq_along(x$ids),identity)
  result <- list()
  for(ci in groups) {
-  ss <- st[st$contour_index %in% ci,,drop=FALSE]
+  ss <- if(by=="drawing")st else st[starts[ci]:ends[ci],,drop=FALSE]
   total <- sum(lens[ci]); id <- if(by=="drawing") NA_character_ else x$ids[ci]
   for(prop in properties) {
    labels <- NULL; unit <- "pixels"
