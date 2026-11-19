@@ -14,3 +14,7 @@ src/*.dll
 /.mote/local/
 /.mote/authority/
 /.mote/tmp/
+/.ruff_cache/
+/.impeccable/build/
+/.impeccable/questions/
+/.impeccable/mocks/decision/

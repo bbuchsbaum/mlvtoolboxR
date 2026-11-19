@@ -1,0 +1,16 @@
+{
+  "command": "R CMD check --as-cran --output=.agent-work/cran-readiness-final mlvtoolbox_0.2.1.tar.gz",
+  "exit_code": 0,
+  "errors": 0,
+  "warnings": 0,
+  "notes": 3,
+  "assertions": 1332,
+  "test_failures": 0,
+  "test_warnings": 0,
+  "test_skips": 0,
+  "pdf_manual": "passed",
+  "html_validation": "unavailable: system tidy too old",
+  "platform": "macOS arm64",
+  "R": "4.5.1",
+  "submitted": false
+}

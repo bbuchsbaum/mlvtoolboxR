@@ -1,0 +1,33 @@
+diff --git a/.Rbuildignore b/.Rbuildignore
+index 81bb92b..e800621 100644
+--- a/.Rbuildignore
++++ b/.Rbuildignore
+@@ -15,4 +15,8 @@
+ ^\.git$
+ ^\.gitignore$
+ ^\.github$
++^\.impeccable$
++^\.ruff_cache$
++^PRODUCT\.md$
++^cran-comments\.md$
+ ^mlvtoolbox_.*\.tar\.gz$
+diff --git a/DESCRIPTION b/DESCRIPTION
+index ac2dc4e..85f374c 100644
+--- a/DESCRIPTION
++++ b/DESCRIPTION
+@@ -2,8 +2,13 @@ Package: mlvtoolbox
+ Type: Package
+ Title: Contour Geometry and Mid-Level Vision Analysis
+ Version: 0.2.1
+-Authors@R: person("Bradley", "Buchsbaum", email = "brad.buchsbaum@gmail.com",
+-    role = c("aut", "cre"))
++Authors@R: c(
++    person("Bradley", "Buchsbaum", email = "brad.buchsbaum@gmail.com",
++        role = c("aut", "cre")),
++    person("Josep", "Mones i Teixidor", role = "ctb",
++        comment = "Original Octave morphology lookup tables"),
++    person("Carne", "Draug", role = "ctb",
++        comment = "Original Octave morphology lookup tables"))
+ Description: Analyses vectorized line drawings using contour orientation, length,
+     curvature, junctions, and average-outward-flux medial-axis representations.
+     Includes image tracing, stimulus manipulation, reproducible feature tables,

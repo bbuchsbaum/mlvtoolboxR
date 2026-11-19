@@ -15,5 +15,9 @@
 ^\.git$
 ^\.gitignore$
 ^\.github$
+^\.impeccable$
+^\.ruff_cache$
+^PRODUCT\.md$
+^cran-comments\.md$
 ^mlvtoolbox_.*\.tar\.gz$
 ^COPYING$
