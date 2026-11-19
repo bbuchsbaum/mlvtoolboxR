@@ -2,8 +2,8 @@ test_that("fused statistics preserve qualified 0.2.0 public values and metadata"
  witness<-readRDS(system.file("fixtures","statistics-0.2.0.rds",package="mlvtoolbox"))
  for(i in seq_along(witness$cases)) {
   case<-witness$cases[[i]]
-  expect_identical(do.call(getExportedValue("mlvtoolbox",case$fun),case$args),
-                   case$expected,info=paste("baseline case",i,case$fun))
+  expect_witness(do.call(getExportedValue("mlvtoolbox",case$fun),case$args),
+                 case$expected,info=paste("baseline case",i,case$fun))
  }
 })
 
