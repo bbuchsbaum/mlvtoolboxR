@@ -1,3 +1,16 @@
+# mlvtoolbox 0.2.1
+
+* Orientation, length and curvature histograms are computed in a fused native
+  pass directly from contours. Measured `feature_table()` workloads are
+  3.8-9.4x faster than 0.2.0; all 122 baseline public outputs and their
+  metadata are unchanged (see `docs/FUSED_STATISTICS.md`).
+* Added contour graph descriptors: source-linked topology, continuation,
+  parallel relations and strict enclosure, with calibrated cache validation
+  and rejection of stale geometry, parameters and calibration.
+* Credited the original MLV, Python AOF and GNU Octave image contributors in
+  `Authors@R`, added software and methods citations, and installed the full
+  applicable license texts and original notices.
+
 # mlvtoolbox 0.2.0
 
 ## Subsequent candidate: whole-contour stimulus design

@@ -21,6 +21,8 @@ Description: Analyses vectorized line drawings using contour orientation, length
     maintained R port and extension of the Mid-Level Vision Toolbox, with
     explicit estimator choices and documented departures from reference outputs.
 License: GPL (>= 3)
+URL: https://github.com/bbuchsbaum/mlvtoolboxR
+BugReports: https://github.com/bbuchsbaum/mlvtoolboxR/issues
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
 Imports: Rcpp, graphics, grDevices, stats, utils, tools

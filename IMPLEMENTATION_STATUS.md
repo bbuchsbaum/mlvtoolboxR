@@ -1,7 +1,23 @@
 # Implementation status
 
-The local R package is version 0.1.1. This file supersedes the original
+The R package is version 0.2.1. This file supersedes the original
 assessment's statements that no implementation exists.
+
+## Current qualification (0.2.1)
+
+- Feature schemas, alternative estimators and the subset designer (0.2.0),
+  fused native histograms and contour graph descriptors (0.2.1) are integrated.
+- 1,332 installed assertions pass with no failures, warnings or skips.
+  R and C++ coverage is 95.0669% ([graph qualification](docs/QUALIFICATION_GRAPHS.md)).
+- Direct `R CMD check --as-cran`, including the PDF manual, gives 0 errors,
+  0 warnings and 3 notes on local macOS arm64, R 4.5.1
+  ([CRAN readiness](docs/CRAN_READINESS.md)).
+- R-devel, Windows/Linux and current HTML Tidy validation remain unexecuted.
+- 77 retained upstream MATLAB files have no explicit license grant
+  ([licensing audit](vendor/LICENSING.md)).
+
+The sections below record the 0.1.1 port qualification and remain the basis
+for parity claims.
 
 ## Implemented
 
@@ -39,7 +55,7 @@ assessment's statements that no implementation exists.
 See [PARITY](docs/PARITY.md) for the stage matrix, plots, tolerances, adapters,
 natural drawing and reproduced upstream defects. Actual MATLAB was not executed.
 
-## Qualification
+## Qualification (0.1.1)
 
 Source d83ed952fdc9f639b98e849b0d8697259894de46 passes R CMD check
 --as-cran --no-manual with 0 errors, 0 warnings and one informational
@@ -59,9 +75,8 @@ docs/evidence/parity-perf. The local installable archive is
 mlvtoolbox_0.1.1.tar.gz; it is ignored by Git and can be rebuilt with
 tools/bounded_check.py. The 0.1.0 archive and historical evidence are preserved.
 
-Prepared CI covers macOS, Windows and Linux; hosted and Windows/Linux execution
-remain unexecuted. No CRAN/R-universe submission, site deployment, repository push
-or upstream issue submission has occurred.
+Prepared CI covers macOS, Windows and Linux. No CRAN/R-universe submission,
+site deployment or upstream issue submission has occurred.
 
 The full Python image pipeline and actual MATLAB have not run. Natural-image
 scientific acceptance, peak RSS, parallel scaling, general SVG paint effects,
