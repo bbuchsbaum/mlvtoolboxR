@@ -39,6 +39,14 @@ Run `python3 tools/audit_licenses.py` to verify the snapshots and regenerate it.
 
 ## Unresolved upstream permissions
 
+**The public repository does not contain these 82 files.** They were removed
+from the entire Git history before first publication and are ignored by Git.
+Their paths and hashes remain in [SOURCES.json](SOURCES.json) and the
+inventory. Parity, benchmark and license-audit tools need them; run
+`python3 tools/fetch_ungranted_vendor.py` to fetch them from the pinned
+upstream commit, verified against the recorded SHA-256 hashes.
+
+
 The pinned MATLAB repository has **no root license file**. Its README directs
 readers to individual file licenses. Of 82 retained files without an explicit
 grant, 77 are `.m` files. This includes much of `MLVcode/`, `maxlinedev.m`,
