@@ -89,26 +89,54 @@ simplified
 
 ``` r
 
-op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5), cex.main = 1, font.main = 1)
-plot(from_svg, axes = FALSE, lwd = 1.5, main = "SVG (vector)")
-plot(simplified, axes = FALSE, lwd = 1.5,
-     col = rep(grDevices::palette.colors(8, "Okabe-Ito")[c(2, 3, 4, 6, 7, 8)],
-               length.out = length(simplified$contours))[
-       as.data.frame(simplified)$contour_index],
-     main = "Traced, simplify = 1")
+ink <- read_mlv_image(png_file) < 0.5
+pixels <- function(colour) as.raster(matrix(ifelse(ink, colour, "transparent"), nrow(ink)))
+pieces <- simplified$contours
+# Hues for the horizon pieces (left, middle, right) that are easy to tell
+# apart; the roof and the circle in two more.
+horizon_ids <- which(vapply(pieces, function(z) min(z[, c(2, 4)]) >= 29, TRUE))
+traced_cols <- rep("#56B4E9", length(pieces))
+traced_cols[horizon_ids] <- c("#E69F00", "#0072B2", "#CC79A7")
+traced_cols[setdiff(seq_along(pieces), horizon_ids)] <- c("#009E73", "#56B4E9")
+# The numbers in the caption, read from the traced contours.
+horizon_pieces <- which(vapply(pieces, function(z) min(z[, c(2, 4)]) >= 29, TRUE))
+outer <- pieces[[horizon_pieces[1]]]
+middle_row <- pieces[[horizon_pieces[2]]][1, 2]
+svg_row <- from_svg$contours[[1]][1, 2]
+apex_of <- function(z) { v <- rbind(z[, 1:2], z[nrow(z), 3:4]); v[which.min(v[, 2]), ] }
+svg_apex <- apex_of(from_svg$contours[[2]])
+traced_apex <- apex_of(pieces[[which(vapply(pieces, function(z) nrow(z) == 2L, TRUE))]])
+circle_sides <- nrow(pieces[[length(pieces)]])
+stopifnot(outer[1, 2] > outer[1, 4], pieces[[horizon_pieces[3]]][1, 4] > pieces[[horizon_pieces[3]]][1, 2])
+window <- list(xlim = c(3, 58), ylim = c(34, 6))
+op <- par(mfrow = c(1, 3), mar = c(0.3, 0.3, 1.6, 0.3), cex.main = 1, font.main = 1)
+par(cex = 0.8)
+plot(from_svg, axes = FALSE, frame = FALSE, lwd = 1.5, main = "SVG",
+     xlim = window$xlim, ylim = window$ylim)
+plot(from_svg, col = NA, axes = FALSE, frame = FALSE, main = "Raster",
+     xlim = window$xlim, ylim = window$ylim)
+rasterImage(pixels("black"), 0.5, nrow(ink) + 0.5, ncol(ink) + 0.5, 0.5, interpolate = FALSE)
+plot(simplified, col = NA, axes = FALSE, frame = FALSE, main = "Traced",
+     xlim = window$xlim, ylim = window$ylim)
+rasterImage(pixels("grey85"), 0.5, nrow(ink) + 0.5, ncol(ink) + 0.5, 0.5, interpolate = FALSE)
+for (k in seq_along(pieces)) segments(pieces[[k]][, 1], pieces[[k]][, 2], pieces[[k]][, 3],
+                                      pieces[[k]][, 4], col = traced_cols[k], lwd = 1.8)
 ```
 
-![The SVG drawing (left) and its traced raster copy simplified to 1 px
-(right). Colours mark traced contours: tracing splits the horizon where
-the roof meets it, thinning bends the traced horizon slightly near those
-junctions, and the coarse simplification reduces the circle to a
+![The SVG drawing (left), its raster copy (middle) and the contours
+traced from it, simplified to 1 px (right, one colour per contour,
+raster in grey). Tracing splits the horizon into 3 pieces at the roof;
+the middle piece lies 1 pixel higher (row 30, not 31), so each outer
+piece tilts up toward the roof. The apex moves from (26, 11) to (27,
+12); the circle becomes a
 pentagon.](workflows_files/figure-html/fig-trace-1.png)![](workflows_files/figure-html/fig-trace-1.phone.png)
 
-The SVG drawing (left) and its traced raster copy simplified to 1 px
-(right). Colours mark traced contours: tracing splits the horizon where
-the roof meets it, thinning bends the traced horizon slightly near those
-junctions, and the coarse simplification reduces the circle to a
-pentagon.
+The SVG drawing (left), its raster copy (middle) and the contours traced
+from it, simplified to 1 px (right, one colour per contour, raster in
+grey). Tracing splits the horizon into 3 pieces at the roof; the middle
+piece lies 1 pixel higher (row 30, not 31), so each outer piece tilts up
+toward the roof. The apex moves from (26, 11) to (27, 12); the circle
+becomes a pentagon.
 
 ``` r
 
@@ -177,20 +205,43 @@ transform or crop the geometry.
 
 ``` r
 
-op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5), cex.main = 1, font.main = 1)
-plot(drawing, axes = FALSE, lwd = 1.5, main = "Original")
-plot(clip_circle(rotate_drawing(drawing, 25), radius = 12), axes = FALSE,
-     lwd = 1.5, main = "Rotated 25°, clipped to r = 12 px")
-t <- seq(0, 2 * pi, length.out = 97)
-lines(20 + 12 * cos(t), 15 + 12 * sin(t), lty = 2, col = "grey60")
+angle <- 25; radius <- 12; centre <- c(drawing$width, drawing$height) / 2
+rotated <- rotate_drawing(drawing, angle)
+clipped <- clip_circle(rotated, radius = radius)
+mark_centre <- function() points(centre[1], centre[2], pch = 3, cex = 0.9, col = "grey30")
+op <- par(mfrow = c(1, 3), mar = c(0.3, 0.3, 1.6, 0.3), cex.main = 1, font.main = 1)
+par(cex = 0.8)
+plot(drawing, axes = FALSE, frame = FALSE, lwd = 1.5, main = "Original")
+plot(rotated, col = NA, axes = FALSE, frame = FALSE, main = sprintf("Rotated %g°", angle))
+plot(drawing, add = TRUE, col = "grey80", lwd = 1.5)
+plot(rotated, add = TRUE, lwd = 1.5)
+mark_centre()
+# The vertical stem passes through the centre: an arc from its old direction
+# (down, 270°) to its new one shows the counterclockwise turn.
+t <- seq(270, 270 + angle, length.out = 20) * pi / 180
+lines(centre[1] + 7 * cos(t), centre[2] - 7 * sin(t), col = "#D55E00", lwd = 1.3)
+arrows(centre[1] + 7 * cos(t[19]), centre[2] - 7 * sin(t[19]), centre[1] + 7 * cos(t[20]),
+       centre[2] - 7 * sin(t[20]), length = 0.06, col = "#D55E00", lwd = 1.3)
+text(centre[1] + 8.5 * cos(t[10]), centre[2] - 8.5 * sin(t[10]), paste0(angle, "°"),
+     cex = 0.8, col = "#D55E00", adj = c(0.5, 1))
+plot(clipped, col = NA, axes = FALSE, frame = FALSE, main = sprintf("Clipped, r = %g px", radius))
+plot(rotated, add = TRUE, col = "grey80", lwd = 1.5)
+plot(clipped, add = TRUE, lwd = 1.5)
+a <- seq(0, 2 * pi, length.out = 97)
+lines(centre[1] + radius * cos(a), centre[2] + radius * sin(a), lty = 2, col = "grey55")
+mark_centre()
 ```
 
-![A drawing (left) after a 25 degree counterclockwise rotation and a
-circular crop of radius 12 px about the canvas centre
-(right).](workflows_files/figure-html/fig-edit-1.png)![](workflows_files/figure-html/fig-edit-1.phone.png)
+![Left, a drawing. Middle, the same drawing rotated 25° counterclockwise
+about (20, 15), the default centre (+), over the original in grey.
+Right, the rotated drawing clipped to a circle of radius 12 px about the
+same point, with the removed parts in
+grey.](workflows_files/figure-html/fig-edit-1.png)![](workflows_files/figure-html/fig-edit-1.phone.png)
 
-A drawing (left) after a 25 degree counterclockwise rotation and a
-circular crop of radius 12 px about the canvas centre (right).
+Left, a drawing. Middle, the same drawing rotated 25° counterclockwise
+about (20, 15), the default centre (+), over the original in grey.
+Right, the rotated drawing clipped to a circle of radius 12 px about the
+same point, with the removed parts in grey.
 
 ``` r
 

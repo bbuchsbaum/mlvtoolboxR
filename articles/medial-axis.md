@@ -38,7 +38,9 @@ shows how to reproduce values published with the MATLAB toolbox.
 The drawing has three contours on an 80 by 50 pixel canvas: a straight
 line at y = 18, a second line below it that runs from y = 32 to y = 30,
 so the gap narrows slightly from left to right, and a shallow open V
-beneath both.
+beneath both. The five stage figures below show this whole canvas, at
+the same size and position, so they can be compared like the pages of a
+flip-book.
 
 ``` r
 
@@ -60,18 +62,42 @@ with a line width of one pixel.
 
 ``` r
 
-plot(mat, "ink", drawing = drawing, overlay_col = okabe[["vermillion"]],
-     overlay_lwd = 1.5, legend = FALSE)
+contour_col <- "grey60"
+box_x <- c(12.5, 30.5); box_y <- c(28.5, 34.5)       # the enlarged region
+plot(mat, "ink", drawing = drawing, overlay_col = contour_col, overlay_lwd = 1.5,
+     main = "1  Ink")
+rect(box_x[1], box_y[2], box_x[2], box_y[1], border = "grey30", lty = 2)
+# The inset is the box scaled by k into the empty top of the canvas.
+k <- 2.3; at <- c(36, 2)                                # inset's top-left corner
+to_x <- function(x) at[1] + (x - box_x[1]) * k
+to_y <- function(y) at[2] + (y - box_y[1]) * k
+rect(to_x(box_x[1]), to_y(box_y[2]), to_x(box_x[2]), to_y(box_y[1]), col = "white",
+     border = "grey30", lty = 2)
+px <- which(mat$mask, arr.ind = TRUE)
+px <- px[px[, 2] > box_x[1] & px[, 2] < box_x[2] & px[, 1] > box_y[1] & px[, 1] < box_y[2], ]
+rect(to_x(px[, 2] - 0.5), to_y(px[, 1] - 0.5), to_x(px[, 2] + 0.5), to_y(px[, 1] + 0.5),
+     col = "black", border = NA)
+grid_x <- seq(box_x[1] + 1, box_x[2] - 1); grid_y <- seq(box_y[1] + 1, box_y[2] - 1)
+segments(to_x(grid_x), to_y(box_y[1]), to_x(grid_x), to_y(box_y[2]), col = "grey75", lwd = 0.4)
+segments(to_x(box_x[1]), to_y(grid_y), to_x(box_x[2]), to_y(grid_y), col = "grey75", lwd = 0.4)
+line2 <- drawing$contours[[2]]                          # the middle line, clipped to the box
+xs_in <- box_x; ys_in <- approx(line2[c(1, 3)], line2[c(2, 4)], xs_in)$y
+segments(to_x(xs_in[1]), to_y(ys_in[1]), to_x(xs_in[2]), to_y(ys_in[2]),
+         col = contour_col, lwd = 1.5)
 ```
 
-![Stage 1. The rasterized ink (black), with the vector contours drawn
-over it in orange: each segment becomes one pixel per step along its
-longer
-axis.](medial-axis_files/figure-html/stage-ink-1.png)![](medial-axis_files/figure-html/stage-ink-1.phone.png)
+![Stage 1. Rasterized ink (black) under the vector contours (grey line).
+The inset at the top enlarges the dashed box on its pixel grid. Each
+segment is drawn one pixel per column, the step along its longer axis,
+so the middle line's 2-pixel rise over 60 pixels becomes three flat runs
+joined by one-pixel
+steps.](medial-axis_files/figure-html/stage-ink-1.png)![](medial-axis_files/figure-html/stage-ink-1.phone.png)
 
-Stage 1. The rasterized ink (black), with the vector contours drawn over
-it in orange: each segment becomes one pixel per step along its longer
-axis.
+Stage 1. Rasterized ink (black) under the vector contours (grey line).
+The inset at the top enlarges the dashed box on its pixel grid. Each
+segment is drawn one pixel per column, the step along its longer axis,
+so the middle line’s 2-pixel rise over 60 pixels becomes three flat runs
+joined by one-pixel steps.
 
 ## Signed distance map
 
@@ -86,17 +112,23 @@ is not a contour, so the distance keeps growing towards the corners.
 
 ``` r
 
-plot(mat, "distance", drawing = drawing)
+plot(mat, "distance", levels = seq(2, 22, by = 2),
+     main = "2  Distance to ink")
 ```
 
-![Stage 2. Signed distance to the nearest ink pixel. The ridges of
-locally maximal distance, halfway between neighbouring contours, are the
-medial axis the later stages
-extract.](medial-axis_files/figure-html/stage-distance-1.png)![](medial-axis_files/figure-html/stage-distance-1.phone.png)
+![Stage 2. Distance from each pixel to the nearest ink pixel, with
+isolines every 2 px. Where isolines from two contours meet they fold
+into creases. These creases, halfway between neighbouring contours, are
+the ridges of the distance map: the medial axis the later stages
+extract. The corners are darkest only because the canvas edge is not a
+boundary.](medial-axis_files/figure-html/stage-distance-1.png)![](medial-axis_files/figure-html/stage-distance-1.phone.png)
 
-Stage 2. Signed distance to the nearest ink pixel. The ridges of locally
-maximal distance, halfway between neighbouring contours, are the medial
-axis the later stages extract.
+Stage 2. Distance from each pixel to the nearest ink pixel, with
+isolines every 2 px. Where isolines from two contours meet they fold
+into creases. These creases, halfway between neighbouring contours, are
+the ridges of the distance map: the medial axis the later stages
+extract. The corners are darkest only because the canvas edge is not a
+boundary.
 
 ``` r
 
@@ -105,6 +137,8 @@ range(mat$distance_map[mat$mask])     # on ink
 max(mat$distance_map)                 # farthest pixel from any ink, in px
 #> [1] 22.36068
 ```
+
+This drawing has no isolated ink pixel, so its smallest value is 0.
 
 ## Average outward flux
 
@@ -127,19 +161,144 @@ somewhat lower.
 
 ``` r
 
-plot(mat, "flux", drawing = drawing)
+probes <- data.frame(row = c(24, 10, 18, 45), col = c(40, 40, 7, 25),
+                     name = c("Ridge", "Above line", "Line end", "Under V"))
+plot(mat, "flux", drawing = drawing, main = "3  Outward flux")
+points(probes$col, probes$row, pch = 1, cex = 1.3, lwd = 1.2)
+halo(probes$col, probes$row, seq_len(nrow(probes)), pos = c(4, 4, 2, 4), offset = 0.6,
+     cex = 0.75, font = 2)                    # each number beside its ring, off the ink
 ```
 
-![Stage 3. Average outward flux on a diverging scale with limits
-symmetric about zero. Red ridges (positive flux) run midway between
-contours; blue (negative) hugs the ink. The black tick on the colour bar
-marks the skeleton
-threshold.](medial-axis_files/figure-html/stage-flux-1.png)![](medial-axis_files/figure-html/stage-flux-1.phone.png)
+![Stage 3. Outward flux, the sum over 60 sample points. Positive flux
+(red) forms ridges midway between contours; negative flux (blue) gathers
+around the ink, most strongly at line ends. The dashed line encloses the
+pixels above the skeleton threshold, 17.9. Numbers 1 to 4 mark the
+pixels that the next figure takes
+apart.](medial-axis_files/figure-html/stage-flux-1.png)![](medial-axis_files/figure-html/stage-flux-1.phone.png)
 
-Stage 3. Average outward flux on a diverging scale with limits symmetric
-about zero. Red ridges (positive flux) run midway between contours; blue
-(negative) hugs the ink. The black tick on the colour bar marks the
-skeleton threshold.
+Stage 3. Outward flux, the sum over 60 sample points. Positive flux
+(red) forms ridges midway between contours; negative flux (blue) gathers
+around the ink, most strongly at line ends. The dashed line encloses the
+pixels above the skeleton threshold, 17.9. Numbers 1 to 4 mark the
+pixels that the next figure takes apart.
+
+The sum can be rebuilt by hand for any pixel. The function below repeats
+the default (`aof = "centered"`) computation: it places the `samples`
+points on the circle of radius `epsilon`, finds each point’s nearest ink
+pixels (equally near ones are averaged, and a point that falls on a cell
+boundary uses both cells), and returns each point’s contribution, the
+dot product of the unit vector towards that ink with the circle’s
+outward normal.
+
+``` r
+
+ink_rc <- which(skeletonize(mat$mask), arr.ind = TRUE)   # thinned ink, row and column
+flux_samples <- function(row, col, samples = mat$parameters$samples,
+                         epsilon = mat$parameters$epsilon) {
+  a <- 2 * pi * (seq_len(samples) - 1) / samples
+  cells <- function(p) {                         # nearest cell(s) to a coordinate
+    f <- floor(p)
+    if (abs(p - f - 0.5) < 1e-9) c(f, f + 1) else floor(p + 0.5)
+  }
+  t(vapply(seq_len(samples), function(s) {
+    pr <- row + epsilon * cos(a[s]); pc <- col + epsilon * sin(a[s])
+    near <- NULL
+    for (r in cells(pr)) for (k in cells(pc)) {
+      d2 <- (ink_rc[, 1] - r)^2 + (ink_rc[, 2] - k)^2
+      near <- rbind(near, ink_rc[d2 == min(d2), , drop = FALSE])
+    }
+    near <- unique(near)
+    u <- cbind(near[, 1] - pr, near[, 2] - pc) / sqrt((near[, 1] - pr)^2 + (near[, 2] - pc)^2)
+    v <- colMeans(u)
+    # the first and last of the equally near ink pixels (the same pixel when unique)
+    c(x = pc, y = pr, dx = v[2], dy = v[1], contribution = sum(v * c(cos(a[s]), sin(a[s]))),
+      ink_x = unname(near[1, 2]), ink_y = unname(near[1, 1]),
+      ink_x2 = unname(near[nrow(near), 2]), ink_y2 = unname(near[nrow(near), 1]))
+  }, numeric(9)))
+}
+probes$flux <- mapply(function(r, k) sum(flux_samples(r, k)[, "contribution"]),
+                      probes$row, probes$col)
+probes
+#>   row col       name       flux
+#> 1  24  40      Ridge  33.513004
+#> 2  10  40 Above line   0.377034
+#> 3  18   7   Line end -10.145035
+#> 4  45  25    Under V  10.059189
+```
+
+``` r
+
+half <- 8                                     # window: 2 * half + 1 pixels wide
+every <- 5                                    # draw every 5th of the samples
+cut_flux <- mat$parameters$threshold * mat$parameters$samples
+sign_col <- c(inward = "#2E5EAA", outward = "#B2182B")
+minus <- function(v) sub("^-", "\u2212", sprintf("%.1f", v))   # a true minus sign
+bar_lim <- range(c(0, probes$flux, cut_flux)) + c(-22, 6)
+layout(matrix(1:8, 2, byrow = TRUE), heights = c(1, 0.32))
+op <- par(mar = c(0.3, 0.3, 1.4, 0.3), cex = 0.85, cex.main = 0.95)
+for (k in seq_len(nrow(probes))) {
+  r <- probes$row[k]; cc <- probes$col[k]
+  plot(mat, "ink", legend = FALSE, xlim = cc + c(-1, 1) * (half + 0.5),
+       ylim = r + c(-1, 1) * (half + 0.5), main = paste(k, " ", probes$name[k]))
+  # Starting at the 3rd sample keeps the drawn points off the exact tangents
+  # (contribution 0) and off cell boundaries (ties between two ink pixels).
+  f <- flux_samples(r, cc)[seq(3, mat$parameters$samples, by = every), , drop = FALSE]
+  line_col <- ifelse(abs(f[, "contribution"]) < 1e-9, "grey60",
+                     ifelse(f[, "contribution"] > 0, sign_col[["outward"]], sign_col[["inward"]]))
+  segments(f[, "x"], f[, "y"], f[, "ink_x"], f[, "ink_y"], lwd = 0.8, col = line_col)
+  segments(f[, "x"], f[, "y"], f[, "ink_x2"], f[, "ink_y2"], lwd = 0.8, col = line_col)  # ties
+  t <- seq(0, 2 * pi, length.out = 97)
+  lines(cc + mat$parameters$epsilon * sin(t), r + mat$parameters$epsilon * cos(t),
+        col = "grey30", lwd = 0.8)
+  points(f[, "x"], f[, "y"], pch = 16, cex = 0.3, col = line_col)
+}
+par(mar = c(0.9, 0.3, 0.2, 0.3))
+for (k in seq_len(nrow(probes))) {
+  plot.new(); plot.window(bar_lim, c(0, 1), xaxs = "i")
+  rect(0, 0.25, probes$flux[k], 0.65, border = NA,
+       col = if (probes$flux[k] > 0) sign_col[["outward"]] else sign_col[["inward"]])
+  segments(0, 0.1, 0, 0.8, col = "grey40", lwd = 0.8)
+  segments(cut_flux, 0.05, cut_flux, 0.85, lty = 2, col = "grey20")
+  # The value sits left of the bar, clear of the threshold line.
+  text(min(0, probes$flux[k]), 0.45, minus(probes$flux[k]), pos = 2, offset = 0.3,
+       cex = 0.8, xpd = NA)
+  if (k == 1) text(cut_flux, 0.05, sprintf("threshold %.1f", cut_flux), pos = 1,
+                   offset = 0.2, cex = 0.65, col = "grey20", xpd = NA)
+}
+```
+
+![The flux at the four numbered pixels, each in a 17 × 17 pixel window.
+Lines join every fifth sample point on the circle to its nearest ink (to
+both, if two tie): red where the ink lies outward, so the point adds to
+the sum; blue where it lies back across the circle. The bars give each
+sum against the threshold (dashed); only the ridge exceeds
+it.](medial-axis_files/figure-html/fig-flux-microscope-1.png)![](medial-axis_files/figure-html/fig-flux-microscope-1.phone.png)
+
+The flux at the four numbered pixels, each in a 17 × 17 pixel window.
+Lines join every fifth sample point on the circle to its nearest ink (to
+both, if two tie): red where the ink lies outward, so the point adds to
+the sum; blue where it lies back across the circle. The bars give each
+sum against the threshold (dashed); only the ridge exceeds it.
+
+``` r
+
+par(op)
+```
+
+The circle has radius 1 px. On the ridge (pixel 1) nearly every sample’s
+nearest ink lies on its own side of the circle, so the directions point
+outward and the sum, 33.5, exceeds the threshold. Above the middle of
+the top line (pixel 2) every sample’s nearest ink lies almost straight
+below it, so the contributions nearly cancel; across that whole band the
+flux stays close to zero (0.2 to 1.1). Past a line end (pixel 3) every
+sample’s nearest ink is the end pixel, so the directions converge and
+the sum is negative (−10.1). Where the V is drawn in steps (pixel 4),
+the nearest ink jumps from one step to the next between neighbouring
+columns, so each step leaves a weak ridge (10.1 under one of them)
+beside a negative column: the stripes. They stay below the threshold, so
+they do not reach the skeleton. Taken together, the panels explain the
+map above; the last section of this vignette plots the flux down one
+column, across the gap between two lines.
 
 Pixels whose sampling circle would leave the canvas are set to zero,
 which is why a one-pixel frame shows no flux.
@@ -163,19 +322,22 @@ pixels (default 2.5% of the larger image side) are dropped.
 
 ``` r
 
-plot(mat, "skeleton", drawing = drawing)
+plot(mat, "skeleton", main = "4  Threshold and skeleton")
 ```
 
-![Stage 4. Pixels whose flux exceeds the threshold (light blue) and the
-thinned skeleton (dark blue). The skeleton runs midway between each pair
-of contours and continues past their open ends, where the two nearest
-boundaries are the contour
+![Stage 4. Pixels above the flux threshold (light red), thinned to a
+one-pixel skeleton (dark red); ink in black. Where the thresholded
+region is one pixel wide, the skeleton covers it completely. The
+skeleton runs midway between each pair of contours and continues past
+their open ends, where the nearest boundaries are the two contour
 endpoints.](medial-axis_files/figure-html/stage-skeleton-1.png)![](medial-axis_files/figure-html/stage-skeleton-1.phone.png)
 
-Stage 4. Pixels whose flux exceeds the threshold (light blue) and the
-thinned skeleton (dark blue). The skeleton runs midway between each pair
-of contours and continues past their open ends, where the two nearest
-boundaries are the contour endpoints.
+Stage 4. Pixels above the flux threshold (light red), thinned to a
+one-pixel skeleton (dark red); ink in black. Where the thresholded
+region is one pixel wide, the skeleton covers it completely. The
+skeleton runs midway between each pair of contours and continues past
+their open ends, where the nearest boundaries are the two contour
+endpoints.
 
 ``` r
 
@@ -214,19 +376,25 @@ head(mat$branches[[1]])
 
 ``` r
 
-plot(mat, "branches", drawing = drawing)
+plot(mat, "branches", discs = 15, legend = "space", main = "5  Branches")
 ```
 
-![Stage 5. The traced branches, one colour per branch and labelled with
-their index in mat\$branches. The two-pixel piece of skeleton inside the
-V is a separate component; a component is never removed, however short,
-so it is branch
+![Stage 5. The traced branches, each coloured and labelled with its
+index in the branch list (mat\$branches). Grey circles are maximal
+inscribed discs at every fifteenth branch point: centred on the axis,
+touching the nearest ink, with the branch radius. The two pixels inside
+the V form their own component, kept as branch
 3.](medial-axis_files/figure-html/stage-branches-1.png)![](medial-axis_files/figure-html/stage-branches-1.phone.png)
 
-Stage 5. The traced branches, one colour per branch and labelled with
-their index in mat\$branches. The two-pixel piece of skeleton inside the
-V is a separate component; a component is never removed, however short,
-so it is branch 3.
+Stage 5. The traced branches, each coloured and labelled with its index
+in the branch list (mat\$branches). Grey circles are maximal inscribed
+discs at every fifteenth branch point: centred on the axis, touching the
+nearest ink, with the branch radius. The two pixels inside the V form
+their own component, kept as branch 3.
+
+Branch 3 is kept for two reasons. Its 2 pixels meet the minimum
+component size (`min_component`, 2 px on this canvas), and spur pruning,
+described next, never removes a component’s last path.
 
 Small irregularities in a contour give the skeleton short side branches.
 A *spur* is a path from an end pixel to a junction, and spurs with fewer
@@ -247,21 +415,21 @@ removed.
 stub <- mlv_drawing(list(seg(10, 10, 70, 10), seg(10, 30, 70, 30),
                          seg(40, 10, 40, 15)), width = 80, height = 40)
 op <- par(mfrow = c(1, 2))
-plot(compute_mat(stub, min_branch_points = 2), "branches", drawing = stub,
-     main = "min_branch_points = 2")
-plot(compute_mat(stub), "branches", drawing = stub,
-     main = "min_branch_points = 10")
+plot(compute_mat(stub, min_branch_points = 2), "branches", legend = FALSE,
+     main = "Spurs kept")
+plot(compute_mat(stub), "branches", legend = FALSE,
+     main = "Spurs removed (default)")
 ```
 
 ![A short stub on the upper of two lines gives the skeleton two 8-pixel
 spurs. With min_branch_points = 2 (left) the skeleton is traced as five
-branches; with the default 10 (right) both spurs are removed and the
+branches; with the default, 10 (right), both spurs are removed and the
 axis between the lines is a single
 branch.](medial-axis_files/figure-html/spur-1.png)![](medial-axis_files/figure-html/spur-1.phone.png)
 
 A short stub on the upper of two lines gives the skeleton two 8-pixel
 spurs. With min_branch_points = 2 (left) the skeleton is traced as five
-branches; with the default 10 (right) both spurs are removed and the
+branches; with the default, 10 (right), both spurs are removed and the
 axis between the lines is a single branch.
 
 ``` r
@@ -311,26 +479,40 @@ zeros into their neighbours.
 
 ``` r
 
-op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5))
-plot(mat, "parallelism", drawing = drawing)
-plot(mat, "separation", drawing = drawing)
+plot_branch_profile(mat, c("radius", "parallelism", "separation"), discs = 15,
+                    ylim = list(separation = c(0, 0.5)))
 ```
 
-![Branch scores at each skeleton pixel. Parallelism (left) is near 1
-along the middle of the upper channel and falls where the skeleton bends
-out of an open end; separation (right) is higher along the upper
-channel, where the gap is
-wider.](medial-axis_files/figure-html/stage-scores-1.png)![](medial-axis_files/figure-html/stage-scores-1.phone.png)
+![Each branch's radius and scores below the drawing, against image x;
+line type and end numbers tell branches apart. Parallelism is near 1
+along the middle of branch 1, dips where its axis steps up one row (row
+25 to 24), and falls past both open ends, where the radius grows. Branch
+3, two points, has radii and one separation dot, but no
+parallelism.](medial-axis_files/figure-html/stage-scores-1.png)![](medial-axis_files/figure-html/stage-scores-1.phone.png)
 
-Branch scores at each skeleton pixel. Parallelism (left) is near 1 along
-the middle of the upper channel and falls where the skeleton bends out
-of an open end; separation (right) is higher along the upper channel,
-where the gap is wider.
+Each branch’s radius and scores below the drawing, against image x; line
+type and end numbers tell branches apart. Parallelism is near 1 along
+the middle of branch 1, dips where its axis steps up one row (row 25 to
+24), and falls past both open ends, where the radius grows. Branch 3,
+two points, has radii and one separation dot, but no parallelism.
 
 ``` r
 
-par(op)
+b1 <- mat$branches[[1]][order(mat$branches[[1]]$x), ]
+step <- b1$x[which(diff(b1$y) != 0)]            # where the axis changes row
+near <- abs(b1$x - step) <= 6
+c(step_x = step, radius_before = b1$radius[b1$x == step],
+  radius_after = b1$radius[b1$x == step + 1], dip = min(b1$parallelism[near]),
+  one_from = min(b1$x[b1$x > step & b1$parallelism > 0.999]))
+#>        step_x radius_before  radius_after           dip      one_from 
+#>    21.0000000     7.0000000     6.0000000     0.8377868    29.0000000
 ```
+
+A one-row step in the skeleton changes the radius by a whole pixel, and
+parallelism responds: between x = 21 and 22, where the axis of branch 1
+steps up from row 25 to row 24 and the radius from 7 to 6 px, branch 1
+dips to 0.84; it returns to 1 from x = 29. The median separation is 0.16
+along branch 1 and 0.11 along branch 2.
 
 Each score is easiest to understand on two drawings that differ in only
 the property it measures. The helper below computes the scores and
@@ -345,7 +527,8 @@ main_branch <- function(m) {
   b <- m$branches[[which.max(vapply(m$branches, nrow, integer(1)))]]
   b[order(b$x), ]
 }
-interior <- function(b) b$x >= 25 & b$x <= 65   # away from the open ends
+inner_x <- c(25, 65)                            # away from the open ends
+interior <- function(b) b$x >= inner_x[1] & b$x <= inner_x[2]
 ```
 
 ### Parallelism
@@ -380,24 +563,45 @@ c(parallel = median(b_par$parallelism[interior(b_par)]),
 
 ``` r
 
-op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5))
-plot(m_par, "parallelism", drawing = parallel, main = "Parallel")
-plot(m_con, "parallelism", drawing = converging, main = "Converging")
+# Each panel's median over the interior, written inside the shaded band,
+# clear of the curve.
+# Each panel's median over the interior, written just above the shaded band,
+# clear of every curve.
+show_median <- function(branches, v) function(column, row) if (row == v) {
+  b <- branches[[column]]
+  inside <- b[[v]][interior(b)]
+  usr <- par("usr"); span <- diff(usr[3:4])
+  label <- sprintf("%.*f", if (v == "taper") 3 else 2, median(inside))
+  if (max(inside) < usr[4] - 0.3 * span) {          # room in the band's top
+    text(mean(inner_x), usr[4] - 0.04 * span, label, pos = 1, cex = 0.75, col = "grey20")
+  } else if (min(inside) > usr[3] + 0.3 * span) {   # room in the band's bottom
+    text(mean(inner_x), usr[3] + 0.04 * span, label, pos = 3, cex = 0.75, col = "grey20")
+  } else text(mean(inner_x), usr[4], label, pos = 3, offset = 0.15, cex = 0.75,
+              col = "grey20", xpd = NA)
+}
+plot_branch_profile(list(Parallel = m_par, Converging = m_con),
+                    c("radius", "parallelism"), branches = "longest", discs = 10,
+                    col = "black", band = inner_x, context = "radius",
+                    panel = show_median(list(b_par, b_con), "parallelism"))
 ```
 
-![Parallelism along the axis of two parallel lines (left) and two lines
-converging at 11.3 degrees each (right). Constant width scores 1; steady
-narrowing lowers the whole
-branch.](medial-axis_files/figure-html/fig-parallelism-1.png)![](medial-axis_files/figure-html/fig-parallelism-1.phone.png)
+![Parallelism along the axis of two parallel lines (left) and of two
+lines converging, each at 11.3° to the axis (right); discs at every
+tenth axis point, the other pair's radius in grey. Over the shaded
+interior, constant width scores 1 and steady narrowing a median of 0.80.
+Parallelism falls where the axis leaves through a wide open end and
+rises again near the
+apex.](medial-axis_files/figure-html/fig-parallelism-1.png)![](medial-axis_files/figure-html/fig-parallelism-1.phone.png)
 
-Parallelism along the axis of two parallel lines (left) and two lines
-converging at 11.3 degrees each (right). Constant width scores 1; steady
-narrowing lowers the whole branch.
+Parallelism along the axis of two parallel lines (left) and of two lines
+converging, each at 11.3° to the axis (right); discs at every tenth axis
+point, the other pair’s radius in grey. Over the shaded interior,
+constant width scores 1 and steady narrowing a median of 0.80.
+Parallelism falls where the axis leaves through a wide open end and
+rises again near the apex.
 
-``` r
-
-par(op)
-```
+Near the apex of the converging pair (x ≥ 78) the raster radius stays
+between 3 and 3.2 px, and parallelism rises to 0.98.
 
 The measured median for the converging pair, 0.802, is a little below
 the analytical 0.828. The difference comes from the raster: the radius
@@ -415,6 +619,92 @@ both <- (score_branch(exact, "parallelism") +
 median(both[interior(exact)])
 #> [1] 0.8280335
 ```
+
+The same comparison over a range of angles shows how the score responds
+to convergence. Each wedge below has the converging pair’s layout (lines
+from x = 10 to x = 80, 6 px apart at the narrow end), with half-angles
+from 0° to 30°; the medians are taken over the same interior, and the
+published (mlv2023) recipe is computed alongside.
+
+``` r
+
+published_mat <- function(d) compute_mat_properties(
+  compute_mat(d, aof = "mlv2023", morphology = "hmt8", branch_rule = "mlv2023",
+              threshold_angle = asin(0.3 * pi / 2) * 180 / pi), properties = P)
+wedge <- function(angle) {                        # half-angle in degrees
+  half <- 3 + 70 * tan(angle * pi / 180)          # half-gap at x = 10
+  mid <- half + 6
+  mlv_drawing(list(poly(c(10, 80), c(mid - half, mid - 3)),
+                   poly(c(10, 80), c(mid + half, mid + 3))), 90, ceiling(2 * mid))
+}
+angles <- seq(0, 30, by = 2.5)
+sweep_par <- t(sapply(angles, function(a) {
+  d <- wedge(a)
+  med <- function(m) { b <- main_branch(m); median(b$parallelism[interior(b)]) }
+  c(angle = a, default = med(score_pair(d)), published = med(published_mat(d)),
+    analytical = (1 + sin(a * pi / 180)^2)^-5)
+}))
+round(sweep_par, 3)
+#>       angle default published analytical
+#>  [1,]   0.0   1.000     1.000      1.000
+#>  [2,]   2.5   0.990     0.990      0.991
+#>  [3,]   5.0   0.891     0.891      0.963
+#>  [4,]   7.5   0.854     0.854      0.919
+#>  [5,]  10.0   0.823     0.823      0.862
+#>  [6,]  12.5   0.765     0.763      0.795
+#>  [7,]  15.0   0.707     0.707      0.723
+#>  [8,]  17.5   0.650     0.650      0.649
+#>  [9,]  20.0   0.575     0.575      0.575
+#> [10,]  22.5   0.503     0.503      0.505
+#> [11,]  25.0   0.426     0.428      0.440
+#> [12,]  27.5   0.402     0.402      0.380
+#> [13,]  30.0   0.333     0.333      0.328
+```
+
+``` r
+
+op <- par(mar = c(3.2, 3.4, 0.6, 1), mgp = c(2, 0.5, 0), las = 1, cex.axis = 0.85,
+          tcl = -0.25)
+curve_a <- seq(0, 30, by = 0.25)
+plot(NA, xlim = c(0, 30), ylim = c(0, 1), bty = "n", axes = FALSE,
+     xlab = "half-angle (°)", ylab = "median parallelism")
+axis(1, at = seq(0, 30, 5), col = "grey60"); axis(2, at = c(0, 0.5, 1), col = "grey60")
+lines(curve_a, (1 + sin(curve_a * pi / 180)^2)^-5, col = "grey55", lwd = 1.2)
+points(sweep_par[, "angle"], sweep_par[, "default"], pch = 16, cex = 0.8)
+spec <- c(theta * 180 / pi, median(b_con$parallelism[interior(b_con)]))
+points(spec[1], spec[2], pch = 16, cex = 0.8)
+points(spec[1], spec[2], pch = 1, cex = 1.8)
+text(spec[1], spec[2], sprintf("converging pair, %.1f°", spec[1]), pos = 1, offset = 0.9,
+     cex = 0.75)
+text(30, (1 + sin(30 * pi / 180)^2)^-5,          # right-aligned, under its line
+     expression(atop("analytical", (1 + sin^2 * theta)^-5)), adj = c(1, 1.4), cex = 0.8,
+     col = "grey35")
+```
+
+![Median parallelism over the interior of wedges with half-angles from
+0° to 30° (dots), against its analytical value (line); the converging
+pair above (11.3°) is the ringed dot. The raster scores fall furthest
+below the line at small angles, where the radius changes in uneven
+one-pixel steps. The published (mlv2023) recipe gives the same medians
+within 0.002, so one series is
+drawn.](medial-axis_files/figure-html/fig-parallelism-response-1.png)![](medial-axis_files/figure-html/fig-parallelism-response-1.phone.png)
+
+Median parallelism over the interior of wedges with half-angles from 0°
+to 30° (dots), against its analytical value (line); the converging pair
+above (11.3°) is the ringed dot. The raster scores fall furthest below
+the line at small angles, where the radius changes in uneven one-pixel
+steps. The published (mlv2023) recipe gives the same medians within
+0.002, so one series is drawn.
+
+``` r
+
+par(op)
+```
+
+The analytical curve assumes that the radius changes smoothly. On the
+raster it changes in steps of whole pixel distances, so at 5° the median
+is 0.072 below the analytical value; from 15° on they differ by at most
+0.022.
 
 ### Separation
 
@@ -446,18 +736,95 @@ rbind(radius = c(narrow = median(b_nar$radius[interior(b_nar)]),
 
 ``` r
 
-op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5))
-plot(m_nar, "separation", drawing = narrow, main = "Narrow gap")
-plot(m_wid, "separation", drawing = wide, main = "Wide gap")
+plot_branch_profile(list("Narrow gap" = m_nar, "Wide gap" = m_wid),
+                    c("radius", "separation"), branches = "longest", discs = 10,
+                    col = "black", band = inner_x, context = "radius",
+                    panel = show_median(list(b_nar, b_wid), "separation"))
 ```
 
-![Separation for a 6 px gap (left, radius 3) and a 20 px gap (right,
-radius 10). The score grows with the radius; it is not a measure of
-closeness.](medial-axis_files/figure-html/fig-separation-1.png)![](medial-axis_files/figure-html/fig-separation-1.phone.png)
+![Separation along the axis of a 6 px gap (left, radius 3) and a 20 px
+gap (right, radius 10), with discs at every tenth axis point and the
+other gap's radius in grey. The wider gap scores higher: medians 0.02
+and 0.35 over the shaded interior (values in the band). High separation
+means far apart. It rises further past the open ends, where the radius
+grows.](medial-axis_files/figure-html/fig-separation-1.png)![](medial-axis_files/figure-html/fig-separation-1.phone.png)
 
-Separation for a 6 px gap (left, radius 3) and a 20 px gap (right,
-radius 10). The score grows with the radius; it is not a measure of
-closeness.
+Separation along the axis of a 6 px gap (left, radius 3) and a 20 px gap
+(right, radius 10), with discs at every tenth axis point and the other
+gap’s radius in grey. The wider gap scores higher: medians 0.02 and 0.35
+over the shaded interior (values in the band). High separation means far
+apart. It rises further past the open ends, where the radius grows.
+
+Two gaps are two points on a curve. The sweep below measures the median
+separation over the interior for gaps from 4 to 60 pixels, in both
+modes:
+
+``` r
+
+gaps <- sort(unique(c(seq(4, 60, by = 4), 6)))
+sweep_sep <- t(sapply(gaps, function(g) {
+  d <- mlv_drawing(list(poly(c(10, 80), c(10, 10)), poly(c(10, 80), c(10 + g, 10 + g))),
+                   90, 20 + g)
+  med <- function(m, v) { b <- main_branch(m); median(b[[v]][interior(b)]) }
+  m <- score_pair(d)
+  c(gap = g, radius = med(m, "radius"), default = med(m, "separation"),
+    published = med(published_mat(d), "separation"))
+}))
+round(sweep_sep, 3)
+#>       gap radius default published
+#>  [1,]   4      2   0.001     0.001
+#>  [2,]   6      3   0.017     0.017
+#>  [3,]   8      4   0.056     0.056
+#>  [4,]  12      6   0.162     0.162
+#>  [5,]  16      8   0.263     0.263
+#>  [6,]  20     10   0.349     0.349
+#>  [7,]  24     12   0.419     0.419
+#>  [8,]  28     14   0.477     0.477
+#>  [9,]  32     16   0.524     0.524
+#> [10,]  36     18   0.565     0.565
+#> [11,]  40     20   0.599     0.599
+#> [12,]  44     22   0.628     0.628
+#> [13,]  48     24   0.653     0.653
+#> [14,]  52     26   0.676     0.676
+#> [15,]  56     28   0.695     0.695
+#> [16,]  60     30   0.712     0.712
+```
+
+``` r
+
+half_gap <- 2 / (1 - 0.5^(1 / 10))            # the gap at which (1 - 2/gap)^10 = 0.5
+op <- par(mar = c(3.2, 3.4, 0.6, 1), mgp = c(2, 0.5, 0), las = 1, cex.axis = 0.85,
+          tcl = -0.25)
+curve_g <- seq(2, max(gaps), by = 0.25)
+plot(NA, xlim = c(0, max(gaps)), ylim = c(0, 1), bty = "n", axes = FALSE,
+     xlab = "gap between the lines (px)", ylab = "median separation")
+axis(1, at = seq(0, max(gaps), 10), col = "grey60"); axis(2, at = c(0, 0.5, 1), col = "grey60")
+segments(half_gap, 0, half_gap, 0.5, lty = 3, col = "grey40")
+segments(0, 0.5, half_gap, 0.5, lty = 3, col = "grey40")
+lines(curve_g, (1 - 2 / curve_g)^10, col = "grey55", lwd = 1.2)
+points(sweep_sep[, "gap"], sweep_sep[, "default"], pch = 16, cex = 0.8)
+marked <- sweep_sep[sweep_sep[, "gap"] %in% c(6, 20), , drop = FALSE]
+points(marked[, "gap"], marked[, "default"], pch = 1, cex = 1.8)
+halo(marked[, "gap"], marked[, "default"], c("narrow gap", "wide gap"), pos = c(4, 2),
+     offset = 0.9, cex = 0.75)
+text(max(gaps), (1 - 2 / max(gaps))^10, expression(atop("analytical", (1 - 1 / R)^10)),
+     adj = c(1, 1.6), cex = 0.8, col = "grey35")         # right-aligned, under its line
+```
+
+![Median separation over the interior of two parallel lines, for gaps
+from 4 to 60 px (dots), against its analytical value with R = gap / 2
+(line); the two gaps above are ringed. For even gaps the raster radius
+is exactly half the gap, so every dot lies on the line. The score does
+not reach 0.5 until the gap is 29.9 px (dotted); published (mlv2023)
+medians are
+identical.](medial-axis_files/figure-html/fig-separation-response-1.png)![](medial-axis_files/figure-html/fig-separation-response-1.phone.png)
+
+Median separation over the interior of two parallel lines, for gaps from
+4 to 60 px (dots), against its analytical value with R = gap / 2 (line);
+the two gaps above are ringed. For even gaps the raster radius is
+exactly half the gap, so every dot lies on the line. The score does not
+reach 0.5 until the gap is 29.9 px (dotted); published (mlv2023) medians
+are identical.
 
 ``` r
 
@@ -498,35 +865,98 @@ rbind(spans = c(symmetric = nrow(spans(b_sym)), asymmetric = nrow(spans(b_asy)))
 #> parallelism 0.2244749  0.5487837
 ```
 
+Under the default `branch_rule = "invariant"` the axis is fitted twice,
+once traced from each end, and a point’s mirror score is the mean of its
+scores in the two fits. The two fits can split a bent axis differently:
+
 ``` r
 
-chords <- function(b) {   # drawn 4 px above the axis so the scores stay visible
-  s <- spans(b)
-  segments(b$x[s[, 1]], b$y[s[, 1]] - 4, b$x[s[, 2]], b$y[s[, 2]] - 4, lwd = 1.2)
-  points(b$x[unique(c(s))], b$y[unique(c(s))] - 4, pch = "|", cex = 0.6)
+directions <- function(b) {     # b is sorted from left to right
+  n <- nrow(b)
+  reverse <- spans(b[n:1, ])
+  list(spans = list(forward = spans(b), reverse = n + 1 - reverse[nrow(reverse):1, 2:1, drop = FALSE]),
+       score = list(forward = score_branch(b, "mirror"),
+                    reverse = rev(score_branch(b[n:1, ], "mirror"))))
 }
-op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5))
-plot(m_sym, "mirror", drawing = symmetric, main = "Mirror-symmetric pair")
-chords(b_sym)
-plot(m_asy, "mirror", drawing = asymmetric, main = "Asymmetric pair")
-chords(b_asy)
+fits <- list(directions(b_sym), directions(b_asy))
+lapply(fits[[2]]$spans, function(s) s[, 2] - s[, 1] + 1)   # points per span, asymmetric
+#> $forward
+#> [1] 18 24 22 21  2
+#> 
+#> $reverse
+#> [1]  2 21 22 24 18
 ```
-
-![Mirror scores with the straight spans found by fit_line_segments()
-drawn as black chords, offset 4 px above the axis. The symmetric pair
-(left) has a straight axis fitted by one span; the asymmetric pair
-(right) needs several, and each shorter span scores
-lower.](medial-axis_files/figure-html/fig-mirror-1.png)![](medial-axis_files/figure-html/fig-mirror-1.phone.png)
-
-Mirror scores with the straight spans found by fit_line_segments() drawn
-as black chords, offset 4 px above the axis. The symmetric pair (left)
-has a straight axis fitted by one span; the asymmetric pair (right)
-needs several, and each shorter span scores lower.
 
 ``` r
 
-par(op)
+dir_lty <- c(forward = 1, reverse = 2)
+dir_y <- c(forward = 0.62, reverse = 0.16)               # rows in the span diagram
+mirror_panel <- function(column, row) {
+  b <- list(b_sym, b_asy)[[column]]; f <- fits[[column]]
+  for (k in names(dir_lty)) {
+    s <- f$spans[[k]]
+    if (row == "drawing") {
+      out <- if (k == "forward") -4 else 4
+      segments(b$x[s[, 1]], b$y[s[, 1]] + out, b$x[s[, 2]], b$y[s[, 2]] + out,
+               lty = dir_lty[[k]], lwd = 1.1, col = "grey20")
+      points(b$x[unique(c(s))], b$y[unique(c(s))] + out, pch = "|", cex = 0.45,
+             col = "grey20")
+    } else if (row == "spans") {
+      y <- dir_y[[k]]; x0 <- b$x[s[, 1]]; x1 <- b$x[s[, 2]]
+      segments(x0, y, x1, y, lty = dir_lty[[k]], lwd = 1.1, col = "grey20")
+      segments(c(x0, x1), y - 0.05, c(x0, x1), y + 0.05, col = "grey20", lwd = 0.8)
+      n <- s[, 2] - s[, 1] + 1
+      text((x0 + x1) / 2, y, n, pos = 3, offset = 0.25, cex = 0.65)
+    } else if (row == "mirror") {
+      lines(b$x, f$score[[k]], lty = dir_lty[[k]], lwd = 1, col = "grey20")
+    }
+  }
+  if (row == "mirror" && column == 1) {               # the one span's score, and its source
+    n <- nrow(b)
+    text(mean(b$x), median(b$mirror),
+         bquote(.(sprintf("%.2f", median(b$mirror))) == (.(n - 1) / .(n))^10),
+         pos = 1, offset = 0.8, cex = 0.75)
+  }
+  if (row == "mirror" && column == 2) {               # where a 2-point span pulls a fit down
+    text(b$x[1], min(f$score$reverse), sprintf("%.3f", min(f$score$reverse)), pos = 4,
+         offset = 0.4, cex = 0.7)
+  }
+  if (row == "mirror" && column == 1)                 # the key, in the empty lower part
+    # recordGraphics() re-runs the placement when knitr replays the plot at
+    # phone width, so the rows keep their spacing in text lines.
+    recordGraphics({
+      step <- 1.6 * strheight("M", cex = 0.7)
+      y <- par("usr")[3] + step * c(2.8, 1.8, 0.8)
+      labels <- c("left-to-right fit", "right-to-left fit", "mean (default)")
+      x <- par("usr")[1] + c(0.12, 0.12) * diff(par("usr")[1:2]) + c(0, 1.5) * strwidth("MM", cex = 0.7)
+      segments(x[1], y, x[2], y, lty = c(1, 2, 1), lwd = c(1, 1, 3),
+               col = c("grey20", "grey20", "black"))
+      text(x[2], y, labels, pos = 4, cex = 0.7, offset = 0.3)
+    }, list(), environment())
+}
+plot_branch_profile(list("Symmetric pair" = m_sym, "Asymmetric pair" = m_asy),
+                    c("spans", "mirror"), branches = "longest", col = "black", lwd = 3,
+                    blank = "spans", panel = mirror_panel)
 ```
+
+![Mirror scores along the axis (red line). The axis is fitted with
+straight spans twice: left to right (solid chords, offset 4 px above)
+and right to left (dashed, below). The middle row gives each span's n; a
+fit scores (1 − 1/n)^10 on each span. The default (thick) is the mean of
+the fits, which coincide for the symmetric pair; the bent axis drops at
+each 2-point end
+span.](medial-axis_files/figure-html/fig-mirror-1.png)![](medial-axis_files/figure-html/fig-mirror-1.phone.png)
+
+Mirror scores along the axis (red line). The axis is fitted with
+straight spans twice: left to right (solid chords, offset 4 px above)
+and right to left (dashed, below). The middle row gives each span’s n; a
+fit scores (1 − 1/n)^10 on each span. The default (thick) is the mean of
+the fits, which coincide for the symmetric pair; the bent axis drops at
+each 2-point end span.
+
+The symmetric pair is one 63-point span either way and scores 0.85
+throughout. The asymmetric pair needs 5 spans each way, and at each end
+one fit’s 2-point span scores 0.001, which pulls the mean down to 0.28.
 
 The two scores dissociate. The symmetric pair has a straight axis (high
 mirror) but a radius that changes along it (low parallelism); the
@@ -551,55 +981,49 @@ wavy_x <- seq(10, 80, by = 2)
 wave <- 4 * sin((wavy_x - 10) / 70 * 3 * pi)
 wavy <- mlv_drawing(list(poly(wavy_x, 13 - wave), poly(wavy_x, 37 + wave)), 90, 50)
 m_wav <- score_pair(wavy); b_wav <- main_branch(m_wav)
-profiles <- list(parallel = b_par, wedge = b_con, wavy = b_wav)
+profiles <- list(parallel = b_par, converging = b_con, wavy = b_wav)
 round(sapply(profiles, function(b)
   c(parallelism = median(b$parallelism[interior(b)]),
     taper = median(b$taper[interior(b)]))), 3)
-#>             parallel wedge  wavy
-#> parallelism        1 0.802 0.503
-#> taper              1 0.995 0.985
+#>             parallel converging  wavy
+#> parallelism        1      0.802 0.503
+#> taper              1      0.995 0.985
+inside <- interior(b_wav)
+peak_x <- b_wav$x[inside][which.max(b_wav$parallelism[inside])]   # wavy parallelism peak
 ```
 
 ``` r
 
-cols <- unname(okabe[c("blue", "orange", "green")])
-op <- par(mfrow = c(2, 3), mar = c(3, 3.2, 2, 0.6), mgp = c(1.9, 0.5, 0),
-          cex.axis = 0.8, cex.lab = 0.85, cex.main = 1, font.main = 1)
-for (k in seq_along(profiles)) {
-  m <- list(m_par, m_con, m_wav)[[k]]
-  d <- list(parallel, converging, wavy)[[k]]
-  par(mar = c(0.5, 0.5, 2, 0.5))
-  plot(m, "ink", drawing = d, legend = FALSE, main = names(profiles)[k])
-  b <- main_branch(m); points(b$x, b$y, pch = 15, cex = 0.25, col = cols[k])
-}
-par(mar = c(3, 3.2, 2, 0.6))
-for (v in c("radius", "parallelism", "taper")) {
-  ylim <- if (v == "radius") c(0, 20) else c(0, 1)
-  plot(NA, xlim = c(0, 90), ylim = ylim, xlab = "x (px)",
-       ylab = if (v == "radius") "radius (px)" else paste(v, "(0–1)"),
-       main = v, las = 1, bty = "l")
-  for (k in seq_along(profiles))
-    lines(profiles[[k]]$x, profiles[[k]][[v]], col = cols[k], lwd = 1.6)
-  if (v == "radius") legend("bottomleft", names(profiles), col = cols, lwd = 1.6,
-                            bty = "n", cex = 0.8)
-}
+taper_lim <- c(min(0.9, floor(20 * min(unlist(lapply(profiles, `[[`, "taper")),
+                                        na.rm = TRUE)) / 20), 1)
+plot_branch_profile(list(Parallel = m_par, Converging = m_con, Wavy = m_wav),
+                    c("radius", "parallelism", "taper"), branches = "longest",
+                    discs = 10, col = "black", band = inner_x, context = "radius",
+                    ylim = list(taper = taper_lim),
+                    panel = function(column, row) if (row != "drawing" && row != "radius")
+                      show_median(profiles, row)(column, row))
 ```
 
-![Top: three channels with their traced branch. Bottom: radius,
-parallelism and taper along each branch. The wedge loses parallelism but
-keeps taper near 1 because its width changes at a constant rate; the
-wavy channel lowers both, taper only
-slightly.](medial-axis_files/figure-html/fig-taper-1.png)![](medial-axis_files/figure-html/fig-taper-1.phone.png)
+![Three channels with their axes and inscribed discs (top); below each,
+its radius (other channels in grey), parallelism and taper along the
+axis, with medians over the shaded interior written in each band. The
+converging channel loses parallelism but keeps taper near 1, because its
+width changes at a constant rate; the wavy channel halves parallelism
+(0.50) and barely moves taper (0.985). The taper axis runs from 0.9 to
+1.](medial-axis_files/figure-html/fig-taper-1.png)![](medial-axis_files/figure-html/fig-taper-1.phone.png)
 
-Top: three channels with their traced branch. Bottom: radius,
-parallelism and taper along each branch. The wedge loses parallelism but
-keeps taper near 1 because its width changes at a constant rate; the
-wavy channel lowers both, taper only slightly.
+Three channels with their axes and inscribed discs (top); below each,
+its radius (other channels in grey), parallelism and taper along the
+axis, with medians over the shaded interior written in each band. The
+converging channel loses parallelism but keeps taper near 1, because its
+width changes at a constant rate; the wavy channel halves parallelism
+(0.50) and barely moves taper (0.985). The taper axis runs from 0.9 to
+1.
 
-``` r
-
-par(op)
-```
+Over the interior the converging pair’s parallelism median is 0.80 and
+its taper 0.995; the wavy channel’s are 0.50 and 0.985. The wavy
+channel’s parallelism peaks at x = 44, where its width briefly stops
+changing: within 3 pixels of that point the radius stays at 8 px.
 
 On these drawings taper stays close to 1 even for the wavy channel
 (median 0.985), because the second difference of a twice-smoothed radius
@@ -646,19 +1070,61 @@ in one call.
 
 ``` r
 
-plot(mapped, property = "parallelism", axes = FALSE,
-     main = "Parallelism mapped onto contours")
+# The middle line's mapped score, and what each branch alone would map to it.
+one_branch <- function(i) {
+  m <- mat; m$branches <- m$branches[i]
+  map_mat_properties(drawing, m)$mat_images$parallelism
+}
+middle <- which(rasterize(drawing) & row(mat$mask) %in% 29:33, arr.ind = TRUE)
+middle <- middle[order(middle[, 2], middle[, 1]), ]
+cand <- sapply(1:2, function(i) one_branch(i)[middle])
+chosen <- mapped$mat_images$parallelism[middle]
+stopifnot(isTRUE(all.equal(chosen, pmax(cand[, 1], cand[, 2]))))
+layout(matrix(1:2), heights = c(2.6, 1.3))
+op <- par(mar = c(0.4, 3, 2, 0.5))
+plot(mapped, property = "parallelism", col = NA, axes = FALSE,
+     main = "Parallelism on the contours", font.main = 1)
+draw_mat_axis(mat)
+xr <- par("usr")[1:2]
+par(mar = c(3, 3, 0.8, 0.5), mgp = c(1.8, 0.45, 0), las = 1, cex.axis = 0.8, tcl = -0.25)
+plot.new(); plot.window(xr, c(0, 1), xaxs = "i")
+axis(1, at = c(1, pretty(c(1, 80))[-1]), col = "grey60"); axis(2, at = c(0, 1), col = "grey60")
+mtext("x (px)", side = 1, line = 1.8, cex = 0.8)
+mtext("middle line", side = 3, line = 0, adj = 0, at = xr[1], cex = 0.8)
+lines(middle[, 2], chosen, lwd = 4, col = "grey75")            # the mapped score
+lines(middle[, 2], cand[, 1], lty = 2)                         # branch 1 alone
+lines(middle[, 2], cand[, 2], lty = 3)                         # branch 2 alone
+at <- which.min(abs(middle[, 2] - 45))
+text(52, cand[at, 1], "branch 1 (above)", pos = 3, offset = 0.3, cex = 0.7, xpd = NA)
+at2 <- which.min(abs(middle[, 2] - 45))
+text(45, cand[at2, 2], "branch 2 (below)", pos = 1, offset = 0.5, cex = 0.7)
+# The key sits one text line above the axis, measured again on a replay.
+recordGraphics({
+  y <- par("usr")[3] + 0.8 * strheight("M", cex = 0.7)
+  segments(18, y, 23, y, lwd = 4, col = "grey75")
+  text(23, y, "mapped (higher)", pos = 4, offset = 0.3, cex = 0.7)
+}, list(), environment())
 ```
 
-![Parallelism mapped onto the contour pixels of the running example. The
-middle line takes the higher of the scores from the branches above and
-below it; at the default mapping radius every ink pixel receives a
-score.](medial-axis_files/figure-html/fig-mapped-1.png)![](medial-axis_files/figure-html/fig-mapped-1.phone.png)
+![Parallelism mapped onto the contour pixels of the running example
+(top), with the medial axis (red) the scores come from. The middle line
+lies between two branches: below, along that line, the score each branch
+alone would give it (dashed, dotted) and the mapped score (thick grey),
+the higher of the two. Line ends score low, as the profiles above do
+where the axis leaves a
+channel.](medial-axis_files/figure-html/fig-mapped-1.png)![](medial-axis_files/figure-html/fig-mapped-1.phone.png)
 
-Parallelism mapped onto the contour pixels of the running example. The
-middle line takes the higher of the scores from the branches above and
-below it; at the default mapping radius every ink pixel receives a
-score.
+Parallelism mapped onto the contour pixels of the running example (top),
+with the medial axis (red) the scores come from. The middle line lies
+between two branches: below, along that line, the score each branch
+alone would give it (dashed, dotted) and the mapped score (thick grey),
+the higher of the two. Line ends score low, as the profiles above do
+where the axis leaves a channel.
+
+``` r
+
+par(op)
+```
 
 The mapping radius trades coverage against specificity. A radius much
 smaller than one pixel misses pixels where the raster radius and the
@@ -790,7 +1256,7 @@ list(centered = table(row(default_flux$skeleton)[default_flux$skeleton]),
 ```
 
 The default flux exceeds the threshold only on row 16, and its
-neighbours on rows 15 and 17 have equal values. The MATLAB flux
+neighbours on rows 15 and 17 have equal values. The published flux
 (`aof = "mlv2023"`) exceeds it on rows 16 and 17. MATLAB’s `computeAOF`
 centres the sampling circle on the pixel corner, half a pixel below and
 to the right of the pixel centre, but reads the nearest-boundary labels
@@ -801,32 +1267,48 @@ of the second row, but 2 skeleton pixels remain on row 17.
 ``` r
 
 rows <- 11:21
-op <- par(mar = c(3.2, 3.6, 1, 1), mgp = c(2.1, 0.6, 0), las = 1, cex.axis = 0.85,
-          cex.main = 1, font.main = 1)
-plot(rows, default_flux$AOF[rows, 25], type = "o", pch = 16, col = okabe[["blue"]],
-     ylim = range(c(default_flux$AOF[rows, 25], mlv_flux$AOF[rows, 25], 0)),
-     xlab = "image row y (px)", ylab = "flux (sum of 60 samples)", bty = "l", xaxt = "n")
-axis(1, at = rows)
-lines(rows, mlv_flux$AOF[rows, 25], type = "o", pch = 17, col = okabe[["orange"]])
-abline(h = cut, lty = 2, col = "grey40")
-abline(v = 16, col = "grey70")
-text(16, -12, "analytical\nmedial row 16", pos = 4, cex = 0.75, col = "grey30")
-legend("topleft", c("aof = \"centered\" (default)", "aof = \"mlv2023\"",
-                    "threshold"),
-       col = c(okabe[["blue"]], okabe[["orange"]], "grey40"), lty = c(1, 1, 2),
-       pch = c(16, 17, NA), bty = "n", cex = 0.75)
+series <- list(default = default_flux$AOF[rows, 25], published = mlv_flux$AOF[rows, 25])
+y_axis <- pretty(range(unlist(series)))
+ink_rows <- c(10, 22)                         # the two lines
+op <- par(mar = c(3.2, 3.6, 0.6, 5.6), mgp = c(2.1, 0.6, 0), las = 1, cex.axis = 0.85)
+plot(NA, xlim = range(ink_rows) + c(-0.5, 0.5), ylim = range(y_axis), axes = FALSE,
+     xlab = "image row y (px)",
+     ylab = sprintf("flux (sum of %d samples)", default_flux$parameters$samples))
+axis(1, at = c(ink_rows, rows), labels = c("ink", "ink", rows), col = "grey60")
+axis(2, at = y_axis, labels = sub("^-", "\u2212", y_axis), col = "grey60")   # true minus
+rect(ink_rows - 0.25, min(y_axis), ink_rows + 0.25, max(y_axis), col = "grey20", border = NA)
+abline(v = 16, col = "grey88", lwd = 3)
+abline(h = cut, lty = 2, col = "grey30")
+for (k in names(series)) {
+  v <- series[[k]]
+  points(rows, v, pch = ifelse(v > cut, 16, 21), bg = "white", col = mode_col[[k]],
+         cex = 1.1)
+}
+# One label for the two equal neighbours, in the empty upper left, with leaders.
+# The equal neighbours (open blue markers on rows 15 and 17), in the margin.
+mtext(sprintf("rows 15, 17:\n%.2f", series$default[5]), side = 4, at = cut - 7,
+      line = 0.3, cex = 0.72, col = mode_col[["default"]], adj = 0, las = 1)
+text(16, min(y_axis), "analytical\nmedial row", pos = 3, cex = 0.72, col = "grey40")
+mtext(sprintf("threshold %.2f", cut), side = 4, at = cut, line = 0.3, cex = 0.72,
+      col = "grey30")
+text(16, series$default[6], "default", pos = 2, cex = 0.78, col = mode_col[["default"]],
+     font = 2)
+text(17, series$published[7], "published", pos = 3, offset = 0.6, cex = 0.78,
+     col = mode_col[["published"]], font = 2)
 ```
 
-![Flux across the gap between two lines (column 25). The default flux
-(blue) peaks on the analytical medial row 16 with symmetric neighbours;
-the MATLAB flux, aof = "mlv2023" (orange), exceeds the threshold
-(dashed) on rows 16 and
+![Flux down column 25, across the gap between two lines (black bars,
+rows 10 and 22). Filled markers exceed the threshold (dashed, 17.93);
+open markers do not. The default flux (blue) crosses it only on the
+analytical medial row, 16; the published flux (aof = "mlv2023", orange)
+also on row
 17.](medial-axis_files/figure-html/fig-midline-1.png)![](medial-axis_files/figure-html/fig-midline-1.phone.png)
 
-Flux across the gap between two lines (column 25). The default flux
-(blue) peaks on the analytical medial row 16 with symmetric neighbours;
-the MATLAB flux, aof = “mlv2023” (orange), exceeds the threshold
-(dashed) on rows 16 and 17.
+Flux down column 25, across the gap between two lines (black bars, rows
+10 and 22). Filled markers exceed the threshold (dashed, 17.93); open
+markers do not. The default flux (blue) crosses it only on the
+analytical medial row, 16; the published flux (aof = “mlv2023”, orange)
+also on row 17.
 
 ``` r
 

@@ -98,27 +98,34 @@ data.frame(drawing = names(found),
 
 ``` r
 
-op <- par(mfrow = c(2, 3), mar = c(0.4, 0.4, 2.2, 0.4))
+op <- par(mfrow = c(2, 3), mar = c(0.2, 0.2, 1.8, 0.2))
+par(cex = 0.85)
 for (name in names(gallery)) {
   j <- found[[name]]
-  title <- if (nrow(j)) sprintf("%s: %d arms, largest gap %g°", j$type,
-                                length(j$arms[[1]]), round(j$max_angle))
-           else "L: 2 arms, not a junction"
-  plot(gallery[[name]], property = "junctions", arms = TRUE, arm_length = 8,
-       axes = FALSE, lwd = 2, main = title, cex.main = 1, font.main = 1)
-  if (nrow(j)) label_gaps(j, r = 5) else
-    text(27, 27, "corner of two\ncontours", cex = 0.8, col = "grey30")
+  title <- if (nrow(j)) sprintf("%s, %d arms", j$type, length(j$arms[[1]])) else
+    "L, 2 arms: no junction"
+  xy <- do.call(rbind, gallery[[name]]$contours)
+  mid <- c(mean(range(xy[, c(1, 3)])), mean(range(xy[, c(2, 4)])))
+  plot(gallery[[name]], property = "junctions", arms = TRUE, gaps = TRUE,
+       arm_length = 9, axes = FALSE, frame = FALSE, lwd = 2,
+       xlim = mid[1] + c(-15.5, 15.5), ylim = mid[2] + c(15.5, -15.5))
+  fit_title(title, if (nrow(j)) title else "L: no junction")
+  if (!nrow(j)) exits(c(20, 20), c(20, 20), c(0, 90), 9)
 }
 ```
 
-![Arms (arrows) and the gaps between them for six two- and three-contour
-drawings. The L has only two arms and is not a junction; the three-arm
-drawings differ only in their largest
-gap.](junctions_files/figure-html/fig-gallery-1.png)![](junctions_files/figure-html/fig-gallery-1.phone.png)
+![Six drawings of two or three contours, with each junction's arms
+(orange) and the gaps between them. Among three arms the largest gap
+sets the type: 180° makes a T and 240° an Arrow (shaded), while the Y's
+largest gap, 120°, is under the 160° limit. The L leaves its corner only
+twice (grey arrows), so it is not a
+junction.](junctions_files/figure-html/fig-gallery-1.png)![](junctions_files/figure-html/fig-gallery-1.phone.png)
 
-Arms (arrows) and the gaps between them for six two- and three-contour
-drawings. The L has only two arms and is not a junction; the three-arm
-drawings differ only in their largest gap.
+Six drawings of two or three contours, with each junction’s arms
+(orange) and the gaps between them. Among three arms the largest gap
+sets the type: 180° makes a T and 240° an Arrow (shaded), while the Y’s
+largest gap, 120°, is under the 160° limit. The L leaves its corner only
+twice (grey arrows), so it is not a junction.
 
 ``` r
 
@@ -132,6 +139,60 @@ equal 120 degree gaps (Y), a straight bar with a stem (T, largest gap
 180), and three arms within a half-plane (Arrow, largest gap 240). Four
 arms always make an X and the six arms of three crossing lines a Star,
 whatever their angles.
+
+The three-arm types are bands of one continuum, not three shapes.
+Opening the two upper arms of a junction step by step sweeps its largest
+gap from 125° to 240°; the type changes where the largest gap crosses
+160° (Y to T) and crosses 200° (T to Arrow). Both limits above were
+found by bisection on
+[`detect_junctions()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/detect_junctions.md)
+itself.
+
+``` r
+
+morph_types <- vapply(morph_gaps, type_of, "")
+layout(rbind(seq_along(morph_gaps), length(morph_gaps) + 1), heights = c(1, lcm(2)))
+op <- par(mar = c(0, 0.1, 0.2, 0.1))
+for (k in seq_along(morph_gaps)) {
+  plot(three_arms(morph_gaps[k]), property = "junctions", arms = TRUE, gaps = "max",
+       arm_length = 8, arm_lwd = 1.6, arm_head = 0.05, axes = FALSE, frame = FALSE, lwd = 1.6,
+       xlim = c(7.5, 32.5), ylim = c(33, 12))
+  # The leader starts at the end of the stem and runs to the bottom of the cell.
+  replay(function() segments(20, 33, 20, grconvertY(0, "nfc", "user"), col = "grey70",
+                             lwd = 0.7, xpd = NA))
+}
+# The number line of largest gap, with the type limits and each junction.
+par(mar = c(1.6, 0.1, 0, 0.1))
+plot(NA, xlim = c(0.5, length(morph_gaps) + 0.5), ylim = c(0, 1), axes = FALSE,
+     xlab = "", ylab = "", xaxs = "i", yaxs = "i")
+scale_x <- function(L) 1 + (L - 120) / (245 - 120) * (length(morph_gaps) - 1)
+rect(scale_x(limits[["YT"]]), 0.25, scale_x(limits[["TA"]]), 0.45, col = "grey88", border = NA)
+segments(scale_x(120), 0.35, scale_x(245), 0.35, col = "grey40")
+segments(scale_x(limits), 0.18, scale_x(limits), 0.52, lwd = 1.5)
+text(scale_x(limits), 0.6, paste0(round(limits), "°"), adj = c(0.5, 0), cex = 0.8)
+text(scale_x(c(140, mean(limits), 222)), 0.06, c("Y", "T", "Arrow"), cex = 0.8,
+     col = "grey30", adj = c(0.5, 0))
+segments(seq_along(morph_gaps), 1, scale_x(morph_gaps), 0.35, col = "grey70", lwd = 0.7)
+points(scale_x(morph_gaps), rep(0.35, length(morph_gaps)), pch = 19, cex = 0.6)
+mtext("largest gap (°)", side = 1, line = 0.4, cex = 0.7, col = "grey30")
+```
+
+![A T is not one shape but a 40° band of shapes. Nine three-arm
+junctions, each typed by detect_junctions(), with their largest gap
+shaded (125° to 240°); leaders place each on a line of largest gap,
+which the 160° and 200° limits divide into Y, T and
+Arrow.](junctions_files/figure-html/fig-morph-1.png)![](junctions_files/figure-html/fig-morph-1.phone.png)
+
+A T is not one shape but a 40° band of shapes. Nine three-arm junctions,
+each typed by detect_junctions(), with their largest gap shaded (125° to
+240°); leaders place each on a line of largest gap, which the 160° and
+200° limits divide into Y, T and Arrow.
+
+``` r
+
+par(op)
+layout(1)
+```
 
 ## The gap allowance
 
@@ -174,23 +235,33 @@ detect_junctions(v_shape)[, c("x", "y", "type")]
 
 ``` r
 
-op <- par(mfrow = c(1, 2), mar = c(0.4, 0.4, 2, 0.4))
+near_gap <- 10.5 - 10; far_gap <- 11.5 - 10
+op <- par(mfrow = c(1, 2), mar = c(0.2, 0.2, 1.8, 0.2))
 for (x0 in c(12, 28)) {
-  zoom(gaps, c(x0, 12), 4, sprintf("gap %.1f px", if (x0 == 12) 0.5 else 1.5),
-       arm_length = 2.2)
-  y_end <- if (x0 == 12) 10.5 else 11.5
-  segments(x0, y_end, x0, y_end - 1, lty = 2, col = okabe[["blue"]], lwd = 2)
-  text(x0 - 0.3, y_end + 1.2, "1 px\nallowance", pos = 2, cex = 0.75,
-       col = okabe[["blue"]])
+  short <- if (x0 == 12) near_gap else far_gap
+  loupe(gaps, c(x0, 11.2), 2.6, property = "junctions", reach = "euclidean",
+        main = sprintf("%g px short: %s", short, if (x0 == 12) "T" else "no junction"),
+        short = sprintf("%g px short: %s", short, if (x0 == 12) "T" else "none"))
+  dimension(c(x0, 10 + short), c(x0, 10), sprintf("%g px", short), off = -1.2)
+  if (x0 == 28) {
+    dimension(c(x0, 10 + short - eps), c(x0, 10), "", off = 0.5)
+    text(x0 + 1.08, 10 + short - eps + 0.1, sprintf("still\n%g px\nshort", short - eps),
+         adj = c(0, 1), cex = 0.75, col = "grey15")
+  }
 }
 ```
 
-![A stem 0.5 px short of the bar (left) meets it within the 1 px
-allowance (dashed); a stem 1.5 px short (right) does
-not.](junctions_files/figure-html/fig-gap-1.png)![](junctions_files/figure-html/fig-gap-1.phone.png)
+![The gap allowance at pixel scale; grid lines are pixel boundaries. A
+stem's end may extend along the stem by up to 1 px (blue, to the dashed
+outline). Left: a stem 0.5 px short reaches the bar and forms a T (dot).
+Right: a stem 1.5 px short, extended 1 px, still misses by 0.5 px: no
+junction.](junctions_files/figure-html/fig-gap-1.png)![](junctions_files/figure-html/fig-gap-1.phone.png)
 
-A stem 0.5 px short of the bar (left) meets it within the 1 px allowance
-(dashed); a stem 1.5 px short (right) does not.
+The gap allowance at pixel scale; grid lines are pixel boundaries. A
+stem’s end may extend along the stem by up to 1 px (blue, to the dashed
+outline). Left: a stem 0.5 px short reaches the bar and forms a T (dot).
+Right: a stem 1.5 px short, extended 1 px, still misses by 0.5 px: no
+junction.
 
 ``` r
 
@@ -242,37 +313,134 @@ the drawing is rotated.
 
 ``` r
 
-op <- par(mfrow = c(2, 2), mar = c(0.4, 0.4, 2, 0.4))
+op <- par(mfrow = c(2, 2), mar = c(0.2, 0.2, 1.8, 0.2), oma = c(0, 1.6, 1.4, 0))
 for (r in c("diagonal", "rotated")) for (m in c("euclidean", "chebyshev")) {
-  d <- if (r == "diagonal") diagonal else rotated
-  d <- compute_contour_properties(d, gap_metric = m)
-  zoom(d, c(20, 20), 3, sprintf("%s stem, %s: %s", r, m, results[r, m]),
-       arm_length = 1.6)
-  z <- d$contours[[2]][1, ]
-  u <- (z[1:2] - z[3:4]) / sqrt(sum((z[1:2] - z[3:4])^2))
-  reach <- if (m == "euclidean") 1 else 1 / max(abs(u))
-  segments(z[1], z[2], z[1] + reach * u[1], z[2] + reach * u[2],
-           lty = 2, lwd = 2, col = okabe[["blue"]])
-  text(17.3, 22.4, sprintf("dashed: reach %.2f px", reach), adj = 0,
-       cex = 0.75, col = okabe[["blue"]])
+  d <- compute_contour_properties(if (r == "diagonal") diagonal else rotated, gap_metric = m)
+  tip <- d$contours[[2]][1, 1:2]
+  far <- d$contours[[2]][1, 3:4]; u <- (tip - far) / sqrt(sum((tip - far)^2))
+  # Reach along the stem: the allowance measured in the metric.
+  reach <- if (m == "euclidean") eps else eps / max(abs(u))
+  meets <- results[r, m] != "none"
+  loupe(d, tip + c(-0.5, 0.6), 2.4, property = "junctions", reach = m,
+        main = sprintf("reach %.2f px: %s", reach, if (meets) results[r, m] else "no junction"),
+        short = sprintf("%.2f px: %s", reach, if (meets) results[r, m] else "none"))
+  # The gap, measured along the stem from its end to the bar, and what is left.
+  dimension(tip, tip + g * u, sprintf("%g px", g), off = 1.2)
+  if (!meets && r == "diagonal") dimension(tip + reach * u, tip + g * u,
+                                           sprintf("%.1f px", g - reach), off = -0.5, gap = 0.45)
+  # On the grid, the bar runs down-right from the crossing: label to its left.
+  if (!meets && r == "rotated") {
+    dimension(tip + reach * u, tip + g * u, "", off = -0.5)
+    text((tip + g * u)[1] - 0.25, (tip + g * u)[2] + 0.75, sprintf("%.1f px", g - reach),
+         adj = c(1, 0.5), cex = 0.75, col = "grey15")
+  }
 }
+mtext(c("Euclidean", "Chebyshev"), side = 3, outer = TRUE, at = c(0.25, 0.75),
+      line = 0.2, cex = 0.9)
+mtext(c("diagonal stem", "stem on the grid"), side = 2, outer = TRUE, at = c(0.75, 0.25),
+      line = 0.3, cex = 0.8, col = "grey25", las = 0)
 ```
 
-![The same 1.3 px gap under the two metrics, before (top) and after
-(bottom) a 45 degree rotation. The dashed segment shows how far each
-metric lets the stem reach; only the Chebyshev reach on the diagonal
-(1.41 px) closes the
-gap.](junctions_files/figure-html/fig-metric-1.png)![](junctions_files/figure-html/fig-metric-1.phone.png)
+![A stem stops 1.3 px short of a bar. The blue segment is how far each
+metric lets the stem's end extend along its own line: 1 px, except for a
+diagonal stem under the Chebyshev distance, where it reaches 1.41 px and
+meets the bar. The dashed outline shows the metric's shape; only the
+extension counts. Brackets: the gap (1.3 px) and what remains (0.3
+px).](junctions_files/figure-html/fig-metric-1.png)![](junctions_files/figure-html/fig-metric-1.phone.png)
 
-The same 1.3 px gap under the two metrics, before (top) and after
-(bottom) a 45 degree rotation. The dashed segment shows how far each
-metric lets the stem reach; only the Chebyshev reach on the diagonal
-(1.41 px) closes the gap.
+A stem stops 1.3 px short of a bar. The blue segment is how far each
+metric lets the stem’s end extend along its own line: 1 px, except for a
+diagonal stem under the Chebyshev distance, where it reaches 1.41 px and
+meets the bar. The dashed outline shows the metric’s shape; only the
+extension counts. Brackets: the gap (1.3 px) and what remains (0.3 px).
 
 ``` r
 
 par(op)
 ```
+
+The four stems above are four points of a larger picture. Turning a T
+through every angle to the pixel grid and finding, at each angle, the
+largest gap at which its stem still meets the bar shows the whole region
+in which each metric finds a junction.
+
+``` r
+
+# A T whose stem stops `gap` px short of a 20 px bar, turned by `angle`
+# degrees about the junction. The stem is 15 px long, so the relative limit
+# (0.3 of its length) never binds before the 1 px allowance does.
+t_at <- function(angle, gap) rotate_drawing(
+  mlv_drawing(list(seg(10, 20, 30, 20), seg(20, 20 + gap, 20, 35)), 40, 40), angle, c(20, 20))
+meets_at <- function(angle, gap, metric)
+  nrow(detect_junctions(t_at(angle, gap), gap_metric = metric)) > 0
+# The largest accepted gap at each angle, by bisection on detect_junctions().
+limit_at <- function(angle, metric, lo = 0, hi = 2) {
+  for (i in 1:18) { mid <- (lo + hi) / 2; if (meets_at(angle, mid, metric)) lo <- mid else hi <- mid }
+  lo
+}
+angles <- seq(0, 90, by = 2.5)  # includes the diagonal, 45 degrees
+metrics <- c(euclidean = "euclidean", chebyshev = "chebyshev")
+measured <- lapply(metrics, function(m) vapply(angles, limit_at, 0, metric = m))
+sapply(measured, range)
+#>      euclidean chebyshev
+#> [1,] 0.9999924  1.000000
+#> [2,] 1.0000000  1.414207
+```
+
+``` r
+
+cases <- data.frame(angle = c(0, 0, 0, 45), gap = c(near_gap, far_gap, g, g),
+                    label = c("0.5", "1.5", "1.3", "1.3"))
+op <- par(mfrow = c(1, 2), mar = c(3.2, 3.4, 1.6, 0.6), las = 1, cex.axis = 0.8)
+for (m in metrics) {
+  plot(NA, xlim = c(-4, 92), ylim = c(0, 2), xaxs = "i", yaxs = "i", axes = FALSE,
+       xlab = "", ylab = "")
+  title(main = if (m == "euclidean") "Euclidean" else "Chebyshev", cex.main = 1, font.main = 1)
+  polygon(c(angles, rev(angles)), c(measured[[m]], rep(0, length(angles))),
+          col = "#C6DBEF", border = NA)
+  curve <- seq(0, 90, by = 0.5)
+  lines(curve, analytic(curve, m), lwd = 1.2, col = "#0072B2")
+  text(55, c(0.25, 1.75), c("junction", "no junction"), cex = 0.8, col = "grey25")
+  axis(1, at = c(0, 15, 30, 45, 60, 75, 90), col = "grey55", col.ticks = "grey55",
+       tcl = -0.3, mgp = c(3, 0.5, 0))
+  axis(2, at = c(0, 0.5, 1, 1.5, 2), col = "grey55", col.ticks = "grey55", tcl = -0.3)
+  title(xlab = "angle to grid (°)", line = 2, cex.lab = 0.85)
+  if (m == "euclidean") title(ylab = "gap (px)", line = 2.4, cex.lab = 0.85)
+  hit <- mapply(meets_at, cases$angle, cases$gap, MoreArgs = list(metric = m))
+  points(cases$angle, cases$gap, pch = ifelse(hit, 19, 21), bg = "white", cex = 1)
+  # Labels to the right, the diagonal point's below its curve.
+  # Labels beside their points; under the Chebyshev curve, the diagonal
+  # point's label goes below it, clear of the line.
+  below <- m == "chebyshev" & cases$angle == 45
+  text(cases$angle, cases$gap + c(0, 0.08, -0.08, 0), cases$label, pos = ifelse(below, 1, 4),
+       cex = 0.72, offset = 0.4)
+}
+```
+
+![Under the Euclidean distance a stem may stop up to 1 px short of a bar
+at any angle; under the Chebyshev distance the allowance grows to 1.41
+px on the diagonal. Shaded: the gaps at which detect_junctions() still
+finds a junction, measured at 37 angles per panel; line: the analytical
+limit. Points: the four stems above (gap in px), filled where a junction
+is
+found.](junctions_files/figure-html/fig-decision-map-1.png)![](junctions_files/figure-html/fig-decision-map-1.phone.png)
+
+Under the Euclidean distance a stem may stop up to 1 px short of a bar
+at any angle; under the Chebyshev distance the allowance grows to 1.41
+px on the diagonal. Shaded: the gaps at which detect_junctions() still
+finds a junction, measured at 37 angles per panel; line: the analytical
+limit. Points: the four stems above (gap in px), filled where a junction
+is found.
+
+``` r
+
+par(op)
+```
+
+A methods section can read its tolerance off this map: with the default
+Euclidean gap, any stroke that stops within 1 pixel of another meets it,
+whatever the drawing’s orientation; with the Chebyshev gap the tolerance
+depends on how the stroke is turned.
 
 ## The arm rule
 
@@ -302,9 +470,9 @@ vapply(arm_found, function(j) if (nrow(j)) j$type else "none", "")
   2 pixel neighbourhood, so it leaves only downward: three arms, a T.
   Crossing by 3 pixels, it leaves upward as well, and the junction is an
   X.
-- **Split polyline.** One near-straight stroke stored as three contours,
-  with a short middle piece, touches itself at two points 1.4 pixels
-  apart. They merge into one neighbourhood, and only two arms leave it
+- **Split stroke.** One near-straight stroke stored as three contours,
+  with a short middle piece. The pieces meet at two points 1.4 pixels
+  apart; these merge into one neighbourhood, and only two arms leave it
   (left and right), so there is no junction.
 - **Closed contour.** A quadrilateral whose first vertex, (15, 16), lies
   1 pixel below a bar crossing. The outline leaves the neighbourhood
@@ -332,33 +500,41 @@ centres <- list(overshoot_1 = c(20, 10), overshoot_3 = c(20, 10),
 titles <- c(overshoot_1 = "1 px overshoot: T", overshoot_3 = "3 px overshoot: X",
             split = "split stroke: no junction", closed = "closed outline: X")
 piece_cols <- list(overshoot_1 = "black", overshoot_3 = "black",
-                   split = okabe[c("blue", "purple", "green")],
+                   split = c("black", okabe[["purple"]], okabe[["green"]]),
                    closed = "black")
 intersections <- list(overshoot_1 = rbind(c(20, 10)), overshoot_3 = rbind(c(20, 10)),
                       split = rbind(c(19.5, 20), c(20.5, 21)), closed = rbind(c(15, 15)))
-op <- par(mfrow = c(2, 2), mar = c(0.4, 0.4, 2, 0.4))
+op <- par(mfrow = c(2, 2), mar = c(0.2, 0.2, 1.8, 0.2))
 for (name in names(arm_cases)) {
-  zoom(arm_cases[[name]], centres[[name]], 5, titles[[name]], arm_length = 3.4,
-       col = piece_cols[[name]])
+  loupe(arm_cases[[name]], centres[[name]], 5, titles[[name]], grid = FALSE,
+        property = "junctions", arms = TRUE, arm_length = 2.8,
+        col = piece_cols[[name]])
   p <- intersections[[name]]
-  disc(p[, 1], p[, 2], 2)
+  disc(p[, 1], p[, 2], nbhd)
+  if (name == "split") exits(p[, 1], p[, 2], c(180, 0), 2.8)
   if (name == "closed") {
-    points(15, 16, pch = 4, cex = 1.2, lwd = 2)
-    text(14.6, 16.6, "start\nvertex", pos = 2, cex = 0.75)
+    points(15, 16, pch = 4, cex = 1.1, lwd = 2)
+    segments(13.9, 17.9, 14.75, 16.3, col = "grey40", lwd = 0.7)
+    text(14.1, 18.2, "start vertex", pos = 2, cex = 0.75, offset = 0.2)
+    inset(arm_cases$closed, c(10.3, 10.3, 13.6, 13.6), c(10, 10, 20, 20))
   }
 }
 ```
 
-![The arm rule on four drawings. Shaded discs are the junction
-neighbourhood (radius 2 px). A 1 px overshoot ends inside it and adds no
-arm; a split stroke leaves it only twice; a closed outline that starts
-inside it still leaves
-twice.](junctions_files/figure-html/fig-arms-1.png)![](junctions_files/figure-html/fig-arms-1.phone.png)
+![A contour adds an arm wherever it leaves the junction neighbourhood
+(shaded, radius 2 px). A 1 px overshoot ends inside it (T); a 3 px one
+adds an arm (X). A stroke stored as three contours (black, purple,
+green) leaves the merged discs of its two joins only twice (grey
+arrows). A closed outline (inset) starting inside leaves twice (X). Arms
+are drawn from the junction
+point.](junctions_files/figure-html/fig-arms-1.png)![](junctions_files/figure-html/fig-arms-1.phone.png)
 
-The arm rule on four drawings. Shaded discs are the junction
-neighbourhood (radius 2 px). A 1 px overshoot ends inside it and adds no
-arm; a split stroke leaves it only twice; a closed outline that starts
-inside it still leaves twice.
+A contour adds an arm wherever it leaves the junction neighbourhood
+(shaded, radius 2 px). A 1 px overshoot ends inside it (T); a 3 px one
+adds an arm (X). A stroke stored as three contours (black, purple,
+green) leaves the merged discs of its two joins only twice (grey
+arrows). A closed outline (inset) starting inside leaves twice (X). Arms
+are drawn from the junction point.
 
 ``` r
 
@@ -415,24 +591,33 @@ were merged; if that is not what the stimulus means, reduce
 
 ``` r
 
-op <- par(mfrow = c(1, 2), mar = c(0.4, 0.4, 2, 0.4))
+op <- par(mfrow = c(1, 2), mar = c(0.2, 0.2, 1.8, 0.2))
 for (s in c(1.5, 2.5)) {
-  d <- two_stems(s)
-  zoom(d, c(18 + s / 2, 20), 5.5, sprintf("stems %.1f px apart: %s", s,
-       paste(detect_junctions(d)$type, collapse = " + ")), arm_length = 3.2)
-  disc(c(18, 18 + s), c(20, 20), 1, col = NA, border = okabe[["blue"]], lty = 2)
-  if (s < 2) text(18 + s / 2 + 1, c(16.2, 23.8), "2 arms", pos = 4, cex = 0.75)
+  d <- two_stems(s); found_s <- detect_junctions(d)
+  loupe(d, c(18 + s / 2, 20.8), 4.6, grid = FALSE, property = "junctions",
+        arms = TRUE, arm_length = if (nrow(found_s) == 1L) 2.6 else 1.05,
+        main = sprintf("%g px apart: %s", s,
+                       if (nrow(found_s) == 1L) "one Star" else "two X"))
+  disc(c(18, 18 + s), c(20, 20), merge_r / 2)
+  dimension(c(18, 24.6), c(18 + s, 24.6), "", off = 1e-9)
+  text(18 + s + 0.25, 24.6, sprintf("%g px", s), adj = c(0, 0.5), cex = 0.75, col = "grey15")
 }
 ```
 
-![Discs of radius merge_radius / 2 around each crossing: when they
-overlap or touch, the crossings merge. At 1.5 px the two crossings form
-one six-arm Star; at 2.5 px they remain two
+![Two stems cross a bar 1.5 px apart (left) and 2.5 px apart (right).
+Each crossing has a grey disc of radius merge_radius / 2 = 1 px, and
+crossings whose discs touch or overlap merge. On the left they form one
+six-arm Star, drawn from the merged position between the stems; its
+upward and downward arms come in coincident pairs (×2). On the right
+they remain two
 X-junctions.](junctions_files/figure-html/fig-merge-1.png)![](junctions_files/figure-html/fig-merge-1.phone.png)
 
-Discs of radius merge_radius / 2 around each crossing: when they overlap
-or touch, the crossings merge. At 1.5 px the two crossings form one
-six-arm Star; at 2.5 px they remain two X-junctions.
+Two stems cross a bar 1.5 px apart (left) and 2.5 px apart (right). Each
+crossing has a grey disc of radius merge_radius / 2 = 1 px, and
+crossings whose discs touch or overlap merge. On the left they form one
+six-arm Star, drawn from the merged position between the stems; its
+upward and downward arms come in coincident pairs (×2). On the right
+they remain two X-junctions.
 
 ``` r
 
@@ -474,26 +659,65 @@ compare
 #> 3     closed_start         X       42        T      90
 ```
 
-- **Diagonal T (MLV-M007).** A bar from (10, 10) to (30, 30) with a stem
-  from its midpoint up and to the right. The stem is perpendicular to
-  the bar, so the gaps are 90, 90 and 180 degrees and `min_angle` is
-  90. MLV measures arms that pass through the junction with y pointing
-      up but arms that end there with y pointing down. The bar’s arms,
-      at 135 and 315 degrees, are mirrored to 225 and 45 degrees, so one
-      of them coincides with the stem and `min_angle` is
-  91. The type is still T, so the difference shows only when angles are
-      analysed.
-- **Overshoot with a vertex inside the neighbourhood (MLV-M024).** The
-  stem overshoots the bar by 1 pixel, as before, but is drawn as two
-  segments with a vertex at y = 11. MLV makes every segment of a contour
-  inside the neighbourhood an arm, so both stem segments count and the T
-  becomes an X with a 0 degree gap. The default rule follows the contour
-  out of the neighbourhood and finds one downward arm.
-- **Closed contour starting inside the neighbourhood (MLV-M026).** MLV
-  treats a closed contour as ending at its first vertex. Starting at
-  (15, 16), the outline appears to end inside the neighbourhood and
-  loses an arm, so MLV reports a T; started at any other vertex it
-  reports an X. The default rule reports X for every start vertex.
+**Diagonal T (MLV-M007).** A bar from (10, 10) to (30, 30) with a stem
+from its midpoint up and to the right. The stem is perpendicular to the
+bar, so the gaps are 90, 90 and 180 degrees and `min_angle` is 90. MLV
+measures arms that pass through the junction with y pointing up but arms
+that end there with y pointing down. The bar’s arms, at 135 and 315
+degrees, are mirrored to 225 and 45 degrees, so one of them coincides
+with the stem and `min_angle` is 0. The type is still T, so the
+difference shows only when angles are analysed.
+
+``` r
+
+compare_rules("diagonal_t", c(20, 20))
+```
+
+![The diagonal T under the default rule (left) and the published rule
+(right). Orange: the arms each rule assigns; grey open arrowheads: the
+default arms, for comparison; shaded disc: the junction neighbourhood
+(radius 2 px). The published rule mirrors the bar's arms, so one lies on
+the stem (×2, min angle 0°) and the other on no
+ink.](junctions_files/figure-html/fig-mlv-1.png)![](junctions_files/figure-html/fig-mlv-1.phone.png)
+
+The diagonal T under the default rule (left) and the published rule
+(right). Orange: the arms each rule assigns; grey open arrowheads: the
+default arms, for comparison; shaded disc: the junction neighbourhood
+(radius 2 px). The published rule mirrors the bar’s arms, so one lies on
+the stem (×2, min angle 0°) and the other on no ink.
+
+**Overshoot with a vertex inside the neighbourhood (MLV-M024).** The
+stem overshoots the bar by 1 pixel, as before, but is drawn as two
+segments with a vertex at y = 11. MLV makes every segment of a contour
+inside the neighbourhood an arm, so both stem segments count and the T
+becomes an X with a 0 degree gap. The default rule follows the contour
+out of the neighbourhood and finds one downward arm.
+
+``` r
+
+compare_rules("vertex_overshoot", c(20, 11.4),
+              function() points(20, 11, pch = 21, bg = "white", cex = 1.1, lwd = 1.3))
+```
+
+![The overshooting stem drawn as two segments, with a vertex (open
+circle) inside the neighbourhood. The default rule follows the stem out
+of the neighbourhood and finds one downward arm (T). The published rule
+gives each of the stem's two segments an arm; the two coincide (×2, min
+angle 0°), and it reports an X. Grey open arrowheads: the default
+arms.](junctions_files/figure-html/fig-mlv-overshoot-1.png)![](junctions_files/figure-html/fig-mlv-overshoot-1.phone.png)
+
+The overshooting stem drawn as two segments, with a vertex (open circle)
+inside the neighbourhood. The default rule follows the stem out of the
+neighbourhood and finds one downward arm (T). The published rule gives
+each of the stem’s two segments an arm; the two coincide (×2, min angle
+0°), and it reports an X. Grey open arrowheads: the default arms.
+
+**Closed contour starting inside the neighbourhood (MLV-M026).** MLV
+treats a closed contour as ending at its first vertex. Starting at (15,
+16), the outline appears to end inside the neighbourhood, so it
+contributes one arm rather than two and MLV reports a T; started at any
+other vertex it reports an X. The default rule reports X for every start
+vertex.
 
 ``` r
 
@@ -507,42 +731,30 @@ vapply(1:4, function(k) {
 
 ``` r
 
-mlv_centres <- list(diagonal_t = c(20, 20), vertex_overshoot = c(20, 10),
-                    closed_start = c(15, 15))
-op <- par(mfrow = c(3, 2), mar = c(0.4, 0.4, 2, 0.4))
-for (name in names(mlv_cases)) for (rule in c("exit", "mlv2023")) {
-  d <- compute_contour_properties(mlv_cases[[name]], rule = rule)
-  j <- d$junctions
-  zoom(d, mlv_centres[[name]], 6, sprintf("%s: %s, min angle %g°",
-       if (rule == "exit") "default" else "mlv2023", j$type, round(j$min_angle)),
-       arm_length = 4)
-  label_gaps(j, r = 2.4, cex = 0.7)
-}
+compare_rules("closed_start", c(15, 15.2),
+              function() points(15, 16, pch = 4, cex = 1.1, lwd = 2))
 ```
 
-![The same drawings under the default rule (left) and rule = "mlv2023"
-(right), with each rule's arms drawn. MLV mirrors the diagonal bar's
-arms so that one coincides with the stem (top), adds an arm per segment
-of the overshooting stem (middle), and loses an arm when a closed
-contour starts inside the neighbourhood
-(bottom).](junctions_files/figure-html/fig-mlv-1.png)![](junctions_files/figure-html/fig-mlv-1.phone.png)
+![The closed outline of the arm-rule figure, which starts inside the
+neighbourhood (cross: its start vertex). The default rule follows the
+outline round its start and finds two arms, up and down to the right:
+with the bar's two, an X (min angle 42°). The published rule treats the
+outline as ending at its start, assigns it one arm (the default's second
+arm in grey dashes) and reports a
+T.](junctions_files/figure-html/fig-mlv-closed-1.png)![](junctions_files/figure-html/fig-mlv-closed-1.phone.png)
 
-The same drawings under the default rule (left) and rule = “mlv2023”
-(right), with each rule’s arms drawn. MLV mirrors the diagonal bar’s
-arms so that one coincides with the stem (top), adds an arm per segment
-of the overshooting stem (middle), and loses an arm when a closed
-contour starts inside the neighbourhood (bottom).
-
-``` r
-
-par(op)
-```
+The closed outline of the arm-rule figure, which starts inside the
+neighbourhood (cross: its start vertex). The default rule follows the
+outline round its start and finds two arms, up and down to the right:
+with the bar’s two, an X (min angle 42°). The published rule treats the
+outline as ending at its start, assigns it one arm (the default’s second
+arm in grey dashes) and reports a T.
 
 Under `rule = "mlv2023"` the `arms` column holds the directions MLV
-assigns, in MLV’s own conventions, which is why the figure can show
-them. The same rule also turns the split stroke of the previous section
-into a T (T), because its short middle piece is attached by its start
-point. `rule = "mlv2023"` always uses the Chebyshev gap.
+assigns, in MLV’s own conventions, which is why the figures above can
+show them. The same rule also turns the split stroke of the previous
+section into a T (T), because its short middle piece is attached by its
+start point. `rule = "mlv2023"` always uses the Chebyshev gap.
 
 ## What junction statistics measure
 

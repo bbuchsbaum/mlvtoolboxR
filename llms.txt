@@ -300,6 +300,8 @@ data are not copied into the build workspace.
   : Bind a prediction model to its training feature schema
 - [`clip_circle()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/clip_circle.md)
   : Clip all segment-circle intersections
+- [`colour_key()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/colour_key.md)
+  : Draw a colour key in its own panel
 - [`compute_contour_properties()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/compute_contour_properties.md)
   : Compute contour measurements and junctions
 - [`compute_mat()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/compute_mat.md)
@@ -320,6 +322,8 @@ data are not copied into the build workspace.
   : Detect and classify intersections between distinct contours
 - [`distance_transform()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/distance_transform.md)
   : Exact Euclidean distance to the nearest feature pixel
+- [`draw_mat_axis()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/draw_mat_axis.md)
+  : Add the medial axis to a plot
 - [`feature_density()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_density.md)
   : Feature density on a pixel grid
 - [`feature_schema()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_schema.md)
@@ -342,6 +346,8 @@ data are not copied into the build workspace.
   : Plot vector contours or properties
 - [`plot(`*`<mlv_mat>`*`)`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/plot.mlv_mat.md)
   : Plot a stage of a medial-axis representation
+- [`plot_branch_profile()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/plot_branch_profile.md)
+  : Plot branch quantities under the drawing they come from
 - [`plot_properties()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/plot_properties.md)
   : Plot several property panels
 - [`predict_contours()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/predict_contours.md)

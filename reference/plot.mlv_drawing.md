@@ -8,7 +8,9 @@ lie at integers starting at 1; the plot coordinates are those of
 \`property\`, segments are coloured by that quantity and, by default, a
 colour bar naming the quantity and its unit is drawn to the right of the
 canvas, inside the plot region, so later low-level calls (\`points()\`,
-\`text()\`) use the same coordinates.
+\`text()\`) use the same coordinates. To keep the bar out of the plot
+region, or to share one bar between panels, draw with \`legend = FALSE\`
+and add \[colour_key()\] in a \[graphics::layout()\] cell.
 
 ## Usage
 
@@ -26,7 +28,16 @@ plot(
   arms = FALSE,
   arm_length = NULL,
   junction_col = "#D55E00",
-  frame = TRUE
+  frame = TRUE,
+  arm_lwd = NULL,
+  fan = 0,
+  gaps = FALSE,
+  reference_junctions = NULL,
+  pixel_grid = FALSE,
+  reach = NULL,
+  reach_epsilon = NULL,
+  add = FALSE,
+  arm_head = 0.075
 )
 ```
 
@@ -43,7 +54,10 @@ plot(
 
 - col:
 
-  Contour colour when no segment property is shown.
+  Contour colour when no segment property is shown; one colour, or one
+  per segment. With a mapped medial-axis property it is the colour of
+  the vector contours drawn under the mapped pixels: the default draws
+  them in grey, and \`NA\` leaves them out.
 
 - lwd:
 
@@ -86,6 +100,53 @@ plot(
 
   Outline the canvas in light grey.
 
+- arm_lwd:
+
+  Width of the arm bands; defaults to \`2.5 \* lwd\`, at least 3.
+
+- fan:
+
+  Angle in degrees between drawn arms that share an orientation; 0
+  (default) draws them on one line with stacked arrowheads.
+
+- gaps:
+
+  Draw and label the angular gaps between arms: \`TRUE\` for every gap
+  (shading the unique largest), \`"min"\` for the smallest gap only, the
+  one reported as \`min_angle\`, or \`"max"\` for the largest gap only,
+  the one that decides between Y, T and Arrow.
+
+- reference_junctions:
+
+  Optional junction table, for example \`detect_junctions(x)\` under
+  another rule, whose arms are drawn as thin grey dashed arrows beneath
+  the drawn arms for comparison.
+
+- pixel_grid:
+
+  Draw the pixel boundaries in light grey.
+
+- reach:
+
+  \`NULL\` (default), \`"euclidean"\` or \`"chebyshev"\`: draw the gap
+  allowance under that metric at each free contour end.
+
+- reach_epsilon:
+
+  The absolute (pixels) and relative limits of the allowance, as
+  \`absolute_epsilon\` and \`relative_epsilon\` of
+  \[detect_junctions()\]; defaults to that function's defaults.
+
+- add:
+
+  Draw onto the current plot, in its coordinates, instead of starting a
+  new one; no axes, frame or colour bar are drawn. Useful for overlaying
+  a drawing on another, for example a transformed copy on its original.
+
+- arm_head:
+
+  Length of the arrowheads, in inches.
+
 ## Value
 
 The drawing invisibly.
@@ -97,13 +158,38 @@ have the same colour, and the default palette is a cyclic hue wheel over
 0 to 180 degrees, so 0 and 180 share a colour. Length and curvature use
 the sequential Viridis palette over \`zlim\`. Mapped medial-axis scores
 are drawn as filled mapped pixels on a 0 to 1 Viridis scale over grey
-contours. With \`property = "junctions"\`, or \`arms = TRUE\`, junction
-positions are marked; \`arms = TRUE\` also draws each arm as an arrow
-leaving the junction along its orientation (the \`arms\` column of
-\[detect_junctions()\]). Junctions come from the drawing's stored
-\`junctions\` (for example from \[compute_contour_properties()\] with
-\`rule = "mlv2023"\`), its feature specification, or default
-\[detect_junctions()\].
+contours.
+
+With \`property = "junctions"\`, or \`arms = TRUE\`, junction positions
+are marked. \`arms = TRUE\` also draws each arm leaving the junction
+along its orientation (the \`arms\` column of \[detect_junctions()\]): a
+translucent band drawn beneath the ink, so the contour stays visible
+along the arm, with an arrowhead at its end. An arm that lies on no ink,
+which some rules produce, shows as a band without a stroke. Arms that
+share an orientation are drawn on one line with one arrowhead each,
+stacked along the arm, and labelled with their count ("x2" drawn with a
+multiplication sign), so every arm can be counted; \`fan\` spreads them
+by an angle instead. \`gaps = TRUE\` draws each angular gap between
+consecutive arms as an arc labelled in degrees and shades the largest
+gap when it is unique, the gap that separates Y, T and Arrow junctions.
+Junctions come from the drawing's stored \`junctions\` (for example from
+\[compute_contour_properties()\] with \`rule = "mlv2023"\`), its feature
+specification, or default \[detect_junctions()\].
+
+Two options help with pixel-scale views (use \`xlim\` and \`ylim\` to
+zoom): \`pixel_grid = TRUE\` draws the pixel boundaries, which lie
+half-way between the integer pixel centres, and \`reach\` draws the gap
+allowance of \[detect_junctions()\] at each free end of an open contour:
+the set of extension of the end segment along its own line (solid, with
+a tick at its end) as far as the allowance lets it reach, and, as a
+dashed grey outline, the set of points within \`reach_epsilon\[1\]\` of
+the end under the chosen metric (a disc for \`"euclidean"\`, an
+axis-aligned square for \`"chebyshev"\`). The extension stops where the
+segment's line leaves that set, or at \`reach_epsilon\[2\]\` of the
+segment's length when that is stricter. Only the extension decides
+whether a junction is found: another contour that crosses the outline
+but not the extension is not met. Along a diagonal the Chebyshev square
+lets the extension reach \`sqrt(2)\` times further than the disc.
 
 ## Examples
 
@@ -111,5 +197,14 @@ leaving the junction along its orientation (the \`arms\` column of
 d <- mlv_drawing(list(rbind(c(5, 10, 35, 10)), rbind(c(20, 10, 20, 35))), 40, 40)
 plot(d, property = "orientation")
 
-plot(d, property = "junctions", arms = TRUE, axes = FALSE)
+plot(d, property = "junctions", arms = TRUE, gaps = TRUE, axes = FALSE)
+
+# A pixel-scale view of a stem that stops 1.3 px short of a bar.
+g <- mlv_drawing(list(rbind(c(5, 20, 35, 20)), rbind(c(20, 21.3, 20, 35))), 40, 40)
+plot(g, xlim = c(16, 24), ylim = c(25, 17), pixel_grid = TRUE,
+     reach = "euclidean", axes = FALSE, frame = FALSE, lwd = 2)
+
+# A rotated copy over its original.
+plot(d, col = "grey80", lwd = 2)
+plot(rotate_drawing(d, 30), add = TRUE, lwd = 2)
 ```

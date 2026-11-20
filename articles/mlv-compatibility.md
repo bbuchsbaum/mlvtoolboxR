@@ -248,34 +248,52 @@ round(r, 3)
 
 ``` r
 
-op <- par(mfrow = c(1, 3), mar = c(3.2, 3.4, 2, 0.8), mgp = c(2, 0.5, 0),
-          las = 1, cex.axis = 0.8, cex.lab = 0.85, cex.main = 1, font.main = 1)
+agree <- sapply(P, function(p) mean(abs(a[ok, p] - b[ok, p]) <= 0.01))
+above <- mean(a[ok, "parallelism"] > b[ok, "parallelism"])
+round(100 * c(agree, parallelism_above = above))   # percent of contours
+#>       parallelism        separation            mirror parallelism_above 
+#>                 0                33                16                98
+```
+
+``` r
+
+op <- par(mfrow = c(1, 3), mar = c(2.8, 2.6, 2.4, 0.6), mgp = c(1.7, 0.45, 0),
+          pty = "s", las = 1, cex.axis = 0.8, cex.lab = 0.85, cex.main = 1,
+          font.main = 1, tcl = -0.25)
+par(cex = 0.85)                # mfrow would otherwise shrink all text by a third
 for (p in P) {
-  plot(b[ok, p], a[ok, p], xlim = c(0, 1), ylim = c(0, 1), asp = 1,
-       pch = 16, cex = 0.7, col = adjustcolor(okabe[["blue"]], 0.7),
-       xlab = "published-compatible", ylab = "package default", main = p, bty = "l")
+  plot(b[ok, p], a[ok, p], xlim = c(0, 1), ylim = c(0, 1), xaxs = "i", yaxs = "i",
+       pch = 16, cex = 0.7, col = adjustcolor("grey20", 0.6), bty = "n",
+       xlab = "published", ylab = if (p == P[1]) "default" else "",
+       main = sprintf("%s\nr = %.2f", p, r[[p]]), xpd = NA, axes = FALSE)
+  axis(1, at = c(0, 0.5, 1), col = "grey60"); axis(2, at = c(0, 0.5, 1), col = "grey60",
+                                                   labels = p == P[1])
   abline(0, 1, col = "grey60")
 }
 ```
 
-![Per-contour mean scores in the published-compatible mode (x) and the
-package defaults (y) for 64 contours of eight random synthetic drawings,
-with the identity line in grey. The modes are correlated (r = 0.59, 0.60
-and 0.85 here) but rarely give the same
-value.](mlv-compatibility_files/figure-html/fig-random-1.png)![](mlv-compatibility_files/figure-html/fig-random-1.phone.png)
+![Per-contour mean scores for 64 contours of eight random synthetic
+drawings: published (mlv2023) mode on x, package default on y, identity
+line in grey, correlation in each title. The modes correlate but do not
+match: even separation, the closest, agrees within 0.01 for only 33% of
+contours, and default parallelism is higher for
+98%.](mlv-compatibility_files/figure-html/fig-random-1.png)![](mlv-compatibility_files/figure-html/fig-random-1.phone.png)
 
-Per-contour mean scores in the published-compatible mode (x) and the
-package defaults (y) for 64 contours of eight random synthetic drawings,
-with the identity line in grey. The modes are correlated (r = 0.59, 0.60
-and 0.85 here) but rarely give the same value.
+Per-contour mean scores for 64 contours of eight random synthetic
+drawings: published (mlv2023) mode on x, package default on y, identity
+line in grey, correlation in each title. The modes correlate but do not
+match: even separation, the closest, agrees within 0.01 for only 33% of
+contours, and default parallelism is higher for 98%.
 
 ``` r
 
 par(op)
 ```
 
-For these random drawings the per-contour correlations between modes are
-0.59 (parallelism), 0.6 (separation) and 0.85 (mirror). Random line
+The modes agree on at most a third of contours: parallelism never agrees
+within 0.01, separation does for 33% of contours and mirror for 16%. For
+these random drawings the per-contour correlations between modes are
+0.59 (parallelism), 0.60 (separation) and 0.85 (mirror). Random line
 segments make many short, irregular branches, so these values say
 nothing about natural drawings; the qualification figures for natural
 drawings are in the evidence section below. Default parallelism lies

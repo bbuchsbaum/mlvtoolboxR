@@ -21,6 +21,7 @@
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/batch_statistics.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/bind_feature_model.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/clip_circle.html</loc></url>
+<url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/colour_key.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/compute_contour_properties.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/compute_mat.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/compute_mat_properties.html</loc></url>
@@ -31,6 +32,7 @@
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/design_subsets.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/detect_junctions.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/distance_transform.html</loc></url>
+<url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/draw_mat_axis.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_density.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_schema.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_spec.html</loc></url>
@@ -44,6 +46,7 @@
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/mlvtoolbox-package.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/plot.mlv_drawing.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/plot.mlv_mat.html</loc></url>
+<url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/plot_branch_profile.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/plot_properties.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/predict_contours.html</loc></url>
 <url><loc>https://bbuchsbaum.github.io/mlvtoolboxR/reference/rasterize.html</loc></url>
