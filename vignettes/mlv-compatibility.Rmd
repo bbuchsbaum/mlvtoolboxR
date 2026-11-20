@@ -230,15 +230,28 @@ r <- sapply(P, function(p) cor(a[ok, p], b[ok, p]))
 round(r, 3)
 ```
 
-```{r fig-random, fig.width = 7, fig.height = 2.7, fig.cap = sprintf("Per-contour mean scores in the published-compatible mode (x) and the package defaults (y) for %d contours of eight random synthetic drawings, with the identity line in grey. The modes are correlated (r = %.2f, %.2f and %.2f here) but rarely give the same value.", sum(ok), r[1], r[2], r[3])}
-op <- par(mfrow = c(1, 3), mar = c(3.2, 3.4, 2, 0.8), mgp = c(2, 0.5, 0),
-          las = 1, cex.axis = 0.8, cex.lab = 0.85, cex.main = 1, font.main = 1)
+```{r agreement}
+agree <- sapply(P, function(p) mean(abs(a[ok, p] - b[ok, p]) <= 0.01))
+above <- mean(a[ok, "parallelism"] > b[ok, "parallelism"])
+round(100 * c(agree, parallelism_above = above))   # percent of contours
+```
+
+```{r fig-random, fig.height = 2.9, fig.cap = sprintf("Per-contour mean scores for %d contours of eight random synthetic drawings: published (mlv2023) mode on x, package defaults on y, identity line in grey; each panel gives its correlation. The modes correlate but seldom agree: parallelism agrees within 0.01 for %.0f%% of contours, separation for %.0f%% and mirror for %.0f%%. Default parallelism is higher for %.0f%% of contours.", sum(ok), 100 * agree[["parallelism"]], 100 * agree[["separation"]], 100 * agree[["mirror"]], 100 * above)}
+op <- par(mfrow = c(1, 3), mar = c(1.8, 1.2, 2.6, 0.8), oma = c(1.4, 2.4, 0, 0),
+          mgp = c(2, 0.5, 0), pty = "s", las = 1, cex.axis = 0.8, cex.lab = 0.85,
+          cex.main = 1, font.main = 1, tcl = -0.25)
+par(cex = 0.85)                # mfrow would otherwise shrink all text by a third
 for (p in P) {
-  plot(b[ok, p], a[ok, p], xlim = c(0, 1), ylim = c(0, 1), asp = 1,
-       pch = 16, cex = 0.7, col = adjustcolor(okabe[["blue"]], 0.7),
-       xlab = "published-compatible", ylab = "package default", main = p, bty = "l")
+  plot(b[ok, p], a[ok, p], xlim = c(0, 1), ylim = c(0, 1), xaxs = "i", yaxs = "i",
+       pch = 16, cex = 0.7, col = adjustcolor(okabe[["blue"]], 0.7), bty = "n",
+       xlab = "", ylab = "", main = sprintf("%s\nr = %.2f", p, r[[p]]),
+       xpd = NA, axes = FALSE)
+  axis(1, at = c(0, 0.5, 1), col = "grey60"); axis(2, at = c(0, 0.5, 1), col = "grey60",
+                                                   labels = p == P[1])
   abline(0, 1, col = "grey60")
 }
+mtext("package default", side = 2, outer = TRUE, line = 1, las = 0, cex = 0.75)
+mtext("published (mlv2023)", side = 1, outer = TRUE, line = 0.3, cex = 0.75)
 par(op)
 ```
 

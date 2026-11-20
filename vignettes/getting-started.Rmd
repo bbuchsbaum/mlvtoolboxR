@@ -62,21 +62,61 @@ drawing
 ```
 
 ```{r label-helper, include = FALSE}
-label_contours <- function() {
-  text(c(110, 22, 90, 107), c(56, 46, 15, 36),
-       c("horizon", "roof", "wave", "sun"), cex = 0.8, col = "grey25")
+# The phone-width copy of each figure is a replay of the desktop drawing, so
+# anything measured from the device (text widths, inches) is drawn through
+# recordGraphics(), which re-evaluates it on replay.
+replay <- function(f, ...) {
+  args <- list(...)
+  recordGraphics(do.call(f, args), list(f = f, args = args), globalenv())
 }
+# One Okabe-Ito colour per contour, shared by the drawing's labels and the
+# stacked histograms below.
+contour_cols <- c(horizon = "#0072B2", roof = "#D55E00", wave = "#009E73", sun = "#E69F00")
+label_contours <- function() replay(function(cols) {
+  x <- c(110, 22, 90, 107); y <- c(56, 46, 15, 36)
+  text(x, y, names(cols), cex = 0.8, col = "grey20")
+  w <- strwidth(names(cols), cex = 0.8); gap <- 1.1 * strwidth("m", cex = 0.8)
+  points(x - w / 2 - gap, y, pch = 15, cex = 0.9, col = cols)
+}, cols = contour_cols)
+# Axis titles just outside the canvas edges, wherever asp = 1 puts them.
+canvas_titles <- function(d, xlab, ylab) replay(function(w, h, xlab, ylab) {
+  line <- par("csi") * diff(par("usr")[1:2]) / par("pin")[1]
+  text((w + 1) / 2, h + 0.5 + 2.1 * line, xlab, xpd = NA, cex = 0.85, col = "grey30")
+  text(0.5 - 2.6 * line, (h + 1) / 2, ylab, srt = 90, xpd = NA, cex = 0.85, col = "grey30")
+}, w = d$width, h = d$height, xlab = xlab, ylab = ylab)
+# A key in one centred row, a swatch and a name per contour, filling a strip.
+contour_legend <- function() {
+  plot.new()
+  replay(function(cols) {
+    ids <- names(cols); gap <- strwidth("m", cex = 0.85)
+    w <- strwidth(ids, cex = 0.85) + 3.2 * gap
+    x0 <- 0.5 - sum(w) / 2 + c(0, cumsum(w)[-length(w)])
+    points(x0, rep(0.5, length(ids)), pch = 15, cex = 1.3, col = cols)
+    text(x0 + gap, 0.5, ids, adj = c(0, 0.5), cex = 0.85)
+  }, cols = contour_cols)
+}
+# A short line at each orientation, drawn under the bars at x = at.
+orientation_glyphs <- function(at, degrees) replay(function(at, degrees) {
+  upi <- diff(par("usr")[1:2]) / par("pin")[1]; vpi <- diff(par("usr")[3:4]) / par("pin")[2]
+  g <- min(0.09, 0.33 * diff(at[1:2]) / upi); a <- degrees * pi / 180; y <- -0.17 * vpi
+  segments(at - g * upi * cos(a), y - g * vpi * sin(a), at + g * upi * cos(a),
+           y + g * vpi * sin(a), xpd = NA, lwd = 1.2, col = "grey20")
+  show <- degrees %% 45 == 0
+  text(at[show], y - 0.2 * vpi, paste0(degrees[show], "°"), xpd = NA, cex = 0.75)
+}, at = at, degrees = degrees)
 ```
-
-```{r fig-drawing, fig.height = 3.6, fig.cap = "The drawing on its 120 × 80 pixel canvas. The y axis points down, as in an image, and dots mark the vertices: the horizon has two, the roof three and the sun 32."}
-op <- par(mar = c(2.5, 2.5, 1.5, 1), cex.main = 1, font.main = 1)
-plot(drawing, lwd = 1.5, main = "Four contours in image coordinates")
+```{r fig-drawing, fig.height = 4.3, fig.cap = sprintf("The drawing on its %d × %d pixel canvas. The y axis points down, as in an image, and dots mark the vertices: the horizon has %d, the roof %d and the sun %d. The roof's vertices are labelled, for the hand calculations below; the coloured squares key each contour to the histograms further down.", drawing$width, drawing$height, nrow(drawing$contours[[1]]) + 1L, nrow(drawing$contours[[2]]) + 1L, nrow(drawing$contours[[4]]))}
+op <- par(mar = c(3, 3.2, 0.3, 0.5))
+plot(drawing, lwd = 1.5, frame = FALSE)
+canvas_titles(drawing, "x (px)", "y (px), pointing down")
 vertices <- do.call(rbind, lapply(drawing$contours, function(z) z[, 1:2]))
 points(vertices, pch = 16, cex = 0.35)
+roof_xy <- rbind(drawing$contours[[2]][, 1:2], drawing$contours[[2]][2, 3:4])
+text(roof_xy[, 1], roof_xy[, 2], sprintf("(%g, %g)", roof_xy[, 1], roof_xy[, 2]),
+     pos = c(1, 3, 1), cex = 0.7, col = "grey30", offset = 0.4)
 label_contours()
 par(op)
 ```
-
 `mlv_drawing()` checks the input before anything is measured. Rows of a
 contour must connect, and a segment of zero length is an error unless you ask
 for it to be removed with `zero_length = "drop"`. Keep strokes that a viewer
@@ -174,16 +214,27 @@ the quantity and its unit. Orientation uses a cyclic palette over 0 to 180
 degrees, so the roof's two slopes (45 and 135 degrees, axially) sit on opposite
 sides of the colour wheel and a horizontal segment has the same colour
 whichever way it was drawn. Length and curvature use a sequential palette.
+In the figure below each panel is drawn with `legend = FALSE` and its key by
+`colour_key()` in a layout cell of its own, which keeps the key off the
+drawing; `colour_key()` also lets several panels share one key.
 
-```{r fig-properties, fig.height = 2.6, fig.cap = "Orientation (left, cyclic palette) and curvature (right). Segments are coloured by their mean curvature. The straight horizon has zero curvature; the roof's two slopes share the apex turn equally; the wave is most curved at its peaks and troughs."}
-op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 1.5, 3), cex.main = 1, font.main = 1)
-plot(drawing, property = "orientation", lwd = 2.5, axes = FALSE,
-     main = "Orientation")
-plot(drawing, property = "curvature", lwd = 2.5, axes = FALSE,
-     main = "Curvature")
+```{r fig-properties, fig.height = 2.7, fig.cap = sprintf("Each segment coloured by its orientation (left) and by its mean curvature (right). The orientation palette wraps, so 0° and 180° share a colour, and the roof's slopes, at 45° and 135°, sit on opposite sides of the wheel (the glyphs under the key show each angle). The straight horizon has zero curvature, the roof's two slopes share the apex turn equally (%.2f deg/px each), and the wave curves most at its peaks and troughs.", roof$curvature[1])}
+layout(matrix(1:4, 2), heights = c(1, lcm(2)))
+op <- par(mar = c(0.3, 0.3, 1.6, 0.3), cex.main = 1, font.main = 1)
+# Crop to the ink, which fills the canvas only between rows 15 and 60.
+window <- list(xlim = c(1, 120), ylim = c(65, 13))
+plot(drawing, property = "orientation", lwd = 2.5, axes = FALSE, legend = FALSE,
+     frame = FALSE, main = "Orientation", xlim = window$xlim, ylim = window$ylim)
+colour_key(drawing, "orientation", glyphs = TRUE)
+plot(drawing, property = "curvature", lwd = 2.5, axes = FALSE, legend = FALSE,
+     frame = FALSE, main = "Curvature", xlim = window$xlim, ylim = window$ylim)
+# The roof's slopes carry the same value; label it on each.
+text(c(25, 45), c(49, 49), sprintf("%.2f", roof$curvature), pos = c(2, 4), cex = 0.7,
+     col = "grey25")
+colour_key(drawing, "curvature")
 par(op)
+layout(1)
 ```
-
 The colour scale for length and curvature runs over the data range by
 default. Pass a fixed `zlim` when several drawings must share one scale.
 
@@ -274,20 +325,48 @@ histogram the horizon alone fills the bin from
 the other three contours, `r round(min(other_lengths))` to
 `r round(max(other_lengths))` pixels long, share the bin below it.
 
-```{r fig-histograms, fig.height = 3, fig.cap = "Drawing-level histograms. Orientation (left) is weighted by segment length and dominated by the horizontal bin; length (right) counts whole-contour length in logarithmic bins."}
-op <- par(mfrow = c(1, 2), mar = c(4.8, 4.2, 2, 0.5), las = 1, cex.axis = 0.8,
-          cex.main = 1, font.main = 1)
-barplot(ori$value, names.arg = ori$label, col = "grey60", border = NA,
-        cex.names = 0.75, las = 2, ylab = "segment length (px)",
-        main = "Orientation")
-mtext("bin centre (deg)", side = 1, line = 3.6, cex = 0.8)
-barplot(len$value, names.arg = signif(len$center, 2), col = "grey60",
-        border = NA, cex.names = 0.75, las = 2,
-        ylab = "contour length (px)", main = "Length")
-mtext("bin centre (px)", side = 1, line = 3.6, cex = 0.8)
+```{r fig-histograms, fig.height = 3.4, fig.cap = sprintf("Histograms for the whole drawing, each bar split by contour (colours as keyed in the first figure). Left: segment length per orientation bin; the horizontal bin dominates, with %.1f px of ink. Right: whole-contour length per logarithmic length bin, drawn at the bins' true widths; the horizon alone fills one bin, and the other three contours share the bin below it.", ori$value[1])}
+ids <- names(contour_cols)
+len_by_contour <- contour_statistics(measured, properties = "length", by = "contour")
+per_contour <- function(tab, bins) t(sapply(ids, function(id)
+  vapply(bins, function(b) sum(tab$value[tab$contour_id == id & tab$bin == b]), 0)))
+ori_stack <- per_contour(by_contour, ori$bin); len_stack <- per_contour(len_by_contour, len$bin)
+stopifnot(isTRUE(all.equal(unname(colSums(ori_stack)), ori$value)),
+          isTRUE(all.equal(unname(colSums(len_stack)), len$value)))
+layout(matrix(c(1, 1, 2, 3), 2, byrow = TRUE), heights = c(lcm(0.9), 1))
+op <- par(mar = c(0, 0, 0, 0), las = 1, cex.axis = 0.8, cex.main = 1, font.main = 1)
+contour_legend()
+par(mar = c(3.6, 4, 1.6, 0.8))
+top <- max(pretty(c(0, ori$value)))
+mids <- barplot(ori_stack, col = contour_cols, border = "white", lwd = 0.5, space = 0.15,
+                ylim = c(0, top), axes = FALSE, names.arg = rep("", ncol(ori_stack)),
+                main = "Orientation")
+axis(2, at = pretty(c(0, top)), col = "grey55", col.ticks = "grey55", tcl = -0.3)
+title(ylab = "segment length (px)", line = 2.6, cex.lab = 0.85)
+# A line under each bar shows the bin's orientation.
+orientation_glyphs(mids, ori$center)
+# Length bins are equal in log10(1 + x); draw them at their true widths.
+tx <- function(v) log10(1 + v)
+top <- max(pretty(c(0, len$value)))
+plot(NA, xlim = tx(range(length_edges)), ylim = c(0, top), axes = FALSE, xaxs = "i",
+     yaxs = "i", xlab = "", ylab = "", main = "Length")
+abline(v = tx(length_edges), col = "grey90", lwd = 0.8)
+base <- 0
+for (k in seq_along(ids)) {
+  h <- len_stack[k, ]
+  rect(tx(len$lower), base, tx(len$upper), base + h, col = contour_cols[k],
+       border = ifelse(h > 0, "white", NA), lwd = 0.5)
+  base <- base + h
+}
+ticks <- c(2, 5, 10, 20, 50, 100, 200)
+axis(1, at = tx(ticks), labels = ticks, col = "grey55", col.ticks = "grey55", tcl = -0.3,
+     mgp = c(3, 0.5, 0))
+axis(2, at = pretty(c(0, top)), col = "grey55", col.ticks = "grey55", tcl = -0.3)
+title(ylab = "summed contour length (px)", line = 2.6, cex.lab = 0.85)
+mtext("length (px, log scale)", side = 1, line = 2, cex = 0.7, col = "grey30")
 par(op)
+layout(1)
 ```
-
 With `normalize = TRUE` each histogram is divided by total contour length and
 expressed per 10,000 pixels of contour, so drawings with different amounts of
 ink can be compared. With `by = "contour"` the histograms are computed per
@@ -390,30 +469,46 @@ The integrated curvature of the roof, the sum of curvature times length, is
 the single 90 degree turn at the apex. `contour_turning()` lists the
 unsmoothed vertex turns directly.
 
-```{r fig-estimators, fig.height = 3, fig.cap = "Curvature along the roof under three estimators. The published estimator spreads the apex turn over both whole slopes and counts it twice (shaded area 180 degrees); the turning and arc-length estimators each enclose 90 degrees."}
-step_profile <- function(p) {
+```{r fig-estimators, fig.height = 3.4, fig.cap = sprintf("Turning accumulated along the roof, from its left end, under three estimators; the dotted line marks the apex. The height each curve reaches is the total turning it assigns. The published estimator (mlv2023) spreads the apex turn over both whole slopes and counts it twice, reaching %g°; the turning estimator spreads it over the slopes' inner halves and the arc-length estimator over %g px either side of the apex, and both reach the single %g° turn.", totals[["mlv2023"]], 2, totals[["turning"]])}
+# Exact running integral of a piecewise-linear curvature profile.
+cumulative <- function(p, n = 40) {
   s0 <- if (is.null(p$s_start)) c(0, cumsum(p$length)[-nrow(p)]) else p$s_start
   s1 <- if (is.null(p$s_end)) cumsum(p$length) else p$s_end
   k0 <- if (is.null(p$curvature_start)) p$curvature else p$curvature_start
   k1 <- if (is.null(p$curvature_end)) p$curvature else p$curvature_end
-  list(s = as.vector(rbind(s0, s1)), k = as.vector(rbind(k0, k1)))
+  s <- 0; total <- 0; out <- 0
+  for (i in seq_along(s0)) {
+    t <- seq(0, s1[i] - s0[i], length.out = n)
+    run <- total + k0[i] * t + (k1[i] - k0[i]) / (2 * (s1[i] - s0[i])) * t^2
+    s <- c(s, s0[i] + t[-1]); out <- c(out, run[-1]); total <- run[n]
+  }
+  list(s = s, turn = out)
 }
-op <- par(mfrow = c(1, 3), mar = c(4, 4, 2, 0.5), las = 1, cex.axis = 0.85,
-          cex.main = 1, font.main = 1)
-for (e in names(profiles)) {
-  z <- step_profile(profiles[[e]])
-  plot(z$s, z$k, type = "n", ylim = c(0, 50), xlab = "arc length (px)",
-       ylab = "curvature (deg/px)", main = e, bty = "l")
-  polygon(c(z$s, rev(z$s)), c(z$k, rep(0, length(z$k))),
-          col = "grey85", border = NA)
-  lines(z$s, z$k, lwd = 1.5)
-  abline(v = sqrt(800), lty = 3, col = "grey40")
-  text(sqrt(800), 48, "apex", pos = 4, cex = 0.8, col = "grey30")
-  text(56, 20, sprintf("area %g deg", totals[[e]]), adj = 1, cex = 0.85)
-}
+curves <- lapply(profiles, cumulative)
+stopifnot(isTRUE(all.equal(vapply(curves, function(z) z$turn[length(z$turn)], 0),
+                           totals)))
+est_cols <- c(mlv2023 = "#D55E00", turning = "#0072B2", arclength = "#009E73")
+apex <- sqrt(800); roof_length <- 2 * apex
+op <- par(mar = c(3.4, 3.8, 0.6, 0.8), las = 1, cex.axis = 0.8)
+plot(NA, xlim = c(0, roof_length), ylim = c(0, 190), xaxs = "i", yaxs = "i",
+     axes = FALSE, xlab = "", ylab = "")
+abline(h = c(90, 180), col = "grey90", lwd = 0.8)
+abline(v = apex, lty = 3, col = "grey40")
+for (e in names(curves)) lines(curves[[e]]$s, curves[[e]]$turn, lwd = 2.2,
+                                col = est_cols[[e]])
+axis(1, at = c(0, 10, 20, 30, 40, 50), col = "grey55", col.ticks = "grey55", tcl = -0.3,
+     mgp = c(3, 0.5, 0))
+axis(2, at = c(0, 45, 90, 135, 180), col = "grey55", col.ticks = "grey55", tcl = -0.3)
+title(xlab = "arc length along the roof (px)", line = 2, cex.lab = 0.85)
+title(ylab = "accumulated turning (°)", line = 2.6, cex.lab = 0.85)
+text(apex, 186, "apex", pos = 4, cex = 0.75, col = "grey30", offset = 0.3)
+labels <- c(mlv2023 = "published (mlv2023)", turning = "turning", arclength = "arc length")
+labels <- sprintf("%s\n%g°", labels, totals)
+text(1, 178, labels[1], adj = c(0, 1), cex = 0.8, col = est_cols[1])
+text(roof_length - 0.5, 80, labels[2], adj = c(1, 1), cex = 0.8, col = est_cols[2])
+text(31, 38, labels[3], adj = c(0, 1), cex = 0.8, col = est_cols[3])
 par(op)
 ```
-
 The estimators also differ in how they respond to sampling. A circle of
 radius 10 drawn as a regular polygon has one curvature under every estimator,
 the polygon's turn over its side, which approaches 180 / (10π) degrees per

@@ -119,3 +119,124 @@ test_that("every stage renders on a pdf device without encoding warnings", {
   for (what in c("ink", "distance", "flux", "skeleton", "branches", "parallelism", "separation"))
     expect_no_warning(plot(f$mat, what, drawing = f$drawing))
 })
+
+test_that("default palettes contain no missing colours", {
+  # hcl.colors(101, "Blue-Red 3")[51] is NA in R 4.5.1; an NA colour is drawn
+  # transparent, so zero flux would read as "no data".
+  for (what in c("distance", "flux", "parallelism")) {
+    pal <- mlvtoolbox:::.mat_palette(what)
+    expect_length(pal, 101L)
+    expect_false(anyNA(pal))
+  }
+  expect_false(anyNA(mlvtoolbox:::.safe_hcl(101, "Blue-Red 3")))
+  expect_identical(mlvtoolbox:::.safe_hcl(5, "Viridis"), grDevices::hcl.colors(5, "Viridis"))
+  # The flux midpoint is a neutral near-white, not missing.
+  mid <- grDevices::col2rgb(mlvtoolbox:::.mat_palette("flux")[51])
+  expect_true(all(mid > 230))
+})
+
+test_that("a zero-flux pixel is painted, and only missing values are transparent", {
+  z <- matrix(c(-1, 0, 1, NA), 2)
+  pal <- mlvtoolbox:::.mat_palette("flux")
+  painted <- mlvtoolbox:::.mat_colour_matrix(z, pal, c(-1, 1))
+  expect_identical(painted[2, 1], pal[51])
+  expect_identical(painted[2, 2], "transparent")
+  expect_false(anyNA(painted))
+  skip_if_not_installed("png")
+  # Render a MAT with a region of exactly zero flux on a magenta background:
+  # the zero pixels must not show the background through.
+  d <- mlv_drawing(list(matrix(c(5, 10, 45, 10), 1), matrix(c(5, 22, 45, 22), 1)), 50, 32)
+  m <- compute_mat(d)
+  zero <- which(m$AOF == 0, arr.ind = TRUE)
+  expect_gt(nrow(zero), 0L)
+  file <- tempfile(fileext = ".png")
+  grDevices::png(file, width = 500, height = 320, bg = "#FF00FF")
+  par(mar = c(0, 0, 0, 0))
+  plot(m, "flux", legend = FALSE, main = "", levels = numeric(0))
+  px <- grconvertX(zero[1, 2], "user", "device"); py <- grconvertY(zero[1, 1], "user", "device")
+  grDevices::dev.off(); on.exit(unlink(file))
+  rgb <- png::readPNG(file)[round(py), round(px), 1:3]
+  expect_true(all(rgb > 0.85))                 # near-white, not magenta
+})
+
+test_that("discs, isolines, zoom and grid render and are validated", {
+  f <- plot_fixture()
+  with_png({
+    expect_no_error(plot(f$mat, "branches", discs = 5))
+    expect_no_error(plot(f$mat, "parallelism", discs = 3, legend = FALSE))
+    expect_no_error(plot(f$mat, "distance", levels = 1:8))
+    expect_no_error(plot(f$mat, "flux", levels = numeric(0)))
+    plot(f$mat, "ink", xlim = c(10, 20), ylim = c(15, 5), grid = TRUE, legend = FALSE)
+    usr <- par("usr")
+    expect_lte(usr[1], 10); expect_gte(usr[2], 20)
+    expect_gt(usr[3], usr[4])                    # y still increases downward
+    expect_error(plot(f$mat, "ink", discs = -1), "discs")
+    expect_error(plot(f$mat, "ink", discs = c(1, 2)), "discs")
+    expect_error(plot(f$mat, "distance", levels = "a"), "levels")
+    expect_error(plot(f$mat, "ink", grid = NA), "grid")
+    expect_error(plot(f$mat, "ink", xlim = c(1, 1)), "xlim")
+    expect_error(plot(f$mat, "ink", ylim = c(1, NA)), "ylim")
+  })
+})
+
+test_that("every stage reserves the same legend room, so stage figures align", {
+  f <- plot_fixture()
+  usr <- lapply(c("ink", "distance", "flux", "skeleton", "branches", "parallelism"),
+                function(what) with_png({ par(mar = c(0, 0, 0, 0)); plot(f$mat, what); par("usr") }))
+  for (u in usr[-1]) expect_equal(u, usr[[1]])
+  with_png({
+    par(mar = c(0, 0, 0, 0))
+    plot(f$mat, "flux", legend = FALSE)
+    u <- par("usr")
+    expect_true(isTRUE(all.equal(u[2], 50.5)) || isTRUE(all.equal(u[3], 32.5)))
+  })
+})
+
+test_that("unscored skeleton pixels get a legend entry", {
+  short <- compute_mat_properties(compute_mat(mlv_drawing(list(
+    matrix(c(5, 10, 45, 10), 1), matrix(c(5, 22, 45, 22), 1),
+    rbind(c(15, 28, 25, 31), c(25, 31, 35, 28))), 50, 36)), "parallelism")
+  undefined <- short$skeleton & !is.finite(short$score_images$parallelism)
+  expect_true(any(undefined))
+  skip_if_not_installed("png")
+  swatch_pixels <- function(legend) {
+    file <- tempfile(fileext = ".png")
+    grDevices::png(file, width = 600, height = 400)
+    par(mar = c(0, 0, 0, 0))
+    plot(short, "parallelism", legend = legend, main = "")
+    edge <- grconvertX(50.5, "user", "device")
+    grDevices::dev.off(); on.exit(unlink(file))
+    img <- png::readPNG(file)
+    right <- img[, seq(ceiling(edge) + 2, dim(img)[2]), 1:3, drop = FALSE]
+    grey75 <- grDevices::col2rgb("grey75")[, 1] / 255
+    sum(abs(right[, , 1] - grey75[1]) < 0.02 & abs(right[, , 2] - grey75[2]) < 0.02 &
+        abs(right[, , 3] - grey75[3]) < 0.02)
+  }
+  expect_gt(swatch_pixels(TRUE), 20)             # the "no score" swatch is drawn
+  expect_identical(swatch_pixels(FALSE), 0L)
+})
+
+test_that("branch colours can be replaced and the key follows them", {
+  key <- mlvtoolbox:::.mat_branch_key(3L, col = c("red", "blue"))
+  expect_identical(key$fill, c("black", "red", "blue", "red"))
+  f <- plot_fixture()
+  with_png(expect_no_error(plot(f$mat, "branches", col = "grey40", discs = 4)))
+})
+
+test_that("colour_key() for a MAT matches the stage's colours, limits and threshold", {
+  f <- plot_fixture()
+  with_png({
+    layout(matrix(1:2), heights = c(1, lcm(1.3)))
+    plot(f$mat, "flux", legend = FALSE)
+    key <- colour_key(f$mat, "flux")
+    limit <- max(abs(f$mat$AOF))
+    expect_equal(key$limits, c(-limit, limit))
+    expect_no_error(colour_key(f$mat, "parallelism", horizontal = FALSE))
+    expect_no_error(colour_key(f$mat, "distance", zlim = c(0, 5)))
+    expect_error(colour_key(f$mat, "skeleton"), "what must be one of")
+    expect_error(colour_key(f$mat, "flux", zlim = c(2, 1)), "zlim")
+  })
+  expect_false(anyNA(mlvtoolbox:::.mat_scale(f$mat, "flux")$colours))
+  expect_equal(mlvtoolbox:::.mat_scale(f$mat, "flux")$mark,
+               f$mat$parameters$threshold * f$mat$parameters$samples)
+})

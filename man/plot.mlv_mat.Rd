@@ -15,6 +15,11 @@
   axes = FALSE,
   overlay_col = "black",
   overlay_lwd = 0.6,
+  discs = 0,
+  levels = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  grid = FALSE,
   ...
 )
 }
@@ -31,8 +36,9 @@ example the drawing the MAT was computed from. Its dimensions must match.}
 \item{zlim}{Optional colour limits for `"distance"`, `"flux"` and scores.
 The default flux limits are symmetric about zero.}
 
-\item{col}{Optional vector of colours replacing the default palette for a
-continuous stage.}
+\item{col}{Optional colours. For a continuous stage, a vector replacing the
+default palette; for `"branches"`, colours recycled over the branches in
+index order.}
 
 \item{main}{Panel title; the default names the stage. Titles use
 `cex.main = 1` and `font.main = 1` unless set in `...`.}
@@ -40,6 +46,24 @@ continuous stage.}
 \item{axes}{Draw light pixel axes.}
 
 \item{overlay_col, overlay_lwd}{Colour and width of the `drawing` overlay.}
+
+\item{discs}{Draw the maximal inscribed disc (radius = the branch radius)
+at every `discs`-th point of every branch, as faint circles; `0` (the
+default) draws none. Each disc is centred on the axis and touches the
+nearest ink, so its size shows the radius that every branch score is
+computed from.}
+
+\item{levels}{Isolines drawn over the image: `NULL` (the default) draws
+the threshold isoline for `"flux"` and none otherwise; a numeric vector
+gives the levels of the stage's quantity (distance, flux or score) to
+draw; `numeric(0)` draws none.}
+
+\item{xlim, ylim}{Optional image region to show, in pixel coordinates (for
+example `xlim = c(10, 30)` to zoom in). `ylim` may be given in either
+order; y always increases downward.}
+
+\item{grid}{Draw a faint grid on the pixel boundaries, useful when zoomed
+in.}
 
 \item{...}{Further graphical parameters passed to [graphics::plot.window()]
 and [graphics::title()], such as `cex.main`.}
@@ -50,33 +74,46 @@ and [graphics::title()], such as `cex.main`.}
 \description{
 Draws one stage of the pipeline stored in an `mlv_mat`, in image
 coordinates: x increases to the right, y increases downward, pixel centres
-lie at integers and the aspect ratio is one. Quantities are colour-coded
-with a legend that names the quantity and its unit:
+lie at integers and the aspect ratio is one. Ink is black in every stage.
+Quantities are colour-coded with a legend that names the quantity and its
+unit:
 }
 \details{
 * `"ink"`: the rasterized ink mask (black on white).
-* `"distance"`: the signed distance map in pixels (sequential palette).
-  Ink pixels have nonpositive values.
+* `"distance"`: the signed distance map in pixels (sequential palette), with the ink in black.
+  Ink pixels have nonpositive values; only an isolated single ink pixel is
+  negative.
 * `"flux"`: the average outward flux, stored as the sum of `samples`
-  dot products (diverging palette with limits symmetric about zero). The
-  legend marks the skeleton threshold, `threshold * samples`.
-* `"skeleton"`: the pixels whose flux exceeds the threshold (light) and the
-  thinned skeleton (dark), with the ink in grey.
+  dot products (diverging palette with limits symmetric about zero, zero
+  drawn as a neutral near-white). The skeleton threshold,
+  `threshold * samples`, is marked on the colour bar and drawn as a dashed
+  isoline in the image.
+* `"skeleton"`: the pixels whose flux exceeds the threshold (light red) and
+  the thinned skeleton (dark red), with the ink in black.
 * `"branches"`: traced branches, one colour per branch, each labelled with
   its index in `x$branches`.
 * a branch score name present in `x$score_images` (for example
   `"parallelism"`; see [compute_mat_properties()]): the score at each
-  skeleton pixel on a 0-1 sequential palette. Pixels without a score are
-  not drawn.
+  skeleton pixel on a 0-1 sequential palette. Skeleton pixels without a
+  score (for example the ends of a branch, or a branch too short to score)
+  are drawn in light grey, and the legend lists them as "no score".
 
-The function changes no persistent graphics parameter: it reserves room for
-the legend inside the plotting region, so later calls such as
-[graphics::points()] use the same image coordinates.
+The function changes no persistent graphics parameter. Room for the legend
+is reserved inside the plotting region, to the right of the image (the same
+room [plot.mlv_drawing()] reserves, so a drawing and a MAT stage of one
+canvas share coordinates), and later calls such as [graphics::points()] use
+the same image coordinates.
 }
 \examples{
 d <- mlv_drawing(list(matrix(c(5, 10, 45, 10), 1),
                       matrix(c(5, 22, 45, 22), 1)), 50, 32)
 m <- compute_mat(d)
 plot(m, "flux", drawing = d)
-plot(m, "branches")
+plot(m, "distance", levels = seq(1, 10))
+plot(m, "branches", discs = 6)
+plot(m, "ink", xlim = c(1, 12), ylim = c(5, 15), grid = TRUE, legend = FALSE)
+}
+\seealso{
+[plot_branch_profile()] to plot a branch quantity against image
+  position, under the drawing.
 }

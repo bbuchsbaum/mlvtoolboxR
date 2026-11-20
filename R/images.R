@@ -190,23 +190,45 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #' [plot.mlv_mat()], so MAT stages and drawings overlay exactly. With a `property`, segments are coloured by
 #' that quantity and, by default, a colour bar naming the quantity and its unit
 #' is drawn to the right of the canvas, inside the plot region, so later
-#' low-level calls (`points()`, `text()`) use the same coordinates.
+#' low-level calls (`points()`, `text()`) use the same coordinates. To keep the
+#' bar out of the plot region, or to share one bar between panels, draw with
+#' `legend = FALSE` and add [colour_key()] in a [graphics::layout()] cell.
 #'
 #' Orientation is axial: a segment at 10 degrees and one at 190 degrees have
 #' the same colour, and the default palette is a cyclic hue wheel over 0 to
 #' 180 degrees, so 0 and 180 share a colour. Length and curvature use the
 #' sequential Viridis palette over `zlim`. Mapped medial-axis scores are drawn
-#' as filled mapped pixels on a 0 to 1 Viridis scale over grey contours. With
-#' `property = "junctions"`, or `arms = TRUE`, junction positions are marked;
-#' `arms = TRUE` also draws each arm as an arrow leaving the junction along its
-#' orientation (the `arms` column of [detect_junctions()]). Junctions come from
-#' the drawing's stored `junctions` (for example from
+#' as filled mapped pixels on a 0 to 1 Viridis scale over grey contours.
+#'
+#' With `property = "junctions"`, or `arms = TRUE`, junction positions are
+#' marked. `arms = TRUE` also draws each arm leaving the junction along its
+#' orientation (the `arms` column of [detect_junctions()]): a translucent band
+#' drawn beneath the ink, so the contour stays visible along the arm, with an
+#' arrowhead at its end. An arm that lies on no ink, which some rules
+#' produce, shows as a band without a stroke. Arms that share an orientation
+#' are fanned `fan` degrees apart and labelled with their count, so
+#' every arm can be counted. `gaps = TRUE` draws each angular gap between
+#' consecutive arms as an arc labelled in degrees and shades the largest gap
+#' when it is unique, the gap that separates Y, T and Arrow junctions.
+#' Junctions come from the drawing's stored `junctions` (for example from
 #' [compute_contour_properties()] with `rule = "mlv2023"`), its feature
 #' specification, or default [detect_junctions()].
+#'
+#' Two options help with pixel-scale views (use `xlim` and `ylim` to zoom):
+#' `pixel_grid = TRUE` draws the pixel boundaries, which lie half-way between
+#' the integer pixel centres, and `reach` draws the gap allowance of
+#' [detect_junctions()] at each free end of an open contour: the set of
+#' points within `reach_epsilon[1]` of the end under the chosen metric (a disc
+#' for `"euclidean"`, an axis-aligned square for `"chebyshev"`) and, dashed,
+#' the extension of the end segment to the edge of that set, shortened to
+#' `reach_epsilon[2]` of the segment's length when that is stricter. Along a
+#' diagonal the Chebyshev square reaches `sqrt(2)` times further than the
+#' disc.
 #' @param x A drawing.
 #' @param property Optional segment property (`"orientation"`, `"length"`,
 #'   `"curvature"`), `"junctions"`, or a mapped MAT property.
-#' @param col Contour colour when no segment property is shown.
+#' @param col Contour colour when no segment property is shown; one colour,
+#'   or one per segment.
 #' @param lwd Line width.
 #' @param ... Arguments to the initial plot, such as `main`, `xlim` or
 #'   `axes = FALSE`.
@@ -221,42 +243,60 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #'   canvas side.
 #' @param junction_col Colour of junction markers and arms.
 #' @param frame Outline the canvas in light grey.
+#' @param arm_lwd Width of the arm bands; defaults to `2.5 * lwd`, at least 3.
+#' @param fan Angle in degrees between drawn arms that share an orientation;
+#'   0 draws them on top of each other.
+#' @param gaps Draw and label the angular gaps between arms.
+#' @param reference_junctions Optional junction table, for example
+#'   `detect_junctions(x)` under another rule, whose arms are drawn as thin
+#'   grey dashed arrows beneath the drawn arms for comparison.
+#' @param pixel_grid Draw the pixel boundaries in light grey.
+#' @param reach `NULL` (default), `"euclidean"` or `"chebyshev"`: draw the gap
+#'   allowance under that metric at each free contour end.
+#' @param reach_epsilon The absolute (pixels) and relative limits of the
+#'   allowance, as `absolute_epsilon` and `relative_epsilon` of
+#'   [detect_junctions()].
+#' @param add Draw onto the current plot, in its coordinates, instead of
+#'   starting a new one; no axes, frame or colour bar are drawn. Useful for
+#'   overlaying a drawing on another, for example a transformed copy on its
+#'   original.
 #' @return The drawing invisibly.
 #' @export
 #' @examples
 #' d <- mlv_drawing(list(rbind(c(5, 10, 35, 10)), rbind(c(20, 10, 20, 35))), 40, 40)
 #' plot(d, property = "orientation")
-#' plot(d, property = "junctions", arms = TRUE, axes = FALSE)
+#' plot(d, property = "junctions", arms = TRUE, gaps = TRUE, axes = FALSE)
+#' # A pixel-scale view of a stem that stops 1.3 px short of a bar.
+#' g <- mlv_drawing(list(rbind(c(5, 20, 35, 20)), rbind(c(20, 21.3, 20, 35))), 40, 40)
+#' plot(g, xlim = c(16, 24), ylim = c(25, 17), pixel_grid = TRUE,
+#'      reach = "euclidean", axes = FALSE, frame = FALSE, lwd = 2)
+#' # A rotated copy over its original.
+#' plot(d, col = "grey80", lwd = 2)
+#' plot(rotate_drawing(d, 30), add = TRUE, lwd = 2)
 plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
                              palette=NULL,zlim=NULL,arms=FALSE,arm_length=NULL,
-                             junction_col="#D55E00",frame=TRUE) {
+                             junction_col="#D55E00",frame=TRUE,arm_lwd=NULL,fan=6,
+                             gaps=FALSE,reference_junctions=NULL,pixel_grid=FALSE,
+                             reach=NULL,reach_epsilon=c(1,0.3),add=FALSE) {
  .check_drawing(x)
- for(flag in list(legend,arms,frame))
-  if(!is.logical(flag)||length(flag)!=1L||is.na(flag))stop("legend, arms and frame must be TRUE or FALSE",call.=FALSE)
+ for(flag in list(legend,arms,frame,gaps,pixel_grid,add))
+  if(!is.logical(flag)||length(flag)!=1L||is.na(flag))
+   stop("legend, arms, frame, gaps, pixel_grid and add must be TRUE or FALSE",call.=FALSE)
+ if(length(fan)!=1L||!is.finite(fan)||fan<0)stop("fan must be a nonnegative angle",call.=FALSE)
+ if(!is.null(reach))reach<-match.arg(reach,c("euclidean","chebyshev"))
+ if(!is.numeric(reach_epsilon)||length(reach_epsilon)!=2L||any(!is.finite(reach_epsilon))||any(reach_epsilon<0))
+  stop("reach_epsilon must be two nonnegative numbers",call.=FALSE)
+ if(!is.null(reference_junctions)&&(!is.data.frame(reference_junctions)||
+    !all(c("x","y","arms")%in%names(reference_junctions))))
+  stop("reference_junctions must be a junction table from detect_junctions()",call.=FALSE)
  st<-.measurement_table(x,x$feature_spec)
- colors<-rep(col,nrow(st));bar<-NULL;mat<-FALSE
- segment_property<-!is.null(property)&&property %in% c("length","orientation","curvature")
- if(!is.null(property)&&!segment_property&&property!="junctions") {
-  if(is.null(x$mat_properties[[property]]))stop("unknown or unmapped plot property",call.=FALSE)
-  .checked_mat_measurements(x,x$feature_spec);mat<-TRUE
- }
- if(segment_property) {
-  value<-st[[property]]
-  if(property=="orientation") {
-   pal<-.plot_palette(palette,.orientation_colours);range<-c(0,180);value<-value%%180
-   colors<-.map_colours(value,range,pal,cyclic=TRUE)
-  } else {
-   pal<-.plot_palette(palette,function(n)grDevices::hcl.colors(n,"Viridis"))
-   range<-if(is.null(zlim)) {if(any(is.finite(value)))range(value,finite=TRUE) else c(0,1)} else zlim
-   if(length(range)!=2L||any(!is.finite(range))||range[2]<range[1])stop("zlim must be an increasing finite range",call.=FALSE)
-   colors<-.map_colours(value,range,pal)
-  }
-  bar<-list(palette=pal,range=range,label=.plot_label(x,property),cyclic=property=="orientation")
- } else if(mat) {
-  pal<-.plot_palette(palette,function(n)grDevices::hcl.colors(n,"Viridis"))
-  bar<-list(palette=pal,range=c(0,1),label=paste0(property,"\n(0",.range_dash(),"1)"),cyclic=FALSE)
- }
- if(!legend)bar<-NULL
+ colors<-rep(col,length.out=nrow(st))
+ bar<-.drawing_bar(x,property,palette,zlim,st)
+ mat<-!is.null(bar)&&isTRUE(bar$mat)
+ if(!is.null(bar)&&!mat)
+  colors<-.map_colours(if(bar$cyclic)st[[property]]%%180 else st[[property]],bar$range,bar$palette,cyclic=bar$cyclic)
+ pal<-if(is.null(bar))NULL else bar$palette
+ if(!legend||add)bar<-NULL
  # The canvas is the raster extent: pixel centres at 1..width and 1..height,
  # so edges at 0.5 and width + 0.5, exactly as in plot.mlv_mat(), and a
  # colour bar takes the same room, so drawings and MAT stages overlay.
@@ -264,16 +304,35 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  defaults<-list(x=NA_real_,xlim=c(.5,x$width+.5+if(is.null(bar))0 else .3*side),
                 ylim=c(x$height+.5,.5),asp=1,xaxs="i",yaxs="i",xlab="",ylab="",type="n")
  arguments<-utils::modifyList(defaults,list(...))
- axes<-if(is.null(arguments$axes))TRUE else isTRUE(arguments$axes)
+ axes<-!add&&(if(is.null(arguments$axes))TRUE else isTRUE(arguments$axes))
  arguments$axes<-FALSE;arguments$frame.plot<-FALSE
- do.call(graphics::plot,arguments)
+ if(add)frame<-FALSE else do.call(graphics::plot,arguments)
  if(axes) {
   # Axes sit on the canvas edges, not the plot-region edges that asp = 1 moves.
   style<-list(col="grey55",col.ticks="grey55",col.axis="grey30",cex.axis=.8,tcl=-.3,mgp=c(3,.5,0))
   do.call(graphics::axis,c(list(1,at=.canvas_ticks(x$width),pos=x$height+.5),style))
   do.call(graphics::axis,c(list(2,at=.canvas_ticks(x$height),pos=.5,las=1),style))
  }
+ if(pixel_grid).pixel_grid()
  if(frame)graphics::rect(.5,x$height+.5,x$width+.5,.5,border="grey75",lwd=.75)
+ if(!is.null(reach)).draw_reach(x,reach,reach_epsilon)
+ show_junctions<-identical(property,"junctions")||arms
+ j<-if(show_junctions).measurement_junctions(x,x$feature_spec) else NULL
+ if(arms) {
+  if(is.null(arm_length))arm_length<-.08*min(x$width,x$height)
+  if(length(arm_length)!=1L||!is.finite(arm_length)||arm_length<=0)stop("arm_length must be positive",call.=FALSE)
+  if(is.null(arm_lwd))arm_lwd<-max(3,2.5*lwd)
+  if(length(arm_lwd)!=1L||!is.finite(arm_lwd)||arm_lwd<=0)stop("arm_lwd must be positive",call.=FALSE)
+  if(nrow(j)&&is.null(j$arms))stop("junctions lack arm directions; recompute them",call.=FALSE)
+ }
+ # Layers, back to front: gap sectors and reference arms, arm bands, ink,
+ # arrowheads, gap arcs and labels, junction markers. Arms never hide ink.
+ # Sizes in inches (arrowheads, label offsets) are computed when the
+ # display list is replayed, so they survive resizing and re-rendering.
+ if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=TRUE)
+ if(arms&&!is.null(reference_junctions)&&nrow(reference_junctions))
+  .replayable(.draw_arms,j=reference_junctions,len=arm_length,col="grey45",lwd=arm_lwd,fan=fan,part="ghost")
+ if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="bands")
  if(mat) {
   image<-x$mat_images[[property]];where<-which(is.finite(image))
   graphics::segments(st$x1,st$y1,st$x2,st$y2,col="gray70",lwd=lwd)
@@ -285,19 +344,146 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
                         interpolate=FALSE)
  } else graphics::segments(st$x1,st$y1,st$x2,st$y2,col=colors,lwd=lwd)
  if(!is.null(bar)).colour_bar(x,bar)
- if(identical(property,"junctions")||arms) {
-  j<-.measurement_junctions(x,x$feature_spec)
-  if(arms&&nrow(j)) {
-   if(is.null(j$arms))stop("junctions lack arm directions; recompute them",call.=FALSE)
-   if(is.null(arm_length))arm_length<-.08*min(x$width,x$height)
-   if(length(arm_length)!=1L||!is.finite(arm_length)||arm_length<=0)stop("arm_length must be positive",call.=FALSE)
-   k<-rep.int(seq_len(nrow(j)),lengths(j$arms));a<-unlist(j$arms,use.names=FALSE)*pi/180
-   graphics::arrows(j$x[k],j$y[k],j$x[k]+arm_length*cos(a),j$y[k]-arm_length*sin(a),
-                    length=.06,angle=25,col=junction_col,lwd=1.5*lwd)
-  }
+ if(show_junctions) {
+  if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="heads")
+  if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=FALSE)
   graphics::points(j$x,j$y,pch=21,bg=junction_col,col="white",cex=1.1)
  }
  invisible(x)
+}
+# Colour coding of a drawing property: palette, value range, legend label and
+# whether the scale is cyclic, shared by plot.mlv_drawing() and colour_key().
+# NULL when the property is not colour coded.
+.drawing_bar <- function(x,property,palette=NULL,zlim=NULL,st=NULL) {
+ if(is.null(property)||identical(property,"junctions"))return(NULL)
+ if(!is.character(property)||length(property)!=1L)stop("unknown or unmapped plot property",call.=FALSE)
+ if(property %in% c("length","orientation","curvature")) {
+  if(property=="orientation")
+   return(list(palette=.plot_palette(palette,.orientation_colours),range=c(0,180),
+               label=.plot_label(x,property),cyclic=TRUE,mat=FALSE))
+  if(is.null(st))st<-.measurement_table(x,x$feature_spec)
+  value<-st[[property]]
+  range<-if(is.null(zlim)) {if(any(is.finite(value)))range(value,finite=TRUE) else c(0,1)} else zlim
+  if(length(range)!=2L||any(!is.finite(range))||range[2]<range[1])stop("zlim must be an increasing finite range",call.=FALSE)
+  return(list(palette=.plot_palette(palette,function(n)grDevices::hcl.colors(n,"Viridis")),
+              range=range,label=.plot_label(x,property),cyclic=FALSE,mat=FALSE))
+ }
+ if(is.null(x$mat_properties[[property]]))stop("unknown or unmapped plot property",call.=FALSE)
+ .checked_mat_measurements(x,x$feature_spec)
+ list(palette=.plot_palette(palette,function(n)grDevices::hcl.colors(n,"Viridis")),range=c(0,1),
+      label=paste0(property,"\n(0",.range_dash(),"1)"),cyclic=FALSE,mat=TRUE)
+}
+# User coordinates per inch on the current plot (asp = 1, so x and y agree).
+.user_per_inch <- function() diff(graphics::par("usr")[1:2])/graphics::par("pin")[1]
+# Pixel boundaries (half-integers) across the visible region.
+.pixel_grid <- function(col="grey88") {
+ u<-graphics::par("usr");xr<-sort(u[1:2]);yr<-sort(u[3:4])
+ if(diff(xr)>400||diff(yr)>400)return(invisible(NULL))
+ v<-seq(ceiling(xr[1]-.5),floor(xr[2]-.5))+.5;h<-seq(ceiling(yr[1]-.5),floor(yr[2]-.5))+.5
+ graphics::abline(v=v,h=h,col=col,lwd=.6)
+ invisible(NULL)
+}
+# Evaluate a drawing function now and again whenever the display list is
+# replayed (a resized window, or knitr re-rendering at another size), so
+# sizes it computes in inches stay right.
+.replayable <- function(f,...) {
+ args<-list(...)
+ grDevices::recordGraphics(do.call(f,args),list(f=f,args=args),getNamespace("mlvtoolbox"))
+}
+# Arms from each junction, coincident arms fanned and counted. part =
+# "bands" draws translucent bands (beneath the ink), "heads" the arrowheads
+# and counts (above it), "ghost" thin dashed grey arrows for comparison.
+.draw_arms <- function(j,len,col,lwd,fan,part=c("bands","heads","ghost")) {
+ part<-match.arg(part)
+ upi<-.user_per_inch();head<-.075*upi;half<-.045*upi
+ for(k in seq_len(nrow(j))) {
+  a<-sort(unlist(j$arms[[k]],use.names=FALSE)%%360)
+  if(!length(a))next
+  # Group arms within half a degree of each other (cyclically).
+  group<-cumsum(c(TRUE,diff(a)>.5))
+  if(length(a)>1L&&(a[1]+360-a[length(a)])<=.5)group[group==max(group)]<-1L
+  for(g in unique(group)) {
+   m<-sum(group==g);base<-a[group==g][1]
+   shown<-base+fan*(seq_len(m)-(m+1)/2)
+   for(i in seq_along(shown)) {
+    r<-shown[i]*pi/180;ex<-j$x[k]+len*cos(r);ey<-j$y[k]-len*sin(r)
+    if(part=="ghost") {
+     graphics::segments(j$x[k],j$y[k],ex-head*cos(r),ey+head*sin(r),col=col,lwd=1.1,lty=2)
+     .arrowhead(ex,ey,r,head*1.1,half*1.1,"white",col)
+    } else if(part=="bands") {
+     graphics::segments(j$x[k],j$y[k],ex-head*.6*cos(r),ey+head*.6*sin(r),
+                        col=grDevices::adjustcolor(col,.45),lwd=lwd,lend=1)
+    } else {
+     .arrowhead(ex,ey,r,head,half,col,NA)
+     # The count sits beside the last tip of a fanned group, clear of the arm.
+     if(m>1L&&i==m) {
+      q<-r+pi/2
+      graphics::text(ex+.13*upi*cos(q),ey-.13*upi*sin(q),paste0("\u00d7",m),
+                     cex=.8,col=col,font=2,xpd=NA)
+     }
+    }
+   }
+  }
+ }
+ invisible(NULL)
+}
+.arrowhead <- function(x,y,r,len,half,fill,border) {
+ bx<-x-len*cos(r);by<-y+len*sin(r)
+ graphics::polygon(c(x,bx-half*sin(r),bx+half*sin(r)),c(y,by-half*cos(r),by+half*cos(r)),
+                   col=fill,border=border,lwd=.8)
+}
+# Gaps between consecutive arms: arcs at radius rad, each labelled in
+# degrees on its bisector; with sectors = TRUE only the unique largest gap is
+# shaded (drawn beneath the ink).
+.draw_gaps <- function(j,rad,sectors) {
+ upi<-.user_per_inch()
+ for(k in seq_len(nrow(j))) {
+  a<-unlist(j$arms[[k]],use.names=FALSE);g<-unlist(j$angles[[k]],use.names=FALSE)
+  if(length(a)<2L||length(g)!=length(a))next
+  big<-which.max(g);unique_big<-sum(abs(g-g[big])<1e-6)==1L
+  for(i in seq_along(a)) {
+   if(g[i]<1)next
+   t<-seq(a[i],a[i]+g[i],length.out=max(8L,ceiling(g[i]/3)))*pi/180
+   if(sectors) {
+    if(i==big&&unique_big)
+     graphics::polygon(c(j$x[k],j$x[k]+rad*cos(t)),c(j$y[k],j$y[k]-rad*sin(t)),
+                       col="grey88",border=NA)
+    next
+   }
+   graphics::lines(j$x[k]+rad*cos(t),j$y[k]-rad*sin(t),col="grey35",lwd=.8)
+   b<-(a[i]+g[i]/2)*pi/180;lr<-rad+.13*upi
+   lab<-paste0(round(g[i]),"\u00b0");cx<-.7
+   px<-j$x[k]+lr*cos(b);py<-j$y[k]-lr*sin(b)
+   w<-graphics::strwidth(lab,cex=cx)/2+.02*upi;h<-abs(graphics::strheight(lab,cex=cx))/2+.02*upi
+   graphics::rect(px-w,py-h,px+w,py+h,col=grDevices::adjustcolor("white",.85),border=NA)
+   graphics::text(px,py,lab,cex=cx,col="grey15",font=if(i==big&&unique_big)2 else 1)
+  }
+ }
+}
+# Gap allowance at the free ends of open contours: the metric's ball of
+# radius epsilon[1] (light fill) and the reachable extension of the end
+# segment (dashed).
+.draw_reach <- function(x,metric,epsilon,col="#0072B2") {
+ for(z in x$contours) {
+  n<-nrow(z);if(!n)next
+  if(all(z[1,1:2]==z[n,3:4]))next
+  ends<-list(list(p=z[1,1:2],q=z[1,3:4]),list(p=z[n,3:4],q=z[n,1:2]))
+  for(e in ends) {
+   p<-unname(e$p);d<-p-unname(e$q);seg<-sqrt(sum(d^2));if(seg<=0)next
+   u<-d/seg;r<-epsilon[1]
+   if(metric=="euclidean") {
+    t<-seq(0,2*pi,length.out=97)
+    graphics::polygon(p[1]+r*cos(t),p[2]+r*sin(t),col=grDevices::adjustcolor(col,.12),border=col,lwd=.7)
+    reach<-r
+   } else {
+    graphics::rect(p[1]-r,p[2]-r,p[1]+r,p[2]+r,col=grDevices::adjustcolor(col,.12),border=col,lwd=.7)
+    reach<-r/max(abs(u))
+   }
+   reach<-min(reach,epsilon[2]*seg)
+   graphics::segments(p[1],p[2],p[1]+reach*u[1],p[2]+reach*u[2],col=col,lwd=1.6,lty=2)
+  }
+ }
+ invisible(NULL)
 }
 # Cyclic hue wheel at constant chroma and luminance: hue 0 and 360 coincide,
 # so axial orientations 0 and 180 degrees receive the same colour.
