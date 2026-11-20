@@ -216,3 +216,29 @@ test_that("legend labels use the degree sign", {
   expect_match(mlvtoolbox:::.plot_label(d, "orientation"), "°, mod 180", fixed = TRUE)
   expect_match(mlvtoolbox:::.plot_label(d, "curvature"), "°/px", fixed = TRUE)
 })
+
+test_that("arrowhead size can be set and is validated", {
+  d <- mlv_drawing(list(sg(6, 20, 34, 20), sg(20, 20, 20, 34)), 40, 40)
+  with_png({
+    expect_silent(plot(d, property = "junctions", arms = TRUE, arm_head = 0.04))
+    expect_error(plot(d, arms = TRUE, arm_head = 0), "arm_head")
+  })
+  big <- shoot(function() plot(d, property = "junctions", arms = TRUE, arm_length = 10,
+                               arm_head = 0.3, axes = FALSE, frame = FALSE), 40, 40)
+  small <- shoot(function() plot(d, property = "junctions", arms = TRUE, arm_length = 10,
+                                 arm_head = 0.03, axes = FALSE, frame = FALSE), 40, 40)
+  orange <- function(img) sum(img[, , 1] > 0.6 & img[, , 3] < 0.3)
+  expect_gt(orange(big), orange(small))
+})
+
+test_that("a mapped property's underlay takes col, and col = NA leaves it out", {
+  # Shallow diagonal lines: the vector underlay shows as slivers beside the
+  # stepped raster pixels.
+  d <- mlv_drawing(list(sg(4, 5, 26, 9), sg(4, 15, 26, 19)), 30, 22)
+  mapped <- analyse_mat(d, properties = "parallelism", min_branch_points = 2)$drawing
+  draw <- function(col) function() plot(mapped, property = "parallelism", legend = FALSE,
+                                        axes = FALSE, frame = FALSE, lwd = 3, col = col)
+  red <- function(img) sum(img[, , 1] > 0.8 & img[, , 2] < 0.2 & img[, , 3] < 0.2)
+  expect_gt(red(shoot(draw("red"), 30, 22)), 0)
+  expect_equal(red(shoot(draw(NA), 30, 22)), 0)
+})

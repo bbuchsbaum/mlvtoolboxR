@@ -260,3 +260,11 @@ test_that("discs crossing the shown region are omitted and the flux stage draws 
   grDevices::dev.off(); on.exit(unlink(file))
   expect_true(all(png::readPNG(file)[round(py), round(px), 1:3] < 0.1))
 })
+
+test_that("legend = \"space\" reserves the legend room without drawing a key", {
+  f <- plot_fixture()
+  usr_of <- function(legend) with_png({
+    par(mar = c(0, 0, 0, 0)); plot(f$mat, "branches", legend = legend); par("usr") })
+  expect_equal(usr_of("space"), usr_of(TRUE))
+  with_png(expect_error(plot(f$mat, "ink", legend = "yes"), "legend"))
+})

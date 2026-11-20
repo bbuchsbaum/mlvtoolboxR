@@ -17,8 +17,10 @@
 #'   isoline in the image.
 #' * `"skeleton"`: the pixels whose flux exceeds the threshold (light red) and
 #'   the thinned skeleton (dark red), with the ink in black.
-#' * `"branches"`: traced branches, one colour per branch, each labelled with
-#'   its index in `x$branches`.
+#' * `"branches"`: traced branches, one colour per branch, drawn as the medial
+#'   axis is drawn everywhere (a line through the pixel centres, half a pixel
+#'   wide, so it never reads as ink) and labelled with its index in
+#'   `x$branches`.
 #' * a branch score name present in `x$score_images` (for example
 #'   `"parallelism"`; see [compute_mat_properties()]): the score at each
 #'   skeleton pixel on a 0-1 sequential palette. Skeleton pixels without a
@@ -35,7 +37,9 @@
 #' @param what Stage to draw; see Description.
 #' @param drawing Optional `mlv_drawing` whose segments are drawn on top, for
 #'   example the drawing the MAT was computed from. Its dimensions must match.
-#' @param legend Draw a colour bar or key to the right of the image.
+#' @param legend Draw a colour bar or key to the right of the image. `"space"`
+#'   reserves the same room without drawing a key, so that a series of stage
+#'   figures, some with keys and some without, place the image identically.
 #' @param zlim Optional colour limits for `"distance"`, `"flux"` and scores.
 #'   The default flux limits are symmetric about zero.
 #' @param col Optional colours. For a continuous stage, a vector replacing the
@@ -87,8 +91,10 @@ plot.mlv_mat <- function(x, what = "flux", drawing = NULL, legend = TRUE,
     stop("what must be one of ", paste(c(stages, scores), collapse = ", "),
          if (!length(scores)) " (branch scores need compute_mat_properties())",
          call. = FALSE)
+  space_only <- identical(legend, "space")
+  if (space_only) legend <- TRUE
   if (!is.logical(legend) || length(legend) != 1L || is.na(legend))
-    stop("legend must be TRUE or FALSE", call. = FALSE)
+    stop("legend must be TRUE, FALSE or \"space\"", call. = FALSE)
   if (!is.null(zlim) && (!is.numeric(zlim) || length(zlim) != 2L ||
       any(!is.finite(zlim)) || zlim[2] <= zlim[1]))
     stop("zlim must be two increasing finite numbers", call. = FALSE)
@@ -173,12 +179,9 @@ plot.mlv_mat <- function(x, what = "flux", drawing = NULL, legend = TRUE,
     n <- length(x$branches)
     if (!n) note <- "no branches" else {
       if (discs > 0) .mat_draw_discs(x$branches, discs, view)
-      for (i in seq_len(n)) {
-        b <- x$branches[[i]]
-        graphics::rect(b$x - 0.5, b$y - 0.5, b$x + 0.5, b$y + 0.5,
-                       col = pal[(i - 1L) %% length(pal) + 1L], border = NA)
-      }
-      .mat_branch_labels(x, seq_len(n), view)
+      branch_col <- function(i) pal[(i - 1L) %% length(pal) + 1L]
+      for (i in seq_len(n)) .mat_draw_axis(x$branches[i], branch_col(i))
+      .mat_branch_labels(x, seq_len(n), view, col = branch_col)
     }
   }
   if (discs > 0 && what != "branches" && length(x$branches))
@@ -211,8 +214,8 @@ plot.mlv_mat <- function(x, what = "flux", drawing = NULL, legend = TRUE,
     list(main = main, cex.main = 1, font.main = 1), list(...)))
   # Drawn through recordGraphics(), so that a replay on another device size
   # (knitr's phone copy) re-measures the text and re-places the legend.
-  if (legend && !is.null(bar)) .replayable(.mat_colour_bar, bar, view)
-  if (legend && !is.null(key)) .replayable(.mat_key, key, view)
+  if (legend && !space_only && !is.null(bar)) .replayable(.mat_colour_bar, bar, view)
+  if (legend && !space_only && !is.null(key)) .replayable(.mat_key, key, view)
   invisible(x)
 }
 
@@ -257,6 +260,60 @@ colour_key.mlv_mat <- function(x, what = "flux", zlim = NULL, col = NULL, ...) {
 .mat_above_colour <- "#F2C4BA"
 .mat_skeleton_colour <- "#A1181D"
 .mat_unscored_colour <- "grey75"
+
+# The one encoding of the medial axis in every figure: ink is black, the axis is
+# the skeleton red, half a pixel wide, so it never reads as a stimulus line.
+.mat_axis_col <- .mat_skeleton_colour
+
+# Draws branches as the medial axis: a band of `width` pixels along the path
+# through the pixel centres (polygons in image units, so the weight scales
+# with the image, also on a replayed copy). Steps longer than one diagonal
+# pixel are not joined.
+.mat_draw_axis <- function(branches, col = .mat_axis_col, width = 0.5) {
+  h <- width / 2
+  for (b in branches) {
+    n <- nrow(b); if (!n) next
+    graphics::rect(b$x - h, b$y - h, b$x + h, b$y + h, col = col, border = NA)
+    if (n < 2L) next
+    dx <- diff(b$x); dy <- diff(b$y); len <- sqrt(dx^2 + dy^2)
+    j <- which(len > 0 & len < 1.5)
+    if (!length(j)) next
+    nx <- -dy[j] / len[j] * h; ny <- dx[j] / len[j] * h
+    x0 <- b$x[j]; y0 <- b$y[j]; x1 <- b$x[j + 1L]; y1 <- b$y[j + 1L]
+    px <- rbind(x0 + nx, x1 + nx, x1 - nx, x0 - nx, NA)
+    py <- rbind(y0 + ny, y1 + ny, y1 - ny, y0 - ny, NA)
+    graphics::polygon(c(px), c(py), col = col, border = NA)
+  }
+}
+
+#' Add the medial axis to a plot
+#'
+#' Draws the branches of an `mlv_mat` on the current plot in image coordinates,
+#' in the encoding every plot of the package uses: a line through the pixel
+#' centres, half a pixel wide, in the skeleton red of `plot(x, "skeleton")`, so
+#' that the axis is never mistaken for ink. Use it on [plot.mlv_mat()] or
+#' [plot.mlv_drawing()] panels of the same canvas.
+#'
+#' @param x An `mlv_mat` with traced branches.
+#' @param branches Indices of the branches to draw; all by default.
+#' @param col Colour; the default is the medial-axis red.
+#' @param width Width of the line in pixels.
+#' @return `x`, invisibly.
+#' @examples
+#' d <- mlv_drawing(list(matrix(c(5, 10, 45, 10), 1),
+#'                       matrix(c(5, 22, 45, 22), 1)), 50, 32)
+#' m <- compute_mat(d)
+#' plot(m, "ink", legend = FALSE)
+#' draw_mat_axis(m)
+#' @export
+draw_mat_axis <- function(x, branches = NULL, col = .mat_axis_col, width = 0.5) {
+  if (!inherits(x, "mlv_mat")) stop("x must be an mlv_mat", call. = FALSE)
+  if (!is.numeric(width) || length(width) != 1L || !is.finite(width) || width <= 0)
+    stop("width must be a positive number", call. = FALSE)
+  index <- .profile_branches(x, branches)
+  .mat_draw_axis(x$branches[index], col, width)
+  invisible(x)
+}
 
 # Okabe-Ito colours (without black), recycled over branches in index order.
 # Blue and orange come late: blue means negative flux in the stages before,

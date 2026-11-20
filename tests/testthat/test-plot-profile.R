@@ -100,3 +100,44 @@ test_that("blank rows, context curves and equal drawing heights work", {
     if (row == "drawing") heights[column] <<- abs(diff(par("usr")[3:4]))), width = 700)
   expect_equal(heights[1], heights[2], tolerance = 1e-6)
 })
+
+test_that("the medial axis is drawn in its own colour, never as ink", {
+  skip_if_not_installed("png")
+  m <- profile_fixture()
+  b <- m$branches[[which.max(vapply(m$branches, nrow, integer(1)))]]
+  file <- tempfile(fileext = ".png")
+  grDevices::png(file, width = 800, height = 700)
+  where <- list()
+  plot_branch_profile(m, "parallelism", branches = "longest", col = "black",
+    panel = function(column, row) if (row == "drawing") {
+      k <- which.min(abs(b$x - 40))
+      ink <- which(m$mask, arr.ind = TRUE)[1, ]
+      where$axis <<- c(grconvertX(b$x[k], "user", "device"), grconvertY(b$y[k], "user", "device"))
+      where$ink <<- c(grconvertX(ink[2], "user", "device"), grconvertY(ink[1], "user", "device"))
+    })
+  grDevices::dev.off(); on.exit(unlink(file))
+  img <- png::readPNG(file)
+  px <- function(p) img[round(p[2]), round(p[1]), 1:3]
+  axis <- px(where$axis)
+  expect_false(all(axis < 0.2))                       # not black
+  expect_gt(axis[1], axis[2] + 0.3)                   # red
+  expect_true(all(px(where$ink) < 0.1))               # ink is black
+})
+
+test_that("stacked columns, row-specific context and the axis helper work", {
+  m <- profile_fixture()
+  calls <- character()
+  with_png(plot_branch_profile(list(a = m, b = m), "parallelism", stack = TRUE,
+    context = "parallelism", panel = function(column, row) calls <<- c(calls, row)),
+    height = 900)
+  expect_identical(calls, c("drawing", "parallelism", "drawing", "parallelism"))
+  with_png({
+    expect_error(plot_branch_profile(m, stack = NA), "stack")
+    expect_error(plot_branch_profile(m, context = 1), "context")
+    plot(m, "ink", legend = FALSE)
+    expect_invisible(draw_mat_axis(m))
+    expect_no_error(draw_mat_axis(m, branches = 1, col = "grey40", width = 1))
+    expect_error(draw_mat_axis(list()), "mlv_mat")
+    expect_error(draw_mat_axis(m, width = 0), "width")
+  })
+})

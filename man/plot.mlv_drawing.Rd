@@ -24,7 +24,8 @@
   pixel_grid = FALSE,
   reach = NULL,
   reach_epsilon = NULL,
-  add = FALSE
+  add = FALSE,
+  arm_head = 0.075
 )
 }
 \arguments{
@@ -34,7 +35,9 @@
 `"curvature"`), `"junctions"`, or a mapped MAT property.}
 
 \item{col}{Contour colour when no segment property is shown; one colour,
-or one per segment.}
+or one per segment. With a mapped medial-axis property it is the colour of
+the vector contours drawn under the mapped pixels: the default draws them
+in grey, and `NA` leaves them out.}
 
 \item{lwd}{Line width.}
 
@@ -86,6 +89,8 @@ allowance, as `absolute_epsilon` and `relative_epsilon` of
 starting a new one; no axes, frame or colour bar are drawn. Useful for
 overlaying a drawing on another, for example a transformed copy on its
 original.}
+
+\item{arm_head}{Length of the arrowheads, in inches.}
 }
 \value{
 The drawing invisibly.

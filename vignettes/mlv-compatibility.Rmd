@@ -236,7 +236,7 @@ above <- mean(a[ok, "parallelism"] > b[ok, "parallelism"])
 round(100 * c(agree, parallelism_above = above))   # percent of contours
 ```
 
-```{r fig-random, fig.height = 2.75, fig.cap = sprintf("Per-contour mean scores for %d contours of eight random synthetic drawings: published (mlv2023) mode on x, package default on y, identity line in grey, correlation in each title. The modes correlate but seldom agree, and default parallelism is higher for %.0f%% of contours.", sum(ok), 100 * above)}
+```{r fig-random, fig.height = 2.75, fig.cap = sprintf("Per-contour mean scores for %d contours of eight random synthetic drawings: published (mlv2023) mode on x, package default on y, identity line in grey, correlation in each title. The modes correlate, but agree within 0.01 for at most %.0f%% of contours (%s), and default parallelism is higher for %.0f%% of contours.", sum(ok), 100 * max(agree), names(which.max(agree)), 100 * above)}
 op <- par(mfrow = c(1, 3), mar = c(2.8, 2.6, 2.4, 0.6), mgp = c(1.7, 0.45, 0),
           pty = "s", las = 1, cex.axis = 0.8, cex.lab = 0.85, cex.main = 1,
           font.main = 1, tcl = -0.25)
@@ -258,8 +258,8 @@ The two modes seldom give the same value: parallelism
 within 0.01, separation does for `r round(100 * agree[["separation"]])`% of
 contours and mirror for `r round(100 * agree[["mirror"]])`%.
 For these random drawings the per-contour correlations between modes are
-`r round(r[["parallelism"]], 2)` (parallelism), `r round(r[["separation"]], 2)`
-(separation) and `r round(r[["mirror"]], 2)` (mirror). Random line segments
+`r sprintf("%.2f", r[["parallelism"]])` (parallelism), `r sprintf("%.2f", r[["separation"]])`
+(separation) and `r sprintf("%.2f", r[["mirror"]])` (mirror). Random line segments
 make many short, irregular branches, so these values say nothing about natural
 drawings; the qualification figures for natural drawings are in the evidence
 section below. Default parallelism lies above the published values because

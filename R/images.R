@@ -233,7 +233,9 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #' @param property Optional segment property (`"orientation"`, `"length"`,
 #'   `"curvature"`), `"junctions"`, or a mapped MAT property.
 #' @param col Contour colour when no segment property is shown; one colour,
-#'   or one per segment.
+#'   or one per segment. With a mapped medial-axis property it is the colour of
+#'   the vector contours drawn under the mapped pixels: the default draws them
+#'   in grey, and `NA` leaves them out.
 #' @param lwd Line width.
 #' @param ... Arguments to the initial plot, such as `main`, `xlim` or
 #'   `axes = FALSE`.
@@ -264,6 +266,7 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #' @param reach_epsilon The absolute (pixels) and relative limits of the
 #'   allowance, as `absolute_epsilon` and `relative_epsilon` of
 #'   [detect_junctions()]; defaults to that function's defaults.
+#' @param arm_head Length of the arrowheads, in inches.
 #' @param add Draw onto the current plot, in its coordinates, instead of
 #'   starting a new one; no axes, frame or colour bar are drawn. Useful for
 #'   overlaying a drawing on another, for example a transformed copy on its
@@ -285,7 +288,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
                              palette=NULL,zlim=NULL,arms=FALSE,arm_length=NULL,
                              junction_col="#D55E00",frame=TRUE,arm_lwd=NULL,fan=0,
                              gaps=FALSE,reference_junctions=NULL,pixel_grid=FALSE,
-                             reach=NULL,reach_epsilon=NULL,add=FALSE) {
+                             reach=NULL,reach_epsilon=NULL,add=FALSE,arm_head=0.075) {
  .check_drawing(x)
  gap_set<-if(is.character(gaps)&&length(gaps)==1L&&gaps%in%c("min","max"))gaps else "all"
  if(gap_set!="all")gaps<-TRUE
@@ -293,6 +296,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
   if(!is.logical(flag)||length(flag)!=1L||is.na(flag))
    stop("legend, arms, frame, gaps, pixel_grid and add must be TRUE or FALSE",call.=FALSE)
  if(length(fan)!=1L||!is.finite(fan)||fan<0)stop("fan must be a nonnegative angle",call.=FALSE)
+ if(length(arm_head)!=1L||!is.finite(arm_head)||arm_head<=0)stop("arm_head must be a positive length",call.=FALSE)
  if(!is.null(reach))reach<-match.arg(reach,c("euclidean","chebyshev"))
  if(is.null(reach_epsilon)) {
   f<-formals(detect_junctions);reach_epsilon<-c(f$absolute_epsilon,f$relative_epsilon)
@@ -344,11 +348,14 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  # display list is replayed, so they survive resizing and re-rendering.
  if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=TRUE,only=gap_set)
  if(arms&&!is.null(reference_junctions)&&nrow(reference_junctions))
-  .replayable(.draw_arms,j=reference_junctions,len=arm_length,col="grey45",lwd=arm_lwd,fan=fan,part="ghost")
- if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="bands")
+  .replayable(.draw_arms,j=reference_junctions,len=arm_length,col="grey45",lwd=arm_lwd,fan=fan,part="ghost",head_in=arm_head)
+ if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="bands",head_in=arm_head)
  if(mat) {
   image<-x$mat_images[[property]];where<-which(is.finite(image))
-  graphics::segments(st$x1,st$y1,st$x2,st$y2,col="gray70",lwd=lwd)
+  # The vector contours as a grey underlay; col = NA leaves it out, and any
+  # other colour than the default black replaces the grey.
+  under<-if(identical(col,"black"))"gray70" else col
+  if(!all(is.na(under)))graphics::segments(st$x1,st$y1,st$x2,st$y2,col=under,lwd=lwd)
   # Each mapped pixel is a filled unit square on the raster extent
   # (0.5..width + 0.5), so mapped contours read as continuous strokes.
   fill<-matrix("transparent",nrow(image),ncol(image))
@@ -359,7 +366,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  if(!is.null(bar)).colour_bar(x,bar)
  if(show_junctions) {
   if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="heads",
-                               ink=as.matrix(st[,c("x1","y1","x2","y2")]))
+                               ink=as.matrix(st[,c("x1","y1","x2","y2")]),head_in=arm_head)
   if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=FALSE,only=gap_set)
   graphics::points(j$x,j$y,pch=21,bg=junction_col,col="white",cex=1.1)
  }
@@ -407,9 +414,9 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
 # Arms from each junction, coincident arms fanned and counted. part =
 # "bands" draws translucent bands (beneath the ink), "heads" the arrowheads
 # and counts (above it), "ghost" thin dashed grey arrows for comparison.
-.draw_arms <- function(j,len,col,lwd,fan,part=c("bands","heads","ghost"),ink=NULL) {
+.draw_arms <- function(j,len,col,lwd,fan,part=c("bands","heads","ghost"),ink=NULL,head_in=.075) {
  part<-match.arg(part)
- upi<-.user_per_inch();head<-.075*upi;half<-.045*upi
+ upi<-.user_per_inch();head<-head_in*upi;half<-.6*head_in*upi
  for(k in seq_len(nrow(j))) {
   a<-sort(unlist(j$arms[[k]],use.names=FALSE)%%360)
   if(!length(a))next

@@ -31,7 +31,9 @@
 \item{drawing}{Optional `mlv_drawing` whose segments are drawn on top, for
 example the drawing the MAT was computed from. Its dimensions must match.}
 
-\item{legend}{Draw a colour bar or key to the right of the image.}
+\item{legend}{Draw a colour bar or key to the right of the image. `"space"`
+reserves the same room without drawing a key, so that a series of stage
+figures, some with keys and some without, place the image identically.}
 
 \item{zlim}{Optional colour limits for `"distance"`, `"flux"` and scores.
 The default flux limits are symmetric about zero.}
@@ -91,8 +93,10 @@ unit:
   isoline in the image.
 * `"skeleton"`: the pixels whose flux exceeds the threshold (light red) and
   the thinned skeleton (dark red), with the ink in black.
-* `"branches"`: traced branches, one colour per branch, each labelled with
-  its index in `x$branches`.
+* `"branches"`: traced branches, one colour per branch, drawn as the medial
+  axis is drawn everywhere (a line through the pixel centres, half a pixel
+  wide, so it never reads as ink) and labelled with its index in
+  `x$branches`.
 * a branch score name present in `x$score_images` (for example
   `"parallelism"`; see [compute_mat_properties()]): the score at each
   skeleton pixel on a 0-1 sequential palette. Skeleton pixels without a

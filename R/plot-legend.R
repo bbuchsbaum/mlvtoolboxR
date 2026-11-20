@@ -132,11 +132,12 @@ colour_key.mlv_drawing <- function(x, property, palette = NULL, zlim = NULL, ...
     width <- right - left
     x0 <- left + 0.12 * width; x1 <- right - 0.12 * width
     g <- if (glyphs) 0.07 else 0
-    # Stack, top to bottom: label, bar, ticks and their values, glyphs;
-    # the stack is centred vertically in the strip.
-    stack <- (if (is.null(label)) 0 else 1.35 * line_h) + thick + tick + 1.15 * line_h +
-      (if (glyphs) 2 * g + 0.06 else 0)
-    y1 <- (top + bottom) / 2 + stack / 2 - (if (is.null(label)) 0 else 1.35 * line_h)
+    # Stack, top to bottom: label, bar, ticks and their values, then any
+    # glyphs. The stack without glyphs is centred in the strip and glyphs hang
+    # below it, so keys with and without glyphs put their bars at one height.
+    head <- if (is.null(label)) 0 else 1.6 * line_h
+    stack <- head + thick + tick + 1.15 * line_h
+    y1 <- (top + bottom) / 2 + stack / 2 - head
     y0 <- y1 - thick
     at <- function(v) x0 + (v - limits[1]) / diff(limits) * (x1 - x0)
     graphics::rasterImage(grDevices::as.raster(matrix(cols, nrow = 1L)), fx(x0), fy(y0),
@@ -161,7 +162,7 @@ colour_key.mlv_drawing <- function(x, property, palette = NULL, zlim = NULL, ...
                        cex = 0.9 * cex, xpd = NA)
     }
     if (!is.null(label))
-      graphics::text(fx(x0), fy(y1 + 0.35 * line_h), label, adj = c(0, 0), cex = cex, xpd = NA)
+      graphics::text(fx(x0), fy(y1 + 0.55 * line_h), label, adj = c(0, 0), cex = cex, xpd = NA)
   } else {
     height <- top - bottom
     x0 <- left + 0.1 * (right - left); x1 <- x0 + thick

@@ -22,8 +22,11 @@
 #'   one such entry per column.
 #' @param discs Draw the maximal inscribed disc at every `discs`-th point of
 #'   the shown branches (see [plot.mlv_mat()]); `0` draws none.
-#' @param col `NULL` colours each branch by its index, as in
-#'   `plot(x, "branches")`; otherwise colours recycled over the columns.
+#' @param col Colours of the profile curves, recycled over the columns; the
+#'   default is black. Where a column shows several branches, they are told
+#'   apart by line type and by their index at the line ends. The axis in the
+#'   drawing row is always drawn in the medial-axis colour (the skeleton red
+#'   of `plot(x, "skeleton")`), half a pixel wide, whatever `col` is.
 #' @param ylim Optional y limits: one numeric pair for every row, or a named
 #'   list of pairs keyed by `what`. The default is `c(0, 1)` for scores and
 #'   from zero to the largest value for `"radius"`.
@@ -31,7 +34,11 @@
 #'   panel, drawing included, for example the stretch over which a summary is
 #'   computed.
 #' @param context Draw the other columns' curves faintly behind each profile,
-#'   so that every column can be compared with the rest.
+#'   so that every column can be compared with the rest: `TRUE` for every row,
+#'   `FALSE` for none, or the names of the rows to give context.
+#' @param stack Place the columns one below another instead of side by side,
+#'   each at the full device width (useful on narrow devices or when a drawing
+#'   needs labels).
 #' @param blank Names in `what` that are not branch quantities but empty rows,
 #'   drawn with only their row label on the shared x scale, for `panel` to
 #'   fill (for example a diagram of fitted spans). Their y range is 0 to 1.
@@ -58,7 +65,7 @@
 plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs = 0,
                                 col = NULL, ylim = NULL, band = NULL, labels = TRUE,
                                 main = NULL, panel = NULL, cex = NULL, lwd = 1.6,
-                                context = FALSE, blank = character()) {
+                                context = FALSE, blank = character(), stack = FALSE) {
   mats <- if (inherits(x, "mlv_mat")) list(x) else x
   if (!is.list(mats) || !length(mats) || !all(vapply(mats, inherits, logical(1), "mlv_mat")))
     stop("x must be an mlv_mat or a list of them", call. = FALSE)
@@ -77,8 +84,9 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
   if (!is.null(band) && (!is.numeric(band) || length(band) != 2L || any(!is.finite(band))))
     stop("band must be two finite numbers", call. = FALSE)
   if (!is.null(panel) && !is.function(panel)) stop("panel must be a function", call. = FALSE)
-  if (!is.logical(context) || length(context) != 1L || is.na(context))
-    stop("context must be TRUE or FALSE", call. = FALSE)
+  if (is.logical(context) && length(context) == 1L && !is.na(context)) {
+    context <- if (context) what else character()
+  } else if (!is.character(context)) stop("context must be TRUE, FALSE or row names", call. = FALSE)
   pick <- if (is.list(branches) && !is.character(branches)) branches else rep(list(branches), nc)
   if (length(pick) != nc) stop("branches must have one entry per column", call. = FALSE)
   shown <- lapply(seq_len(nc), function(k) .profile_branches(mats[[k]], pick[[k]]))
@@ -101,7 +109,7 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
     if (is.numeric(ylim) && length(ylim) == 2L) return(ylim)
     if (v == "radius") {
       r <- data$value[data$what == v & is.finite(data$value)]
-      return(c(0, if (length(r)) max(r) * 1.05 else 1))
+      return(c(0, if (length(r)) max(pretty(c(0, max(r)))) else 1))
     }
     c(0, 1)
   })
@@ -115,7 +123,11 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
   left <- 2.3 * csi; right <- 0.25 * csi
   label_h <- 1.25 * csi                   # room for the row label above each profile
   title_h <- if (any(nzchar(main))) 1.5 * csi else 0.1
-  pw <- din[1] / nc - left - right
+  if (!is.logical(stack) || length(stack) != 1L || is.na(stack))
+    stop("stack must be TRUE or FALSE", call. = FALSE)
+  blocks <- if (stack) 1L else nc          # columns side by side
+  page_h <- if (stack) din[2] / nc else din[2]
+  pw <- din[1] / blocks - left - right
   # Each drawing is cropped vertically to its ink, its shown branches and their
   # discs; the full width is kept so that x matches the profiles below.
   # Every column gets the same height, centred on its content, so the drawings
@@ -131,18 +143,29 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
                        numeric(1)))
   draw_h <- pw * aspect + title_h + 0.04
   bottom <- 2.6 * csi
-  avail <- din[2] - draw_h - bottom
+  avail <- page_h - draw_h - bottom
   row_h <- avail / length(what)          # includes label_h
-  if (row_h < 0.5) {                      # too little room: shrink the drawing
-    row_h <- min(0.5, (din[2] - bottom) / (length(what) + 1))
-    draw_h <- din[2] - bottom - row_h * length(what)
+  # Too little room: shrink the drawing. The floor leaves room for each row's
+  # margins also when knitr replays the figure on a narrower (shorter) device.
+  if (row_h < 0.75) {
+    row_h <- min(0.75, (page_h - bottom) / (length(what) + 1))
+    draw_h <- page_h - bottom - row_h * length(what)
   }
   heights <- c(draw_h, rep(row_h, length(what)))
   heights[length(heights)] <- heights[length(heights)] + bottom
-  graphics::layout(matrix(seq_len((length(what) + 1L) * nc), ncol = nc), heights = heights)
+  # knitr's phone copy replays the figure at about half the height while the
+  # margins keep their size in inches: give every row at least twice its
+  # margins, taking the room from the drawing.
+  need <- 2 * c(title_h + 0.04, rep(label_h + 0.04, length(what))) + 0.1
+  need[length(need)] <- need[length(need)] + 2 * bottom
+  rows <- pmax(heights[-1], need[-1])
+  heights <- c(max(need[1], page_h - sum(rows)), rows)
+  cells <- seq_len((length(what) + 1L) * nc)
+  if (stack) graphics::layout(matrix(cells, ncol = 1L), heights = rep(heights, nc))
+  else graphics::layout(matrix(cells, ncol = nc), heights = heights)
   graphics::par(cex = s, mgp = c(1.9, 0.45, 0), tcl = -0.25, las = 1, xpd = FALSE)
-  pal <- function(k, i) if (is.null(col)) .mat_branch_colours[(i - 1L) %% length(.mat_branch_colours) + 1L]
-                         else rep_len(col, nc)[k]
+  pal <- function(k, i) if (is.null(col)) "black" else rep_len(col, nc)[k]
+  lty_of <- function(k, i) if (length(shown[[k]]) > 1L) match(i, shown[[k]]) else 1L
 
   for (k in seq_len(nc)) {
     m <- mats[[k]]
@@ -152,12 +175,9 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
     if (!is.null(band)) graphics::rect(min(band), view$y[1], max(band), view$y[2],
       col = grDevices::adjustcolor("grey50", 0.12), border = NA)
     if (discs > 0) .mat_draw_discs(m$branches[shown[[k]]], discs, view)
-    for (i in shown[[k]]) {
-      b <- m$branches[[i]]
-      graphics::rect(b$x - 0.5, b$y - 0.5, b$x + 0.5, b$y + 0.5, col = pal(k, i), border = NA)
-    }
+    .mat_draw_axis(m$branches[shown[[k]]])
     if (labels && length(shown[[k]]) > 1L)
-      .mat_branch_labels(m, shown[[k]], view, col = function(i) pal(k, i))
+      .mat_branch_labels(m, shown[[k]], view, col = .mat_axis_col)
     if (!is.null(panel)) panel(k, "drawing")
     xr <- graphics::par("usr")[1:2]
     for (j in seq_along(what)) {
@@ -168,7 +188,7 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
       usr <- graphics::par("usr")
       if (!is.null(band)) graphics::rect(min(band), usr[3], max(band), usr[4],
                                          col = "grey93", border = NA)
-      if (k == 1L) graphics::mtext(.profile_label(v), side = 3, line = 0.15, adj = 0,
+      if (k == 1L || stack) graphics::mtext(.profile_label(v), side = 3, line = 0.15, adj = 0,
                                    at = xr[1], cex = 0.8 * s, col = "grey20")
       if (v %in% blank) {
         if (!is.null(panel)) panel(k, v)
@@ -176,7 +196,7 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
       }
       graphics::axis(2, col = "grey60", col.axis = "grey25", lwd = 0.6, cex.axis = 0.8,
                      at = .profile_ticks(v, limits[[v]]), labels = FALSE)
-      if (k == 1L || nc == 1L) {
+      if (k == 1L || nc == 1L || stack) {
         # Score axes are labelled at their ends only; the middle tick marks
         # the midpoint, so a zoomed range (0 to 0.5) reads as one.
         at <- .profile_ticks(v, limits[[v]])
@@ -194,14 +214,14 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
         graphics::mtext("x (px)", side = 1, line = 1.6, cex = 0.85 * s)
       }
       graphics::segments(xr[1], usr[3], xr[1], usr[4], col = "grey60", lwd = 0.6)
-      if (context) for (kk in setdiff(seq_len(nc), k)) for (i in shown[[kk]]) {
+      if (v %in% context) for (kk in setdiff(seq_len(nc), k)) for (i in shown[[kk]]) {
         d <- data[data$column == kk & data$branch == i & data$what == v, ]
         graphics::lines(d$x, d$value, col = "grey80", lwd = 1)
       }
       for (i in shown[[k]]) {
         d <- data[data$column == k & data$branch == i & data$what == v, ]
         if (!nrow(d)) next
-        graphics::lines(d$x, d$value, col = pal(k, i), lwd = lwd)
+        graphics::lines(d$x, d$value, col = pal(k, i), lwd = lwd, lty = lty_of(k, i))
         # Points with no finite neighbour, or a branch whose finite values all
         # lie at one x, would draw no visible line: mark them as dots.
         fin <- is.finite(d$value)

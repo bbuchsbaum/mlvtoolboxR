@@ -18,7 +18,8 @@ plot_branch_profile(
   cex = NULL,
   lwd = 1.6,
   context = FALSE,
-  blank = character()
+  blank = character(),
+  stack = FALSE
 )
 }
 \arguments{
@@ -36,8 +37,11 @@ one such entry per column.}
 \item{discs}{Draw the maximal inscribed disc at every `discs`-th point of
 the shown branches (see [plot.mlv_mat()]); `0` draws none.}
 
-\item{col}{`NULL` colours each branch by its index, as in
-`plot(x, "branches")`; otherwise colours recycled over the columns.}
+\item{col}{Colours of the profile curves, recycled over the columns; the
+default is black. Where a column shows several branches, they are told
+apart by line type and by their index at the line ends. The axis in the
+drawing row is always drawn in the medial-axis colour (the skeleton red
+of `plot(x, "skeleton")`), half a pixel wide, whatever `col` is.}
 
 \item{ylim}{Optional y limits: one numeric pair for every row, or a named
 list of pairs keyed by `what`. The default is `c(0, 1)` for scores and
@@ -62,11 +66,16 @@ add annotations.}
 \item{lwd}{Width of the profile lines.}
 
 \item{context}{Draw the other columns' curves faintly behind each profile,
-so that every column can be compared with the rest.}
+so that every column can be compared with the rest: `TRUE` for every row,
+`FALSE` for none, or the names of the rows to give context.}
 
 \item{blank}{Names in `what` that are not branch quantities but empty rows,
 drawn with only their row label on the shared x scale, for `panel` to
 fill (for example a diagram of fitted spans). Their y range is 0 to 1.}
+
+\item{stack}{Place the columns one below another instead of side by side,
+each at the full device width (useful on narrow devices or when a drawing
+needs labels).}
 }
 \value{
 Invisibly, a data frame with one row per plotted point: `column`,
