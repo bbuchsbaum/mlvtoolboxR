@@ -28,7 +28,7 @@
  list(branch_estimator=s$branch_estimator,branch_definition=spec$definitions[['branch']],
   units=s$units,physical_pixel_size=.spec_scale(spec,pixels_per_degree),window=s$branch_window,
   power=s$branch_power,reference_radius=s$reference_radius,fit_tolerance=s$fit_tolerance,
-  mat=s$mat,mapping_radius=s$mapping_radius,raster_line_width=s$raster_line_width)
+  mat=s$mat,mat_definitions=spec$definitions[c("aof","morphology","branch_rule")],mapping_radius=s$mapping_radius,raster_line_width=s$raster_line_width)
 }
 .linear_histogram <- function(left,right,lengths,groups,edges,n_groups) {
  k<-length(edges)-1L;out<-matrix(0,n_groups,k)

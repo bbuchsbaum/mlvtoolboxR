@@ -31,7 +31,11 @@ An S3 `mlv_drawing` with geometry and provenance.
 Contours are ordered matrices with columns x1, y1, x2, y2. Coordinates
 are continuous image coordinates: x increases right, y increases down;
 raster pixel centers begin at (1,1). Geometry may extend outside the image.
-Zero-length segments require explicit cleaning; subpixel values are retained.
+Zero-length segments require explicit cleaning; a segment whose endpoint
+coordinates differ by at most 64 units in the last place of their own
+magnitude (rounding residue) counts as zero-length. When such segments are
+dropped, the next kept segment starts exactly where the previous one ends
+(cyclically for closed contours). Subpixel values are otherwise retained.
 }
 \examples{
 d <- mlv_drawing(list(rbind(c(1,1,11,1), c(11,1,11,6))), 20, 20)

@@ -12,7 +12,10 @@ compute_mat(
   min_component = NULL,
   min_branch_points = 10L,
   trace_branches = TRUE,
-  spec = NULL
+  spec = NULL,
+  aof = c("centered", "mlv2023"),
+  morphology = c("minimal", "hmt8", "pratt"),
+  branch_rule = c("invariant", "mlv2023")
 )
 }
 \arguments{
@@ -21,7 +24,9 @@ compute_mat(
 \item{threshold_angle}{Object angle in degrees, in [0,90].}
 
 \item{samples, epsilon}{AOF sampling parameters. Angles use alpha=(2*pi)/samples followed by alpha*k;
-the order matters when samples are mapped to discrete grid cells.}
+the order matters when samples are mapped to discrete grid cells. With
+`aof="centered"`, samples must be a multiple of 4 (the sample directions
+must be closed under quarter turns and the diagonal reflection).}
 
 \item{min_component}{Minimum component size; default scales with image size.}
 
@@ -30,18 +35,62 @@ the order matters when samples are mapped to discrete grid cells.}
 \item{trace_branches}{Trace branches now; FALSE defers this work until scoring.}
 
 \item{spec}{Optional feature specification for raster and MAT settings.}
+
+\item{aof}{Flux sampling. `"centered"` (default) centres the sampling circle
+on the pixel, reads the nearest pixel cell (both cells for a point on a cell
+boundary) and averages unit directions over all equidistant nearest boundary
+pixels; it is independent of tie order and, for samples divisible by 4, the
+flux field of a given ink raster is equivariant under the eight lattice
+rotations/reflections. Pixels whose sampling circle leaves the image are
+set to 0 symmetrically on all four borders. `"mlv2023"` reproduces MATLAB computeAOF.m exactly,
+including lowest-index tie labels: its circle is centred on the pixel corner
+(i+0.5,j+0.5) while labels are read from `floor()` cells, which misplaces
+medial ridges by half a pixel and breaks that equivariance.}
+
+\item{morphology}{Thinning used for both ink and flux skeletons; see
+[skeletonize()]. `"minimal"` (default; no simple pixel with two or more
+neighbours remains, 2x2 blocks only where all four pixels are non-simple),
+`"hmt8"` (MATLAB-exact on the reference; may keep simple non-end pixels and
+removable 2x2 blocks) or `"pratt"`.}
+
+\item{branch_rule}{Branch tracing, scoring direction and contour mapping.
+`"invariant"` (default): pixel-graph tracing without repeated points,
+branch scores averaged over both traversal directions, tangent samples
+carrying the mean score of their segment's two points, the maximum over
+exact nearest-sample ties and over branches, and valid zeros retained;
+an isolated closed loop (no end or junction pixel) is scored with circular
+windows for local estimators (it has no start) and, for the mlv2023 mirror
+fit (a global greedy segmentation), as the mean over every start pixel and
+both directions;
+per-pixel scores are unchanged by branch reversal, branch or contour
+renumbering, the start pixel of an isolated closed loop, and lattice
+rotations/reflections of the MAT fields. The whole pipeline from a drawing
+is not guaranteed lattice-equivariant: thinning is sequential
+(direction-ordered) and the rasterizer resolves exact half-pixel ties by
+slope sign.
+`"mlv2023"`: the published chain (Kovesi edgelink/cleanedgelist tracing with
+duplicated merge points, forward scores, MLV fitLineSegments for mirror,
+last-writer skeleton rating image, MATLAB tangent enumeration order with
+lowest-index ties, zeros treated as missing). Together with
+`aof="mlv2023"` and `morphology="hmt8"` (the published-compatible recipe)
+this reproduces published MLV per-pixel scores.}
 }
 \value{
 An `mlv_mat` with distance_map, nearest_boundary, AOF, skeleton,
   branches, mask and method parameters.
 }
 \description{
-Uses the MLV signed-distance construction and 60-angle AOF by default.
-Pratt thinning is the explicitly identified Octave image backend, not a
-claim of equivalence to MATLAB's proprietary skeletonization. Empty ink
-sets have Inf distances and no skeleton; an all-ink image has no valid
-medial axis under this contour-background definition. Isolated ink pixels
-retain signed distance -1. Nearest-boundary ties use the lowest R linear index;
-other backends can choose different tied pixels and consequently different
-flux and skeleton values.
+Uses the MLV signed-distance construction and a 60-sample average outward
+flux. The defaults are the corrected methods: a pixel-centred, tie-invariant
+flux (`aof="centered"`), a topology-preserving thinning that leaves no
+removable (simple) non-end pixel (`morphology="minimal"`) and order-invariant branch handling
+(`branch_rule="invariant"`). The published-compatible recipe is
+`aof="mlv2023", morphology="hmt8", branch_rule="mlv2023"`: the first two
+reproduce the published MATLAB MAT fields (distance map, AOF and skeleton)
+exactly on the Forest_DBW reference, and all three together reproduce the
+published per-pixel scores. `morphology="pratt"` is the Octave image backend.
+Empty ink sets have Inf distances and no skeleton; an all-ink image has no
+valid medial axis under this contour-background definition. Isolated ink
+pixels retain signed distance -1. The `"mlv2023"` flux uses the lowest R
+linear index among equidistant nearest boundary pixels, as MATLAB bwdist does.
 }

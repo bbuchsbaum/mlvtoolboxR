@@ -4,16 +4,29 @@
 \alias{trace_skeleton}
 \title{Trace ordered medial-axis branches}
 \usage{
-trace_skeleton(mat, min_points = 10L)
+trace_skeleton(mat, min_points = 10L, rule = NULL)
 }
 \arguments{
 \item{mat}{An mlv_mat object.}
 
-\item{min_points}{Minimum path size.}
+\item{min_points}{Minimum path size (points for `"invariant"`, Euclidean
+length for `"mlv2023"`).}
+
+\item{rule}{Branch rule; defaults to the rule recorded in `mat`.}
 }
 \value{
 A list of branch data frames with row, column, x, y, radius and AOF.
 }
 \description{
-Trace ordered medial-axis branches
+Skeleton pixels with a nonpositive signed distance lie on ink and are not
+medial points; they are excluded before tracing on every rule, and their
+count is returned as attribute `skeleton_ink_excluded`.
+`rule="invariant"` decomposes the pixel graph (diagonal steps only where no
+orthogonal connection exists) into maximal paths between end/junction
+pixels, keeping paths of at least `min_points` pixels; junction pixels are
+shared by the paths that meet there but never repeated within a path.
+`rule="mlv2023"` is the published MLV tracing: Kovesi `edgelink` with
+`cleanedgelist(minlength=min_points)` (Euclidean length), ported line by
+line, including its raster-scan traversal direction and the duplicated point
+at every merged junction.
 }

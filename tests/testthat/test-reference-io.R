@@ -3,7 +3,7 @@ test_that("compiled Pratt agrees exactly with the identified Octave backend", {
  for(name in c("box","ring","random")) {
   input<-fixture_matrix(paste0("pratt_input_",name,".csv"))>0
   reference<-fixture_matrix(paste0("pratt_output_",name,".csv"))>0
-  expect_identical(skeletonize(input),reference)
+  expect_identical(skeletonize(input,method="pratt"),reference)
  }
 })
 test_that("AOF agrees with executed upstream source on a unique-nearest field", {

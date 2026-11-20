@@ -1,7 +1,7 @@
 Package: mlvtoolbox
 Type: Package
 Title: Contour Geometry and Mid-Level Vision Analysis
-Version: 0.2.1
+Version: 0.3.0
 Authors@R: c(
     person("Bradley", "Buchsbaum", email = "brad.buchsbaum@gmail.com",
            role = c("aut", "cre", "cph")),

@@ -19,17 +19,39 @@
 #' @export
 distance_transform <- function(features) cpp_distance_transform(.check_mask(features))
 
-#' Thin a binary image using Pratt morphology
+#' Thin a binary image
+#'
+#' `"minimal"` (default) is `"hmt8"` thinning followed by sequential removal
+#' (column-major scan, repeated to a fixed point) of every 8-simple pixel that
+#' has at least two neighbours. No simple pixel with two or more neighbours
+#' remains; a 2x2 block can remain only where every one of its pixels is
+#' non-simple (removing any of them would change the 8-connected topology).
+#' The result has the same 8-connected topology as the input, keeps branch end
+#' points and is idempotent.
+#' `"hmt8"` is sequential eight-direction hit-or-miss thinning with edge and
+#' corner structuring elements, applied with background to the S, SW, E, SE, W,
+#' NW, NE and N in turn. It preserves topology but is not always one pixel wide
+#' (a 4x4 square leaves a 2x2 block; 4-connected staircase corners remain). That
+#' order reproduces MATLAB `bwmorph(...,"skel",Inf)` exactly on the Forest_DBW
+#' reference (flux skeleton and ink thinning) and is the published-compatible
+#' choice; MATLAB's own algorithm is undocumented, so wider equivalence is not
+#' claimed. `"pratt"` reproduces the Octave image 2.20.0
+#' `bwmorph(...,"skel",Inf)` lookup tables; its skeletons are not one pixel
+#' wide (strokes of even width keep two-pixel ribbons and 2x2 blocks).
+#' All three are sequential or direction-ordered, so none is equivariant under
+#' lattice rotations/reflections for general inputs.
 #' @param mask Binary ink matrix.
 #' @param min_component Minimum eight-connected component size.
+#' @param method Thinning algorithm: `"minimal"` (default), `"hmt8"` or `"pratt"`.
 #' @return Logical skeleton, with backend metadata described in the package docs.
 #' @export
-skeletonize <- function(mask,min_component=1L) {
+skeletonize <- function(mask,min_component=1L,method=c("minimal","hmt8","pratt")) {
  mask <- .check_mask(mask)
+ method <- match.arg(method)
  if(length(min_component)!=1L || !is.finite(min_component) ||
     min_component<1 || min_component!=floor(min_component) ||
     min_component>.Machine$integer.max) stop("invalid min_component",call.=FALSE)
- result <- cpp_skeletonize(mask)
+ result <- switch(method,pratt=cpp_skeletonize(mask),hmt8=cpp_skeletonize_hmt(mask),minimal=cpp_skeletonize_minimal(mask))
  if(min_component>1L)result <- cpp_remove_small(result,as.integer(min_component))
  result
 }
@@ -93,7 +115,7 @@ write_mlv_png <- function(x,file,...) {
 #' @param image Binary ink mask, grayscale matrix, RGB array, or image filename.
 #' @param threshold Values below this threshold are ink in numeric images.
 #' @param min_points Minimum traced path size.
-#' @param thin Thin the mask before tracing.
+#' @param thin Thin the mask before tracing (the default `"minimal"` thinning, or the specification's MAT morphology).
 #' @param simplify Optional nonnegative line-fit distance tolerance.
 #' @param spec Optional feature/extraction specification, exclusive of individual
 #'   extraction settings. The resulting drawing retains the specification.
@@ -120,7 +142,8 @@ trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=
   if(!is.matrix(image)||any(!is.finite(image)))stop("invalid image",call.=FALSE)
   .check_mask(image<threshold)
  }
- if(thin)mask<-skeletonize(mask)
+ morphology<-if(is.null(spec))"minimal" else spec$settings$mat$morphology
+ if(thin)mask<-skeletonize(mask,method=morphology)
  paths<-cpp_trace_graph(mask,as.integer(min_points))
  contours<-lapply(paths,function(indices) {
   rc<-arrayInd(indices,dim(mask)); xy<-cbind(rc[,2],rc[,1]); n<-nrow(xy)
@@ -128,7 +151,7 @@ trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=
  })
  x<-mlv_drawing(contours,ncol(mask),nrow(mask),
     source=list(image=source,method="pixel_graph_no_corner_cut",thin=thin,threshold=threshold,
-                morphology="octave_image_pratt_2.20.0",min_points=min_points,simplify=simplify))
+                morphology=.morphology_definition(morphology),min_points=min_points,simplify=simplify))
  if(!is.null(simplify))x<-simplify_contours(x,simplify)
  if(!is.null(spec))x$feature_spec<-spec
  x

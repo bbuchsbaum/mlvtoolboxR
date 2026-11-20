@@ -61,11 +61,16 @@ new separation score; published separation retains its one-pixel reference.}
 new branch estimator; published mirror fitting retains its one-pixel rule.}
 
 \item{junction}{Named overrides of absolute_epsilon, relative_epsilon,
-merge_radius, endpoint_radius and method. Spatial tolerances use target units.}
+merge_radius, endpoint_radius, method, rule (`"exit"` or `"mlv2023"`) and
+gap_metric (`"euclidean"` or `"chebyshev"`; defaults to `"chebyshev"` for
+rule `"mlv2023"`); see [detect_junctions()]. Spatial tolerances use target units.}
 
 \item{mat}{Named overrides of threshold_angle, samples, epsilon,
-min_component and min_branch_points. Epsilon and component/point counts
-describe the raster method and remain in pixels/samples.}
+min_component, min_branch_points, aof (`"centered"` or `"mlv2023"`),
+morphology (`"minimal"`, `"hmt8"` or `"pratt"`) and branch_rule (`"invariant"` or
+`"mlv2023"`); see [compute_mat()]. Epsilon and
+component/point counts describe the raster method and remain in
+pixels/samples. The morphology also thins extracted contours.}
 
 \item{mapping_radius, raster_line_width}{Raster mapping distance and ink width
 in pixels; rasterization is explicitly a pixel-grid operation.}

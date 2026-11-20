@@ -39,10 +39,15 @@
 #' @param fit_tolerance Straightness tolerance in target spatial units for the
 #'   new branch estimator; published mirror fitting retains its one-pixel rule.
 #' @param junction Named overrides of absolute_epsilon, relative_epsilon,
-#'   merge_radius, endpoint_radius and method. Spatial tolerances use target units.
+#'   merge_radius, endpoint_radius, method, rule (`"exit"` or `"mlv2023"`) and
+#'   gap_metric (`"euclidean"` or `"chebyshev"`; defaults to `"chebyshev"` for
+#'   rule `"mlv2023"`); see [detect_junctions()]. Spatial tolerances use target units.
 #' @param mat Named overrides of threshold_angle, samples, epsilon,
-#'   min_component and min_branch_points. Epsilon and component/point counts
-#'   describe the raster method and remain in pixels/samples.
+#'   min_component, min_branch_points, aof (`"centered"` or `"mlv2023"`),
+#'   morphology (`"minimal"`, `"hmt8"` or `"pratt"`) and branch_rule (`"invariant"` or
+#'   `"mlv2023"`); see [compute_mat()]. Epsilon and
+#'   component/point counts describe the raster method and remain in
+#'   pixels/samples. The morphology also thins extracted contours.
 #' @param mapping_radius,raster_line_width Raster mapping distance and ink width
 #'   in pixels; rasterization is explicitly a pixel-grid operation.
 #' @param extraction Named extraction settings: method, threshold, thin,
@@ -80,15 +85,29 @@ feature_spec <- function(properties=c("orientation","length","curvature","juncti
  if(units=="visual_degrees"&&branch_estimator=="mlv2023"&&any(properties%in%c("mirror","parallelism","separation","taper")))
   stop("physical branch scores require branch_estimator='arclength'",call.=FALSE)
  junction<-.spec_options(junction,list(absolute_epsilon=1,relative_epsilon=.3,merge_radius=2,
-  endpoint_radius=2,method="sweep"),"junction")
- for(k in setdiff(names(junction),"method"))junction[[k]]<-.spec_number(junction[[k]],paste0("junction.",k))
+  endpoint_radius=2,method="sweep",rule="exit",gap_metric=NULL),"junction")
+ for(k in setdiff(names(junction),c("method","rule","gap_metric")))junction[[k]]<-.spec_number(junction[[k]],paste0("junction.",k))
  junction$method<-match.arg(junction$method,c("sweep","exhaustive"))
- mat<-.spec_options(mat,list(threshold_angle=28,samples=60L,epsilon=1,min_component=NULL,min_branch_points=10L),"mat")
+ for(k in c("rule","gap_metric"))if(!is.null(junction[[k]])&&(!is.character(junction[[k]])||length(junction[[k]])!=1L||is.na(junction[[k]])))
+  stop("junction.",k," must be a single string",call.=FALSE)
+ junction$rule<-match.arg(junction$rule,c("exit","mlv2023"))
+ if(is.null(junction$gap_metric))junction$gap_metric<-if(junction$rule=="mlv2023")"chebyshev" else "euclidean"
+ junction$gap_metric<-match.arg(junction$gap_metric,c("euclidean","chebyshev"))
+ if(junction$rule=="mlv2023"&&junction$gap_metric!="chebyshev")
+  stop("junction.rule = 'mlv2023' requires junction.gap_metric = 'chebyshev'",call.=FALSE)
+ mat<-.spec_options(mat,list(threshold_angle=28,samples=60L,epsilon=1,min_component=NULL,min_branch_points=10L,
+  aof="centered",morphology="minimal",branch_rule="invariant"),"mat")
+ for(k in c("aof","morphology","branch_rule")) {
+  allowed<-switch(k,aof=c("centered","mlv2023"),morphology=c("minimal","hmt8","pratt"),branch_rule=c("invariant","mlv2023"))
+  if(!is.character(mat[[k]])||length(mat[[k]])!=1L||is.na(mat[[k]])||!mat[[k]]%in%allowed)
+   stop("mat.",k," must be one of ",paste(allowed,collapse=", "),call.=FALSE)
+ }
  mat$threshold_angle<-.spec_number(mat$threshold_angle,"threshold_angle",upper=90)
  mat$samples<-.spec_number(mat$samples,"samples",lower=4,upper=100000,integer=TRUE)
  mat$epsilon<-.spec_number(mat$epsilon,"epsilon",strict=TRUE)
  if(!is.null(mat$min_component))mat$min_component<-.spec_number(mat$min_component,"min_component",lower=1,integer=TRUE,upper=.Machine$integer.max)
  mat$min_branch_points<-.spec_number(mat$min_branch_points,"min_branch_points",lower=2,integer=TRUE,upper=.Machine$integer.max)
+ .check_centered_samples(mat$aof,mat$samples)
  mapping_radius<-.spec_number(mapping_radius,"mapping_radius",strict=TRUE)
  raster_line_width<-.spec_number(raster_line_width,"raster_line_width",strict=TRUE)
  extraction<-.spec_options(extraction,list(method="pixel_graph_no_corner_cut",threshold=.5,
@@ -111,7 +130,10 @@ feature_spec <- function(properties=c("orientation","length","curvature","juncti
  structure(list(version=1L,definitions=c(contour=switch(estimator,mlv2023="mlv2023-port-0.1.1",
   turning="vertex-dual-1",arclength="tent-source-normalized-1"),
   branch=if(branch_estimator=="mlv2023")"mlv2023-port-0.1.1" else "physical-integrals-1",histogram="1",
-  morphology="octave_image_pratt_2.20.0",tracing="pixel_graph_no_corner_cut"),settings=args),class="mlv_feature_spec")
+  aof=.aof_definition(mat$aof),morphology=.morphology_definition(mat$morphology),
+  branch_rule=.branch_rule_definition(mat$branch_rule),
+  junction=if(junction$rule=="mlv2023")"mlv2023-port-f12418a" else paste0("exit-neighbourhood-1-",junction$gap_metric),
+  tracing=.tracing_definition(mat$branch_rule)),settings=args),class="mlv_feature_spec")
 }
 #' Validate a feature specification
 #' @param spec A feature specification.
@@ -136,4 +158,22 @@ validate_feature_spec <- function(spec) {
  if(spec$settings$units=="pixels")return(1)
  ppd<-if(is.null(pixels_per_degree))spec$settings$pixels_per_degree else pixels_per_degree
  1/.spec_number(ppd,"pixels_per_degree",strict=TRUE)
+}
+
+# Versioned MAT method identifiers. Specifications and MATs built with other
+# identifiers (including the 0.2.x Pratt default) fail canonical validation.
+.aof_definition <- function(aof) switch(aof,centered="centered-tie-mean-1",mlv2023="mlv2023-computeAOF-lowest-index")
+.branch_rule_definition <- function(rule) switch(rule,
+ invariant="direction-symmetric-tiemax-graph-1",mlv2023="mlv2023-edgelink-lastwriter-1")
+.morphology_definition <- function(morphology) switch(morphology,
+ minimal="hmt8-then-sequential-simple-pixel-removal-1",
+ hmt8="sequential_hmt8_matlab_skel_order-1",pratt="octave_image_pratt_2.20.0")
+.tracing_definition <- function(rule) if(rule=="invariant")"pixel_graph_no_corner_cut" else "kovesi_edgelink_cleanedgelist"
+# The centred AOF is equivariant under all eight lattice symmetries only when the
+# sample angles 2*pi*k/samples are mapped onto themselves by a quarter turn and
+# by the diagonal reflection, i.e. when samples is a multiple of four.
+.check_centered_samples <- function(aof,samples) {
+ if(identical(aof,"centered")&&is.numeric(samples)&&length(samples)==1L&&is.finite(samples)&&samples%%4!=0)
+  stop("aof = 'centered' requires samples to be a multiple of 4 (lattice equivariance); got ",samples,call.=FALSE)
+ invisible(TRUE)
 }

@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // cpp_intersections
-NumericMatrix cpp_intersections(NumericMatrix z, IntegerVector contour, double ae, double re, bool sweep);
-RcppExport SEXP _mlvtoolbox_cpp_intersections(SEXP zSEXP, SEXP contourSEXP, SEXP aeSEXP, SEXP reSEXP, SEXP sweepSEXP) {
+NumericMatrix cpp_intersections(NumericMatrix z, IntegerVector contour, double ae, double re, bool sweep, bool euclidean);
+RcppExport SEXP _mlvtoolbox_cpp_intersections(SEXP zSEXP, SEXP contourSEXP, SEXP aeSEXP, SEXP reSEXP, SEXP sweepSEXP, SEXP euclideanSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type ae(aeSEXP);
     Rcpp::traits::input_parameter< double >::type re(reSEXP);
     Rcpp::traits::input_parameter< bool >::type sweep(sweepSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_intersections(z, contour, ae, re, sweep));
+    Rcpp::traits::input_parameter< bool >::type euclidean(euclideanSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_intersections(z, contour, ae, re, sweep, euclidean));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -135,6 +136,115 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_skeletonize_hmt
+LogicalMatrix cpp_skeletonize_hmt(LogicalMatrix mask);
+RcppExport SEXP _mlvtoolbox_cpp_skeletonize_hmt(SEXP maskSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalMatrix >::type mask(maskSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_skeletonize_hmt(mask));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_aof_centered
+NumericMatrix cpp_aof_centered(NumericMatrix distance, LogicalMatrix ink, LogicalMatrix outer, int samples, double epsilon);
+RcppExport SEXP _mlvtoolbox_cpp_aof_centered(SEXP distanceSEXP, SEXP inkSEXP, SEXP outerSEXP, SEXP samplesSEXP, SEXP epsilonSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type distance(distanceSEXP);
+    Rcpp::traits::input_parameter< LogicalMatrix >::type ink(inkSEXP);
+    Rcpp::traits::input_parameter< LogicalMatrix >::type outer(outerSEXP);
+    Rcpp::traits::input_parameter< int >::type samples(samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_aof_centered(distance, ink, outer, samples, epsilon));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_edgelink_trace
+List cpp_edgelink_trace(LogicalMatrix mask);
+RcppExport SEXP _mlvtoolbox_cpp_edgelink_trace(SEXP maskSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalMatrix >::type mask(maskSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_edgelink_trace(mask));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_cleanedgelist
+List cpp_cleanedgelist(List edgelist, double minlength);
+RcppExport SEXP _mlvtoolbox_cpp_cleanedgelist(SEXP edgelistSEXP, SEXP minlengthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type edgelist(edgelistSEXP);
+    Rcpp::traits::input_parameter< double >::type minlength(minlengthSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_cleanedgelist(edgelist, minlength));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_fit_lines_mlv
+NumericVector cpp_fit_lines_mlv(NumericMatrix xy);
+RcppExport SEXP _mlvtoolbox_cpp_fit_lines_mlv(SEXP xySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type xy(xySEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_fit_lines_mlv(xy));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_nearest_max
+List cpp_nearest_max(NumericMatrix points, NumericMatrix query, NumericMatrix values, double tol);
+RcppExport SEXP _mlvtoolbox_cpp_nearest_max(SEXP pointsSEXP, SEXP querySEXP, SEXP valuesSEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type points(pointsSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type query(querySEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type values(valuesSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_nearest_max(points, query, values, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_skeletonize_minimal
+LogicalMatrix cpp_skeletonize_minimal(LogicalMatrix mask);
+RcppExport SEXP _mlvtoolbox_cpp_skeletonize_minimal(SEXP maskSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalMatrix >::type mask(maskSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_skeletonize_minimal(mask));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_redundant_pixels
+int cpp_redundant_pixels(LogicalMatrix m);
+RcppExport SEXP _mlvtoolbox_cpp_redundant_pixels(SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalMatrix >::type m(mSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_redundant_pixels(m));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_mirror_loop
+NumericVector cpp_mirror_loop(NumericMatrix xy, double power, double tolerance);
+RcppExport SEXP _mlvtoolbox_cpp_mirror_loop(SEXP xySEXP, SEXP powerSEXP, SEXP toleranceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< double >::type power(powerSEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_mirror_loop(xy, power, tolerance));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_grouped_sums
 NumericMatrix cpp_grouped_sums(NumericVector weights, IntegerVector groups, IntegerVector bins, int ng, int nb);
 RcppExport SEXP _mlvtoolbox_cpp_grouped_sums(SEXP weightsSEXP, SEXP groupsSEXP, SEXP binsSEXP, SEXP ngSEXP, SEXP nbSEXP) {
@@ -178,7 +288,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mlvtoolbox_cpp_intersections", (DL_FUNC) &_mlvtoolbox_cpp_intersections, 5},
+    {"_mlvtoolbox_cpp_intersections", (DL_FUNC) &_mlvtoolbox_cpp_intersections, 6},
     {"_mlvtoolbox_cpp_cluster_points", (DL_FUNC) &_mlvtoolbox_cpp_cluster_points, 2},
     {"_mlvtoolbox_cpp_distance_transform", (DL_FUNC) &_mlvtoolbox_cpp_distance_transform, 1},
     {"_mlvtoolbox_cpp_aof", (DL_FUNC) &_mlvtoolbox_cpp_aof, 4},
@@ -188,6 +298,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mlvtoolbox_cpp_trace_graph", (DL_FUNC) &_mlvtoolbox_cpp_trace_graph, 2},
     {"_mlvtoolbox_cpp_nearest", (DL_FUNC) &_mlvtoolbox_cpp_nearest, 2},
     {"_mlvtoolbox_cpp_fit_lines", (DL_FUNC) &_mlvtoolbox_cpp_fit_lines, 2},
+    {"_mlvtoolbox_cpp_skeletonize_hmt", (DL_FUNC) &_mlvtoolbox_cpp_skeletonize_hmt, 1},
+    {"_mlvtoolbox_cpp_aof_centered", (DL_FUNC) &_mlvtoolbox_cpp_aof_centered, 5},
+    {"_mlvtoolbox_cpp_edgelink_trace", (DL_FUNC) &_mlvtoolbox_cpp_edgelink_trace, 1},
+    {"_mlvtoolbox_cpp_cleanedgelist", (DL_FUNC) &_mlvtoolbox_cpp_cleanedgelist, 2},
+    {"_mlvtoolbox_cpp_fit_lines_mlv", (DL_FUNC) &_mlvtoolbox_cpp_fit_lines_mlv, 1},
+    {"_mlvtoolbox_cpp_nearest_max", (DL_FUNC) &_mlvtoolbox_cpp_nearest_max, 4},
+    {"_mlvtoolbox_cpp_skeletonize_minimal", (DL_FUNC) &_mlvtoolbox_cpp_skeletonize_minimal, 1},
+    {"_mlvtoolbox_cpp_redundant_pixels", (DL_FUNC) &_mlvtoolbox_cpp_redundant_pixels, 1},
+    {"_mlvtoolbox_cpp_mirror_loop", (DL_FUNC) &_mlvtoolbox_cpp_mirror_loop, 3},
     {"_mlvtoolbox_cpp_grouped_sums", (DL_FUNC) &_mlvtoolbox_cpp_grouped_sums, 5},
     {"_mlvtoolbox_cpp_contour_lengths", (DL_FUNC) &_mlvtoolbox_cpp_contour_lengths, 1},
     {"_mlvtoolbox_cpp_geometry_histograms", (DL_FUNC) &_mlvtoolbox_cpp_geometry_histograms, 5},

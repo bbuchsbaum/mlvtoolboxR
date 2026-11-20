@@ -3,7 +3,11 @@
 #' Contours are ordered matrices with columns x1, y1, x2, y2. Coordinates
 #' are continuous image coordinates: x increases right, y increases down;
 #' raster pixel centers begin at (1,1). Geometry may extend outside the image.
-#' Zero-length segments require explicit cleaning; subpixel values are retained.
+#' Zero-length segments require explicit cleaning; a segment whose endpoint
+#' coordinates differ by at most 64 units in the last place of their own
+#' magnitude (rounding residue) counts as zero-length. When such segments are
+#' dropped, the next kept segment starts exactly where the previous one ends
+#' (cyclically for closed contours). Subpixel values are otherwise retained.
 #' @param contours List of numeric matrices with four columns.
 #' @param width,height Positive integer image dimensions.
 #' @param ids Unique character contour identifiers.
@@ -39,15 +43,40 @@ mlv_drawing <- function(contours = list(), width, height, ids = NULL,
     if (nrow(z)) {
       len <- sqrt(rowSums((z[,3:4,drop=FALSE] - z[,1:2,drop=FALSE])^2))
       if (any(!is.finite(len))) stop("coordinate differences overflow", call. = FALSE)
-      if (any(len == 0)) {
+      # Endpoints that differ only by rounding residue (64 ulp of their own
+      # magnitude, with no absolute floor so small-scale geometry stays
+      # valid) are the same point: such segments are zero-length (MLV-R009).
+      zero <- rowSums(abs(z[,3:4,drop=FALSE] - z[,1:2,drop=FALSE]) >
+                      64*.Machine$double.eps*pmax(abs(z[,1:2,drop=FALSE]),abs(z[,3:4,drop=FALSE]))) == 0
+      if (any(zero)) {
         if (zero_length == "error") stop("zero-length segment; use zero_length='drop' to clean", call. = FALSE)
-        z <- z[len > 0,,drop=FALSE]
+        n0 <- nrow(z); kept <- which(!zero)
+        closed0 <- n0 > 1L && all(abs(z[1L,1:2] - z[n0,3:4]) <=
+                                  64*.Machine$double.eps*pmax(1,abs(z[1L,1:2]),abs(z[n0,3:4])))
+        z <- z[kept,,drop=FALSE]
+        # Dropping a segment leaves its residue as a gap between neighbours;
+        # the next kept segment starts exactly where the previous one ends,
+        # cyclically for closed contours, so connectivity and closure stay
+        # exact and do not depend on the start vertex (MLV-R016).
+        for (m in seq_along(kept)[-1L]) if (kept[m]-kept[m-1L]>1L) z[m,1:2] <- z[m-1L,3:4]
+        if (length(kept) && closed0 && (kept[1L]>1L || kept[length(kept)]<n0))
+          z[1L,1:2] <- z[length(kept),3:4]
       }
       if (nrow(z)>1L && any(abs(z[-1L,1:2,drop=FALSE] -
                                    z[-nrow(z),3:4,drop=FALSE]) >
                             64*.Machine$double.eps*pmax(1,abs(z[-1L,1:2,drop=FALSE]),
                                                         abs(z[-nrow(z),3:4,drop=FALSE]))))
         stop("segments within a contour must be connected and ordered", call. = FALSE)
+      # Gaps within the residue tolerance are made exact, including the closing
+      # gap, so closure tests downstream do not depend on the start vertex or on
+      # whether a segment was dropped (MLV-R016).
+      if (nrow(z)>1L) {
+        n1 <- nrow(z)
+        z[-1L,1:2] <- z[-n1,3:4]
+        if (all(abs(z[1L,1:2] - z[n1,3:4]) <=
+                64*.Machine$double.eps*pmax(1,abs(z[1L,1:2]),abs(z[n1,3:4]))))
+          z[1L,1:2] <- z[n1,3:4]
+      }
     }
     colnames(z) <- c("x1","y1","x2","y2")
     out[[i]] <- z; keep[i] <- nrow(z)>0L

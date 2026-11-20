@@ -9,8 +9,24 @@
 Coordinates use image x/y conventions, with explicit numerical and
 morphology methods. See the package README and individual workflow functions.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/bbuchsbaum/mlvtoolboxR}
+  \item Report bugs at \url{https://github.com/bbuchsbaum/mlvtoolboxR/issues}
+}
+
+}
 \author{
-\strong{Maintainer}: Bradley Buchsbaum \email{brad.buchsbaum@gmail.com}
+\strong{Maintainer}: Bradley Buchsbaum \email{brad.buchsbaum@gmail.com} [copyright holder]
+
+Other contributors:
+\itemize{
+  \item Dirk Bernhardt-Walther (Original MLV Toolbox and scientific methods) [contributor]
+  \item Morteza Rezanejad (Original MLV and GPL-licensed AOF formulation) [contributor, copyright holder]
+  \item Josep Mones i Teixidor (GNU Octave image morphology lookup tables) [contributor, copyright holder]
+  \item Carnë Draug (GNU Octave image morphology lookup tables) [contributor, copyright holder]
+}
 
 }
 \keyword{internal}

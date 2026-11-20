@@ -20,7 +20,7 @@ trace_contours(
 
 \item{min_points}{Minimum traced path size.}
 
-\item{thin}{Thin the mask before tracing.}
+\item{thin}{Thin the mask before tracing (the default `"minimal"` thinning, or the specification's MAT morphology).}
 
 \item{simplify}{Optional nonnegative line-fit distance tolerance.}
 

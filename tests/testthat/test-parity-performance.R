@@ -61,19 +61,20 @@ test_that("grouped statistics preserve the checked non-boundary output exactly",
 test_that("diverse MAT stages agree when the nearest-boundary field is shared", {
  for(name in c("rectangle","ring","cross","diagonal","sparse","isolated")) {
   ink<-parity_read(paste0(name,".input.csv"))>0
-  m<-compute_mat(ink,trace_branches=FALSE)
+  m<-compute_mat(ink,trace_branches=FALSE,aof="mlv2023",morphology="pratt")
   D<-parity_read(paste0(name,".octave.distance.csv"))
   I<-parity_read(paste0(name,".octave.index.csv"))
   A<-parity_read(paste0(name,".octave.aof.csv"))
   S<-parity_read(paste0(name,".octave.skeleton.csv"))>0
   expect_lt(max(abs(m$distance_map-D)),2e-6)
   expect_lt(max(abs(average_outward_flux(D,I)-A)),1e-10)
-  expect_identical(skeletonize(A>(2/pi*sin(28*pi/180))*60),S)
+  expect_identical(skeletonize(A>(2/pi*sin(28*pi/180))*60,method="pratt"),S)
   h<-nrow(D);r<-row(D);c<-col(D);a<-m$nearest_boundary-1;b<-I-1
   expect_equal(unname((a%%h+1-r)^2+(a%/%h+1-c)^2),
                 unname((b%%h+1-r)^2+(b%/%h+1-c)^2),tolerance=0)
  }
  ink<-parity_read("isolated.input.csv")>0
+ expect_equal(compute_mat(ink,aof="mlv2023",morphology="pratt")$distance_map[ink],c(-1,-1))
  expect_equal(compute_mat(ink)$distance_map[ink],c(-1,-1))
 })
 test_that("branch comparisons preserve correct contracts and expose the terminal fit defect", {
@@ -108,16 +109,40 @@ test_that("spatially filtered MAT mapping agrees with exhaustive nearest samples
  ink<-which(mat$mask);rc<-arrayInd(ink,dim(mat$mask))
  for(radius in c(.1,1,4,100)) {
   expected<-matrix(NA_real_,20,40)
+  # Default (invariant) rule: a tangent sample of segment (i,i+1) carries the mean
+  # of the scores at i and i+1; exact distance ties (1e-9) take the maximum.
   for(b in branches) {
    fp<-mlvtoolbox:::.tangent_points(b)
+   seg<-(head(b$parallelism,-1)+tail(b$parallelism,-1))/2
    for(q in seq_along(ink)) {
-    ds<-rowSums(sweep(fp$points,2,rc[q,],"-")^2);at<-which.min(ds)
-    value<-b$parallelism[fp$source[at]]
-    if(sqrt(ds[at])<radius&&is.finite(value))
+    ds<-sqrt(rowSums(sweep(fp$points,2,rc[q,],"-")^2));tied<-ds<=min(ds)+1e-9
+    v<-seg[fp$source[tied]];value<-if(any(is.finite(v)))max(v[is.finite(v)]) else NA
+    if(min(ds)<radius-1e-9&&is.finite(value))
      expected[ink[q]]<-max(c(expected[ink[q]],value),na.rm=TRUE)
    }
   }
   actual<-map_mat_properties(d,mat,radius)
+  expect_equal(actual$mat_images$parallelism,expected,tolerance=0)
+  expect_identical(actual$mat_mapping_masks$parallelism,is.finite(expected))
+ }
+ # Published rule (branch_rule="mlv2023"): the original first-point / lowest-index
+ # oracle, with MLV's tangent enumeration order, scores read from the last-writer
+ # skeleton rating image, strict radius, maximum across branches, zeros missing.
+ rating<-matrix(NA_real_,20,40);for(b in branches)rating[cbind(b$row,b$column)]<-b$parallelism
+ compat<-mat;compat$parameters<-list(branch_rule="mlv2023");compat$score_images<-list(parallelism=rating)
+ for(radius in c(.1,1,4,100)) {
+  expected<-matrix(NA_real_,20,40)
+  for(b in branches) {
+   fp<-mlvtoolbox:::.tangent_points_mlv(b)
+   for(q in seq_along(ink)) {
+    ds<-rowSums(sweep(fp$points,2,rc[q,],"-")^2);at<-which.min(ds)
+    value<-rating[b$row[fp$source[at]],b$column[fp$source[at]]]
+    if(sqrt(ds[at])<radius&&is.finite(value))
+     expected[ink[q]]<-max(c(expected[ink[q]],value),na.rm=TRUE)
+   }
+  }
+  expected[which(expected==0)]<-NA
+  actual<-map_mat_properties(d,compat,radius)
   expect_equal(actual$mat_images$parallelism,expected,tolerance=0)
   expect_identical(actual$mat_mapping_masks$parallelism,is.finite(expected))
  }
