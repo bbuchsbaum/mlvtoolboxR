@@ -1,0 +1,106 @@
+# Design two matched conditions from whole contours
+
+Assigns contours to condition A, B, or unassigned, maximizing an
+additive target difference. A deterministic bounded exact search is
+intended for small problems (at most 64 eligible contours). It adds no
+solver dependency. Set matching is primary; per-drawing mode applies all
+bounds separately to every drawing and can be infeasible even when a
+pooled experiment is feasible.
+
+## Usage
+
+``` r
+design_subsets(
+  drawings,
+  spec,
+  target = "integrated_curvature",
+  length_bounds,
+  count_bounds = c(1, Inf),
+  nuisance = c(length = 0),
+  count_imbalance = Inf,
+  mode = c("set", "per_drawing"),
+  time_limit = 5,
+  max_nodes = 1e+05,
+  pixels_per_degree = NULL,
+  diagnostics = character()
+)
+```
+
+## Arguments
+
+- drawings:
+
+  Drawing or named list of drawings. All contours are eligible; subset
+  inputs first to exclude any. Drawing IDs must be unique.
+
+- spec:
+
+  A shared feature specification with normalize=FALSE and additive
+  contour properties only. It must include requested nuisance
+  histograms.
+
+- target:
+
+  Additive contour target: integrated absolute curvature at the selected
+  scale, length, or length-integrated horizontal-minus-vertical value.
+
+- length_bounds:
+
+  Common lower/upper retained length for each condition, in
+  specification spatial units. Finite, increasing, nonnegative values.
+
+- count_bounds:
+
+  Common positive lower/upper whole-contour counts.
+
+- nuisance:
+
+  Named nonnegative tolerances. \`length\` bounds absolute length
+  difference. \`orientation\`, \`curvature\`, and
+  \`horizontal_vertical\` bound raw histogram L1 distance. An empty
+  numeric vector omits nuisance constraints.
+
+- count_imbalance:
+
+  Maximum absolute count difference, or Inf.
+
+- mode:
+
+  Match over the complete set or separately within every drawing.
+
+- time_limit:
+
+  Search wall-time budget in seconds; zero performs no search.
+
+- max_nodes:
+
+  Search node budget. Preprocessing/verification are separate.
+
+- pixels_per_degree:
+
+  Optional positive calibration for each input drawing.
+
+- diagnostics:
+
+  Optional names: junctions, parallelism, separation, mirror, taper.
+  These are recomputed on selected drawings and are never optimized.
+
+## Value
+
+An \`mlv_subset_design\` containing condition drawing sets, unassigned
+drawings, original contour/source IDs, specification and input
+provenance, recomputed residuals, and solver/resource metadata. Status
+is \`optimal\`, \`infeasible\`, \`feasible\` (budget stopped with a
+solution), or \`budget_exhausted\` (no solution found). A stopped run's
+upper bound may be loose; no solution is not an infeasibility proof.
+Unsupported inputs error. \`working_data_bytes\` is an object-size
+estimate, not peak process memory. Use saveRDS/readRDS to preserve the
+complete result.
+
+## Details
+
+Nuisance constraints compare raw masses: length difference or L1
+distance between length-weighted histogram bins. Independently
+normalized histograms, transformations, junction/MAT constraints and
+spatial union coverage are not supported. Reconstruction recomputes
+features and verifies all constraints.

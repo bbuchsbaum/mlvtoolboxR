@@ -1,0 +1,124 @@
+# Detect and classify intersections between distinct contours
+
+Returns T, Y, X, Arrow and Star junctions. Same-contour self crossings
+and collinear overlaps have no unique intersection and are excluded.
+Proximate intersections merge by connected components, including
+transitive chains.
+
+## Usage
+
+``` r
+detect_junctions(
+  x,
+  absolute_epsilon = 1,
+  relative_epsilon = 0.3,
+  merge_radius = 2,
+  endpoint_radius = 2,
+  method = c("sweep", "exhaustive"),
+  gap_metric = c("euclidean", "chebyshev"),
+  rule = c("exit", "mlv2023")
+)
+```
+
+## Arguments
+
+- x:
+
+  A drawing.
+
+- absolute_epsilon:
+
+  Maximum endpoint extension in pixels, measured according to
+  \`gap_metric\`.
+
+- relative_epsilon:
+
+  Maximum endpoint extension as a segment fraction; the stricter of the
+  two limits applies.
+
+- merge_radius:
+
+  Radius for merging nearby intersections.
+
+- endpoint_radius:
+
+  Radius of the junction neighbourhood that arms must leave.
+
+- method:
+
+  Exact sweep candidate filtering or exhaustive pair enumeration.
+
+- gap_metric:
+
+  How \`absolute_epsilon\` is measured along a segment. \`"euclidean"\`
+  (default) measures length and is rotation invariant. \`"chebyshev"\`
+  (as in MLV) counts the larger coordinate change, so an extension
+  reaches one raster step: up to \`sqrt(2)\` pixels along a diagonal.
+
+- rule:
+
+  Junction definition. \`"exit"\` (default) is the definition described
+  in Details. \`"mlv2023"\` reproduces the MLV MATLAB toolbox (commit
+  f12418a), including each recorded difference (MLV-M006 to M008, M019,
+  M021 to M026 in DIFFERENCES.md): endpoint snapping, discarded negative
+  coordinates, order-dependent merging, start-first arm attachment and
+  adjacent-segment arms, no wrapping of closed contours, and its
+  interior-arm angle convention. It always uses the Chebyshev gap and
+  the exhaustive pair order; \`method\` is ignored and \`gap_metric\`
+  may only be \`"chebyshev"\`. Its members list the adjacent segments
+  MLV adds. Use it only to reproduce published MLV values.
+
+## Value
+
+A data frame with one row per junction: \`junction_id\`, position \`x\`,
+\`y\`, \`type\`, \`min_angle\` and \`max_angle\` (degrees), and three
+list columns:
+
+- \`arms\`:
+
+  The orientation of each arm, in degrees from 0 to 360,
+  counterclockwise from the positive x axis in the drawing convention
+  (image y pointing down, so 90 points up the screen), sorted
+  increasing. Two arms can share an orientation.
+
+- \`angles\`:
+
+  The gaps between consecutive arms. With \`n\` arms, \`angles\[k\] =
+  arms\[k + 1\] - arms\[k\]\` for \`k \< n\`, and the last gap wraps
+  around: \`angles\[n\] = arms\[1\] + 360 - arms\[n\]\`. Under the
+  default rule the gaps sum to 360.
+
+- \`members\`:
+
+  The incident contour and segment indices.
+
+Under \`rule = "mlv2023"\`, \`arms\` are the directions MLV itself
+assigns, not directions in the drawing convention. A segment that starts
+or ends within \`endpoint_radius\` of the junction position contributes
+its orientation pointing away from that end, and its neighbouring
+segment in the contour contributes one more arm (MLV-M024). A segment
+that passes the junction contributes, for each of its two ends, the
+direction from that end towards the junction position computed with y
+pointing up (MLV-M007). On diagonal segments these arms are therefore
+mirrored, and they can coincide with other arms. \`angles\` are computed
+from these arms exactly as above, modulo 360.
+
+## Details
+
+For the default \`rule = "exit"\`, arms are defined on the junction
+neighbourhood: the union of open discs of radius \`endpoint_radius\`
+around every intersection merged into the junction, so each merged
+crossing keeps its arms. Each incident contour contributes one arm for
+each direction in which it leaves that region, following the contour
+past vertices inside it; a contour that ends inside the region
+contributes no arm in that direction. A segment that never enters the
+region and lies wholly beyond its intersections (a gap wider than the
+radius) contributes only its arm leaving away from them. Closed contours
+wrap around. Overshoots, gaps and contour pieces shorter than the radius
+are therefore part of the junction, and the result does not depend on
+contour direction, numbering or start vertex. An arm's direction is the
+orientation of the segment through which it leaves, pointing away from
+the junction, so angles between straight arms do not depend on the
+merged position. Junctions with fewer than three arms are dropped. An
+endpoint extension exactly equal to its limit is accepted. Angles use
+the drawing convention: counterclockwise degrees, image y down.

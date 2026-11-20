@@ -1,0 +1,96 @@
+# Score one skeletal branch
+
+The taper method uses explicit moving means of width three for both
+derivative stages; this replaces the upstream unspecified adaptive
+smoothing. Final scores use a width-three moving mean and power ten.
+Separation radii below one pixel are undefined and return NA.
+
+## Usage
+
+``` r
+score_branch(
+  branch,
+  property = c("parallelism", "separation", "mirror", "taper"),
+  window = 5L,
+  power = 10,
+  estimator = c("mlv2023", "arclength"),
+  reference_radius = 1,
+  fit_tolerance = 1,
+  units = c("pixels", "visual_degrees"),
+  pixels_per_degree = NULL
+)
+```
+
+## Arguments
+
+- branch:
+
+  A data frame/list with x, y and radius vectors.
+
+- property:
+
+  Parallelism, separation, mirror or taper.
+
+- window:
+
+  Local derivative integration half-window.
+
+- power:
+
+  Final score exponent.
+
+- estimator:
+
+  Published sample-based scores or physical arc-length scores.
+
+- reference_radius:
+
+  Positive reference radius for new separation scores.
+
+- fit_tolerance:
+
+  Positive geometric residual scale for new mirror scores.
+
+- units:
+
+  Spatial units for the new estimator's window and references.
+
+- pixels_per_degree:
+
+  Required calibration for visual-degree units.
+
+## Value
+
+One numeric score per branch point.
+
+## Details
+
+With \`estimator="mlv2023"\` this function returns the published values:
+points where the score is undefined (the two end points for parallelism
+and taper, whose window has zero width; every point of a branch with
+fewer than three points, or of a mirror branch with three or fewer) are
+scored 0, and that 0 enters the final moving mean, lowering the scores
+next to it. \[compute_mat_properties()\] under the default
+\`branch_rule="invariant"\` instead marks those points NA and averages
+only the defined values in each moving-mean window (NA where none is
+defined), so a branch end takes the value of its defined neighbour
+(before smoothing) and a branch too short for a property is NA, not 0.
+The default estimator also sums every window directly rather than as a
+difference of cumulative sums: the published form can round a radius
+pair (1, 1) to 0.99999999999999989 \< 1 and so turn an exact separation
+of 0 into NA. A raw value of exactly 0 is a defined value in both modes;
+it is never replaced by NA, and smoothing averages it like any other
+value. Elsewhere the two modes agree up to rounding.
+
+The arclength estimator integrates the piecewise-linear axis and radius
+exactly over clipped physical windows. Parallelism is axis arc length
+divided by the joint axis/radius arc length. Mirror is chord/arc
+straightness divided by one plus mean squared perpendicular error /
+fit_tolerance squared. Taper is consistency with the best affine radius,
+using a dimensionless RMS residual divided by window length. Separation
+is mean radius divided by (mean radius + reference_radius). The exponent
+applies afterward. These are versioned geometric descriptors, not claims
+of perceptual equivalence. A zero-length window is undefined (NA);
+inconsistent radii at duplicate points fail. The published estimator
+ignores none of these options: nondefault new unit/reference settings
+require explicit arclength selection.

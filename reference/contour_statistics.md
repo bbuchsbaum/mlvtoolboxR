@@ -1,0 +1,90 @@
+# Histograms of drawing and contour properties
+
+Orientation, curvature and horizontal/vertical histograms are weighted
+by segment length. Length histograms collect total contour length.
+Junctions count events; per-contour junctions count each participating
+contour once. MAT histograms count mapped pixels, including valid zero
+scores. Values outside the logarithmic range enter the first/last bin.
+Orientation is axial; exact bin boundaries enter the upper bin,
+including odd bin counts.
+
+## Usage
+
+``` r
+contour_statistics(
+  x,
+  properties = c("orientation", "length", "curvature", "horizontal_vertical",
+    "junction_type", "junction_angle"),
+  bins = 8,
+  by = c("drawing", "contour"),
+  normalize = FALSE,
+  length_range = c(2, max(3, x$width + x$height)),
+  curvature_range = c(0, 90),
+  spec = x$feature_spec,
+  pixels_per_degree = NULL,
+  estimator = c("turning", "mlv2023")
+)
+```
+
+## Arguments
+
+- x:
+
+  A drawing.
+
+- properties:
+
+  Property names.
+
+- bins:
+
+  Positive number of bins (junction types always have five).
+
+- by:
+
+  Summarize the drawing or each contour.
+
+- normalize:
+
+  Scale by contour length to units per 10,000 pixels.
+
+- length_range, curvature_range:
+
+  Increasing nonnegative log-bin ranges.
+
+- spec:
+
+  Optional feature specification, exclusive of individual feature
+  settings. Enriched drawings use their saved specification by default.
+
+- pixels_per_degree:
+
+  Optional input calibration override.
+
+- estimator:
+
+  Curvature definition without a specification: vertex turning (default)
+  or the published \`"mlv2023"\` estimator.
+
+## Value
+
+A long data frame with bin boundaries, centers, values and units.
+
+## Details
+
+A value that differs from a bin edge by at most 1e-9 x max(1, \|edge\|)
+is binned as if it lay exactly on the edge, in the coordinate in which
+the bins are equally spaced (degrees for orientation and junction
+angles, log10(1 + x) for length and the published curvature, the raw
+value otherwise). Angles that are mathematically equal, such as a
+computed 59.999999999999993 and an exact 60 degrees, therefore share a
+bin on every platform. Rounding residue is many orders of magnitude
+smaller than this tolerance, and real measurement differences many
+orders larger.
+
+Without a specification, curvature uses the vertex turning estimator
+(\`estimator = "turning"\`): each vertex turn is spread uniformly over
+its dual cell, half of each adjacent segment, so every turn is counted
+once. The published estimator, \`estimator = "mlv2023"\`, assigns each
+segment the turn to its neighbour divided by its own length and so
+counts every corner twice; see \[feature_spec()\].

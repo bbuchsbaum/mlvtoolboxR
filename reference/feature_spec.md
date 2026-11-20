@@ -1,0 +1,150 @@
+# Declare a reusable measurement specification
+
+Explicit specifications use fixed ranges, independent of the canvas.
+Each method's definition is versioned separately from this
+specification's serialization format and recorded in \`definitions\`, so
+a specification states which estimator it uses whether or not that
+estimator was the default when it was built. Calibration is
+input-specific and is excluded from semantic compatibility after
+conversion to the target units.
+
+## Usage
+
+``` r
+feature_spec(
+  properties = c("orientation", "length", "curvature", "junction_type"),
+  bins = 8,
+  normalize = TRUE,
+  length_range = NULL,
+  curvature_range = c(0, 90),
+  units = c("pixels", "visual_degrees"),
+  pixels_per_degree = NULL,
+  estimator = c("turning", "mlv2023", "arclength"),
+  curvature_scale = 1,
+  branch_estimator = c("mlv2023", "arclength"),
+  branch_window = 5,
+  branch_power = 10,
+  reference_radius = 1,
+  fit_tolerance = 1,
+  junction = list(),
+  mat = list(),
+  mapping_radius = 4,
+  raster_line_width = 1,
+  extraction = list()
+)
+```
+
+## Arguments
+
+- properties:
+
+  Ordered feature names.
+
+- bins:
+
+  Histogram bin count; junction types always use five categories.
+
+- normalize:
+
+  Normalize length/count weights per 10,000 target length units.
+
+- length_range, curvature_range:
+
+  Fixed increasing nonnegative bin ranges. NULL length range means
+  c(2,400) pixels or c(0,20) visual degrees.
+
+- units:
+
+  Spatial unit: pixels or degrees of visual angle. Tangent/turning
+  angles are always measured in geometric degrees.
+
+- pixels_per_degree:
+
+  Positive calibration required for visual degrees.
+
+- estimator:
+
+  Contour curvature definition: vertex turning (default), published
+  (\`"mlv2023"\`), or arc-length-scale curvature; see Details.
+
+- curvature_scale:
+
+  Half-width of the arc-length curvature support, in target spatial
+  units. Applies only to the arclength estimator.
+
+- branch_estimator:
+
+  Published sample-based or arc-length-based scores.
+
+- branch_window:
+
+  Half-window: samples for mlv2023, target spatial units for arclength.
+
+- branch_power:
+
+  Positive score exponent.
+
+- reference_radius:
+
+  Reference radius in target spatial units for the new separation score;
+  published separation retains its one-pixel reference.
+
+- fit_tolerance:
+
+  Straightness tolerance in target spatial units for the new branch
+  estimator; published mirror fitting retains its one-pixel rule.
+
+- junction:
+
+  Named overrides of absolute_epsilon, relative_epsilon, merge_radius,
+  endpoint_radius, method, rule (\`"exit"\` or \`"mlv2023"\`) and
+  gap_metric (\`"euclidean"\` or \`"chebyshev"\`; defaults to
+  \`"chebyshev"\` for rule \`"mlv2023"\`); see \[detect_junctions()\].
+  Spatial tolerances use target units.
+
+- mat:
+
+  Named overrides of threshold_angle, samples, epsilon, min_component,
+  min_branch_points, aof (\`"centered"\` or \`"mlv2023"\`), morphology
+  (\`"minimal"\`, \`"hmt8"\` or \`"pratt"\`) and branch_rule
+  (\`"invariant"\` or \`"mlv2023"\`); see \[compute_mat()\]. Epsilon and
+  component/point counts describe the raster method and remain in
+  pixels/samples. The morphology also thins extracted contours.
+
+- mapping_radius, raster_line_width:
+
+  Raster mapping distance and ink width in pixels; rasterization is
+  explicitly a pixel-grid operation.
+
+- extraction:
+
+  Named extraction settings: method, threshold, thin, min_points,
+  simplify, provider, provider_version. Simplification is in pixels.
+
+## Value
+
+A validated \`mlv_feature_spec\`. It declares methods; constructing it
+does not calculate features or infer extraction provenance for existing
+data.
+
+## Details
+
+Curvature estimators. \`"turning"\` (the default) spreads each vertex's
+turning angle uniformly over the vertex's dual cell, the half-segments
+on either side of it, so every turn is counted once and a 90 degree
+corner integrates to 90 degrees. It has no tuning parameter, and its
+histograms are stable under resampling: a circle of radius 10 drawn with
+16 to 128 vertices, evenly or with alternating 1:2 spacing, puts all its
+length in one 8-bin curvature bin, near 180/(10 pi) degrees per pixel,
+where \`"mlv2023"\` splits the unevenly sampled circles between two
+bins. \`"arclength"\` smooths the turning density with a triangular
+kernel of half-width \`curvature_scale\`, giving curvature at a stated
+spatial scale. \`"mlv2023"\` is the published MLV estimator: each
+segment receives the whole turn to the next segment divided by its own
+length, and the last segment of a contour, which has no next segment,
+repeats the turn from the previous one. The last vertex of every contour
+is therefore counted twice (the 90 degree apex of a two-segment roof
+integrates to 180 degrees), the closing vertex of a closed contour is
+not counted, and the value at a vertex depends on the length of one
+adjacent segment only. Use it to reproduce published values
+(\`vignette("mlv-compatibility")\`).

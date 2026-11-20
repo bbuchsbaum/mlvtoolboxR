@@ -1,0 +1,133 @@
+# Construct an AOF medial-axis representation
+
+Uses the MLV signed-distance construction and a 60-sample average
+outward flux. The defaults are the package methods: a pixel-centred,
+tie-invariant flux (\`aof="centered"\`), a topology-preserving thinning
+that leaves no removable (simple) non-end pixel
+(\`morphology="minimal"\`) and order-invariant branch handling
+(\`branch_rule="invariant"\`). The published-compatible recipe is
+\`aof="mlv2023", morphology="hmt8", branch_rule="mlv2023"\`, with
+\`threshold_angle = asin(0.3\*pi/2)\*180/pi\` (28.11 degrees, flux
+threshold 0.3) to match the lab's datasets, which
+\`computeAllMATfromVecLD\` produced with the omitted-threshold value 0.3
+(MLV-M004; the default 28 degrees gives 0.2989). The first two reproduce
+the published MATLAB MAT fields (distance map, AOF and skeleton) exactly
+on the Forest_DBW reference, and all three together reproduce the
+published per-pixel scores. \`morphology="pratt"\` is the Octave image
+backend. Empty ink sets have Inf distances and no skeleton; an all-ink
+image has no valid medial axis under this contour-background definition.
+Isolated ink pixels retain signed distance -1. The \`"mlv2023"\` flux
+uses the lowest R linear index among equidistant nearest boundary
+pixels, as MATLAB bwdist does.
+
+## Usage
+
+``` r
+compute_mat(
+  mask,
+  threshold_angle = 28,
+  samples = 60L,
+  epsilon = 1,
+  min_component = NULL,
+  min_branch_points = 10L,
+  trace_branches = TRUE,
+  spec = NULL,
+  aof = c("centered", "mlv2023"),
+  morphology = c("minimal", "hmt8", "pratt"),
+  branch_rule = c("invariant", "mlv2023")
+)
+```
+
+## Arguments
+
+- mask:
+
+  Binary matrix, TRUE for ink; or a drawing.
+
+- threshold_angle:
+
+  Object angle in degrees, in \[0,90\].
+
+- samples, epsilon:
+
+  AOF sampling parameters. Angles use alpha=(2\*pi)/samples followed by
+  alpha\*k; the order matters when samples are mapped to discrete grid
+  cells. With \`aof="centered"\`, samples must be a multiple of 4 (the
+  sample directions must be closed under quarter turns and the diagonal
+  reflection).
+
+- min_component:
+
+  Minimum component size; default scales with image size.
+
+- min_branch_points:
+
+  Spur length threshold, in pixels (default \`branch_rule\`) or
+  Euclidean length (\`"mlv2023"\`). Under \`"invariant"\` only spurs
+  (paths from an end pixel to a junction) shorter than this are pruned,
+  shortest first with tied spurs kept together, and never a component's
+  last path; see \[trace_skeleton()\].
+
+- trace_branches:
+
+  Trace branches now; FALSE defers this work until scoring.
+
+- spec:
+
+  Optional feature specification for raster and MAT settings.
+
+- aof:
+
+  Flux sampling. \`"centered"\` (default) centres the sampling circle on
+  the pixel, reads the nearest pixel cell (both cells for a point on a
+  cell boundary) and averages unit directions over all equidistant
+  nearest boundary pixels; it is independent of tie order and, for
+  samples divisible by 4, the flux field of a given ink raster is
+  equivariant under the eight lattice rotations/reflections. Pixels
+  whose sampling circle leaves the image are set to 0 symmetrically on
+  all four borders. \`"mlv2023"\` reproduces MATLAB computeAOF.m
+  exactly, including lowest-index tie labels: its circle is centred on
+  the pixel corner (i+0.5,j+0.5) while labels are read from \`floor()\`
+  cells, which misplaces medial ridges by half a pixel and breaks that
+  equivariance.
+
+- morphology:
+
+  Thinning used for both ink and flux skeletons; see \[skeletonize()\].
+  \`"minimal"\` (default; no simple pixel with two or more neighbours
+  remains, 2x2 blocks only where all four pixels are non-simple),
+  \`"hmt8"\` (MATLAB-exact on the reference; may keep simple non-end
+  pixels and removable 2x2 blocks) or \`"pratt"\`.
+
+- branch_rule:
+
+  Branch tracing, scoring direction and contour mapping. \`"invariant"\`
+  (default): pixel-graph tracing without repeated points and order-free
+  spur pruning that keeps every skeleton component of two or more pixels
+  (see \[trace_skeleton()\]), branch scores NA where undefined (branch
+  ends before smoothing, branches too short for a property) instead of
+  the published zeros and averaged over both traversal directions,
+  tangent samples carrying the mean defined score of their segment's two
+  points, the maximum over exact nearest-sample ties and over branches,
+  and valid zeros retained; an isolated closed loop (no end or junction
+  pixel) is scored with circular windows for local estimators (it has no
+  start) and, for the mlv2023 mirror fit (a global greedy segmentation),
+  as the mean over every start pixel and both directions; traced
+  branches and per-pixel scores are unchanged by branch reversal, branch
+  or contour renumbering, the traced start pixel (including that of an
+  isolated closed loop), and lattice rotations/reflections of the MAT
+  fields. The whole pipeline from a drawing is not guaranteed
+  lattice-equivariant: thinning is sequential (direction-ordered) and
+  the rasterizer resolves exact half-pixel ties by slope sign.
+  \`"mlv2023"\`: the published chain (Kovesi edgelink/cleanedgelist
+  tracing with duplicated merge points, forward scores, MLV
+  fitLineSegments for mirror, last-writer skeleton rating image, MATLAB
+  tangent enumeration order with lowest-index ties, zeros treated as
+  missing). Together with \`aof="mlv2023"\` and \`morphology="hmt8"\`
+  (the published-compatible recipe) this reproduces published MLV
+  per-pixel scores.
+
+## Value
+
+An \`mlv_mat\` with distance_map, nearest_boundary, AOF, skeleton,
+branches, mask and method parameters.
