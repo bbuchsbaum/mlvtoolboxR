@@ -1,0 +1,397 @@
+---
+title: "From a line drawing to contour features"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{From a line drawing to contour features}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
+                      fig.retina = 2, fig.width = 7, fig.height = 3.5,
+                      fig.align = "center")
+library(mlvtoolbox)
+```
+
+`mlvtoolbox` measures the geometry of line drawings: the orientation, length
+and curvature of each contour, the junctions where contours meet, and the
+medial-axis symmetry of the spaces between them. This vignette builds a small
+drawing by hand, measures it, and turns the measurements into the histograms
+and per-contour feature tables used as predictors in behavioural and
+neuroimaging analyses. Every number quoted below is computed when the vignette
+is built, and each is small enough to check by hand.
+
+## A drawing is a list of contours
+
+A *contour* is one continuous stroke, stored as a matrix with one row per
+straight *segment* and columns `x1`, `y1`, `x2`, `y2`. The end of each row is
+the start of the next, so the rows trace the stroke in order; the shared
+points are the contour's *vertices*. A drawing (`mlv_drawing`) is a list of
+contours plus the size of the canvas in pixels.
+
+Coordinates are image coordinates: x increases to the right, y increases
+downward, and pixel centres sit at integers, starting at (1, 1). Coordinates
+need not be integers, and a contour may extend past the canvas.
+
+The drawing below has four contours: a straight horizon, a roof whose two
+slopes meet at a 90 degree apex, a sampled sine wave, and a closed 32-sided
+polygon approximating a circle (the sun). A closed contour is one whose last
+point equals its first.
+
+```{r drawing}
+polyline <- function(x, y) {
+  n <- length(x)
+  cbind(x1 = x[-n], y1 = y[-n], x2 = x[-1], y2 = y[-1])
+}
+wave_x <- seq(65, 115, by = 2.5)
+sun_t <- seq(0, 2 * pi, length.out = 33)
+
+drawing <- mlv_drawing(
+  list(horizon = polyline(c(5, 115), c(60, 60)),
+       roof    = polyline(c(15, 35, 55), c(60, 40, 60)),
+       wave    = polyline(wave_x, 25 + 6 * sin(wave_x / 5)),
+       sun     = polyline(90 + 10 * cos(sun_t), 45 - 10 * sin(sun_t))),
+  width = 120, height = 80,
+  ids = c("horizon", "roof", "wave", "sun"))
+drawing
+```
+
+```{r label-helper, include = FALSE}
+label_contours <- function() {
+  text(c(110, 22, 90, 107), c(56, 46, 15, 36),
+       c("horizon", "roof", "wave", "sun"), cex = 0.8, col = "grey25")
+}
+```
+
+```{r fig-drawing, fig.height = 3.6, fig.cap = "The drawing on its 120 × 80 pixel canvas. The y axis points down, as in an image, and dots mark the vertices: the horizon has two, the roof three and the sun 32."}
+op <- par(mar = c(2.5, 2.5, 1.5, 1), cex.main = 1, font.main = 1)
+plot(drawing, lwd = 1.5, main = "Four contours in image coordinates")
+vertices <- do.call(rbind, lapply(drawing$contours, function(z) z[, 1:2]))
+points(vertices, pch = 16, cex = 0.35)
+label_contours()
+par(op)
+```
+
+`mlv_drawing()` checks the input before anything is measured. Rows of a
+contour must connect, and a segment of zero length is an error unless you ask
+for it to be removed with `zero_length = "drop"`. Keep strokes that a viewer
+sees as separate in separate contours: contour identity determines which
+crossings count as junctions and which histogram a contour's length enters.
+
+## Segment measurements
+
+`as.data.frame()` returns one row per segment with three measurements.
+
+- **Orientation** is the direction from the segment's start to its end, in
+  degrees counterclockwise from the rightward x axis. Because y points down,
+  "counterclockwise" means as seen on the screen: a segment drawn up and to
+  the right has orientation 45. Orientation is directed (0 to 360); histograms
+  treat it as axial, modulo 180, because a line has no direction.
+- **Length** is the Euclidean length in pixels.
+- **Curvature** is in degrees per pixel. Under the published MLV estimator,
+  which is the default, a segment's curvature is the turning angle to the next
+  segment divided by the segment's own length; the last segment of an open
+  contour uses the turn from its previous segment.
+
+```{r segments}
+segments <- as.data.frame(drawing)
+segments[segments$contour_id %in% c("horizon", "roof"),
+         c("contour_id", "segment_index", "length", "orientation", "curvature")]
+```
+
+```{r roof-check, include = FALSE}
+roof <- segments[segments$contour_id == "roof", ]
+stopifnot(isTRUE(all.equal(roof$orientation, c(45, 315))),
+          isTRUE(all.equal(roof$length, rep(sqrt(800), 2))))
+sun <- segments[segments$contour_id == "sun", ]
+circle_curvature <- 180 / (pi * 10)
+```
+
+These values can be checked by hand. The left slope of the roof runs from
+(15, 60) to (35, 40): 20 pixels right and 20 pixels up the screen, so its
+orientation is 45 degrees and its length is √800 =
+`r round(roof$length[1], 2)` pixels. The right slope runs down and to the
+right, orientation 315. At the apex the direction changes by 90 degrees, so
+both slopes receive a curvature of 90 / `r round(roof$length[1], 2)` =
+`r round(roof$curvature[1], 2)` degrees per pixel. The sun's 32 vertices each
+turn by 360 / 32 = 11.25 degrees over segments
+`r round(sun$length[1], 3)` pixels long, a curvature of
+`r round(sun$curvature[1], 2)` degrees per pixel; a true circle of radius 10
+has curvature 180 / (10π) = `r round(circle_curvature, 2)` degrees per pixel.
+
+The roof also shows a property of the published estimator that matters when
+curvature is summed. The single 90 degree turn at the apex is assigned to
+both slopes, so the roof's length-weighted total curvature is
+`r round(sum(roof$curvature * roof$length), 1)` degrees, twice the actual
+turn. The section on feature specifications below shows estimators that count
+each turn once.
+
+`plot()` colours segments by a measurement and adds a colour bar that names
+the quantity and its unit. Orientation uses a cyclic palette over 0 to 180
+degrees, so the roof's two slopes (45 and 135 degrees, axially) sit on opposite
+sides of the colour wheel and a horizontal segment has the same colour
+whichever way it was drawn. Length and curvature use a sequential palette.
+
+```{r fig-properties, fig.height = 2.6, fig.cap = "Orientation (left, cyclic palette) and curvature (right) for each segment. The straight horizon has zero curvature; the wave is most curved at its peaks and troughs."}
+op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 1.5, 3), cex.main = 1, font.main = 1)
+plot(drawing, property = "orientation", lwd = 2.5, axes = FALSE,
+     main = "Orientation")
+plot(drawing, property = "curvature", lwd = 2.5, axes = FALSE,
+     main = "Curvature")
+par(op)
+```
+
+The colour scale for length and curvature runs over the data range by
+default. Pass a fixed `zlim` when several drawings must share one scale.
+
+## Storing measurements and junctions
+
+`compute_contour_properties()` measures the drawing once and stores the
+results on it: the segment table, the length of each contour, and the
+junctions between contours.
+
+```{r compute}
+measured <- compute_contour_properties(drawing)
+measured$contour_properties
+measured$junctions[, c("x", "y", "type", "min_angle", "max_angle")]
+```
+
+```{r junction-check, include = FALSE}
+stopifnot(nrow(measured$junctions) == 2L,
+          all(measured$junctions$type == "T"))
+```
+
+The roof ends on the horizon at both eaves, so the drawing has
+`r nrow(measured$junctions)` junctions, both T-junctions: the horizon
+contributes two arms and the roof slope a third, at
+`r round(measured$junctions$min_angle[1])` degrees to the horizon. How
+junctions are found, what an arm is and how the type and angles are defined
+are the subject of `vignette("junctions", package = "mlvtoolbox")`.
+
+## Histograms
+
+Most analyses do not use segment tables directly. They use histograms that
+summarize a drawing, or each contour, in a fixed set of bins.
+`contour_statistics()` returns them in long form, one row per bin.
+
+```{r statistics}
+stats <- contour_statistics(measured,
+                            properties = c("orientation", "length", "curvature"))
+head(stats[stats$property == "orientation",
+           c("property", "label", "lower", "upper", "value", "units")], 8)
+```
+
+```{r orientation-numbers, include = FALSE}
+ori <- stats[stats$property == "orientation", ]
+len <- stats[stats$property == "length", ]
+crv <- stats[stats$property == "curvature", ]
+length_edges <- c(len$lower, len$upper[nrow(len)])
+curvature_edges <- c(crv$lower, crv$upper[nrow(crv)])
+by_contour <- contour_statistics(measured, properties = "orientation", by = "contour")
+in_bin <- function(id, label) by_contour$value[by_contour$contour_id == id & by_contour$label == label]
+stopifnot(isTRUE(all.equal(in_bin("roof", "45"), sqrt(800))),
+          isTRUE(all.equal(in_bin("roof", "135"), sqrt(800))))
+horizon_bin <- len[len$lower <= 110 & len$upper > 110, ]
+other_lengths <- measured$contour_properties$length[-1]
+below <- len[which(len$bin == horizon_bin$bin - 1L), ]
+stopifnot(isTRUE(all.equal(horizon_bin$value, 110)),
+          all(other_lengths >= below$lower & other_lengths < below$upper))
+```
+
+The weighting is part of the definition of each histogram, and the defaults
+were chosen so that the histograms describe ink, not vertex counts:
+
+- the orientation histogram adds each segment's length to the bin of its axial
+  orientation, so a contour sampled with more vertices does not count more;
+- the length histogram adds each whole contour's length to the bin of that
+  length;
+- the curvature histogram adds segment length to the bin of the segment's
+  curvature.
+
+Length and curvature bins are equally spaced in log10(1 + x) between the ends
+of `length_range` (by default 2 pixels and the canvas width plus height) and
+`curvature_range` (by default 0 to 90 degrees per pixel). Here the 8 length
+bins have
+edges at `r paste(signif(length_edges, 3), collapse = ", ")` pixels, and the
+curvature bins at `r paste(signif(curvature_edges, 3), collapse = ", ")`
+degrees per pixel. Values outside a range enter the first or last bin.
+
+Orientation bins are centred on 0, 22.5, 45, … degrees, so the first bin runs
+from −11.25 to 11.25 degrees. It holds `r round(ori$value[1], 1)` pixels: the
+110-pixel horizon plus the near-horizontal parts of the wave and the sun. The
+45 degree bin receives the left roof slope (`r round(in_bin("roof", "45"), 1)`
+pixels) and about as much again from the rising flanks of the wave
+(`r round(in_bin("wave", "45"), 1)` pixels), plus
+`r round(in_bin("sun", "45"), 1)` from the sun. The 135 degree bin receives
+the right slope, `r round(in_bin("wave", "135"), 1)` pixels of wave and the
+same `r round(in_bin("sun", "135"), 1)` from the sun. In the length
+histogram the horizon alone fills the bin from
+`r round(horizon_bin$lower, 1)` to `r round(horizon_bin$upper, 1)` pixels;
+the other three contours, `r round(min(other_lengths))` to
+`r round(max(other_lengths))` pixels long, share the bin below it.
+
+```{r fig-histograms, fig.height = 3, fig.cap = "Drawing-level histograms. Orientation (left) is weighted by segment length and dominated by the horizontal bin; length (right) counts whole-contour length in logarithmic bins."}
+op <- par(mfrow = c(1, 2), mar = c(4.8, 4.2, 2, 0.5), las = 1, cex.axis = 0.8,
+          cex.main = 1, font.main = 1)
+barplot(ori$value, names.arg = ori$label, col = "grey60", border = NA,
+        cex.names = 0.75, las = 2, ylab = "segment length (px)",
+        main = "Orientation")
+mtext("bin centre (deg)", side = 1, line = 3.6, cex = 0.8)
+barplot(len$value, names.arg = signif(len$center, 2), col = "grey60",
+        border = NA, cex.names = 0.75, las = 2,
+        ylab = "contour length (px)", main = "Length")
+mtext("bin centre (px)", side = 1, line = 3.6, cex = 0.8)
+par(op)
+```
+
+With `normalize = TRUE` each histogram is divided by total contour length and
+expressed per 10,000 pixels of contour, so drawings with different amounts of
+ink can be compared. With `by = "contour"` the histograms are computed per
+contour instead of per drawing.
+
+## Per-contour feature tables
+
+`feature_table()` puts the per-contour histograms side by side: one row per
+contour, one column per bin, normalized per 10,000 pixels by default. This is
+the format used to fit a model of a per-contour response.
+
+```{r features}
+features <- feature_table(measured)
+dim(features)
+features[, c("contour_id", paste0("orientation_", 1:8))]
+```
+
+```{r feature-check, include = FALSE}
+stopifnot(isTRUE(all.equal(features$orientation_1[1], 10000)),
+          isTRUE(all.equal(unlist(features[4, paste0("orientation_", 1:8)],
+                                  use.names = FALSE), rep(1250, 8))))
+```
+
+The rows can again be read off the geometry. All of the horizon's length lies
+in the first orientation bin, so it scores
+`r format(features$orientation_1[1], big.mark = ",")` there
+and zero elsewhere. The roof's length divides equally between the 45 and 135
+degree bins (`r format(features$orientation_3[2], big.mark = ",")` each). The sun's 32 equal segments
+step through every orientation in 11.25 degree increments, four per bin, so
+each of the eight bins holds `r format(features$orientation_1[4], big.mark = ",")`.
+
+The table carries a schema that records each column's bin edges, weights,
+units and normalization. `feature_schema(features)` returns it, and model
+prediction uses it to refuse tables measured differently from the training
+data (see `vignette("workflows", package = "mlvtoolbox")`).
+
+## Feature specifications
+
+Two settings above depend on things other than the contour geometry. The
+default length bins end at the canvas width plus height, so the same contours
+on a larger canvas fall into different bins. The curvature estimator, junction
+rule and medial-axis method also change the numbers. A *feature
+specification* fixes all of these in one object, so that every drawing in a
+study is measured the same way and the choices are recorded with the results.
+
+```{r canvas-dependence}
+larger <- mlv_drawing(drawing$contours, width = 240, height = 160,
+                      ids = drawing$ids)
+default_small <- feature_table(drawing, properties = "length")
+default_large <- feature_table(larger, properties = "length")
+rbind(small_canvas = default_small[1, -1], large_canvas = default_large[1, -1])
+```
+
+```{r spec}
+spec <- feature_spec(c("orientation", "length", "curvature"),
+                     length_range = c(2, 400), estimator = "turning")
+identical(feature_table(drawing, spec = spec)[, -1],
+          feature_table(larger, spec = spec)[, -1])
+spec$settings[c("estimator", "bins", "length_range", "normalize")]
+```
+
+```{r spec-check, include = FALSE}
+stopifnot(identical(feature_table(drawing, spec = spec)[, -1],
+                    feature_table(larger, spec = spec)[, -1]))
+```
+
+Under the specification the horizon's length bin no longer depends on the
+canvas. The specification also records method definitions for the curvature
+estimator, the junction rule and the medial-axis stages, which is why a table
+built under one specification cannot silently be mixed with one built under
+another.
+
+The `estimator` setting selects the curvature definition. `"mlv2023"` is the
+published estimator described above and remains the default.
+`"turning"` assigns each vertex turn once, split evenly over the half-segments
+on either side of the vertex. `"arclength"` spreads each turn over a tent of
+half-width `curvature_scale` pixels along the contour, so curvature is
+expressed at a stated spatial scale and each turn is still counted once. Its
+values stop depending on vertex density once segments are shorter than that
+scale; a coarsely sampled contour still concentrates its turns at its few
+vertices. Both new estimators wrap around closed contours.
+
+```{r estimators}
+roof_only <- subset_contours(drawing, "roof")
+profiles <- lapply(c("mlv2023", "turning", "arclength"), function(e) {
+  s <- feature_spec(c("length", "curvature"), estimator = e,
+                    curvature_scale = 2)
+  as.data.frame(roof_only, spec = s)
+})
+names(profiles) <- c("mlv2023", "turning", "arclength")
+sapply(profiles, function(p) sum(p$curvature * p$length))
+```
+
+```{r estimator-check, include = FALSE}
+totals <- sapply(profiles, function(p) sum(p$curvature * p$length))
+stopifnot(isTRUE(all.equal(unname(totals), c(180, 90, 90))))
+```
+
+The integrated curvature of the roof, the sum of curvature times length, is
+`r totals[["mlv2023"]]` degrees under the published estimator and
+`r totals[["turning"]]` degrees under both corrected estimators, which matches
+the single 90 degree turn at the apex. `contour_turning()` lists the
+unsmoothed vertex turns directly.
+
+```{r fig-estimators, fig.height = 3, fig.cap = "Curvature along the roof under three estimators. The published estimator spreads the apex turn over both whole slopes and counts it twice (shaded area 180 degrees); the turning and arc-length estimators each enclose 90 degrees."}
+step_profile <- function(p) {
+  s0 <- if (is.null(p$s_start)) c(0, cumsum(p$length)[-nrow(p)]) else p$s_start
+  s1 <- if (is.null(p$s_end)) cumsum(p$length) else p$s_end
+  k0 <- if (is.null(p$curvature_start)) p$curvature else p$curvature_start
+  k1 <- if (is.null(p$curvature_end)) p$curvature else p$curvature_end
+  list(s = as.vector(rbind(s0, s1)), k = as.vector(rbind(k0, k1)))
+}
+op <- par(mfrow = c(1, 3), mar = c(4, 4, 2, 0.5), las = 1, cex.axis = 0.85,
+          cex.main = 1, font.main = 1)
+for (e in names(profiles)) {
+  z <- step_profile(profiles[[e]])
+  plot(z$s, z$k, type = "n", ylim = c(0, 50), xlab = "arc length (px)",
+       ylab = "curvature (deg/px)", main = e, bty = "l")
+  polygon(c(z$s, rev(z$s)), c(z$k, rep(0, length(z$k))),
+          col = "grey85", border = NA)
+  lines(z$s, z$k, lwd = 1.5)
+  abline(v = roof$length[1], lty = 3, col = "grey40")
+  text(roof$length[1], 48, "apex", pos = 4, cex = 0.8, col = "grey30")
+  text(56, 20, sprintf("area %g deg", totals[[e]]), adj = 1, cex = 0.85)
+}
+par(op)
+```
+
+For new studies, the arc-length estimator with a curvature scale chosen for
+the stimulus resolution states the spatial scale of every curvature value and
+counts each turn once; choose a scale longer than the typical segment so that
+the values do not depend on how finely contours were sampled. The published
+estimator is the right choice only when results must be comparable with
+published MLV values. The same
+specification can express physical units: `units = "visual_degrees"` with a
+`pixels_per_degree` calibration reports lengths in degrees of visual angle
+(curvature stays in geometric degrees per unit length).
+
+## Where to go next
+
+- `vignette("junctions", package = "mlvtoolbox")`: how junctions are found,
+  what an arm is, and where the corrected rule differs from MLV.
+- `vignette("medial-axis", package = "mlvtoolbox")`: the medial axis and the
+  parallelism, separation, mirror and taper scores mapped back onto contours.
+- `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing
+  published MLV values and what each correction changes.
+- `vignette("workflows", package = "mlvtoolbox")`: reading SVG, MAT and image
+  files, and fitting and applying models to feature tables.
+- `vignette("stimulus-design", package = "mlvtoolbox")`: selecting matched
+  subsets of contours across a stimulus set.

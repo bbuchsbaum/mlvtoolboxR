@@ -68,9 +68,10 @@ remain distinct from missing scores.
   descriptors for closure, continuation and enclosure.
 - **Measured implementation changes:** compiled geometry and fused histograms,
   with [performance and equality evidence](docs/FUSED_STATISTICS.md).
-- **Known differences and limits:** an explicit Octave-derived morphology
-  backend and tie rule; no bundled SAM weights or MATLAB serialized models.
-  Actual MATLAB equivalence has not been established.
+- **Two modes for junctions and the medial axis:** corrected defaults, and
+  explicit `mlv2023` options that reproduce outputs the original lab computed
+  in MATLAB (see [parity evidence](docs/PARITY.md)). No bundled SAM weights or
+  MATLAB serialized models.
 
 See the [comparison with the originals](docs/ATTRIBUTION.md) for scope, source
 lineage and qualification boundaries.
@@ -90,16 +91,30 @@ ordered branches, and method parameters. compute_mat_properties() adds
 parallelism, separation, mirror and optional taper ratings.
 map_mat_properties() transfers them back to contours.
 
-This is a qualified implementation with explicit methods: compiled exact
-Euclidean distance transforms, a deterministic nearest-boundary tie rule,
-Octave-image Pratt morphology and a pixel-graph tracing method. The Pratt LUTs
-and AOF have small executed Octave comparison fixtures. These checks do not
-establish equivalence to MATLAB's proprietary morphology or rasterizer, nor
-broad natural-image scientific acceptance. Executed comparisons show that
-equidistant nearest-boundary choices can change flux and skeleton pixels between
-R and Octave, despite identical distances; see [parity evidence](docs/PARITY.md).
-Taper uses documented explicit
-smoothing. See [implementation status](IMPLEMENTATION_STATUS.md).
+By default the flux is pixel-centred and independent of how equidistant
+boundary pixels are labelled, the skeleton keeps no removable pixel, and branch
+scores do not depend on branch direction or numbering. The published-compatible
+recipe reproduces the lab's stored MATLAB results: on 2,757 drawings, 99.1–99.4%
+of per-pixel scores agree within 1e-4 (residual: MATLAB's single precision).
+
+```r
+compat <- compute_mat(drawing, aof = "mlv2023", morphology = "hmt8",
+                      branch_rule = "mlv2023",
+                      threshold_angle = asin(0.3 * pi / 2) * 180 / pi)
+```
+
+These comparisons qualify computation against stored outputs, not the
+perceptual validity of the measures. See [parity evidence](docs/PARITY.md) and
+[implementation status](IMPLEMENTATION_STATUS.md).
+
+## Learn more
+
+- `vignette("getting-started", package = "mlvtoolbox")`: from a line drawing to contour features.
+- `vignette("junctions", package = "mlvtoolbox")`: how junctions are found and what they measure.
+- `vignette("medial-axis", package = "mlvtoolbox")`: medial axis and symmetry scores.
+- `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing published MLV values.
+- `vignette("workflows", package = "mlvtoolbox")`: file input, extraction and feature recipes.
+- `vignette("stimulus-design", package = "mlvtoolbox")`: matched conditions across a stimulus set.
 
 ## Manipulate and import
 
