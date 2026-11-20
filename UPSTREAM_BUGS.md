@@ -137,3 +137,58 @@ not bugs attributed to either vendored library.
 
 See [the integrated performance report](docs/FUSED_STATISTICS.md) for the exact
 qualified archive, numerical witnesses and check evidence.
+
+## Findings from qualification against stored MATLAB outputs (0.3.0)
+
+The lab's MLV datasets in the local reference collection carry outputs computed
+in MATLAB: 3,017 drawings with orientations, lengths, curvatures and junctions,
+2,757 of them with per-pixel parallelism, separation and mirror scores, and the
+full Forest_DBW distance map, AOF and skeleton. Re-executing the pinned source
+under Octave reproduces the stored fields, so these findings apply to the pinned
+revision. Each entry has a synthetic reproducer with an independently derived
+answer; full evidence, counts and oracles are in
+[the junction report](docs/evidence/mlvref/junctions/REPORT.md) and
+[the medial-axis report](docs/evidence/mlvref/mat/REPORT.md). Natural data are
+not redistributed.
+
+### MLV findings
+
+| ID | Finding | Natural effect | R treatment |
+|---|---|---|---|
+| MLV-M018 | Contract clarification: lineIntersection.m converts the 1 px gap allowance to a parameter fraction with max(abs(dx),abs(dy)), so the absolute gap is Chebyshev (up to 1.41 px on a diagonal) | 7,745 junctions change under a Euclidean gap | Default `gap_metric = "euclidean"` (rotation-invariant); `"chebyshev"` available |
+| MLV-M019 | Intersection parameters within 1e-4 of 0 or 1 snap to the segment endpoint, an error of up to 1e-4 × length | 29 junctions | Exact intersection |
+| MLV-M020 | A zero-length neighbour adds an arm of orientation atan2d(0,0) = 0 | 8 junctions | Zero-length segments are explicit input errors or dropped |
+| MLV-M021 | Interior arms are measured from the merged centroid, biasing straight-arm angles | 960 junctions | Arm direction from the segment through which the contour leaves the junction |
+| MLV-M022 | Segments attach at their start when it is within 2 px, even when the end is nearer, so reversing a contour changes the junction | part of 7,484 | Direction-free exit rule |
+| MLV-M023 | Splitting one polyline into contours with a short middle piece creates a junction | part of 7,484; 376 pseudo-junctions | Contours ending inside the neighbourhood contribute no arm |
+| MLV-M024 | Every segment of a contour inside the neighbourhood is an arm (duplicate arms; overshoots read as X) | 1,255 exact duplicates; most of 5,659 Star→X | One arm per contour exit |
+| MLV-M025 | A member segment with both endpoints beyond 2 px always gets two arms, even when it lies wholly beyond the junction | part of 7,484 | Only the arm leading away |
+| MLV-M026 | Closed contours are treated as ending at their first vertex; the junction depends on the start vertex | 68 arm-count changes; 164 junctions MLV drops | Closed contours wrap |
+| MLV-M027 | computeAOF centres its sampling circle on the pixel corner but reads labels from floor() cells: half-pixel misregistration, not lattice-equivariant; two parallel lines give a two-row ridge | 3,285 Forest skeleton pixels | Default `aof = "centered"` (pixel-centred, mean over equidistant boundary pixels) |
+| MLV-M028 | Branch scores depend on traversal direction (forward differences, movmean(2) radius, pair (i,i+1) scored by i) | Reversing branches drops stored-value agreement from 0.999 to 0.044 | Default scores are direction-symmetric |
+| MLV-M029 | mapMATtoContour reads a last-writer-wins score image and resolves exact nearest-tangent ties by enumeration order | Forest agreement 0.848 → 0.999 when emulated | Each branch keeps its own score; maximum over exact ties |
+| MLV-M030 | Kovesi cleanedgelist duplicates junction points when merging edges | 272 duplicates on Forest | Default tracing never repeats a junction pixel within a branch |
+| MLV-M031 | separation = (1 - 1/R)^10 is unbounded: radius 0 gives +Inf, radii below 0.5 exceed 1 | 11 stored +Inf samples | NA below radius 1 |
+
+MLV-M006, M007, M008 and M015 were re-verified on the natural data
+(462, 24,759, 0 and 552 affected items respectively). `rule = "mlv2023"` and
+`aof = "mlv2023"`, `branch_rule = "mlv2023"` reproduce all of these behaviours
+for published-compatible results.
+
+### R defects found and fixed
+
+| ID | Failure | Fix |
+|---|---|---|
+| MLV-R005 | Junction arm direction was the chord from the merged position, biasing straight-arm angles (28,975 natural junctions) | Direction of the leaving segment |
+| MLV-R006 | Junction arm membership depended on contour direction; contour pieces inside the neighbourhood counted as arms | Arms are exits from the open disc of radius `endpoint_radius` |
+| MLV-R007 | Closed contours did not wrap; junction type depended on the start vertex (247 natural junctions) | Indices wrap for closed contours |
+| MLV-R008 | A member segment that never reaches the disc got a phantom arm back across the junction (172 natural junctions) | Only the arm leading away |
+| MLV-R009 | Rounding-residue segments (length ~1e-13) were accepted, producing curvatures ~1e13 deg/px (19 natural segments) | Endpoints within 64 ulp of their magnitude are the same point |
+| MLV-R010 | Width-1 rasterization depended on segment direction (1,984 Forest pixels changed under reversal) | Major-axis DDA with MATLAB's half-pixel tie rule; reversal-invariant, 0 pixels missing against MATLAB's raster |
+| MLV-R011 | Coincident consecutive branch points produced NaN tangent subscripts and an error | Zero-length pairs contribute no tangent samples |
+| MLV-R012 | Skeleton pixels on ink (distance <= 0) reached branch scoring and aborted it (7 of 580 drawings, Pratt path) | Excluded before tracing on every path, with a recorded count |
+| MLV-R013 | The Octave-derived Pratt thinning is neither thin nor MATLAB's skeleton (18,035 redundant pixels vs 327 on Forest) | Default `morphology = "hmt8"`, which reproduces MATLAB's Forest skeleton exactly; Pratt kept as an option |
+| MLV-R014 | A merged junction's neighbourhood was one disc around the centroid; distant merged crossings lost or gained arms | Union of discs around every merged intersection |
+| MLV-R015 | Sweep prefilter was not conservative and exact-limit extensions depended on segment direction | Canonical segment frame, shared acceptance arithmetic; sweep and exhaustive bitwise identical |
+| MLV-R016 | Dropping a rounding-residue segment left a gap that opened closed contours | Kept segments are re-joined exactly, cyclically for closed contours |
+| MLV-R017 | `rule = "mlv2023"` visited merge partners in sweep order, not MATLAB's ascending index | Ascending order; iterative traversal |

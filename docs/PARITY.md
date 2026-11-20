@@ -1,4 +1,44 @@
-# MATLAB/Python parity: 0.1.1
+# MATLAB parity
+
+## 0.3.0: qualification against stored MATLAB outputs
+
+The Bernhardt-Walther lab's MLV datasets in the local reference collection
+contain outputs computed in MATLAB itself: 3,017 drawings (IAPS, OASIS,
+architectural scenes, Toronto scenes, Snodgrass–Vanderwart) with segment
+geometry and junctions, 2,757 of them with per-pixel parallelism, separation
+and mirror scores, and the complete Forest_DBW distance map, AOF and skeleton.
+Re-running the pinned source (f12418a) under Octave reproduces every stored
+geometry value and all junctions checked, so there is no version drift.
+Natural data stay local; only harness code, synthetic fixtures and aggregate
+receipts are committed. Evidence:
+[junctions and geometry](evidence/mlvref/junctions/REPORT.md) and
+[medial axis](evidence/mlvref/mat/REPORT.md).
+
+The package offers two modes. Defaults correct demonstrated MLV defects
+([register](../UPSTREAM_BUGS.md), MLV-M018–M031); explicit `mlv2023` options
+reproduce published values.
+
+| Stage | Published-compatible mode vs stored MATLAB | Corrected defaults vs stored MATLAB |
+|---|---|---|
+| Segment orientation, length, curvature | All 2,284,239 segments within 1e-9 (571 zero-length/residue segments are dropped by contract) | Same |
+| Junctions | `rule = "mlv2023"`: 395,125 / 395,134 exact (position, type, contour/segment lists, angles); the 9 others need zero-length segments a drawing cannot hold | `rule = "exit"`, Euclidean gap: 356,113 (90.1%) exact; every difference attributed to a named MLV defect or definition |
+| Distance map, AOF, skeleton (Forest_DBW, from the vector drawing) | `aof = "mlv2023"`, `morphology = "hmt8"`: bit-exact distances, AOF within 2.1e-14, skeleton identical (24,904 px) | Centred, tie-invariant AOF; thinning that leaves no removable (simple) pixel (`morphology = "minimal"`) |
+| Per-pixel MAT scores (all 2,757 drawings) | `branch_rule = "mlv2023"`: 99.1% / 99.4% / 99.3% of pixels within 1e-4 (parallelism / separation / mirror); per-contour r 0.9993 / 0.9999 / 0.9986; residual is MLV single precision | Invariant to branch direction and numbering, loop start and lattice transforms of the MAT fields; per-contour r 0.889 / 0.972 / 0.836 against published values |
+
+Published-compatible settings: `detect_junctions(rule = "mlv2023")`
+(implies `gap_metric = "chebyshev"`) and `compute_mat(aof = "mlv2023",
+morphology = "hmt8", branch_rule = "mlv2023")`, or the equivalent `feature_spec()` settings.
+Feature specifications record every method definition, and specifications or
+cached MATs built under other definitions are rejected.
+
+Remaining boundaries: actual MATLAB was not executed, so stored outputs are the
+MATLAB reference; MATLAB's undocumented `bwmorph('skel')` was identified
+empirically (exact on two Forest stages); rasterization tie rules were observed
+on integer endpoints only; photograph-to-drawing extraction is not qualified.
+
+## 0.1.1: synthetic Octave/Python parity (historical)
+
+The statements below describe 0.1.1. Its MAT conclusions are superseded by the 0.3.0 section above.
 
 The R port agrees with the runnable reference geometry and histograms on the
 retained forest demonstration, and with the correct stages of a broader synthetic
@@ -13,7 +53,7 @@ with image 2.20.0, and Python source
 `14b3183b91146b1021eb7ef97db75ad703b06832`, executed by Python 3.14.7
 and NumPy 2.4.3. MATLAB itself was not executed. Vendor snapshots remain unchanged.
 
-## Executed comparison matrix
+### Executed comparison matrix
 
 There are 18 synthetic cases, seed 9201, with 264 hashed CSV inputs/reference
 outputs. See the [case list](../inst/fixtures/parity/cases.csv),
@@ -46,7 +86,7 @@ adds 1e-10 to the length denominator. Label squared distances are checked exactl
 Analytical boundary, conservation, exhaustive-search and projection tests
 independently decide behavior where upstream outputs are defective.
 
-## Default MAT differences and a controlled explanation
+### Default MAT differences and a controlled explanation
 
 | Mask | R skeleton pixels | Octave pixels | Differing pixels | Intersection / union |
 |---|---:|---:|---:|---:|
@@ -75,7 +115,7 @@ Flux panels share a scale within each row. The four differing cases are shown.
 [Full metrics, including the label-substitution experiment](evidence/parity-perf/mat-topologies.csv)
 and the [asserted experiment log](evidence/parity-perf/visual-parity.log) are retained.
 
-## Retained natural drawing
+### Retained natural drawing
 
 The optional local harness reads `demos/Forest_DBW.mat` from the verified
 reference collection. SHA256:
@@ -102,7 +142,7 @@ rejects shape/nonfinite/numerical mismatches.
 This is a drawing-level geometry/histogram witness, not natural-image MAT
 acceptance or a complete photograph-to-feature comparison.
 
-## Exact adapters and remaining boundaries
+### Exact adapters and remaining boundaries
 
 - Octave uses a temporary copy with two `jj++m_Neighbors8` expressions replaced
   by `jj + m_Neighbors8`; this is an Octave parser accommodation.
@@ -127,7 +167,7 @@ MLV-R001/R002, are in [UPSTREAM_BUGS](../UPSTREAM_BUGS.md).
 The ordinary installed test suite uses the committed synthetic fixtures and
 does not require Octave, Python or the large reference collection.
 
-## Reproduce
+### Reproduce
 
 From the checkout with the optional reference runtimes installed:
 

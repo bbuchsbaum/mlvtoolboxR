@@ -1,20 +1,28 @@
 # Implementation status
 
-The R package is version 0.2.1. This file supersedes the original
+The R package is version 0.3.0. This file supersedes the original
 assessment's statements that no implementation exists.
 
-## Current qualification (0.2.1)
+## Current qualification (0.3.0)
 
-- Feature schemas, alternative estimators and the subset designer (0.2.0),
-  fused native histograms and contour graph descriptors (0.2.1) are integrated.
-- 1,332 installed assertions pass with no failures, warnings or skips.
-  R and C++ coverage is 95.0669% ([graph qualification](docs/QUALIFICATION_GRAPHS.md)).
-- Direct `R CMD check --as-cran`, including the PDF manual, gives 0 errors,
-  0 warnings and 3 notes on local macOS arm64, R 4.5.1
-  ([CRAN readiness](docs/CRAN_READINESS.md)).
-- R-devel, Windows/Linux and current HTML Tidy validation remain unexecuted.
-- 77 retained upstream MATLAB files have no explicit license grant
-  ([licensing audit](vendor/LICENSING.md)).
+- Qualified against outputs the original lab computed in MATLAB: 3,017 drawings
+  with geometry and junctions, 2,757 with per-pixel medial-axis scores, and the
+  complete Forest_DBW MAT. Pinned source under Octave reproduces the stored
+  fields (no version drift). See [PARITY](docs/PARITY.md).
+- Published-compatible options reproduce MATLAB: all segment geometry within
+  1e-9; 395,125/395,134 junctions exactly; Forest distance map, flux and
+  skeleton exactly; 99.1–99.4% of stored per-pixel symmetry scores within 1e-4,
+  with the residual traced to MLV's single-precision arithmetic.
+- Defaults correct 14 newly documented MLV defects (MLV-M018–M031) and are
+  tested for invariance to contour/branch direction and numbering and to lattice
+  symmetries. Thirteen R defects were found and fixed (MLV-R005–R017), four of them by an independent review.
+- The installed suite passes locally (macOS arm64, R 4.5.1); hosted CI covers
+  macOS, Windows and Ubuntu (R-devel, release, oldrel-1).
+- 77 retained upstream MATLAB files have no explicit license grant and are not
+  in the public repository ([licensing audit](vendor/LICENSING.md)).
+- Not qualified: actual MATLAB execution (stored outputs are the reference),
+  photograph-to-drawing extraction, and MATLAB rasterization ties on
+  non-integer endpoints.
 
 The sections below record the 0.1.1 port qualification and remain the basis
 for parity claims.
