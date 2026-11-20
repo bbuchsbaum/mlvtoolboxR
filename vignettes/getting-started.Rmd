@@ -70,16 +70,12 @@ panel <- function(title, tag) {
 type_cols <- c(T = "black", Y = "#56B4E9", X = "#CC79A7", Arrow = "#F0E442")
 type_text <- c(T = "white", Y = "black", X = "black", Arrow = "black")
 type_letter <- c(T = "T", Y = "Y", X = "X", Arrow = "A")
-# Coloured badges with the type's letter; on a narrow device, the letter alone.
+# Coloured badges with the type's letter, as in the key; smaller on a narrow
+# device, where the window's five junctions sit close together.
 badges <- function(j) replay(function(x, y, type) {
-  if (par("din")[1] < 5) {
-    w <- strwidth("M", cex = 0.75)
-    rect(x - 0.7 * w, y - 0.75 * w, x + 0.7 * w, y + 0.75 * w, col = "white", border = NA)
-    text(x, y, type_letter[type], font = 2, cex = 0.75)
-  } else {
-    points(x, y, pch = 21, bg = type_cols[type], col = "grey20", cex = 1.9, lwd = 0.6)
-    text(x, y, type_letter[type], cex = 0.6, font = 2, col = type_text[type])
-  }
+  s <- if (par("din")[1] < 5) 0.6 else 1
+  points(x, y, pch = 21, bg = type_cols[type], col = "grey20", cex = 1.9 * s, lwd = 0.6)
+  text(x, y, type_letter[type], cex = 0.6 * s, font = 2, col = type_text[type])
 }, x = j$x, y = j$y, type = j$type)
 type_key <- function(j) {
   par(mar = c(0, 0, 0, 0)); plot.new()
@@ -109,16 +105,21 @@ disc_points <- axis_points[apply(spots, 1, function(p)
 disc_points <- disc_points[with(disc_points, x - radius > 0.5 & x + radius < 240.5 &
                                   y - radius > 0.5 & y + radius < 160.5), ]
 # Mapped scores drawn `widen` pixels to each side of the ink, so their colour
-# can be read at a glance; each pixel takes the highest score within reach.
+# can be read at a glance. Ink pixels keep their own scores; each added pixel
+# takes the score of its nearest ink pixel.
 widen <- 1
 mapped_wide <- function(d, property, w) {
   img <- d$mat_images[[property]]; out <- img
-  for (dr in -w:w) for (dc in -w:w) {
+  steps <- expand.grid(dr = -w:w, dc = -w:w)
+  steps <- steps[order(steps$dr^2 + steps$dc^2), ][-1, ]
+  for (k in seq_len(nrow(steps))) {
+    dr <- steps$dr[k]; dc <- steps$dc[k]
     shifted <- matrix(NA_real_, nrow(img), ncol(img))
     rr <- max(1, 1 + dr):min(nrow(img), nrow(img) + dr)
     cc <- max(1, 1 + dc):min(ncol(img), ncol(img) + dc)
     shifted[rr, cc] <- img[rr - dr, cc - dc]
-    out <- pmax(out, shifted, na.rm = TRUE)
+    fill <- !is.finite(out) & is.finite(shifted)
+    out[fill] <- shifted[fill]
   }
   fill <- matrix("transparent", nrow(out), ncol(out)); ok <- is.finite(out)
   pal <- grDevices::hcl.colors(256, "Viridis")
@@ -127,7 +128,7 @@ mapped_wide <- function(d, property, w) {
 }
 ```
 
-```{r fig-showcase, echo = FALSE, fig.height = 6.9, fig.cap = sprintf("What the package measures, on one synthetic room of %d contours. Top: the %d junctions it finds, coloured by type, and the orientation of every segment. Bottom: the medial axis (red) between the contours, with %d of its inscribed discs, and the parallelism of the space beside each contour, mapped back onto it (drawn %d px wide). Each panel names the vignette that explains it.", length(scene$contours), nrow(scene_junctions), nrow(disc_points), 2 * widen + 1)}
+```{r fig-showcase, echo = FALSE, fig.height = 6.9, fig.cap = sprintf("What the package measures, on one synthetic room of %d contours. Top: the %d junctions it finds, coloured by type, and segment orientation. Bottom: the medial axis (red) between the contours, with %d of its inscribed discs, and the parallelism of the space beside each contour, mapped back onto it (drawn %d px wide; added pixels copy the nearest ink pixel). Each panel names its vignette.", length(scene$contours), nrow(scene_junctions), nrow(disc_points), 2 * widen + 1)}
 layout(matrix(1:8, 4), heights = c(1, lcm(1.25), 1, lcm(1.25)))
 op <- par(mar = c(0.2, 0.2, 2.2, 0.2), cex = 0.8)
 # Column 1: junctions, then the medial axis.
@@ -642,12 +643,9 @@ title(xlab = "arc length along the roof (px)", line = 2, cex.lab = 0.85)
 title(ylab = "accumulated turning (°)", line = 2.6, cex.lab = 0.85)
 text(apex, 186, "apex", pos = 4, cex = 0.75, col = "grey30", offset = 0.3)
 # Names against each curve, where it is alone; totals at the right-hand ends.
-text(46, 150, "published (mlv2023)", adj = c(1, 0), cex = 0.8)
+text(26.6, 98, "published\n(mlv2023)", adj = c(1, 0), cex = 0.8)
 text(37, 62, "turning", adj = c(0, 1), cex = 0.8)
-# Between the dashed plateau and the solid ramp there is little room; on a
-# narrow device the label shrinks to fit it.
-replay(function() text(31.5, 86, "arc length", adj = c(0, 1),
-                       cex = if (par("din")[1] < 5) 0.6 else 0.8))
+text(29.6, 25, "arc length", adj = c(0, 0.5), cex = 0.8)
 text(roof_length, unique(totals), paste0(unique(totals), "°"), pos = 4, xpd = NA, cex = 0.8,
      offset = 0.3)
 par(op)

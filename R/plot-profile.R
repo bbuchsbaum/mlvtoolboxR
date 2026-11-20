@@ -144,6 +144,8 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
   draw_h <- pw * aspect + title_h + 0.04
   bottom <- 2.6 * csi
   avail <- page_h - draw_h - bottom
+  # Blank rows (annotations) get half the height of a data row.
+  weight <- ifelse(what %in% blank, 0.5, 1)
   row_h <- avail / length(what)          # includes label_h
   # Too little room: shrink the drawing. The floor leaves room for each row's
   # margins also when knitr replays the figure on a narrower (shorter) device.
@@ -151,7 +153,7 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
     row_h <- min(0.75, (page_h - bottom) / (length(what) + 1))
     draw_h <- page_h - bottom - row_h * length(what)
   }
-  heights <- c(draw_h, rep(row_h, length(what)))
+  heights <- c(draw_h, row_h * length(what) * weight / sum(weight))
   heights[length(heights)] <- heights[length(heights)] + bottom
   # knitr's phone copy replays the figure at about half the height while the
   # margins keep their size in inches: give every row at least twice its

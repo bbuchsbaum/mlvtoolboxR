@@ -416,7 +416,9 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
 # and counts (above it), "ghost" thin dashed grey arrows for comparison.
 .draw_arms <- function(j,len,col,lwd,fan,part=c("bands","heads","ghost"),ink=NULL,head_in=.075) {
  part<-match.arg(part)
- upi<-.user_per_inch();head<-head_in*upi;half<-.6*head_in*upi
+ # Heads keep their size in inches but never exceed a third of the arm, so a
+ # small glyph (or its copy on a narrow device) is not all arrowhead.
+ upi<-.user_per_inch();head<-min(head_in*upi,len/3);half<-.6*head
  for(k in seq_len(nrow(j))) {
   a<-sort(unlist(j$arms[[k]],use.names=FALSE)%%360)
   if(!length(a))next

@@ -268,3 +268,18 @@ test_that("legend = \"space\" reserves the legend room without drawing a key", {
   expect_equal(usr_of("space"), usr_of(TRUE))
   with_png(expect_error(plot(f$mat, "ink", legend = "yes"), "legend"))
 })
+
+test_that("the medial axis band has no seams inside a straight run", {
+  skip_if_not_installed("png")
+  branch <- data.frame(x = 5:35, y = rep(10, 31))
+  file <- tempfile(fileext = ".png")
+  grDevices::png(file, width = 800, height = 300)
+  par(mar = c(0, 0, 0, 0)); plot.new(); plot.window(c(0, 40), c(20, 0), asp = 1)
+  draw_mat_axis(structure(list(branches = list(branch)), class = "mlv_mat"))
+  xs <- grconvertX(seq(5.5, 34.5, by = 0.25), "user", "device")  # joints and between
+  y <- grconvertY(10, "user", "device")
+  grDevices::dev.off(); on.exit(unlink(file))
+  img <- png::readPNG(file)
+  rgb <- t(vapply(round(xs), function(x) img[round(y), x, 1:3], numeric(3)))
+  expect_true(all(rgb[, 1] > rgb[, 2] + 0.3))   # every joint is axis red, none background
+})

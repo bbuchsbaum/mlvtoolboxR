@@ -266,23 +266,40 @@ colour_key.mlv_mat <- function(x, what = "flux", zlim = NULL, col = NULL, ...) {
 .mat_axis_col <- .mat_skeleton_colour
 
 # Draws branches as the medial axis: a band of `width` pixels along the path
-# through the pixel centres (polygons in image units, so the weight scales
-# with the image, also on a replayed copy). Steps longer than one diagonal
-# pixel are not joined.
+# through the pixel centres, in image units (so the weight scales with the
+# image, also on a replayed copy). Each run of joined points (steps up to one
+# diagonal pixel) is one mitred polygon with square ends, so antialiasing
+# leaves no seams inside the band; an isolated point is a small square.
 .mat_draw_axis <- function(branches, col = .mat_axis_col, width = 0.5) {
   h <- width / 2
+  band <- function(x, y) {
+    dx <- diff(x); dy <- diff(y); len <- sqrt(dx^2 + dy^2)
+    ux <- dx / len; uy <- dy / len                  # unit directions of the segments
+    nx <- -uy; ny <- ux                             # left normals
+    m <- length(x)
+    vx <- c(nx[1], nx[-1] + nx[-(m - 1)], nx[m - 1])
+    vy <- c(ny[1], ny[-1] + ny[-(m - 1)], ny[m - 1])
+    vl <- sqrt(vx^2 + vy^2); vx <- vx / vl; vy <- vy / vl
+    seg_n <- cbind(c(nx, nx[m - 1]), c(ny, ny[m - 1]))
+    miter <- pmin(2, 1 / pmax(0.5, vx * seg_n[, 1] + vy * seg_n[, 2])) * h
+    # square ends: push the first and last vertices outward along the path
+    x[1] <- x[1] - ux[1] * h; y[1] <- y[1] - uy[1] * h
+    x[m] <- x[m] + ux[m - 1] * h; y[m] <- y[m] + uy[m - 1] * h
+    graphics::polygon(c(x + vx * miter, rev(x - vx * miter)),
+                      c(y + vy * miter, rev(y - vy * miter)), col = col, border = NA)
+  }
   for (b in branches) {
     n <- nrow(b); if (!n) next
-    graphics::rect(b$x - h, b$y - h, b$x + h, b$y + h, col = col, border = NA)
-    if (n < 2L) next
-    dx <- diff(b$x); dy <- diff(b$y); len <- sqrt(dx^2 + dy^2)
-    j <- which(len > 0 & len < 1.5)
-    if (!length(j)) next
-    nx <- -dy[j] / len[j] * h; ny <- dx[j] / len[j] * h
-    x0 <- b$x[j]; y0 <- b$y[j]; x1 <- b$x[j + 1L]; y1 <- b$y[j + 1L]
-    px <- rbind(x0 + nx, x1 + nx, x1 - nx, x0 - nx, NA)
-    py <- rbind(y0 + ny, y1 + ny, y1 - ny, y0 - ny, NA)
-    graphics::polygon(c(px), c(py), col = col, border = NA)
+    keep <- c(TRUE, diff(b$x) != 0 | diff(b$y) != 0)      # drop repeated points
+    x <- b$x[keep]; y <- b$y[keep]; n <- length(x)
+    step <- if (n > 1L) sqrt(diff(x)^2 + diff(y)^2) else numeric()
+    run <- cumsum(c(TRUE, step >= 1.5))                     # breaks between runs
+    for (r in unique(run)) {
+      i <- which(run == r)
+      if (length(i) == 1L) graphics::rect(x[i] - h, y[i] - h, x[i] + h, y[i] + h,
+                                          col = col, border = NA)
+      else band(x[i], y[i])
+    }
   }
 }
 
@@ -338,6 +355,13 @@ draw_mat_axis <- function(x, branches = NULL, col = .mat_axis_col, width = 0.5) 
                     diff(limits) * (length(colours) - 1L) + 0.5)
   k[!is.finite(z)] <- NA
   matrix(ifelse(is.na(k), "transparent", colours[k]), nrow(z), ncol(z))
+}
+
+# A true minus sign for negative tick labels, except on the pdf() and
+# postscript() devices, whose default single-byte encodings lack it.
+.true_minus <- function(labels) {
+  if (names(grDevices::dev.cur()) %in% c("pdf", "postscript")) labels
+  else sub("^-", "\u2212", labels)
 }
 
 .mat_range <- function(z) {
@@ -445,7 +469,7 @@ draw_mat_axis <- function(x, branches = NULL, col = .mat_axis_col, width = 0.5) 
 
 .mat_bar_labels <- function(bar) {
   at <- pretty(bar$limits, 4); at <- at[at >= bar$limits[1] & at <= bar$limits[2]]
-  labels <- format(at, trim = TRUE)
+  labels <- .true_minus(format(at, trim = TRUE))
   if (!is.null(bar$mark) && bar$mark >= bar$limits[1] && bar$mark <= bar$limits[2]) {
     keep <- abs(at - bar$mark) > 0.12 * diff(bar$limits)
     at <- c(at[keep], bar$mark)

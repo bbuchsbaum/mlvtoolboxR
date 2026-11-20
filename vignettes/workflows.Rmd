@@ -95,7 +95,7 @@ simplified <- trace_contours(png_file, simplify = 1)
 simplified
 ```
 
-```{r fig-trace, eval = has_xml2 && has_png, fig.height = 1.8, fig.cap = if (has_xml2 && has_png) sprintf("The SVG drawing (left), its raster copy (middle) and the contours traced from it, simplified to 1 px (right, raster in grey). Tracing splits the horizon into %d pieces at the roof; the middle piece lies %d pixel higher (row %d, not %d), so each outer piece tilts up toward the roof. The apex moves from (%g, %g) to (%g, %g); the circle becomes a %s.", length(horizon_pieces), svg_row - middle_row, middle_row, svg_row, svg_apex[1], svg_apex[2], traced_apex[1], traced_apex[2], if (circle_sides == 5) "pentagon" else paste0(circle_sides, "-sided polygon"))}
+```{r fig-trace, eval = has_xml2 && has_png, fig.height = 1.8, fig.cap = if (has_xml2 && has_png) sprintf("The SVG drawing (left), its raster copy (middle) and the contours traced from it, simplified to 1 px (right, one colour per contour, raster in grey). Tracing splits the horizon into %d pieces at the roof; the middle piece lies %d pixel higher (row %d, not %d), so each outer piece tilts up toward the roof. The apex moves from (%g, %g) to (%g, %g); the circle becomes a %s.", length(horizon_pieces), svg_row - middle_row, middle_row, svg_row, svg_apex[1], svg_apex[2], traced_apex[1], traced_apex[2], if (circle_sides == 5) "pentagon" else paste0(circle_sides, "-sided polygon"))}
 ink <- read_mlv_image(png_file) < 0.5
 pixels <- function(colour) as.raster(matrix(ifelse(ink, colour, "transparent"), nrow(ink)))
 pieces <- simplified$contours
@@ -103,7 +103,7 @@ pieces <- simplified$contours
 # apart; the roof and the circle in two more.
 horizon_ids <- which(vapply(pieces, function(z) min(z[, c(2, 4)]) >= 29, TRUE))
 traced_cols <- rep("#56B4E9", length(pieces))
-traced_cols[horizon_ids] <- c("#E69F00", "black", "#CC79A7")
+traced_cols[horizon_ids] <- c("#E69F00", "#0072B2", "#CC79A7")
 traced_cols[setdiff(seq_along(pieces), horizon_ids)] <- c("#009E73", "#56B4E9")
 # The numbers in the caption, read from the traced contours.
 horizon_pieces <- which(vapply(pieces, function(z) min(z[, c(2, 4)]) >= 29, TRUE))

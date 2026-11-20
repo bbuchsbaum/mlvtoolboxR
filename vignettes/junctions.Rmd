@@ -400,7 +400,7 @@ mtext(c("diagonal stem", "stem on the grid"), side = 2, outer = TRUE, at = c(0.7
 par(op)
 ```
 
-The four drawings above are four points of a larger picture. Turning a T
+The four stems above are four points of a larger picture. Turning a T
 through every angle to the pixel grid and finding, at each angle, the largest
 gap at which its stem still meets the bar shows the whole region in which each
 metric finds a junction.
@@ -418,7 +418,7 @@ limit_at <- function(angle, metric, lo = 0, hi = 2) {
   for (i in 1:18) { mid <- (lo + hi) / 2; if (meets_at(angle, mid, metric)) lo <- mid else hi <- mid }
   lo
 }
-angles <- seq(0, 90, by = 2)
+angles <- seq(0, 90, by = 2.5)  # includes the diagonal, 45 degrees
 metrics <- c(euclidean = "euclidean", chebyshev = "chebyshev")
 measured <- lapply(metrics, function(m) vapply(angles, limit_at, 0, metric = m))
 sapply(measured, range)
@@ -439,7 +439,7 @@ for (m in metrics) {
 }
 ```
 
-```{r fig-decision-map, fig.height = 3.3, fig.cap = sprintf("Under the Euclidean distance a stem may stop up to %g px short of a bar at any angle; under the Chebyshev distance the allowance grows to %.2f px on the diagonal. Shaded: where detect_junctions() finds a junction (the largest accepted gap, found at %d angles per panel); line: the analytical limit. Points: the four drawings above (gap in px), filled where a junction is found.", eps, eps * sqrt(2), length(angles))}
+```{r fig-decision-map, fig.height = 3.3, fig.cap = sprintf("Under the Euclidean distance a stem may stop up to %g px short of a bar at any angle; under the Chebyshev distance the allowance grows to %.2f px on the diagonal. Shaded: the gaps at which detect_junctions() still finds a junction, measured at %d angles per panel; line: the analytical limit. Points: the four stems above (gap in px), filled where a junction is found.", eps, eps * sqrt(2), length(angles))}
 cases <- data.frame(angle = c(0, 0, 0, 45), gap = c(near_gap, far_gap, g, g),
                     label = c("0.5", "1.5", "1.3", "1.3"))
 op <- par(mfrow = c(1, 2), mar = c(3.2, 3.4, 1.6, 0.6), las = 1, cex.axis = 0.8)
@@ -522,7 +522,7 @@ start_types <- vapply(1:4, function(k) {
 start_types
 ```
 
-```{r fig-arms, fig.height = 4.9, fig.cap = sprintf("A contour adds an arm wherever it leaves the junction neighbourhood (shaded, radius %g px). A 1 px overshoot ends inside the disc (T); a 3 px overshoot adds an arm (X). A stroke stored as three contours leaves the merged discs of its two meeting points only twice (grey arrows). A closed outline (inset) starting inside leaves twice (X). Arms start at the junction, pointing where the contour leaves.", nbhd)}
+```{r fig-arms, fig.height = 4.9, fig.cap = sprintf("A contour adds an arm wherever it leaves the junction neighbourhood (shaded, radius %g px). A 1 px overshoot ends inside it (T); a 3 px one adds an arm (X). A stroke stored as three contours (black, purple, green) leaves the merged discs of its two joins only twice (grey arrows). A closed outline (inset) starting inside leaves twice (X). Arms are drawn from the junction point.", nbhd)}
 centres <- list(overshoot_1 = c(20, 10), overshoot_3 = c(20, 10),
                 split = c(20, 20.5), closed = c(15, 15))
 titles <- c(overshoot_1 = "1 px overshoot: T", overshoot_3 = "3 px overshoot: X",
@@ -683,7 +683,7 @@ neighbourhood an arm, so both stem segments count and the T becomes an X
 with a 0 degree gap. The default rule follows the contour out of the
 neighbourhood and finds one downward arm.
 
-```{r fig-mlv-overshoot, fig.height = 3, fig.cap = "The overshooting stem drawn as two segments, with a vertex (open circle) inside the neighbourhood. The default rule follows the stem out of the neighbourhood and finds one downward arm (T). The published rule gives each of the stem's two segments an arm; the two coincide (×2, min angle 0°), and it reports an X."}
+```{r fig-mlv-overshoot, fig.height = 3, fig.cap = "The overshooting stem drawn as two segments, with a vertex (open circle) inside the neighbourhood. The default rule follows the stem out of the neighbourhood and finds one downward arm (T). The published rule gives each of the stem's two segments an arm; the two coincide (×2, min angle 0°), and it reports an X. Grey open arrowheads: the default arms."}
 compare_rules("vertex_overshoot", c(20, 11.4),
               function() points(20, 11, pch = 21, bg = "white", cex = 1.1, lwd = 1.3))
 ```
