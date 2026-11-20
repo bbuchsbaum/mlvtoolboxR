@@ -132,6 +132,7 @@ datasets for each.
 | Mapping | Scores read from a last-writer-wins image; exact nearest-point ties broken by enumeration order | Each branch keeps its own scores; ties take the maximum | M029 |
 | Tracing | Junction points duplicated when edges are merged | No point repeated within a branch | M030 |
 | Mirror score | The line fit forces the last one or two points into the final span even when that exceeds the 1 px error tolerance | The fit stops before the failing point | M016 |
+| Branch scores | Undefined points (branch end points for parallelism and taper, branches of fewer than three points, mirror on three or fewer) scored 0, and that 0 averaged into neighbouring points | Undefined points NA; smoothing averages defined values only | M033 |
 | Mapping | Every mapped score of exactly zero treated as missing | Valid zeros kept; missing is NA | M011 |
 
 The thinning row is a choice rather than a defect: `"hmt8"` is the thinning
@@ -242,7 +243,9 @@ For these random drawings the per-contour correlations between modes are
 (separation) and `r round(r[["mirror"]], 2)` (mirror). Random line segments
 make many short, irregular branches, so these values say nothing about natural
 drawings; the qualification figures for natural drawings are in the evidence
-section below.
+section below. Corrected parallelism lies above the published values because
+the published estimator scores every branch end 0 and averages that 0 into
+the neighbouring point (MLV-M033); short branches are mostly ends.
 
 ### Valid zeros
 
@@ -321,7 +324,7 @@ stored outputs correspond to that source revision.
 | Segment orientation, length, curvature | All 2,284,239 segments within 1e-9 | Orientation and length the same; curvature differs by design (each turn counted once, M032) |
 | Junctions | 395,125 of 395,134 identical in position, type, members and angles; the other 9 depend on zero-length segments | 356,113 (90.1%) identical; every difference attributed to a named defect or definition |
 | Distance map, flux, skeleton (Forest_DBW) | Distances identical, flux within 2.1e-14, skeleton identical (24,904 px) | Different by design (M027, thinning) |
-| Per-pixel scores (2,757 drawings) | 99.1%, 99.4% and 99.3% of pixels within 1e-4 (parallelism, separation, mirror); per-contour r = 0.9993, 0.9999, 0.9986 | Per-contour r = 0.926, 0.982, 0.864 |
+| Per-pixel scores (2,757 drawings) | 99.1%, 99.4% and 99.3% of pixels within 1e-4 (parallelism, separation, mirror); per-contour r = 0.9993, 0.9999, 0.9986 | Per-contour r = 0.811, 0.982, 0.864 |
 
 The remaining per-pixel differences in published mode come from MLV's
 single-precision arithmetic, which occasionally flips an exact tie between

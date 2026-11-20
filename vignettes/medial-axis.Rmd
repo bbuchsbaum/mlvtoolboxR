@@ -205,13 +205,19 @@ between 0 and 1, and all four end in the same two steps: a moving mean over
 three neighbouring points, then a power of 10 (`power`), which spreads the
 values near 1. Under the default `branch_rule = "invariant"`, each score is
 the mean of the scores computed in the two traversal directions, so it does
-not depend on which end the tracer started from. Parallelism, mirror and
-taper score a branch's two end points as zero before that moving mean, so the
-two-pixel branch 3, which has no interior point, scores zero on them. Its
-contour pixels near the V's apex are also reached by branch 2, and mapping
-keeps the larger score (see
-[Mapping scores onto contours](#mapping-scores-onto-contours)), so the zeros
-do not reach the contours.
+not depend on which end the tracer started from.
+
+Some points have no score. Parallelism and taper compare a point's
+neighbours on both sides, so the two end points of a branch, and every point
+of a branch with fewer than three points, are undefined; mirror needs more
+than three points; separation is undefined below radius 1. The default marks
+these points NA, and the moving mean averages only the defined values around
+each point, so a branch end takes the value of its defined neighbour (that
+point's value before smoothing) instead of being pulled towards zero. A value
+of exactly 0 is defined and is averaged like any other. The two-pixel branch 3 has no interior point, so its
+parallelism, mirror and taper are NA (the median above is NA); its
+separation is defined. The published estimator (`branch_rule = "mlv2023"`)
+scores undefined points 0 and averages those zeros into their neighbours.
 
 ```{r stage-scores, fig.width = 7, fig.height = 2.6, fig.cap = "Branch scores at each skeleton pixel. Parallelism (left) is near 1 along the middle of the upper channel and falls where the skeleton bends out of an open end; separation (right) is higher along the upper channel, where the gap is wider."}
 op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5))
@@ -413,9 +419,11 @@ par(op)
 
 On these drawings taper stays close to 1 even for the wavy channel (median
 `r round(median(b_wav$taper[interior(b_wav)]), 3)`), because the second
-difference of a twice-smoothed radius is small for gradual changes. All four
-scores fall towards 0 at the branch ends, where the skeleton leaves the
-channel through its open ends and its radius changes rapidly.
+difference of a twice-smoothed radius is small for gradual changes.
+Parallelism falls at the branch ends, where the skeleton leaves the channel
+through its open ends and its radius changes rapidly. Taper stays near 1 there
+as well, because the radius grows at a nearly constant rate; it measures
+changes in that rate, not the rate itself.
 
 ## Mapping scores onto contours
 
@@ -465,7 +473,11 @@ The values are the fraction of ink pixels mapped at radii of 0.5, 1, 2, 4 and
 ### Valid zeros and missing scores
 
 A mapped score can be missing (NA) or a valid zero, and the two mean different
-things. NA means that no branch explains the pixel. A single straight line has
+things. NA means that no branch gives the pixel a defined score: either no
+branch's tangent samples lie within `radius`, or, for every branch that does,
+its samples nearest to the pixel are undefined (a two-point branch has no
+parallelism). Mapping does not reach past an undefined nearest sample to a
+farther defined one. A single straight line has
 no partner contour, so its flux never exceeds the threshold and every pixel is
 NA. A 20-pixel square is fully covered: its skeleton is an X whose four tied
 arms are all shorter than `min_branch_points`, and since removing them would
@@ -475,6 +487,8 @@ A zero is a measurement. Two lines on rows 20 and 23 are three pixels apart,
 so their geometric medial radius is 1.5 pixels. The skeleton must lie on a
 pixel row, here row 21 or 22, one pixel from the nearer line, so the raster
 radius is exactly 1 and the separation is (1 − 1/1)^10 = 0 at every point.
+Zeros that only stand for an undefined value, such as the published scores of
+a branch's end points, are NA under the default.
 
 ```{r zeros}
 coverage <- function(d, ...) {

@@ -90,6 +90,33 @@ so specifications and cached MATs from 0.2.x are rejected and must be rebuilt.
   its four arms are now kept and all 80 contour pixels are mapped. The result
   does not depend on scan order, start pixel or lattice orientation.
   Specifications and cached MATs with the `-graph-1` definition are rejected.
+* Default branch scores are NA where their estimator is undefined, not 0
+  (`branch_rule = "invariant"`, definition
+  `direction-symmetric-tiemax-graph-defined-3`; MLV-M033). The published
+  estimator scores the end points of parallelism and taper (zero-width
+  window), branches of fewer than three points, and mirror on three or fewer
+  points as 0, and its width-3 moving mean averages that 0 into the next
+  point. The default marks them NA and averages only defined values, so a
+  branch end takes the value of its defined neighbour (before smoothing);
+  traversal directions, score images and contour mapping combine defined
+  values only. The default also sums each smoothing window directly: the
+  published cumulative-sum differences can round a radius pair (1, 1) below 1
+  and turn an exact separation of 0 into NA. A raw score of exactly 0 is a
+  defined value and is never replaced by NA. `score_branch()` and
+  `branch_rule = "mlv2023"` keep the published values. Compared with the
+  published estimator, scores change at undefined points and the points
+  whose smoothing window contains one, and, for separation, around radius
+  pairs that the published sums round below 1; elsewhere they agree to
+  rounding (at most 3.1e-13 on twelve sampled Forest drawings). On the 2,757
+  stored drawings per-contour parallelism correlates 0.811 with the published
+  values (0.926 before), whose branch ends are depressed by those zeros;
+  separation and mirror are unchanged (0.982, 0.864). Specifications and
+  cached MATs with the `-graph-2` definition are rejected.
+* `split_contours()` no longer fails when a contour has no finite medial-axis
+  score (more common now that undefined scores are NA): such contours cannot
+  be ranked, so they are left unassigned, scored NA and listed in the new
+  `unranked` element. Ranks are taken among rankable contours; the length
+  budget is still a fraction of the total length of all contours.
 * Skeleton pixels lying on ink are excluded before branch tracing.
 * `mlv_drawing()` treats segments whose endpoints differ only by rounding residue
   as zero-length.

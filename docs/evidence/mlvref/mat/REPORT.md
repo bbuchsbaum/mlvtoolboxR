@@ -362,3 +362,28 @@ Isolated loops are now recognised from the branch set (a closed path whose start
 Open: short structure that is now kept (2 px components, protected short arms) receives the branch estimator's end-point zeros for parallelism, mirror and taper; mapping takes the maximum over branches, so these zeros reach contours only where nothing else maps (part of the rise in R-only contours). Whether such scores should be NA (undefined) rather than 0 is a scoring-definition decision.
 
 Specifications and MATs carrying graph-1 are rejected; the 30 spec-carrying witness cases were rebuilt with every value unchanged.
+
+## 17. Undefined branch scores are NA (definition direction-symmetric-tiemax-graph-defined-3)
+**Defect (MLV-M033).** computeMATpropertyPerBranch scores undefined points 0: the two end points of parallelism and taper (zero-width derivative window), every point of a branch with fewer than three points, and mirror on three or fewer points. The width-3 moving mean then averages that 0 into the neighbouring point. On a straight branch of constant radius, where the geometry gives 1 everywhere, the published scores are 0.5^10 and (2/3)^10 at the first two points.
+
+**Rule** (branch_rule = "invariant" only; R/mat.R `.score_branch_sample(undefined = "na")`).
+- A score is NA where its estimator is undefined: parallelism/taper end points, branches with fewer than 3 points, mirror on 3 or fewer points, a 0/0 window ratio, separation below radius 1, and arclength mirror over a window whose ends coincide.
+- Every window sum is formed directly, not as a difference of cumulative sums; the published form can round a radius pair (1, 1) to 0.99999999999999989 and turn an exact separation 0 into NA.
+- The width-3 moving mean averages the defined values in each window and is NA where none is defined, so a branch end takes the value of its defined neighbour before smoothing. A raw 0 is defined and is never replaced by NA.
+- Directions and isolated-loop windows use the mean of defined values.
+- Mapping: a tangent sample of segment (i, i+1) carries the mean of the defined scores at i and i+1; per branch, a pixel takes the maximum of the defined scores among its nearest samples (exact ties within 1e-9 px), NA if all of them are undefined, never a farther sample; the result is the maximum over branches. Score images take the maximum over defined values.
+- `score_branch()` and branch_rule = "mlv2023" keep the published values byte for byte. `split_contours()` leaves contours without a finite criterion unassigned (`unranked`).
+
+**Oracles** (tests/testthat/test-mat-undefined.R, 8 blocks, 70 expectations): straight constant-radius branch exactly 1 at every point (published 0.5^10 and (2/3)^10 at the ends); 2- and 3-point branches NA where published is 0; a 2 px component maps NA unless covered by another branch; close pair separation exactly 0; radius (√2, 1, 1, 1, 1) gives separation exactly 0 at points 4–5 (published NA at points 2–4); closed-window arclength mirror NA; radii below 1 at one end keep reversal invariance within 1e-12; split_contours with unrankable contours. The invariance tests of sections 13–16 pass at 1e-12; witness values unchanged.
+
+**Natural data** (2,757 drawings; receipts rewritten). Compat identical to the previous receipts on every row. Default, graph-2 → graph-defined-3 (parallelism / separation / mirror):
+
+| measure | graph-2 | graph-defined-3 |
+|---|---|---|
+| per-pixel within 1e-4 | 0.0777 / 0.1051 / 0.0559 | 0.0781 / 0.1051 / 0.0559 |
+| per-contour r | 0.926 / 0.982 / 0.864 | 0.811 / 0.982 / 0.864 |
+| parallelism per-contour bias | +0.010 | +0.079 |
+| coverage | 0.9985 | 0.9984 |
+| per-drawing mean r, parallelism | 0.996 | 0.973 |
+
+Contours defined only in MATLAB: 241 / 238 / 241 → 244 / 237 / 248; only in R: 358 / 421 / 361 → 358 / 422 / 358. Parallelism per-contour r by family: 0.769 (OASIS, cities) to 0.909 (mountains). On 12 random Forest drawings (273,748 interior points), scores differ from the published estimator only at undefined points and the points whose smoothing window contains one, and, for separation, at 166 points around the 83 radius pair means that the published cumulative sums round below 1; elsewhere the difference is at most 3.1e-13. Parallelism agreement with published values falls because published branch ends are depressed by the artificial zeros; separation and mirror change by less than 0.001. An independent review confirmed the published path is byte-identical to the previous release candidate on 40 random drawings. This resolves the open item in section 16.
