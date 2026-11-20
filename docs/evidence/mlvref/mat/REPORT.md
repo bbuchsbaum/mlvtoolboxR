@@ -166,6 +166,8 @@ So in published-compatible mode the whole remaining gap is three conventions dow
 Image 2.20.0 bwdist is inexact (0.042) with different labels; Octave Pratt skel != MATLAB skel.
 
 ## 6. Default switch, versioning and witnesses
+
+*Superseded in part by section 15: the default morphology is now `"minimal"`; `"hmt8"` is the published-compatible thinning.*
 - compute_mat(aof=c("centered","mlv2023"), morphology=c("hmt8","pratt")); skeletonize(method=c("hmt8","pratt")); trace_contours thins with hmt8 or the spec's morphology and records the morphology definition in its provenance.
 - feature_spec: mat$aof (default "centered") and mat$morphology (default "hmt8"), validated; definitions aof = "centered-tie-mean-1" | "mlv2023-computeAOF-lowest-index", morphology = "sequential_hmt8_matlab_skel_order-1" | "octave_image_pratt_2.20.0". MAT parameters record aof, morphology, aof_definition, morphology_definition; .mat_semantics includes the definitions.
 - Cache validation (existing mechanism): 0.2.x specs (Pratt definition, no aof) fail validate_feature_spec as noncanonical; compute_mat_properties(spec=) rejects a MAT whose methods or definitions differ from the spec; drawings mapped under other MAT semantics fail the existing semantics check.
@@ -197,6 +199,8 @@ Full suite on the current working tree (all tracks), R CMD INSTALL --no-test-loa
 Resolved: isolated closed loops (section 14), provisional IDs (renumbered), negative-distance skeleton pixels (section 10).
 
 ## 10. Branch rules and skeleton pixels on ink
+
+*All compat runs in this report use `threshold_angle = asin(0.3*pi/2)*180/pi` (threshold 0.3; `tools/mlvref/mat_datasets.R`). Section 15 supersedes the default morphology named here.*
 
 **Skeleton pixels on ink.** Skeleton pixels with signed distance <= 0 are ink, not medial points. trace_skeleton() removes them before tracing on every rule; the count is attribute "skeleton_ink_excluded" of the branch list and mat$parameters$skeleton_ink_excluded. This removes MLV-R012: the 7 pratt-path crashes no longer occur (no drawing failed in any run). MATLAB's Forest skeleton contains 0 such pixels, so compat reproduction is unaffected.
 

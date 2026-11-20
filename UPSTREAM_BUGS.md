@@ -61,9 +61,10 @@ interpreter; the full image pipeline was not executed.
 
 ## Intentional changes that are not reported as upstream bugs
 
-- R uses an explicitly named Octave-image Pratt morphology backend. Its LUT
-  output matches the executed Octave fixtures; MATLAB skeletonization equivalence
-  is not claimed.
+- Thinning (0.3.0): the default `morphology = "minimal"` is the MATLAB-exact
+  sequential hit-or-miss thinning (`"hmt8"`, identified on Forest_DBW) followed
+  by removal of remaining simple pixels; `"hmt8"` alone is the published-compatible
+  choice and `"pratt"` is the Octave-image backend used before 0.3.0.
 - Exact EDT ties select the lowest R linear index. Other equally near choices
   can change AOF values. The reference report measures such differences.
 - Contour tracing uses an explicit pixel graph without diagonal shortcuts across
@@ -187,7 +188,7 @@ for published-compatible results.
 | MLV-R010 | Width-1 rasterization depended on segment direction (1,984 Forest pixels changed under reversal) | Major-axis DDA with MATLAB's half-pixel tie rule; reversal-invariant, 0 pixels missing against MATLAB's raster |
 | MLV-R011 | Coincident consecutive branch points produced NaN tangent subscripts and an error | Zero-length pairs contribute no tangent samples |
 | MLV-R012 | Skeleton pixels on ink (distance <= 0) reached branch scoring and aborted it (7 of 580 drawings, Pratt path) | Excluded before tracing on every path, with a recorded count |
-| MLV-R013 | The Octave-derived Pratt thinning is neither thin nor MATLAB's skeleton (18,035 redundant pixels vs 327 on Forest) | Default `morphology = "hmt8"`, which reproduces MATLAB's Forest skeleton exactly; Pratt kept as an option |
+| MLV-R013 | The Octave-derived Pratt thinning is neither thin nor MATLAB's skeleton (18,035 redundant pixels vs 327 on Forest) | `morphology = "hmt8"` reproduces MATLAB's Forest skeleton exactly and is the published-compatible choice; the default `"minimal"` adds removal of remaining simple pixels; Pratt kept as an option |
 | MLV-R014 | A merged junction's neighbourhood was one disc around the centroid; distant merged crossings lost or gained arms | Union of discs around every merged intersection |
 | MLV-R015 | Sweep prefilter was not conservative and exact-limit extensions depended on segment direction | Canonical segment frame, shared acceptance arithmetic; sweep and exhaustive bitwise identical |
 | MLV-R016 | Dropping a rounding-residue segment left a gap that opened closed contours | Kept segments are re-joined exactly, cyclically for closed contours |

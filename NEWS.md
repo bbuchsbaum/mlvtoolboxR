@@ -6,7 +6,8 @@
   for 3,017 line drawings (2,757 with medial-axis scores). Published-compatible
   options now reproduce them: `detect_junctions(rule = "mlv2023")` matches
   395,125 of 395,134 junctions exactly, and `compute_mat(aof = "mlv2023",
-  morphology = "hmt8", branch_rule = "mlv2023")` reproduces Forest_DBW's distance map, flux and
+  morphology = "hmt8", branch_rule = "mlv2023", threshold_angle =
+  asin(0.3 * pi / 2) * 180 / pi)` reproduces Forest_DBW's distance map, flux and
   skeleton exactly and 99.1-99.4% of all stored per-pixel symmetry scores within
   1e-4. See `docs/PARITY.md`.
 
@@ -32,6 +33,20 @@ so specifications and cached MATs from 0.2.x are rejected and must be rebuilt.
 * Skeleton pixels lying on ink are excluded before branch tracing.
 * `mlv_drawing()` treats segments whose endpoints differ only by rounding residue
   as zero-length.
+
+## Documentation and plotting
+
+* New vignettes: `getting-started` (from a line drawing to contour features),
+  `junctions`, `medial-axis` and `mlv-compatibility`; `workflows` now covers file
+  input, extraction and feature recipes.
+* New `plot.mlv_mat()` shows each medial-axis stage (ink, distance, flux,
+  skeleton, branches, scores) in image coordinates with labelled legends.
+* `plot.mlv_drawing()` draws colour bars with units, uses a cyclic palette for
+  orientation, can draw junction arms, frames the canvas on the raster extent
+  so drawings and MAT stages overlay exactly, and draws mapped scores as
+  filled pixels.
+* `detect_junctions()` returns an `arms` list-column with each junction's arm
+  directions; `angles` are the gaps between consecutive arms.
 
 ## Bug fixes
 

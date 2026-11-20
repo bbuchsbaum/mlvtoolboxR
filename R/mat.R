@@ -32,10 +32,13 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #' flux (`aof="centered"`), a topology-preserving thinning that leaves no
 #' removable (simple) non-end pixel (`morphology="minimal"`) and order-invariant branch handling
 #' (`branch_rule="invariant"`). The published-compatible recipe is
-#' `aof="mlv2023", morphology="hmt8", branch_rule="mlv2023"`: the first two
-#' reproduce the published MATLAB MAT fields (distance map, AOF and skeleton)
-#' exactly on the Forest_DBW reference, and all three together reproduce the
-#' published per-pixel scores. `morphology="pratt"` is the Octave image backend.
+#' `aof="mlv2023", morphology="hmt8", branch_rule="mlv2023"`, with
+#' `threshold_angle = asin(0.3*pi/2)*180/pi` (28.11 degrees, flux threshold 0.3)
+#' to match the lab's datasets, which `computeAllMATfromVecLD` produced with the
+#' omitted-threshold value 0.3 (MLV-M004; the default 28 degrees gives 0.2989).
+#' The first two reproduce the published MATLAB MAT fields (distance map, AOF
+#' and skeleton) exactly on the Forest_DBW reference, and all three together
+#' reproduce the published per-pixel scores. `morphology="pratt"` is the Octave image backend.
 #' Empty ink sets have Inf distances and no skeleton; an all-ink image has no
 #' valid medial axis under this contour-background definition. Isolated ink
 #' pixels retain signed distance -1. The `"mlv2023"` flux uses the lowest R

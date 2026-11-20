@@ -27,7 +27,10 @@ reproduce published values.
 
 Published-compatible settings: `detect_junctions(rule = "mlv2023")`
 (implies `gap_metric = "chebyshev"`) and `compute_mat(aof = "mlv2023",
-morphology = "hmt8", branch_rule = "mlv2023")`, or the equivalent `feature_spec()` settings.
+morphology = "hmt8", branch_rule = "mlv2023", threshold_angle = asin(0.3 * pi / 2) * 180 / pi)`,
+or the equivalent `feature_spec()` settings. The threshold angle gives flux
+threshold 0.3, the value MATLAB's `computeAllMATfromVecLD` used for the lab's
+datasets (it omits the threshold; MLV-M004); all qualification runs used it.
 Feature specifications record every method definition, and specifications or
 cached MATs built under other definitions are rejected.
 
