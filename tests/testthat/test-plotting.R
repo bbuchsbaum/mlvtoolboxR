@@ -109,7 +109,10 @@ test_that("drawings and MAT stages share plot coordinates on the same canvas", {
   x_tight <- isTRUE(all.equal(u[1:2], c(0.5, d$width + 0.5)))
   y_tight <- isTRUE(all.equal(u[3:4], c(d$height + 0.5, 0.5)))
   expect_true(x_tight || y_tight)
-  expect_true(u[1] <= 0.5 && u[2] >= d$width + 0.5 && u[3] >= d$height + 0.5 && u[4] <= 0.5)
+  # Containment up to device rounding (Windows reports usr an ulp outside 0.5).
+  tol <- 1e-9 * max(d$width, d$height)
+  expect_true(u[1] <= 0.5 + tol && u[2] >= d$width + 0.5 - tol &&
+              u[3] >= d$height + 0.5 - tol && u[4] <= 0.5 + tol)
 })
 
 test_that("mapped MAT scores fill whole pixels on the raster extent", {
