@@ -205,7 +205,7 @@ Resolved: isolated closed loops (section 14), provisional IDs (renumbered), nega
 **Skeleton pixels on ink.** Skeleton pixels with signed distance <= 0 are ink, not medial points. trace_skeleton() removes them before tracing on every rule; the count is attribute "skeleton_ink_excluded" of the branch list and mat$parameters$skeleton_ink_excluded. This removes MLV-R012: the 7 pratt-path crashes no longer occur (no drawing failed in any run). MATLAB's Forest skeleton contains 0 such pixels, so compat reproduction is unaffected.
 
 **branch_rule="invariant"** (default; definition "direction-symmetric-tiemax-graph-1"):
-- Tracing: pixel graph (diagonal steps only where no orthogonal connection exists) decomposed into maximal paths between end/junction pixels; paths with >= min_branch_points pixels kept; junction pixels shared by meeting branches, never repeated within one.
+- Tracing: pixel graph (diagonal steps only where no orthogonal connection exists) decomposed into maximal paths between end/junction pixels; paths with >= min_branch_points pixels kept; junction pixels shared by meeting branches, never repeated within one. *Superseded by section 16 (graph-2): short spurs are pruned shortest-first with merging, and no component loses its last path.*
 - Scoring: each score = mean of the forward score and the score of the reversed branch mapped back (any estimator; arclength is already symmetric). Score image: maximum over branches.
 - Mapping: a tangent sample of segment (i,i+1) carries the mean of the branch's own scores at i and i+1; exact nearest-sample ties (within 1e-9 px) take the maximum; inclusion d < radius - 1e-9; maximum across branches; valid zeros kept.
 - Known limitation: an isolated closed loop (no end/junction pixel) is cut at a lattice-order start pixel; documented, not covered by the invariance claim.
@@ -337,3 +337,28 @@ The reviewer re-ran every reproducer: all five findings and four concerns fixed.
 - **N3:** documentation no longer claims "minimal" has no 2×2 blocks; the test uses the redundant-pixel oracle on the reviewer's 400 noise masks and checks that the irreducible blocks keep the input's topology.
 
 Full suite: 118 test blocks, 3,816 expectations, 0 failed. Non-loop branches and the compat chain are unchanged, so the receipts stand.
+
+## 16. Default tracer: spur pruning that keeps small shapes (definition direction-symmetric-tiemax-graph-2)
+**Defect.** Under graph-1 the default tracer split the skeleton at every junction pixel and dropped every path shorter than min_branch_points. Small closed shapes lost their whole skeleton: a 20 px square's skeleton is an X whose four arms are all short, so it had 0 branches and all 80 contour pixels were NA. In a survey of 37 small shapes (squares, rectangles, triangles, circles, rings, L/T/H, 10–40 px), 15 had no branch. The published chain keeps such shapes, because cleanedgelist merges through degree-2 nodes and prunes spurs one at a time.
+
+**Rule** (src/kernels.cpp `cpp_trace_graph_pruned`). Paths are the maximal paths between node pixels (pixel-graph degree ≠ 2); a cycle with no node is a closed path. Two steps repeat until nothing changes:
+1. Merge: where exactly two ends of two different paths meet, the paths are joined, with the shared pixel kept once.
+2. Prune: a spur is a path from an end pixel to a junction; it is short if it has fewer than min_branch_points pixels, junction included. Let L be the shortest short-spur length at unprotected junctions. At each junction J with k spurs of length L, all k are removed if J keeps at least two paths; otherwise J is protected and never loses a path.
+
+Without ties this is sequential shortest-first pruning with immediate merging; tied spurs are kept or removed together. Only spurs are pruned, so no skeleton component loses its last path, and junction-to-junction paths and single-path components are kept at any length. Each round depends only on the unordered graph, and L increases strictly, so there are at most min_branch_points rounds. The simpler alternative (prune all short spurs at once, protect only whole components) is discontinuous: it reduces a 20×18 rectangle to a ~2 px middle segment while keeping a 20×20 square whole.
+
+Isolated loops are now recognised from the branch set (a closed path whose start pixel is in no other branch), because a loop left after its spurs are pruned contains former junction pixels that still touch skeleton pixels.
+
+**Oracles** (tests/testthat/test-mat-tracer.R): the 20 px square keeps its 4 tied arms and maps all 80 contour pixels; 17 small shapes keep a path in every skeleton component; exact synthetic graphs (spur pruned and line merged; spur of exactly min_branch_points kept; untied fork merged; tied fork kept; star 6/5/3 → one 10 px path; tied plus kept; short isolated and junction-junction paths kept); 120 random skeletons × 7 lattice transforms give identical branch sets, idempotent, no component lost; reversal, renumbering, lazy tracing and lattice transforms of the MAT fields within 1e-12; a ring whose four tied spurs are pruned becomes one isolated loop independent of start pixel and direction within 1e-12; edgelink fixtures still match Octave exactly.
+
+**Natural data** (2,757 drawings; receipts e2e_summary.csv and e2e_contour_summary.csv rewritten). Compat is identical to the previous receipts on every row. Default, old → new:
+- per-contour r (par / sep / mir): 0.8887 → 0.9257 / 0.9719 → 0.9818 / 0.8359 → 0.8637
+- per-pixel within 1e-4: 0.0781 → 0.0777 / 0.1047 → 0.1051 / 0.0626 → 0.0559 (mirror falls because merged branches change the global line-segment fit)
+- mean abs: 0.0679 → 0.0552 / 0.0224 → 0.0191 / 0.0526 → 0.0501
+- coverage of stored pixels: 0.993 → 0.9985
+- contours defined only in MATLAB: 1,673 → 241; defined only in R: 295–356 → 358–421
+- per-drawing mean r: 0.996 / 0.9995 / 0.994
+
+Open: short structure that is now kept (2 px components, protected short arms) receives the branch estimator's end-point zeros for parallelism, mirror and taper; mapping takes the maximum over branches, so these zeros reach contours only where nothing else maps (part of the rise in R-only contours). Whether such scores should be NA (undefined) rather than 0 is a scoring-definition decision.
+
+Specifications and MATs carrying graph-1 are rejected; the 30 spec-carrying witness cases were rebuilt with every value unchanged.

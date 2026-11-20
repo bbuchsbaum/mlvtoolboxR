@@ -15,17 +15,19 @@ receipts are committed. Evidence:
 [medial axis](evidence/mlvref/mat/REPORT.md).
 
 The package offers two modes. Defaults correct demonstrated MLV defects
-([register](../UPSTREAM_BUGS.md), MLV-M018–M031); explicit `mlv2023` options
+([register](../UPSTREAM_BUGS.md), MLV-M018–M032); explicit `mlv2023` options
 reproduce published values.
 
 | Stage | Published-compatible mode vs stored MATLAB | Corrected defaults vs stored MATLAB |
 |---|---|---|
-| Segment orientation, length, curvature | All 2,284,239 segments within 1e-9 (571 zero-length/residue segments are dropped by contract) | Same |
+| Segment orientation, length, curvature | `estimator = "mlv2023"`: all 2,284,239 segments within 1e-9 (571 zero-length/residue segments are dropped by contract) | Orientation and length the same. Curvature by vertex turning (`estimator = "turning"`, each turn counted once, MLV-M032): defined on all 3,017 drawings, including 178 with exact retracing; the published estimator's integrated curvature is a median 1.22 times larger, and normalized 8-bin curvature histograms differ by a median L1 of 1,650 per 10,000 |
 | Junctions | `rule = "mlv2023"`: 395,125 / 395,134 exact (position, type, contour/segment lists, angles); the 9 others need zero-length segments a drawing cannot hold | `rule = "exit"`, Euclidean gap: 356,113 (90.1%) exact; every difference attributed to a named MLV defect or definition |
 | Distance map, AOF, skeleton (Forest_DBW, from the vector drawing) | `aof = "mlv2023"`, `morphology = "hmt8"`: bit-exact distances, AOF within 2.1e-14, skeleton identical (24,904 px) | Centred, tie-invariant AOF; thinning that leaves no removable (simple) pixel (`morphology = "minimal"`) |
-| Per-pixel MAT scores (all 2,757 drawings) | `branch_rule = "mlv2023"`: 99.1% / 99.4% / 99.3% of pixels within 1e-4 (parallelism / separation / mirror); per-contour r 0.9993 / 0.9999 / 0.9986; residual is MLV single precision | Invariant to branch direction and numbering, loop start and lattice transforms of the MAT fields; per-contour r 0.889 / 0.972 / 0.836 against published values |
+| Per-pixel MAT scores (all 2,757 drawings) | `branch_rule = "mlv2023"`: 99.1% / 99.4% / 99.3% of pixels within 1e-4 (parallelism / separation / mirror); per-contour r 0.9993 / 0.9999 / 0.9986; residual is MLV single precision | Invariant to branch direction and numbering, loop start and lattice transforms of the MAT fields; per-contour r 0.926 / 0.982 / 0.864 against published values |
 
-Published-compatible settings: `detect_junctions(rule = "mlv2023")`
+Published-compatible settings: `estimator = "mlv2023"` for contour curvature
+(`as.data.frame()`, `compute_contour_properties()`, `contour_statistics()`,
+`feature_table()`, `average_property()`), `detect_junctions(rule = "mlv2023")`
 (implies `gap_metric = "chebyshev"`) and `compute_mat(aof = "mlv2023",
 morphology = "hmt8", branch_rule = "mlv2023", threshold_angle = asin(0.3 * pi / 2) * 180 / pi)`,
 or the equivalent `feature_spec()` settings. The threshold angle gives flux
@@ -33,6 +35,16 @@ threshold 0.3, the value MATLAB's `computeAllMATfromVecLD` used for the lab's
 datasets (it omits the threshold; MLV-M004); all qualification runs used it.
 Feature specifications record every method definition, and specifications or
 cached MATs built under other definitions are rejected.
+
+Histogram binning treats a value within 1e-9 × max(1, |edge|) of a bin edge as
+lying on it (both modes). On the stored drawings this moves 1,109 of 389,974
+junction smallest gaps (0.28%; default rule, 8 bins, each a rounding error
+below an interior bin edge) and no segment orientation or curvature value. Receipt:
+[curvature-default/summary.csv](evidence/mlvref/curvature-default/summary.csv)
+(`tools/mlvref/compare_curvature_default.R`). The junction and geometry
+comparisons above do not depend on the curvature default or on binning:
+`tools/mlvref/compare_junctions.R` compares the published segment table
+explicitly and compares junctions, not histograms.
 
 Remaining boundaries: actual MATLAB was not executed, so stored outputs are the
 MATLAB reference; MATLAB's undocumented `bwmorph('skel')` was identified

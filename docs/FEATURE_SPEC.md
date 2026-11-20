@@ -6,16 +6,20 @@ resolved predictor columns; a feature specification supplies the recipe that
 produces them. Binding a model requires its actual training table and never
 infers unavailable training history.
 
-The default contour and branch estimator remains `mlv2023` for one release.
-`turning` and `arclength` are explicit alternatives; arc-length curvature is the
-main new local estimator. A later default change requires a separate decision.
+The default contour curvature estimator is `turning` (0.3.0): each vertex turn
+is spread once over its dual cell, with no tuning parameter. `arclength` gives
+curvature at a stated scale, and `mlv2023` reproduces the published estimator,
+which counts the last vertex of each contour twice (MLV-M032). Specification-free
+calls take the same default and accept `estimator = "mlv2023"`; their feature
+schemas record the curvature definition in effect. The default branch estimator
+remains `mlv2023`.
 Legacy numerical parity fixtures remain unchanged. Metadata fixtures evolve with
 explicit metadata assertions. The definition versions describe this port and
 its documented deviations, not universal equivalence to MATLAB.
 
 | Settings | Meaning and units |
 |---|---|
-| properties, bins, ranges | Ordered predictors and fixed histogram definitions; orientation uses axial upper-edge wrapping; other numeric bins clamp overflow |
+| properties, bins, ranges | Ordered predictors and fixed histogram definitions; orientation uses axial upper-edge wrapping; other numeric bins clamp overflow; a value within 1e-9 × max(1, \|edge\|) of a bin edge (in the binned coordinate) is binned as if on the edge |
 | units | Spatial pixels or degrees of visual angle; tangent and turn angles remain geometric degrees |
 | pixels_per_degree | Required positive input calibration for visual degrees; may vary between inputs with otherwise compatible physical definitions |
 | normalize | Length/count weights per 10,000 target spatial units; unnormalized outputs retain their natural weight units |

@@ -9,13 +9,63 @@
   morphology = "hmt8", branch_rule = "mlv2023", threshold_angle =
   asin(0.3 * pi / 2) * 180 / pi)` reproduces Forest_DBW's distance map, flux and
   skeleton exactly and 99.1-99.4% of all stored per-pixel symmetry scores within
-  1e-4. See `docs/PARITY.md`.
+  1e-4; with `estimator = "mlv2023"` all 2,284,239 stored segment orientations,
+  lengths and curvatures agree within 1e-9. See `docs/PARITY.md`.
 
 ## Behaviour changes (corrected defaults)
 
-Defaults now correct demonstrated MLV defects (MLV-M018-M031 in
+Defaults now correct demonstrated MLV defects (MLV-M018-M032 in
 `UPSTREAM_BUGS.md`). Feature specifications record the new method definitions,
 so specifications and cached MATs from 0.2.x are rejected and must be rebuilt.
+
+* Curvature: the default estimator is now vertex turning (`estimator =
+  "turning"`) in `feature_spec()` and in every specification-free call
+  (`as.data.frame()`, `compute_contour_properties()`, `contour_statistics()`,
+  `feature_table()`, `predict_contours()`, `average_property()`, plotting and
+  `feature_density()`). Each vertex turn is spread once over its dual cell, the
+  half-segments on either side of the vertex. Segment tables keep one row per
+  input segment for every estimator; with `"turning"` and `"arclength"` a
+  segment's curvature is its mean curvature (the exact integral of the density
+  over the segment divided by its length), with a signed mean in
+  `signed_curvature`; `curvature_profile()` returns the piecewise density, and
+  histograms integrate it exactly. The published estimator, now `estimator = "mlv2023"`, gives each
+  segment the whole turn to the next segment divided by its own length and
+  repeats the previous turn on a contour's last segment: the last vertex of every
+  contour is counted twice (a 90 degree apex integrates to 180 degrees), the
+  closing vertex of a closed contour is not counted, and values depend on
+  sampling (MLV-M032). Turning has no tuning parameter and gives sampling-stable
+  histograms: a circle of radius 10 drawn with 16, 32, 64 or 128 vertices,
+  regularly or with alternating 1 : 2 spacing, puts all its length in one
+  curvature bin (4.43-8.54 deg/px of 8), whereas `mlv2023` splits the
+  alternating circles between 2.09-4.43 and 8.54-15.76. `"arclength"` remains
+  for curvature at a stated spatial scale. Specifications state their
+  estimator, so a specification built when `mlv2023` was the default keeps
+  computing `mlv2023` values; specification-free feature schemas now record the
+  curvature definition in effect (`vertex-dual-1` or `mlv2023-port-0.1.1`), so
+  models bound to 0.2.x specification-free tables are rejected unless
+  `estimator = "mlv2023"` is given.
+  `compute_contour_properties(estimator = )` records its choice on the drawing
+  (`curvature_estimator`), and later calls on that drawing that give neither
+  `spec` nor `estimator` use it; geometry operations keep the choice and drop
+  derived measurements. The turning estimator accepts exact
+  retracing (an unsigned 180 degree turn, signed value `NA`), which occurs in 178
+  of the 3,017 stored MLV drawings; `contour_turning()` and the arc-length
+  estimator still reject it. Specification-free turning histograms are computed
+  in the fused native pass (12,000 segments: 2.1 ms vs 1.9 ms for
+  `"mlv2023"`).
+* Histograms: a value within 1e-9 × max(1, |edge|) of a bin edge, in the
+  coordinate in which the bins are equally spaced (degrees, log10(1 + x) or the
+  raw value), is binned as if exactly on the edge, so the upper-bin rule applies
+  and mathematically equal values share a bin on every platform (for example a
+  computed junction gap of 59.999999999999943 and an exact 60 degrees). R and the
+  fused native kernel apply the same rule with the same arithmetic. Rounding
+  residue is about 1e-13 relative or less; the tolerance is far below any real
+  measurement difference. Snapping is a numerical robustness fix that acts
+  only on values within that tolerance of an edge; it does not change the
+  histogram definition (`definitions["histogram"]` stays `"1"`) or feature
+  schema compatibility. On the stored MLV drawings this changes the bin of
+  1,109 of 389,974 junction smallest gaps (8 bins) and of no segment orientation
+  or curvature value.
 
 * `detect_junctions()`: arms are the directions in which each contour leaves the
   junction neighbourhood (`rule = "exit"`), independent of contour direction,
@@ -30,6 +80,16 @@ so specifications and cached MATs from 0.2.x are rejected and must be rebuilt.
   direction, numbering or loop start (`branch_rule = "invariant"`). Isolated
   closed loops are scored with circular windows.
   `skeletonize()` and `trace_contours()` use the same thinning.
+* Default branch tracing (`branch_rule = "invariant"`, definition
+  `direction-symmetric-tiemax-graph-2`) no longer deletes small shapes.
+  `min_branch_points` now removes only spurs (paths from an end pixel to a
+  junction), shortest first, joining paths through every pixel where nothing
+  else branches; tied spurs are kept together when removing them would leave
+  their junction with fewer than two paths, and no skeleton component loses
+  its last path. A 20 px square previously had no branch and no mapped score;
+  its four arms are now kept and all 80 contour pixels are mapped. The result
+  does not depend on scan order, start pixel or lattice orientation.
+  Specifications and cached MATs with the `-graph-1` definition are rejected.
 * Skeleton pixels lying on ink are excluded before branch tracing.
 * `mlv_drawing()` treats segments whose endpoints differ only by rounding residue
   as zero-length.

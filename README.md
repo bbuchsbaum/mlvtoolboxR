@@ -9,8 +9,9 @@ maintained R port and extension of the Bernhardt-Walther Lab's
 The aim is to make the [original MLV methods](https://doi.org/10.3389/fcomp.2023.1140723)
 usable in R with explicit measurement choices, documented bug fixes, tested
 native performance improvements, and tools for matching stimulus sets.
-The published estimator remains available as `mlv2023`; new estimators and
-graph/design workflows are named extensions. Numerical equivalence is qualified
+Corrected definitions are the defaults; the published behaviour remains
+available through explicit `mlv2023` options, and graph/design workflows are
+named extensions. Numerical equivalence is qualified
 against specific fixtures, not promised for every upstream output.
 
 [Purpose and differences](docs/ATTRIBUTION.md) ·
@@ -53,7 +54,8 @@ plot_properties(drawing)
 
 Histogram weighting and normalization are explicit: orientation/curvature
 collect segment length; length collects whole-contour length; junctions count
-events. Normalized values are per 10,000 contour pixels. Valid zero scores
+events. A value within 1e-9 × max(1, |edge|) of a bin edge is binned as if on
+the edge, so mathematically equal angles share a bin on every platform. Normalized values are per 10,000 contour pixels. Valid zero scores
 remain distinct from missing scores.
 
 ## How this port differs
@@ -61,14 +63,14 @@ remain distinct from missing scores.
 - **An R workflow:** drawing objects, feature tables and model compatibility
   metadata; Python and MATLAB serve as references.
 - **Explicit methods and corrections:** subpixel geometry, validated
-  degeneracies and missingness, opt-in turning/arc-length estimators and
-  physical calibration. `mlv2023` retains the published estimator family with
-  documented corrections.
+  degeneracies and missingness, vertex-turning curvature by default (each turn
+  counted once), an arc-length estimator at a stated scale, and physical
+  calibration. `estimator = "mlv2023"` retains the published curvature.
 - **Additional stimulus tools:** constrained subset design and contour graph
   descriptors for closure, continuation and enclosure.
 - **Measured implementation changes:** compiled geometry and fused histograms,
   with [performance and equality evidence](docs/FUSED_STATISTICS.md).
-- **Two modes for junctions and the medial axis:** corrected defaults, and
+- **Two modes for curvature, junctions and the medial axis:** corrected defaults, and
   explicit `mlv2023` options that reproduce outputs the original lab computed
   in MATLAB (see [parity evidence](docs/PARITY.md)). No bundled SAM weights or
   MATLAB serialized models.
@@ -166,8 +168,12 @@ measured <- compute_contour_properties(drawing, spec = spec)
 features <- feature_table(measured)
 ```
 
-`mlv2023` remains the default for compatibility. The new `turning` and
-`arclength` estimators count each vertex turn once and wrap closed contours.
+The default curvature estimator, `turning`, spreads each vertex turn over the
+half-segments on either side of it, so every turn is counted once; `arclength`
+smooths the turns at a stated scale. Both wrap closed contours. The published
+estimator, `estimator = "mlv2023"`, counts the last vertex of every contour
+twice and depends on how a curve is sampled; use it to reproduce published
+values.
 Physical measurement uses `units = "visual_degrees"` with an explicit
 `pixels_per_degree`. New branch scores use `branch_estimator = "arclength"`.
 See the [measurement contract](docs/FEATURE_SPEC.md) for definitions, migration,
