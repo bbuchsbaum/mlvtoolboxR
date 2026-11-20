@@ -50,7 +50,11 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #'   `aof="centered"`, samples must be a multiple of 4 (the sample directions
 #'   must be closed under quarter turns and the diagonal reflection).
 #' @param min_component Minimum component size; default scales with image size.
-#' @param min_branch_points Minimum points retained in traced branches.
+#' @param min_branch_points Spur length threshold, in pixels (default
+#'   `branch_rule`) or Euclidean length (`"mlv2023"`). Under `"invariant"` only
+#'   spurs (paths from an end pixel to a junction) shorter than this are pruned,
+#'   shortest first with tied spurs kept together, and never a component's last
+#'   path; see [trace_skeleton()].
 #' @param trace_branches Trace branches now; FALSE defers this work until scoring.
 #' @param spec Optional feature specification for raster and MAT settings.
 #' @param aof Flux sampling. `"centered"` (default) centres the sampling circle
@@ -69,7 +73,9 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #'   `"hmt8"` (MATLAB-exact on the reference; may keep simple non-end pixels and
 #'   removable 2x2 blocks) or `"pratt"`.
 #' @param branch_rule Branch tracing, scoring direction and contour mapping.
-#'   `"invariant"` (default): pixel-graph tracing without repeated points,
+#'   `"invariant"` (default): pixel-graph tracing without repeated points and
+#'   order-free spur pruning that keeps every skeleton component of two or more pixels (see
+#'   [trace_skeleton()]),
 #'   branch scores averaged over both traversal directions, tangent samples
 #'   carrying the mean score of their segment's two points, the maximum over
 #'   exact nearest-sample ties and over branches, and valid zeros retained;
@@ -77,9 +83,10 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #'   windows for local estimators (it has no start) and, for the mlv2023 mirror
 #'   fit (a global greedy segmentation), as the mean over every start pixel and
 #'   both directions;
-#'   per-pixel scores are unchanged by branch reversal, branch or contour
-#'   renumbering, the start pixel of an isolated closed loop, and lattice
-#'   rotations/reflections of the MAT fields. The whole pipeline from a drawing
+#'   traced branches and per-pixel scores are unchanged by branch reversal,
+#'   branch or contour renumbering, the traced start pixel (including that of
+#'   an isolated closed loop), and lattice rotations/reflections of the MAT
+#'   fields. The whole pipeline from a drawing
 #'   is not guaranteed lattice-equivariant: thinning is sequential
 #'   (direction-ordered) and the rasterizer resolves exact half-pixel ties by
 #'   slope sign.
@@ -178,15 +185,28 @@ compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
 #' count is returned as attribute `skeleton_ink_excluded`.
 #' `rule="invariant"` decomposes the pixel graph (diagonal steps only where no
 #' orthogonal connection exists) into maximal paths between end/junction
-#' pixels, keeping paths of at least `min_points` pixels; junction pixels are
-#' shared by the paths that meet there but never repeated within a path.
+#' pixels, then prunes spurs and merges to a fixed point. A *spur* is a path
+#' from an end pixel to a junction; it is short when it has fewer than
+#' `min_points` pixels (junction included). Each round removes the shortest
+#' short spurs (all tied ones together) at every junction that keeps at least
+#' two paths afterwards; a junction where removing its tied shortest spurs would
+#' leave fewer than two paths is protected and keeps all its paths. Paths are
+#' then joined through every pixel where exactly two remain. Without ties this
+#' is sequential shortest-first spur pruning; with ties (the four equal arms of
+#' a square) every tied spur is kept, so the result does not depend on
+#' traversal order, start pixel or lattice orientation. Only spurs are pruned:
+#' a path between two junctions, or a component that is a single path, is kept
+#' whatever its length, so no skeleton component loses its last path. A closed
+#' path whose start pixel joins no other path is an isolated loop. Junction
+#' pixels are shared by the paths that meet there but never repeated within a
+#' path.
 #' `rule="mlv2023"` is the published MLV tracing: Kovesi `edgelink` with
 #' `cleanedgelist(minlength=min_points)` (Euclidean length), ported line by
 #' line, including its raster-scan traversal direction and the duplicated point
 #' at every merged junction.
 #' @param mat An mlv_mat object.
-#' @param min_points Minimum path size (points for `"invariant"`, Euclidean
-#'   length for `"mlv2023"`).
+#' @param min_points Minimum spur size: pixels for `"invariant"` (spurs only),
+#'   Euclidean length for `"mlv2023"` (cleanedgelist spurs and isolated edges).
 #' @param rule Branch rule; defaults to the rule recorded in `mat`.
 #' @return A list of branch data frames with row, column, x, y, radius and AOF.
 #' @export
@@ -200,7 +220,7 @@ trace_skeleton <- function(mat,min_points=10L,rule=NULL) {
  medial<-if(is.null(D))sk else sk&!is.na(D)&D>0   # ink is never medial (MLV-R012)
  excluded<-sum(sk&!medial)
  paths<-if(rule=="invariant") {
-  lapply(cpp_trace_graph(medial,as.integer(min_points)),function(index)arrayInd(index,dim(sk)))
+  lapply(cpp_trace_graph_pruned(medial,as.integer(min_points)),function(index)arrayInd(index,dim(sk)))
  } else .trace_edgelink(medial,min_points)
  out<-lapply(paths,function(rc) {
   index<-rc[,1]+nrow(sk)*(rc[,2]-1)
@@ -323,12 +343,11 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
  rule<-.branch_rule(mat)
  if(!length(mat$branches)&&any(mat$skeleton))mat$branches<-trace_skeleton(mat,mat$parameters$min_branch_points)
  estimator<-if(is.null(spec))"mlv2023" else s$branch_estimator
- # tracing ran on the medial pixels only (ink skeleton pixels excluded)
- medial<-.check_mask(mat$skeleton);if(!is.null(mat$distance_map))medial<-medial&!is.na(mat$distance_map)&mat$distance_map>0
  loop_window<-window*(if(!is.null(spec)&&identical(s$units,"visual_degrees")&&!is.null(spec$settings$pixels_per_degree))spec$settings$pixels_per_degree else 1)
  one<-function(b,prop)if(is.null(spec))score_branch(b,prop,window,power) else score_branch(b,prop,window,power,
     estimator=s$branch_estimator,reference_radius=s$reference_radius,fit_tolerance=s$fit_tolerance,
     units=s$units,pixels_per_degree=if(s$branch_estimator=="mlv2023")NULL else spec$settings$pixels_per_degree)
+ isolated<-.isolated_loops(mat$branches)
  mat$score_images<-list()
  for(prop in properties) {
   image<-matrix(NA_real_,nrow(mat$skeleton),ncol(mat$skeleton))
@@ -342,7 +361,7 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
     # isolated closed loop has no start: local estimators use circular windows
     # (both directions); the mlv2023 mirror fit is averaged over all starts.
     n<-nrow(b)
-    if(.is_isolated_loop(b,medial)).score_loop(b,function(z)one(z,prop),prop,estimator,power,loop_window) else {
+    if(isolated[i]).score_loop(b,function(z)one(z,prop),prop,estimator,power,loop_window) else {
      f<-one(b,prop)
      if(n>1L)(f+rev(one(b[n:1,,drop=FALSE],prop)))/2 else f
     }
@@ -506,20 +525,24 @@ print.mlv_mat <- function(x,...) {
  invisible(x)
 }
 
-# Pixel-graph degree as used by cpp_trace_graph: eight neighbours, but a
-# diagonal neighbour is ignored when an orthogonal pixel already connects them.
-.graph_degree <- function(sk,r,c) {
- h<-nrow(sk);w<-ncol(sk);at<-function(i,j)i>=1&&i<=h&&j>=1&&j<=w&&sk[i,j];k<-0L
- for(dr in -1:1)for(dc in -1:1){if(!dr&&!dc)next;if(!at(r+dr,c+dc))next
-  if(dr&&dc&&(at(r,c+dc)||at(r+dr,c)))next;k<-k+1L}
- k
+# An isolated closed loop is a closed path (last point repeating the first)
+# whose start pixel belongs to no other branch: no end or junction anchors its
+# points, so it has no start. A closed path starting on a pixel shared with
+# another branch (a junction) is anchored there (a lollipop). For tracer output
+# this is the pruned-graph degree; it does not depend on the raw skeleton, whose
+# pruned spurs still touch the former junction pixel.
+.isolated_loops <- function(branches) {
+ if(!length(branches))return(logical())
+ key<-function(r,c)paste(r,c)
+ count<-table(unlist(lapply(branches,function(b)unique(key(b$row,b$column)))))
+ vapply(branches,function(b){n<-nrow(b)
+  n>=4L&&b$row[1]==b$row[n]&&b$column[1]==b$column[n]&&count[[key(b$row[1],b$column[1])]]==1L},logical(1))
 }
-# A traced path that returns to its start through a degree-two start pixel is an
-# isolated closed loop: it has no end or junction pixel to anchor its points.
-.is_isolated_loop <- function(b,skeleton) {
+# Whether branch b (an element of branches) is an isolated closed loop.
+.is_isolated_loop <- function(b,branches) {
  n<-nrow(b)
- n>=4L&&b$row[1]==b$row[n]&&b$column[1]==b$column[n]&&!is.null(skeleton)&&
-  isTRUE(skeleton[b$row[1],b$column[1]])&&.graph_degree(skeleton,b$row[1],b$column[1])==2L
+ n>=4L&&b$row[1]==b$row[n]&&b$column[1]==b$column[n]&&
+  sum(vapply(branches,function(z)any(z$row==b$row[1]&z$column==b$column[1]),logical(1)))==1L
 }
 # Scores of an isolated closed loop (points 1..m, point m repeating point 1). A
 # loop has no ends, so local estimators use circular windows: each point is

@@ -112,6 +112,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_trace_graph_pruned
+List cpp_trace_graph_pruned(LogicalMatrix mask, int minimum);
+RcppExport SEXP _mlvtoolbox_cpp_trace_graph_pruned(SEXP maskSEXP, SEXP minimumSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalMatrix >::type mask(maskSEXP);
+    Rcpp::traits::input_parameter< int >::type minimum(minimumSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_trace_graph_pruned(mask, minimum));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_nearest
 List cpp_nearest(NumericMatrix points, NumericMatrix query);
 RcppExport SEXP _mlvtoolbox_cpp_nearest(SEXP pointsSEXP, SEXP querySEXP) {
@@ -296,6 +308,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mlvtoolbox_cpp_remove_small", (DL_FUNC) &_mlvtoolbox_cpp_remove_small, 2},
     {"_mlvtoolbox_cpp_raster_indices", (DL_FUNC) &_mlvtoolbox_cpp_raster_indices, 4},
     {"_mlvtoolbox_cpp_trace_graph", (DL_FUNC) &_mlvtoolbox_cpp_trace_graph, 2},
+    {"_mlvtoolbox_cpp_trace_graph_pruned", (DL_FUNC) &_mlvtoolbox_cpp_trace_graph_pruned, 2},
     {"_mlvtoolbox_cpp_nearest", (DL_FUNC) &_mlvtoolbox_cpp_nearest, 2},
     {"_mlvtoolbox_cpp_fit_lines", (DL_FUNC) &_mlvtoolbox_cpp_fit_lines, 2},
     {"_mlvtoolbox_cpp_skeletonize_hmt", (DL_FUNC) &_mlvtoolbox_cpp_skeletonize_hmt, 1},

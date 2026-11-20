@@ -33,6 +33,10 @@ cpp_trace_graph <- function(mask, minimum) {
     .Call(`_mlvtoolbox_cpp_trace_graph`, mask, minimum)
 }
 
+cpp_trace_graph_pruned <- function(mask, minimum) {
+    .Call(`_mlvtoolbox_cpp_trace_graph_pruned`, mask, minimum)
+}
+
 cpp_nearest <- function(points, query) {
     .Call(`_mlvtoolbox_cpp_nearest`, points, query)
 }

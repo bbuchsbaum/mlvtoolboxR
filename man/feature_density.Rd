@@ -14,9 +14,10 @@ feature_density(x, property = "length", sigma = 0)
 \item{sigma}{Gaussian smoothing standard deviation in pixels; zero disables.}
 }
 \value{
-Numeric image matrix. Kernel boundaries are zero padded. With a
-  specification, curvature distributes integrated absolute turning over
-  raster pixels; the historical path distributes segment curvature scores.
+Numeric image matrix. Kernel boundaries are zero padded. Curvature
+  distributes integrated absolute turning (curvature times length of each
+  measured piece) over raster pixels, under the drawing's specification or,
+  without one, the vertex turning estimator.
 }
 \description{
 Feature density on a pixel grid

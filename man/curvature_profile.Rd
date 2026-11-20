@@ -28,6 +28,8 @@ A table partitioned at geometric vertices, kernel knots and signed
   zero crossings. x/y coordinates remain in input pixels. Curvature start/end
   values are unsigned; signed_start/end retain direction. Midpoint values
   integrate means exactly, but histograms require affine interval integration.
+  Rows are pieces of constant (turning) or affine (arclength) density, not
+  input segments; `as.data.frame()` gives per-segment means of this profile.
 }
 \description{
 Turning uses constant densities on vertex dual cells. Arclength uses
@@ -35,4 +37,8 @@ source-normalized triangular kernels with physical half-width `scale`.
 Open-end kernels retain their turning mass; closed kernels are periodic with
 half-width at most half the contour length. This smooths turning density,
 not curve coordinates. Opposite turns can cancel in the smoothed field.
+An exact 180 degree reversal (a contour retracing itself) has an absolute turn
+of 180 degrees but no sign: the turning estimator assigns it absolute
+curvature with a missing signed value, and the arclength estimator, whose
+smoothing needs the sign, rejects it.
 }

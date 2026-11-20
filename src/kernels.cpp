@@ -10,6 +10,7 @@
 #include <set>
 #include <map>
 #include <array>
+#include <climits>
 #include "pratt_lut.h"
 using namespace Rcpp;
 static double cross(double x,double y,double a,double b){return x*b-y*a;}
@@ -259,6 +260,115 @@ List cpp_trace_graph(LogicalMatrix mask,int minimum){
  for(int i=0;i<n;++i)if(mask[i] && adjacent[i].size()!=2)for(int j:adjacent[i])if(!visited.count(edge(i,j)))trace(i,j);
  for(int i=0;i<n;++i)if(mask[i]){if((i&65535)==0)checkUserInterrupt();for(int j:adjacent[i])if(!visited.count(edge(i,j)))trace(i,j);}
  List out(paths.size());for(size_t i=0;i<paths.size();++i)out[i]=wrap(paths[i]);return out;
+}
+// Default medial-axis branch graph (branch_rule = "invariant"; definition
+// "direction-symmetric-tiemax-graph-2"). The pixel graph (diagonal steps only
+// where no orthogonal pixel connects) is decomposed into maximal paths between
+// node pixels (graph degree != 2); cycles without a node are closed paths. Then,
+// to a fixed point:
+//  1. merge: a node with exactly two path ends, of two different paths, is not a
+//     branching point; the two paths are joined there (the node pixel once);
+//  2. prune: a spur is a path from an end node (degree 1) to a junction (degree
+//     >= 3); it is short when it has fewer than `minimum` pixels (junction pixel
+//     included). Let L be the smallest short-spur length over unprotected
+//     junctions. At every junction J with k spurs of length L: if deg(J) - k >= 2
+//     all k are removed at once; otherwise removing them would leave J an end or
+//     an isolated point, so J is protected and none of its paths is ever removed.
+// Without ties this is sequential shortest-first pruning with immediate merging;
+// tied spurs are treated alike, so a symmetric star (a square's X) is kept
+// whole. A junction never loses its last two paths, so no component disappears;
+// a component that is a single path is kept whatever its length. Every round
+// depends only on the unordered graph, so the result is independent of scan
+// order and of lattice symmetries. Output is canonical: open paths run from the
+// smaller to the larger linear index; closed paths whose anchor is not a
+// branching point start at their smallest pixel; then direction makes the
+// second pixel the smaller neighbour; paths are sorted lexicographically.
+// [[Rcpp::export]]
+List cpp_trace_graph_pruned(LogicalMatrix mask,int minimum){
+ int h=mask.nrow(),w=mask.ncol(),n=mask.size();
+ std::vector<std::vector<int>> adjacent(n);
+ for(int i=0;i<n;++i)if(mask[i]){int r=i%h,c=i/h;
+  for(int dc=-1;dc<=1;++dc)for(int dr=-1;dr<=1;++dr){
+   if(!dr&&!dc)continue;int rr=r+dr,cc=c+dc;if(rr<0||rr>=h||cc<0||cc>=w||!mask[rr+h*cc])continue;
+   if(dr&&dc && (mask[r+h*cc]||mask[rr+h*c]))continue;
+   adjacent[i].push_back(rr+h*cc);
+  }
+  std::sort(adjacent[i].begin(),adjacent[i].end());
+ }
+ std::set<std::pair<int,int>> visited;std::vector<std::vector<int>> paths;
+ auto edge=[](int a,int b){return std::make_pair(std::min(a,b),std::max(a,b));};
+ auto trace=[&](int a,int b){
+  std::vector<int> path{a};int previous=a,current=b;visited.insert(edge(a,b));
+  for(;;){path.push_back(current);if(adjacent[current].size()!=2)break;
+   int next=adjacent[current][0]==previous?adjacent[current][1]:adjacent[current][0];
+   if(visited.count(edge(current,next)))break;
+   visited.insert(edge(current,next));previous=current;current=next;
+  }
+  paths.push_back(path);
+ };
+ for(int i=0;i<n;++i)if(mask[i] && adjacent[i].size()!=2)for(int j:adjacent[i])if(!visited.count(edge(i,j)))trace(i,j);
+ std::vector<char> cycle(paths.size(),0);
+ for(int i=0;i<n;++i)if(mask[i]){if((i&65535)==0)checkUserInterrupt();
+  for(int j:adjacent[i])if(!visited.count(edge(i,j))){trace(i,j);cycle.push_back(1);}}
+ // Node graph over the open paths: node pixel -> incident (path, end) pairs.
+ int E=paths.size();std::vector<char> alive(E,1);
+ std::map<int,std::vector<std::pair<int,int>>> inc;std::set<int> guarded;
+ for(int e=0;e<E;++e)if(!cycle[e]){inc[paths[e].front()].push_back({e,0});inc[paths[e].back()].push_back({e,1});}
+ auto drop=[&](int node,int e){auto& v=inc[node];
+  v.erase(std::remove_if(v.begin(),v.end(),[&](const std::pair<int,int>& p){return p.first==e;}),v.end());};
+ auto merge_all=[&](){
+  bool changed=true;
+  while(changed){changed=false;
+   for(auto& kv:inc){int J=kv.first;auto v=kv.second;
+    if(v.size()!=2||v[0].first==v[1].first)continue;
+    int a=v[0].first,b=v[1].first;
+    std::vector<int> pa=paths[a],pb=paths[b];
+    if(v[0].second==0)std::reverse(pa.begin(),pa.end());     // pa ends at J
+    if(v[1].second==1)std::reverse(pb.begin(),pb.end());     // pb starts at J
+    pa.insert(pa.end(),pb.begin()+1,pb.end());
+    int fa=pa.front(),fb=pa.back();
+    drop(fa,a);drop(fa,b);drop(fb,a);drop(fb,b);kv.second.clear();
+    paths[a]=pa;alive[b]=0;paths[b].clear();
+    inc[fa].push_back({a,0});inc[fb].push_back({a,1});
+    changed=true;
+   }
+  }
+ };
+ for(int round=0;;++round){
+  if((round&255)==0)checkUserInterrupt();
+  merge_all();
+  // spurs at unprotected junctions
+  std::map<int,std::vector<int>> spur_at;int L=INT_MAX;
+  for(int e=0;e<E;++e)if(alive[e]&&!cycle[e]){
+   int a=paths[e].front(),b=paths[e].back();if(a==b)continue;
+   size_t da=inc[a].size(),db=inc[b].size();int J;
+   if(da==1&&db>=3)J=b;else if(db==1&&da>=3)J=a;else continue;
+   if(guarded.count(J)||int(paths[e].size())>=minimum)continue;
+   int len=paths[e].size();if(len<L){L=len;spur_at.clear();}
+   if(len==L)spur_at[J].push_back(e);
+  }
+  if(spur_at.empty())break;
+  for(auto& kv:spur_at){int J=kv.first;
+   if(int(inc[J].size())-int(kv.second.size())>=2){
+    for(int e:kv.second){int a=paths[e].front(),b=paths[e].back();drop(a,e);drop(b,e);alive[e]=0;
+     int leaf=a==J?b:a;inc.erase(leaf);}
+   } else guarded.insert(J);
+  }
+ }
+ // canonical orientation and order
+ std::vector<std::vector<int>> keep;
+ for(int e=0;e<E;++e)if(alive[e]){std::vector<int> p=paths[e];
+  if(p.front()!=p.back()){if(p.front()>p.back())std::reverse(p.begin(),p.end());}
+  else {
+   bool free_anchor=cycle[e]||inc[p.front()].size()==2;
+   if(free_anchor&&p.size()>2){p.pop_back();
+    std::rotate(p.begin(),std::min_element(p.begin(),p.end()),p.end());p.push_back(p.front());}
+   if(p.size()>3&&p[1]>p[p.size()-2])std::reverse(p.begin(),p.end());
+  }
+  for(int& q:p)++q;keep.push_back(p);
+ }
+ std::sort(keep.begin(),keep.end());
+ List out(keep.size());for(size_t i=0;i<keep.size();++i)out[i]=wrap(keep[i]);return out;
 }
 struct KDNode{int point,left,right,axis;};
 class KDTree {

@@ -117,9 +117,9 @@ test_that("MAT methods are recorded, specification-controlled and versioned", {
                   "kovesi_edgelink_cleanedgelist")
  expect_identical(unname(s$definitions[["tracing"]]), "pixel_graph_no_corner_cut")
  expect_identical(s$settings$mat$branch_rule, "invariant")
- expect_identical(unname(s$definitions[["branch_rule"]]), "direction-symmetric-tiemax-graph-1")
+ expect_identical(unname(s$definitions[["branch_rule"]]), "direction-symmetric-tiemax-graph-2")
  expect_identical(x$parameters[c("branch_rule", "branch_rule_definition", "tracing")],
-   list(branch_rule = "invariant", branch_rule_definition = "direction-symmetric-tiemax-graph-1", tracing = "pixel_graph_no_corner_cut"))
+   list(branch_rule = "invariant", branch_rule_definition = "direction-symmetric-tiemax-graph-2", tracing = "pixel_graph_no_corner_cut"))
  compat <- feature_spec("parallelism", mat = list(aof = "mlv2023", branch_rule = "mlv2023"))
  mc <- compute_mat(d, spec = compat)
  expect_identical(mc$parameters[c("branch_rule", "branch_rule_definition", "tracing")],
@@ -288,7 +288,7 @@ test_that("isolated closed loops are scored independently of start pixel and dir
  d <- mlv_drawing(list(matrix(c(3, 3, 39, 3), 1)), n, n)      # drawing only supplies the ink raster
  m <- compute_mat(d, min_branch_points = 3, trace_branches = FALSE)
  m$skeleton <- ring; m$distance_map[] <- 3 + (row(ring) %% 3) / 2; m$branches <- trace_skeleton(m, 3L)
- loop <- Filter(function(b) mlvtoolbox:::.is_isolated_loop(b, ring), m$branches)
+ loop <- Filter(function(b) mlvtoolbox:::.is_isolated_loop(b, m$branches), m$branches)
  expect_length(loop, 1L); expect_length(m$branches, 1L)
  props <- c("parallelism", "separation", "mirror", "taper")
  base <- map_mat_properties(d, compute_mat_properties(m, props))$mat_images
@@ -352,7 +352,7 @@ test_that("a junction-anchored loop (lollipop) keeps the maximum of its doubled 
  m <- compute_mat(d, min_branch_points = 4)
  medial <- m$skeleton & m$distance_map > 0
  lol <- which(vapply(m$branches, function(b) { n <- nrow(b); b$row[1] == b$row[n] && b$column[1] == b$column[n] &&
-   !mlvtoolbox:::.is_isolated_loop(b, medial) }, TRUE))
+   !mlvtoolbox:::.is_isolated_loop(b, m$branches) }, TRUE))
  expect_gt(length(lol), 0)
  P <- c("parallelism", "separation", "mirror", "taper")
  A <- compute_mat_properties(m, P); m2 <- m; m2$branches[lol] <- lapply(m2$branches[lol], function(b) b[nrow(b):1, ])
@@ -368,7 +368,7 @@ test_that("loop detection uses the medial pixels that tracing used", {
  d <- mlv_drawing(list(poly(circ(30, 30, 6)), poly(circ(30, 30, 16, 40))), 60, 60)
  m <- compute_mat(d, min_branch_points = 4)
  medial <- m$skeleton & m$distance_map > 0
- L <- which(vapply(m$branches, mlvtoolbox:::.is_isolated_loop, TRUE, skeleton = medial)); expect_length(L, 1L)
+ L <- which(vapply(m$branches, mlvtoolbox:::.is_isolated_loop, TRUE, branches = m$branches)); expect_length(L, 1L)
  b <- m$branches[[L]]; r <- b$row[1]; c <- b$column[1]
  run <- function(mm) map_mat_properties(d, compute_mat_properties(mm, c("parallelism", "mirror")))$mat_images
  for (dr in -1:1) for (dc in -1:1) { rr <- r + dr; cc <- c + dc; if (m$skeleton[rr, cc]) next

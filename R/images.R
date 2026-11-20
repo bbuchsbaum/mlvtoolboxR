@@ -352,9 +352,10 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
 #' @param x A drawing.
 #' @param property Segment property, junctions, or a mapped MAT property.
 #' @param sigma Gaussian smoothing standard deviation in pixels; zero disables.
-#' @return Numeric image matrix. Kernel boundaries are zero padded. With a
-#'   specification, curvature distributes integrated absolute turning over
-#'   raster pixels; the historical path distributes segment curvature scores.
+#' @return Numeric image matrix. Kernel boundaries are zero padded. Curvature
+#'   distributes integrated absolute turning (curvature times length of each
+#'   measured piece) over raster pixels, under the drawing's specification or,
+#'   without one, the vertex turning estimator.
 #' @export
 feature_density <- function(x,property="length",sigma=0) {
  .check_drawing(x)
@@ -370,7 +371,7 @@ feature_density <- function(x,property="length",sigma=0) {
   for(i in seq_len(nrow(st))) {
    index<-cpp_raster_indices(as.matrix(st[i,c("x1","y1","x2","y2")]),x$height,x$width,1)
    value<-st[[property]][i]
-   if(property=="curvature"&&!is.null(x$feature_spec))value<-value*st$length[i]
+   if(property=="curvature")value<-value*st$length[i]
    if(length(index))out[index]<-out[index]+value/length(index)
   }
  } else if(!is.null(x$mat_properties[[property]])) {

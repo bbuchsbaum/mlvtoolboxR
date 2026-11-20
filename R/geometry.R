@@ -3,24 +3,37 @@
 #' @param properties Requested properties; basic segment measures are cheap and
 #'   computed together. Include "junctions" to detect contour intersections.
 #' @param ... Arguments passed to `detect_junctions()`.
-#' @param spec Optional feature specification, exclusive of properties and dots.
+#' @param spec Optional feature specification, exclusive of properties, dots
+#'   and `estimator`.
 #' @param pixels_per_degree Optional input calibration override.
+#' @param estimator Curvature definition without a specification. Both give
+#'   one row per input segment. `"turning"` (default) spreads each vertex turn
+#'   over its dual cell, counting it once; a segment's curvature is its mean
+#'   curvature, the exact integral of that density over the segment divided by
+#'   its length, and `signed_curvature` is the signed mean. The piecewise density
+#'   is available from [curvature_profile()]. `"mlv2023"` gives the published
+#'   value: the turn to the next segment divided by the segment's own length,
+#'   with the last segment repeating the previous turn. Without a
+#'   specification the choice is recorded on the drawing
+#'   (`curvature_estimator`) and becomes the default of later calls on it that
+#'   give neither `spec` nor `estimator` (statistics, feature tables, segment
+#'   tables, plots, densities and contour splits); explicit arguments still win.
 #' @return A drawing with segment and contour tables, and requested junctions.
 #' @export
 compute_contour_properties <- function(x,
   properties=c("orientation","length","curvature","junctions"), ...,
-  spec=x$feature_spec,pixels_per_degree=NULL) {
-  .check_drawing(x)
+  spec=x$feature_spec,pixels_per_degree=NULL,estimator=c("turning","mlv2023")) {
+  .check_drawing(x);estimator_given<-!missing(estimator);estimator<-.drawing_estimator(x,match.arg(estimator),estimator_given)
   if(!is.null(spec)) {
     validate_feature_spec(spec)
-    if(!missing(properties)||length(list(...)))stop("use spec or individual contour settings, not both",call.=FALSE)
+    if(!missing(properties)||length(list(...))||estimator_given)stop("use spec or individual contour settings, not both",call.=FALSE)
     if(!is.null(pixels_per_degree))spec$settings$pixels_per_degree<-.spec_number(pixels_per_degree,"pixels_per_degree",strict=TRUE)
     properties<-c(intersect(spec$settings$properties,c("orientation","length","curvature")),
                   if(any(grepl("^junction_",spec$settings$properties)))"junctions")
   }
   if(any(!properties %in% c("orientation","length","curvature","junctions")))
     stop("unknown contour property",call.=FALSE)
-  x$segment_properties <- .measurement_table(x,spec,pixels_per_degree)
+  x$segment_properties <- .measurement_table(x,spec,pixels_per_degree,estimator)
   st <- x$segment_properties
   x$contour_properties <- data.frame(contour_id=x$ids,
     length=if(length(x$ids))unname(vapply(split(st$length,
@@ -28,6 +41,7 @@ compute_contour_properties <- function(x,
   if("junctions" %in% properties) x$junctions <- if(is.null(spec))detect_junctions(x,...) else
     .measurement_junctions(x,spec,pixels_per_degree)
   if(!is.null(spec))x$feature_spec<-spec
+  x$curvature_estimator<-if(is.null(spec))estimator else NULL
   x
 }
 .empty_junctions <- function() {
@@ -195,13 +209,22 @@ detect_junctions <- function(x,absolute_epsilon=1,relative_epsilon=0.3,
 #' @param property Property name.
 #' @param spec Optional feature specification.
 #' @param pixels_per_degree Optional input calibration override.
+#' @param estimator Curvature definition without a specification; see
+#'   [compute_contour_properties()]. Mean curvature is integrated absolute
+#'   turning per unit length.
 #' @return One numeric summary, or NA when undefined.
 #' @export
 average_property <- function(x,property=c("length","curvature","orientation","junctions",
                                          "mirror","parallelism","separation","taper"),
-                             spec=x$feature_spec,pixels_per_degree=NULL) {
+                             spec=x$feature_spec,pixels_per_degree=NULL,
+                             estimator=c("turning","mlv2023")) {
   .check_drawing(x); property <- match.arg(property)
-  st <- .measurement_table(x,spec,pixels_per_degree); total <- sum(st$length)
+  estimator_given<-!missing(estimator);estimator<-.drawing_estimator(x,match.arg(estimator),estimator_given)
+  if(!is.null(spec)&&estimator_given)stop("use spec or estimator, not both",call.=FALSE)
+  # Without a specification, only curvature depends on the estimator; the other
+  # summaries measure the input segments directly.
+  st <- .measurement_table(x,spec,pixels_per_degree,if(property=="curvature")estimator else "mlv2023")
+  total <- sum(st$length)
   if(property=="length") {
     if(!length(x$ids)) return(NA_real_)
     return(total/length(x$ids))

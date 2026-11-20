@@ -1,4 +1,5 @@
-.feature_schema_from_blocks <- function(blocks, normalize, spec=NULL) {
+# Specification-free (version 1) schemas record the curvature definition in effect.
+.feature_schema_from_blocks <- function(blocks, normalize, spec=NULL, estimator="turning") {
  columns <- lapply(blocks,function(b) {
   prop <- b$property
   data.frame(name=paste0(prop,"_",b$bin),property=prop,bin=b$bin,
@@ -12,7 +13,7 @@
     if(prop=="junction_type")"category" else "upper_edge_clamp_outside",
    units=b$units,stringsAsFactors=FALSE)
  })
- out<-structure(list(schema_version=1L,estimator="mlv2023-port-0.1.1",
+ out<-structure(list(schema_version=1L,estimator=.contour_definition(estimator),
   normalization=if(normalize)"per_10000_contour_pixels" else "none",
   columns=if(length(columns))do.call(rbind,columns) else data.frame()),
   class="mlv_feature_schema")

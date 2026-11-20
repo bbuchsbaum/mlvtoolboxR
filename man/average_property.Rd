@@ -9,7 +9,8 @@ average_property(
   property = c("length", "curvature", "orientation", "junctions", "mirror",
     "parallelism", "separation", "taper"),
   spec = x$feature_spec,
-  pixels_per_degree = NULL
+  pixels_per_degree = NULL,
+  estimator = c("turning", "mlv2023")
 )
 }
 \arguments{
@@ -20,6 +21,10 @@ average_property(
 \item{spec}{Optional feature specification.}
 
 \item{pixels_per_degree}{Optional input calibration override.}
+
+\item{estimator}{Curvature definition without a specification; see
+[compute_contour_properties()]. Mean curvature is integrated absolute
+turning per unit length.}
 }
 \value{
 One numeric summary, or NA when undefined.

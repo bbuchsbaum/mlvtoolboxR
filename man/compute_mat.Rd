@@ -30,7 +30,11 @@ must be closed under quarter turns and the diagonal reflection).}
 
 \item{min_component}{Minimum component size; default scales with image size.}
 
-\item{min_branch_points}{Minimum points retained in traced branches.}
+\item{min_branch_points}{Spur length threshold, in pixels (default
+`branch_rule`) or Euclidean length (`"mlv2023"`). Under `"invariant"` only
+spurs (paths from an end pixel to a junction) shorter than this are pruned,
+shortest first with tied spurs kept together, and never a component's last
+path; see [trace_skeleton()].}
 
 \item{trace_branches}{Trace branches now; FALSE defers this work until scoring.}
 
@@ -54,7 +58,9 @@ neighbours remains, 2x2 blocks only where all four pixels are non-simple),
 removable 2x2 blocks) or `"pratt"`.}
 
 \item{branch_rule}{Branch tracing, scoring direction and contour mapping.
-`"invariant"` (default): pixel-graph tracing without repeated points,
+`"invariant"` (default): pixel-graph tracing without repeated points and
+order-free spur pruning that keeps every skeleton component of two or more pixels (see
+[trace_skeleton()]),
 branch scores averaged over both traversal directions, tangent samples
 carrying the mean score of their segment's two points, the maximum over
 exact nearest-sample ties and over branches, and valid zeros retained;
@@ -62,9 +68,10 @@ an isolated closed loop (no end or junction pixel) is scored with circular
 windows for local estimators (it has no start) and, for the mlv2023 mirror
 fit (a global greedy segmentation), as the mean over every start pixel and
 both directions;
-per-pixel scores are unchanged by branch reversal, branch or contour
-renumbering, the start pixel of an isolated closed loop, and lattice
-rotations/reflections of the MAT fields. The whole pipeline from a drawing
+traced branches and per-pixel scores are unchanged by branch reversal,
+branch or contour renumbering, the traced start pixel (including that of
+an isolated closed loop), and lattice rotations/reflections of the MAT
+fields. The whole pipeline from a drawing
 is not guaranteed lattice-equivariant: thinning is sequential
 (direction-ordered) and the rasterizer resolves exact half-pixel ties by
 slope sign.

@@ -1,6 +1,13 @@
 test_that("specifications are canonical, versioned and independent of input calibration", {
  s<-feature_spec()
- expect_identical(s$settings$estimator,"mlv2023")
+ expect_identical(s$settings$estimator,"turning")
+ expect_identical(s$definitions[["contour"]],"vertex-dual-1")
+ # A specification records its estimator: one built when mlv2023 was the
+ # default carries it explicitly, validates, and keeps its definition.
+ old<-feature_spec(estimator="mlv2023")
+ expect_identical(validate_feature_spec(unserialize(serialize(old,NULL))),old)
+ expect_identical(old$definitions[["contour"]],"mlv2023-port-0.1.1")
+ expect_false(identical(old$definitions,s$definitions))
  expect_identical(s$settings$branch_estimator,"mlv2023")
  expect_identical(s$settings$length_range,c(2,400))
  expect_identical(validate_feature_spec(unserialize(serialize(s,NULL))),s)

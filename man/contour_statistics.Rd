@@ -14,7 +14,8 @@ contour_statistics(
   length_range = c(2, max(3, x$width + x$height)),
   curvature_range = c(0, 90),
   spec = x$feature_spec,
-  pixels_per_degree = NULL
+  pixels_per_degree = NULL,
+  estimator = c("turning", "mlv2023")
 )
 }
 \arguments{
@@ -34,6 +35,9 @@ contour_statistics(
 settings. Enriched drawings use their saved specification by default.}
 
 \item{pixels_per_degree}{Optional input calibration override.}
+
+\item{estimator}{Curvature definition without a specification: vertex
+turning (default) or the published `"mlv2023"` estimator.}
 }
 \value{
 A long data frame with bin boundaries, centers, values and units.
@@ -45,4 +49,21 @@ count events; per-contour junctions count each participating contour once.
 MAT histograms count mapped pixels, including valid zero scores. Values
 outside the logarithmic range enter the first/last bin. Orientation is axial;
 exact bin boundaries enter the upper bin, including odd bin counts.
+}
+\details{
+A value that differs from a bin edge by at most 1e-9 x max(1, |edge|) is
+binned as if it lay exactly on the edge, in the coordinate in which the bins
+are equally spaced (degrees for orientation and junction angles, log10(1 + x)
+for length and the published curvature, the raw value otherwise). Angles that
+are mathematically equal, such as a computed 59.999999999999993 and an exact
+60 degrees, therefore share a bin on every platform. Rounding residue is
+many orders of magnitude smaller than this tolerance, and real measurement
+differences many orders larger.
+
+Without a specification, curvature uses the vertex turning estimator
+(`estimator = "turning"`): each vertex turn is spread uniformly over its dual
+cell, half of each adjacent segment, so every turn is counted once. The
+published estimator, `estimator = "mlv2023"`, assigns each segment the turn
+to its neighbour divided by its own length and so counts every corner twice;
+see [feature_spec()].
 }

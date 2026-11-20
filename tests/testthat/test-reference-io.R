@@ -21,7 +21,7 @@ test_that("MAT import handles synthetic structure arrays", {
  drawings<-read_mlv_mat(file)
  expect_length(drawings,2)
  expect_equal(vapply(drawings,function(d)length(d$ids),integer(1)),c(2L,1L))
- expect_equal(as.data.frame(drawings[[1]])$length,c(10,5,6))
+ expect_equal(as.data.frame(drawings[[1]],estimator="mlv2023")$length,c(10,5,6))
  expect_equal(drawings[[2]]$width,10L)
  expect_error(read_mlv_mat(file,"absent"),"not found")
 })

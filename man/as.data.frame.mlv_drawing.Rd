@@ -10,7 +10,8 @@
   optional = FALSE,
   ...,
   spec = x$feature_spec,
-  pixels_per_degree = NULL
+  pixels_per_degree = NULL,
+  estimator = c("turning", "mlv2023")
 )
 }
 \arguments{
@@ -21,9 +22,18 @@
 \item{spec}{Optional feature specification; defaults to an enriched drawing's recipe.}
 
 \item{pixels_per_degree}{Optional input calibration override.}
+
+\item{estimator}{Curvature definition without a specification; see
+[compute_contour_properties()]; exclusive of `spec`.}
 }
 \value{
-A segment data frame with geometric measurements.
+A data frame with one row per input segment: endpoints, length,
+  orientation and curvature. Under the turning and arc-length estimators
+  curvature is the segment's mean curvature (the exact integral of the
+  estimator's density over the segment divided by its length) and
+  `signed_curvature` its signed mean (NA where an exact reversal leaves the
+  sign undefined); [curvature_profile()] returns the piecewise density itself.
+  Lengths and curvature use the specification's units.
 }
 \description{
 Drawing segment table

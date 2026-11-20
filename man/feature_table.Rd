@@ -12,7 +12,8 @@ feature_table(
   length_range = c(2, max(3, x$width + x$height)),
   curvature_range = c(0, 90),
   spec = x$feature_spec,
-  pixels_per_degree = NULL
+  pixels_per_degree = NULL,
+  estimator = c("turning", "mlv2023")
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ feature_table(
 \item{spec}{Optional feature specification, exclusive of individual settings.}
 
 \item{pixels_per_degree}{Optional input calibration override.}
+
+\item{estimator}{Curvature definition without a specification; see
+[contour_statistics()].}
 }
 \value{
 One row per contour, with named numeric predictors and a

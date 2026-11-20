@@ -6,7 +6,7 @@ parity_drawing<-function(name) {
 }
 test_that("diverse contour measurements agree with executed source references", {
  for(name in c("integer0","integer1","integer2","subpixel","fractional")) {
-  d<-parity_drawing(name);z<-as.data.frame(d)
+  d<-parity_drawing(name);z<-as.data.frame(d,estimator="mlv2023")
   actual<-unname(as.matrix(z[,c("length","orientation","curvature")]))
   expect_equal(actual,parity_read(paste0(name,".octave.geometry.csv")),tolerance=1e-12)
   expect_equal(unname(do.call(rbind,rotate_drawing(d,37)$contours)),
@@ -14,7 +14,7 @@ test_that("diverse contour measurements agree with executed source references", 
   if(grepl("^integer",name))
    expect_lt(max(abs(actual-parity_read(paste0(name,".python.geometry.csv")))),3e-8)
   for(bins in c(5,8,13))for(prop in c("length","orientation","curvature"))for(norm in c(FALSE,TRUE)) {
-   h<-contour_statistics(d,prop,bins,by="contour",normalize=norm)
+   h<-contour_statistics(d,prop,bins,by="contour",normalize=norm,estimator="mlv2023")
    actual<-matrix(h$value,ncol=bins,byrow=TRUE)
    if(!(bins==13&&prop=="orientation")) {
     field<-paste0(if(norm)"norm_" else "",prop,bins,".csv")
@@ -47,7 +47,7 @@ test_that("grouped statistics preserve the checked non-boundary output exactly",
   attr(actual,"measurement_metadata")<-NULL
   expect_witness(actual,case$expected)
  }
- features<-feature_table(w$drawing,c("length","orientation","curvature","parallelism"),13)
+ features<-feature_table(w$drawing,c("length","orientation","curvature","parallelism"),13,estimator="mlv2023")
  expect_s3_class(feature_schema(features),"mlv_feature_schema")
  attr(features,"feature_schema")<-NULL
  attr(features,"measurement_metadata")<-NULL

@@ -34,7 +34,8 @@ for (i in seq_along(w$cases)) {
   w$cases[[i]] <- case; w$cases[[i]]$expected <- expected; n <- n + 1L
 }
 note <- paste("serialized feature specifications rebuilt for the MAT default changes (mat aof='centered',",
-  "morphology='hmt8', branch_rule='invariant'; definitions centered-tie-mean-1 / sequential_hmt8_matlab_skel_order-1 /",
-  "direction-symmetric-tiemax-graph-1); every value unchanged; see docs/evidence/mlvref/mat (track B)")
+  "morphology='minimal', branch_rule='invariant'; definitions centered-tie-mean-1 /",
+  "hmt8-then-sequential-simple-pixel-removal-1 / direction-symmetric-tiemax-graph-2); every value unchanged;",
+  "see docs/evidence/mlvref/mat (track B)")
 w$errata <- c(w$errata[!grepl("serialized feature specifications rebuilt for the MAT default", w$errata)], note)
 saveRDS(w, path); message(path, ": ", n, " cases with embedded specifications refreshed; values unchanged")

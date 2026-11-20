@@ -12,7 +12,7 @@ feature_spec(
   curvature_range = c(0, 90),
   units = c("pixels", "visual_degrees"),
   pixels_per_degree = NULL,
-  estimator = c("mlv2023", "turning", "arclength"),
+  estimator = c("turning", "mlv2023", "arclength"),
   curvature_scale = 1,
   branch_estimator = c("mlv2023", "arclength"),
   branch_window = 5,
@@ -41,8 +41,8 @@ angles are always measured in geometric degrees.}
 
 \item{pixels_per_degree}{Positive calibration required for visual degrees.}
 
-\item{estimator}{Contour curvature definition: published, vertex turning,
-or arc-length-scale curvature.}
+\item{estimator}{Contour curvature definition: vertex turning (default),
+published (`"mlv2023"`), or arc-length-scale curvature; see Details.}
 
 \item{curvature_scale}{Half-width of the arc-length curvature support, in
 target spatial units. Applies only to the arclength estimator.}
@@ -83,9 +83,29 @@ A validated `mlv_feature_spec`. It declares methods; constructing it
   does not calculate features or infer extraction provenance for existing data.
 }
 \description{
-Explicit specifications use fixed ranges, independent of the canvas. The
-published estimator remains the default for one release. New estimators are
-selected explicitly; their definitions are versioned separately from this
-specification's serialization format. Calibration is input-specific and is
-excluded from semantic compatibility after conversion to the target units.
+Explicit specifications use fixed ranges, independent of the canvas. Each
+method's definition is versioned separately from this specification's
+serialization format and recorded in `definitions`, so a specification states
+which estimator it uses whether or not that estimator was the default when it
+was built. Calibration is input-specific and is excluded from semantic
+compatibility after conversion to the target units.
+}
+\details{
+Curvature estimators. `"turning"` (the default) spreads each vertex's turning
+angle uniformly over the vertex's dual cell, the half-segments on either side
+of it, so every turn is counted once and a 90 degree corner integrates to 90
+degrees. It has no tuning parameter, and its histograms are stable under
+resampling: a circle of radius 10 drawn with 16 to 128 vertices, evenly or
+with alternating 1:2 spacing, puts all its length in one 8-bin curvature
+bin, near 180/(10 pi) degrees per pixel, where `"mlv2023"` splits the
+unevenly sampled circles between two bins. `"arclength"` smooths the turning density with a
+triangular kernel of half-width `curvature_scale`, giving curvature at a
+stated spatial scale. `"mlv2023"` is the published MLV estimator: each segment
+receives the whole turn to the next segment divided by its own length, and
+the last segment of a contour, which has no next segment, repeats the turn
+from the previous one. The last vertex of every contour is therefore counted
+twice (the 90 degree apex of a two-segment roof integrates to 180 degrees),
+the closing vertex of a closed contour is not counted, and the value at a
+vertex depends on the length of one adjacent segment only. Use it to
+reproduce published values (`vignette("mlv-compatibility")`).
 }

@@ -13,11 +13,30 @@
 }
 #' Declare a reusable measurement specification
 #'
-#' Explicit specifications use fixed ranges, independent of the canvas. The
-#' published estimator remains the default for one release. New estimators are
-#' selected explicitly; their definitions are versioned separately from this
-#' specification's serialization format. Calibration is input-specific and is
-#' excluded from semantic compatibility after conversion to the target units.
+#' Explicit specifications use fixed ranges, independent of the canvas. Each
+#' method's definition is versioned separately from this specification's
+#' serialization format and recorded in `definitions`, so a specification states
+#' which estimator it uses whether or not that estimator was the default when it
+#' was built. Calibration is input-specific and is excluded from semantic
+#' compatibility after conversion to the target units.
+#'
+#' Curvature estimators. `"turning"` (the default) spreads each vertex's turning
+#' angle uniformly over the vertex's dual cell, the half-segments on either side
+#' of it, so every turn is counted once and a 90 degree corner integrates to 90
+#' degrees. It has no tuning parameter, and its histograms are stable under
+#' resampling: a circle of radius 10 drawn with 16 to 128 vertices, evenly or
+#' with alternating 1:2 spacing, puts all its length in one 8-bin curvature
+#' bin, near 180/(10 pi) degrees per pixel, where `"mlv2023"` splits the
+#' unevenly sampled circles between two bins. `"arclength"` smooths the turning density with a
+#' triangular kernel of half-width `curvature_scale`, giving curvature at a
+#' stated spatial scale. `"mlv2023"` is the published MLV estimator: each segment
+#' receives the whole turn to the next segment divided by its own length, and
+#' the last segment of a contour, which has no next segment, repeats the turn
+#' from the previous one. The last vertex of every contour is therefore counted
+#' twice (the 90 degree apex of a two-segment roof integrates to 180 degrees),
+#' the closing vertex of a closed contour is not counted, and the value at a
+#' vertex depends on the length of one adjacent segment only. Use it to
+#' reproduce published values (`vignette("mlv-compatibility")`).
 #' @param properties Ordered feature names.
 #' @param bins Histogram bin count; junction types always use five categories.
 #' @param normalize Normalize length/count weights per 10,000 target length units.
@@ -26,8 +45,8 @@
 #' @param units Spatial unit: pixels or degrees of visual angle. Tangent/turning
 #'   angles are always measured in geometric degrees.
 #' @param pixels_per_degree Positive calibration required for visual degrees.
-#' @param estimator Contour curvature definition: published, vertex turning,
-#'   or arc-length-scale curvature.
+#' @param estimator Contour curvature definition: vertex turning (default),
+#'   published (`"mlv2023"`), or arc-length-scale curvature; see Details.
 #' @param curvature_scale Half-width of the arc-length curvature support, in
 #'   target spatial units. Applies only to the arclength estimator.
 #' @param branch_estimator Published sample-based or arc-length-based scores.
@@ -58,7 +77,7 @@
 feature_spec <- function(properties=c("orientation","length","curvature","junction_type"),
  bins=8,normalize=TRUE,length_range=NULL,curvature_range=c(0,90),
  units=c("pixels","visual_degrees"),pixels_per_degree=NULL,
- estimator=c("mlv2023","turning","arclength"),curvature_scale=1,
+ estimator=c("turning","mlv2023","arclength"),curvature_scale=1,
  branch_estimator=c("mlv2023","arclength"),branch_window=5,branch_power=10,
  reference_radius=1,fit_tolerance=1,junction=list(),mat=list(),mapping_radius=4,
  raster_line_width=1,extraction=list()) {
@@ -127,8 +146,7 @@ feature_spec <- function(properties=c("orientation","length","curvature","juncti
   branch_window=branch_window,branch_power=branch_power,reference_radius=reference_radius,
   fit_tolerance=fit_tolerance,junction=junction,mat=mat,mapping_radius=mapping_radius,
   raster_line_width=raster_line_width,extraction=extraction)
- structure(list(version=1L,definitions=c(contour=switch(estimator,mlv2023="mlv2023-port-0.1.1",
-  turning="vertex-dual-1",arclength="tent-source-normalized-1"),
+ structure(list(version=1L,definitions=c(contour=.contour_definition(estimator),
   branch=if(branch_estimator=="mlv2023")"mlv2023-port-0.1.1" else "physical-integrals-1",histogram="1",
   aof=.aof_definition(mat$aof),morphology=.morphology_definition(mat$morphology),
   branch_rule=.branch_rule_definition(mat$branch_rule),
@@ -160,11 +178,14 @@ validate_feature_spec <- function(spec) {
  1/.spec_number(ppd,"pixels_per_degree",strict=TRUE)
 }
 
+# Versioned contour curvature definitions.
+.contour_definition <- function(estimator) switch(estimator,mlv2023="mlv2023-port-0.1.1",
+ turning="vertex-dual-1",arclength="tent-source-normalized-1")
 # Versioned MAT method identifiers. Specifications and MATs built with other
 # identifiers (including the 0.2.x Pratt default) fail canonical validation.
 .aof_definition <- function(aof) switch(aof,centered="centered-tie-mean-1",mlv2023="mlv2023-computeAOF-lowest-index")
 .branch_rule_definition <- function(rule) switch(rule,
- invariant="direction-symmetric-tiemax-graph-1",mlv2023="mlv2023-edgelink-lastwriter-1")
+ invariant="direction-symmetric-tiemax-graph-2",mlv2023="mlv2023-edgelink-lastwriter-1")
 .morphology_definition <- function(morphology) switch(morphology,
  minimal="hmt8-then-sequential-simple-pixel-removal-1",
  hmt8="sequential_hmt8_matlab_skel_order-1",pratt="octave_image_pratt_2.20.0")

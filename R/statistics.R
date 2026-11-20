@@ -10,11 +10,42 @@
  k<-length(edges)-1L
  if(as.double(n_groups)*k>.Machine$integer.max)stop("histogram exceeds index capacity",call.=FALSE)
  if(!length(values)||!n_groups)return(matrix(0,n_groups,k))
- if(is.null(index))index<-findInterval(values,edges,all.inside=TRUE)
+ if(is.null(index))index<-.bin_index(values,edges)
  cpp_grouped_sums(weights,groups,index,n_groups,k)
 }
+# Bin-edge snapping. A value within .bin_edge_tolerance(edge) of a bin edge is
+# replaced by the edge itself before binning, so that values that differ from
+# an edge only by floating-point rounding bin as if exactly on it (and the
+# upper-bin rule then applies). The tolerance is relative, 1e-9 * max(1, |edge|),
+# in the coordinate in which the bins are equally spaced (degrees, log10(1 + x),
+# or the raw score). It is far above accumulated rounding of the angle and
+# length computations (~1e-13 relative) and far below any measurement
+# difference that matters. src/statistics.cpp implements the same rule with the
+# same arithmetic; the two must agree exactly.
+.bin_edge_tolerance <- function(edges) 1e-9*pmax(1,abs(edges))
+.snap_to_edges <- function(values,edges) {
+ if(!length(values)||!length(edges))return(values)
+ i<-findInterval(values,edges);k<-length(edges)
+ for(candidate in list(pmax(i,1L),pmin(i+1L,k))) {
+  e<-edges[candidate]
+  hit<-!is.na(values)&is.finite(e)&abs(values-e)<=.bin_edge_tolerance(e)
+  values[hit]<-e[hit]
+ }
+ values
+}
+.bin_index <- function(values,edges) findInterval(.snap_to_edges(values,edges),edges,all.inside=TRUE)
+# Axial orientation bins are centred on 0 degrees: edges at (m - 1/2) * 180 / bins.
+# Scale the axial angle directly. Shifting/subtracting half a bin can put 90
+# and 270 degrees on different sides of the same edge for odd bin counts.
+.orientation_index <- function(values,bins) {
+ axial<-values%%180;scaled<-axial*bins/180+.5
+ nearest<-floor(scaled+.5);edge<-(nearest-.5)*180/bins
+ bin<-floor(scaled);snap<-!is.na(axial)&abs(axial-edge)<=.bin_edge_tolerance(edge)
+ bin[snap]<-nearest[snap]
+ (bin%%bins)+1L
+}
 .statistics_blocks <- function(x,properties,bins,by,normalize,length_range,curvature_range,
-                               spec=NULL,pixels_per_degree=NULL) {
+                               spec=NULL,pixels_per_degree=NULL,estimator="turning") {
  .check_drawing(x);bins<-.bins_count(bins)
  allowed<-c("orientation","length","curvature","horizontal_vertical",
             "junction_type","junction_angle","mirror","parallelism","separation","taper")
@@ -28,20 +59,29 @@
  length_unit<-if(is.null(spec)||spec$settings$units=="pixels")"pixels" else "visual_degrees"
  geometry_names<-c("orientation","length","curvature","horizontal_vertical")
  geometry<-unique(properties[properties %in% geometry_names])
- published<-is.null(spec)||spec$settings$estimator=="mlv2023"
+ if(!is.null(spec))estimator<-spec$settings$estimator
+ published<-estimator=="mlv2023"
+ # The fused native pass measures input segments directly. It serves every
+ # geometry property of the published estimator and of the specification-free
+ # turning path (whose curvature it integrates over vertex dual cells, code 5);
+ # specified turning and arc-length curvature come from the piecewise profile.
+ fused<-published||is.null(spec)
+ fused_geometry<-geometry
  fast_counts<-NULL;st<-NULL;segment_group<-NULL
- if(published) {
-  edge_list<-lapply(geometry,function(prop)switch(prop,
+ if(fused) {
+  edge_list<-lapply(fused_geometry,function(prop)switch(prop,
    orientation=seq(0,180,length.out=bins+1L),
    length=seq(log10(length_range[1]+1),log10(length_range[2]+1),length.out=bins+1L),
-   curvature=seq(log10(curvature_range[1]+1),log10(curvature_range[2]+1),length.out=bins+1L),
+   curvature={e<-seq(log10(curvature_range[1]+1),log10(curvature_range[2]+1),length.out=bins+1L)
+              if(published)e else 10^e-1},
    horizontal_vertical=seq(-1,1,length.out=bins+1L)))
-  fast<-cpp_geometry_histograms(x$contours,match(geometry,geometry_names),edge_list,by=="drawing",scale)
-  lens<-fast$lengths;fast_counts<-stats::setNames(fast$counts,geometry)
+  codes<-match(fused_geometry,geometry_names);if(!published)codes[fused_geometry=="curvature"]<-5L
+  fast<-cpp_geometry_histograms(x$contours,codes,edge_list,by=="drawing",scale)
+  lens<-fast$lengths;fast_counts<-stats::setNames(fast$counts,fused_geometry)
  } else {
   lens<-cpp_contour_lengths(x$contours)*scale
   if(any(geometry!="length")) {
-   st<-.measurement_table(x,spec,pixels_per_degree)
+   st<-.profile_table(x,spec,pixels_per_degree)
    segment_group<-if(by=="drawing")rep.int(1L,nrow(st)) else st$contour_index
   }
  }
@@ -58,9 +98,7 @@
   if(prop=="orientation") {
    width<-180/bins;edges<-seq(0,180,length.out=bins+1L)
    values<-st$orientation;weights<-st$length;groups<-segment_group
-   # Scale the axial angle directly. Shifting/subtracting half a bin can put
-   # 90 and 270 degrees on different sides of the same edge for odd bin counts.
-   index<-(floor((values%%180)*bins/180+.5)%%bins)+1L
+   index<-.orientation_index(values,bins)
    centers<-seq(0,180-width,length.out=bins)
   } else if(prop=="horizontal_vertical") {
    edges<-seq(-1,1,length.out=bins+1L)
@@ -92,8 +130,8 @@
    weights<-rep.int(1,length(values));edges<-seq(0,1,length.out=bins+1L)
    centers<-(head(edges,-1)+tail(edges,-1))/2;unit<-"count"
   }
-  counts<-if(published && prop %in% geometry)fast_counts[[prop]] else
-   if(prop=="curvature"&&!is.null(spec)&&spec$settings$estimator!="mlv2023")
+  counts<-if(fused && prop %in% fused_geometry)fast_counts[[prop]] else
+   if(prop=="curvature"&&!published)
    .linear_histogram(st$curvature_start,st$curvature_end,st$length,groups,10^edges-1,ng) else
    .grouped_bins(values,weights,groups,edges,ng,index)
   if(normalize) {
@@ -119,6 +157,22 @@
 #' MAT histograms count mapped pixels, including valid zero scores. Values
 #' outside the logarithmic range enter the first/last bin. Orientation is axial;
 #' exact bin boundaries enter the upper bin, including odd bin counts.
+#'
+#' A value that differs from a bin edge by at most 1e-9 x max(1, |edge|) is
+#' binned as if it lay exactly on the edge, in the coordinate in which the bins
+#' are equally spaced (degrees for orientation and junction angles, log10(1 + x)
+#' for length and the published curvature, the raw value otherwise). Angles that
+#' are mathematically equal, such as a computed 59.999999999999993 and an exact
+#' 60 degrees, therefore share a bin on every platform. Rounding residue is
+#' many orders of magnitude smaller than this tolerance, and real measurement
+#' differences many orders larger.
+#'
+#' Without a specification, curvature uses the vertex turning estimator
+#' (`estimator = "turning"`): each vertex turn is spread uniformly over its dual
+#' cell, half of each adjacent segment, so every turn is counted once. The
+#' published estimator, `estimator = "mlv2023"`, assigns each segment the turn
+#' to its neighbour divided by its own length and so counts every corner twice;
+#' see [feature_spec()].
 #' @param x A drawing.
 #' @param properties Property names.
 #' @param bins Positive number of bins (junction types always have five).
@@ -128,24 +182,28 @@
 #' @param spec Optional feature specification, exclusive of individual feature
 #'   settings. Enriched drawings use their saved specification by default.
 #' @param pixels_per_degree Optional input calibration override.
+#' @param estimator Curvature definition without a specification: vertex
+#'   turning (default) or the published `"mlv2023"` estimator.
 #' @return A long data frame with bin boundaries, centers, values and units.
 #' @export
 contour_statistics <- function(x,properties=c("orientation","length","curvature",
  "horizontal_vertical","junction_type","junction_angle"),bins=8,
  by=c("drawing","contour"),normalize=FALSE,length_range=c(2,max(3,x$width+x$height)),
- curvature_range=c(0,90),spec=x$feature_spec,pixels_per_degree=NULL) {
- by<-match.arg(by)
+ curvature_range=c(0,90),spec=x$feature_spec,pixels_per_degree=NULL,
+ estimator=c("turning","mlv2023")) {
+ by<-match.arg(by);estimator_given<-!missing(estimator);estimator<-.drawing_estimator(x,match.arg(estimator),estimator_given)
  if(!is.null(spec)) {
   validate_feature_spec(spec)
-  if(!missing(properties)||!missing(bins)||!missing(normalize)||!missing(length_range)||!missing(curvature_range))
+  if(!missing(properties)||!missing(bins)||!missing(normalize)||!missing(length_range)||!missing(curvature_range)||
+     estimator_given)
    stop("use spec or individual feature settings, not both",call.=FALSE)
   s<-spec$settings;properties<-s$properties;bins<-s$bins;normalize<-s$normalize
-  length_range<-s$length_range;curvature_range<-s$curvature_range
+  length_range<-s$length_range;curvature_range<-s$curvature_range;estimator<-s$estimator
  }
- blocks<-.statistics_blocks(x,properties,bins,by,normalize,length_range,curvature_range,spec,pixels_per_degree)
+ blocks<-.statistics_blocks(x,properties,bins,by,normalize,length_range,curvature_range,spec,pixels_per_degree,estimator)
  if(!length(blocks)) {
   out<-.empty_statistics()
-  attr(out,"measurement_metadata")<-.measurement_metadata(x,blocks,normalize,spec,pixels_per_degree,by)
+  attr(out,"measurement_metadata")<-.measurement_metadata(x,blocks,normalize,spec,pixels_per_degree,by,estimator)
   return(out)
  }
  counts<-do.call(cbind,lapply(blocks,`[[`,"counts"))
@@ -157,7 +215,7 @@ contour_statistics <- function(x,properties=c("orientation","length","curvature"
   label=rep(flatten("label"),ng),lower=rep(flatten("lower"),ng),
   upper=rep(flatten("upper"),ng),center=rep(flatten("center"),ng),
   value=as.vector(t(counts)),units=rep(rep(flatten("units"),widths),ng),row.names=NULL)
- attr(out,"measurement_metadata")<-.measurement_metadata(x,blocks,normalize,spec,pixels_per_degree,by)
+ attr(out,"measurement_metadata")<-.measurement_metadata(x,blocks,normalize,spec,pixels_per_degree,by,estimator)
  out
 }
 #' Wide per-contour feature table
@@ -168,24 +226,29 @@ contour_statistics <- function(x,properties=c("orientation","length","curvature"
 #' @param length_range,curvature_range Fixed ranges for logarithmic bins.
 #' @param spec Optional feature specification, exclusive of individual settings.
 #' @param pixels_per_degree Optional input calibration override.
+#' @param estimator Curvature definition without a specification; see
+#'   [contour_statistics()].
 #' @return One row per contour, with named numeric predictors and a
 #'   `feature_schema` attribute. Inspect it with `feature_schema()`.
 #' @export
 feature_table <- function(x,properties=c("orientation","length","curvature","junction_type"),
                           bins=8,normalize=TRUE,
                           length_range=c(2,max(3,x$width+x$height)),curvature_range=c(0,90),
-                          spec=x$feature_spec,pixels_per_degree=NULL) {
+                          spec=x$feature_spec,pixels_per_degree=NULL,
+                          estimator=c("turning","mlv2023")) {
+ estimator_given<-!missing(estimator);estimator<-.drawing_estimator(x,match.arg(estimator),estimator_given)
  if(!is.null(spec)) {
   validate_feature_spec(spec)
-  if(!missing(properties)||!missing(bins)||!missing(normalize)||!missing(length_range)||!missing(curvature_range))
+  if(!missing(properties)||!missing(bins)||!missing(normalize)||!missing(length_range)||!missing(curvature_range)||
+     estimator_given)
    stop("use spec or individual feature settings, not both",call.=FALSE)
   s<-spec$settings;properties<-s$properties;bins<-s$bins;normalize<-s$normalize
-  length_range<-s$length_range;curvature_range<-s$curvature_range
+  length_range<-s$length_range;curvature_range<-s$curvature_range;estimator<-s$estimator
  }
  if(!is.logical(normalize)||length(normalize)!=1L||is.na(normalize))
   stop("normalize must be TRUE or FALSE",call.=FALSE)
  blocks<-.statistics_blocks(x,unique(properties),bins,"contour",normalize,
-                            length_range,curvature_range,spec,pixels_per_degree)
+                            length_range,curvature_range,spec,pixels_per_degree,estimator)
  out<-data.frame(contour_id=x$ids)
  if(length(blocks)) {
  counts<-do.call(cbind,lapply(blocks,function(b) {
@@ -193,7 +256,7 @@ feature_table <- function(x,properties=c("orientation","length","curvature","jun
  }))
  out<-data.frame(out,counts,check.names=FALSE,row.names=NULL)
  }
- metadata<-.measurement_metadata(x,blocks,normalize,spec,pixels_per_degree)
+ metadata<-.measurement_metadata(x,blocks,normalize,spec,pixels_per_degree,estimator=estimator)
  attr(out,"feature_schema")<-metadata$schema
  attr(out,"measurement_metadata")<-metadata
  out
@@ -210,12 +273,16 @@ feature_table <- function(x,properties=c("orientation","length","curvature","jun
 #' @param normalize,length_range,curvature_range Feature-table settings.
 #' @param spec Optional feature specification, exclusive of individual settings.
 #' @param pixels_per_degree Optional input calibration override.
+#' @param estimator Curvature definition without a specification; see
+#'   [contour_statistics()].
 #' @return A finite numeric vector in contour order.
 #' @export
 predict_contours <- function(x,model,properties=c("orientation","length","curvature","junction_type"),
                              bins=8,...,expected_spec=NULL,check_spec=TRUE,
                              normalize=TRUE,length_range=c(2,max(3,x$width+x$height)),
-                             curvature_range=c(0,90),spec=x$feature_spec,pixels_per_degree=NULL) {
+                             curvature_range=c(0,90),spec=x$feature_spec,pixels_per_degree=NULL,
+                             estimator=c("turning","mlv2023")) {
+ estimator_given<-!missing(estimator);estimator<-.drawing_estimator(x,match.arg(estimator),estimator_given)
  if(!is.logical(check_spec)||length(check_spec)!=1L||is.na(check_spec))
   stop("check_spec must be TRUE or FALSE",call.=FALSE)
  if(inherits(model,"mlv_feature_model")) {
@@ -225,10 +292,11 @@ predict_contours <- function(x,model,properties=c("orientation","length","curvat
  if(check_spec&&is.null(expected_spec))
   stop("missing training feature schema; bind_feature_model() or supply expected_spec",call.=FALSE)
  if(!is.null(spec)) {
-  if(!missing(properties)||!missing(bins)||!missing(normalize)||!missing(length_range)||!missing(curvature_range))
+  if(!missing(properties)||!missing(bins)||!missing(normalize)||!missing(length_range)||!missing(curvature_range)||
+     estimator_given)
    stop("use spec or individual feature settings, not both",call.=FALSE)
   f<-feature_table(x,spec=spec,pixels_per_degree=pixels_per_degree)
- } else f <- feature_table(x,properties,bins,normalize,length_range,curvature_range,spec=NULL)
+ } else f <- feature_table(x,properties,bins,normalize,length_range,curvature_range,spec=NULL,estimator=estimator)
  if(check_spec).compare_feature_schemas(expected_spec,feature_schema(f)) else
   warning("unchecked prediction: training feature compatibility was not validated",call.=FALSE)
  predictors <- f[,setdiff(names(f),"contour_id"),drop=FALSE]

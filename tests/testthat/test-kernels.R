@@ -117,8 +117,11 @@ test_that("deferred branch tracing preserves scoring results", {
 
 test_that("wrapper optimization preserves the checked mixed-contour output exactly", {
  witness<-readRDS(system.file("fixtures","geometry-before-optimization.rds",package="mlvtoolbox"))
- expect_identical(compute_contour_properties(witness$drawing,c("length","orientation","curvature")),
-                  witness$expected)
+ # Witness of the published per-segment table (pinned to its estimator).
+ measured<-compute_contour_properties(witness$drawing,c("length","orientation","curvature"),estimator="mlv2023")
+ # The recorded estimator postdates the witness; everything else must be identical.
+ expect_identical(measured$curvature_estimator,"mlv2023");measured$curvature_estimator<-NULL
+ expect_identical(measured,witness$expected)
  expect_identical(distance_transform(matrix(TRUE,5,7)),
                   distance_transform(matrix(1,5,7)))
 })

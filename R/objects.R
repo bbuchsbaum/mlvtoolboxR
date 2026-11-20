@@ -93,6 +93,7 @@ mlv_drawing <- function(contours = list(), width, height, ids = NULL,
   out<-mlv_drawing(contours, x$width, x$height, ids,
               source=list(parent=x$source, operation=operation), zero_length="drop")
   if(!is.null(x$feature_spec))out$feature_spec<-x$feature_spec
+  if(!is.null(x$curvature_estimator))out$curvature_estimator<-x$curvature_estimator
   out
 }
 .empty_segments <- function() data.frame(contour_id=character(), contour_index=integer(),
@@ -129,11 +130,22 @@ print.mlv_drawing <- function(x, ...) {
 #' @param row.names,optional,... Standard data frame method arguments.
 #' @param spec Optional feature specification; defaults to an enriched drawing's recipe.
 #' @param pixels_per_degree Optional input calibration override.
-#' @return A segment data frame with geometric measurements.
+#' @param estimator Curvature definition without a specification; see
+#'   [compute_contour_properties()]; exclusive of `spec`.
+#' @return A data frame with one row per input segment: endpoints, length,
+#'   orientation and curvature. Under the turning and arc-length estimators
+#'   curvature is the segment's mean curvature (the exact integral of the
+#'   estimator's density over the segment divided by its length) and
+#'   `signed_curvature` its signed mean (NA where an exact reversal leaves the
+#'   sign undefined); [curvature_profile()] returns the piecewise density itself.
+#'   Lengths and curvature use the specification's units.
 #' @export
 as.data.frame.mlv_drawing <- function(x, row.names=NULL, optional=FALSE, ...,
-                                    spec=x$feature_spec,pixels_per_degree=NULL) {
-  .measurement_table(x,spec,pixels_per_degree)
+                                    spec=x$feature_spec,pixels_per_degree=NULL,
+                                    estimator=c("turning","mlv2023")) {
+  estimator_given<-!missing(estimator);estimator<-.drawing_estimator(x,match.arg(estimator),estimator_given)
+  if(!is.null(spec)&&estimator_given)stop("use spec or estimator, not both",call.=FALSE)
+  .measurement_table(x,spec,pixels_per_degree,estimator)
 }
 #' Select contours and invalidate derived properties
 #' @param x A drawing.
