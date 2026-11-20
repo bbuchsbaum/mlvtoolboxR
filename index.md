@@ -150,6 +150,8 @@ status](https://bbuchsbaum.github.io/mlvtoolboxR/IMPLEMENTATION_STATUS.md).
   reproducing published MLV values.
 - [`vignette("workflows", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.md):
   file input, extraction and feature recipes.
+- [`vignette("line-extraction", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md):
+  from an image or painting to a line drawing.
 - [`vignette("stimulus-design", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.md):
   matched conditions across a stimulus set.
 
@@ -195,7 +197,10 @@ sizes. A model can instead receive its training schema via
 `check_spec = FALSE` warns that compatibility was not checked.
 
 trace_rgb() requires an explicitly supplied provider returning an ink
-mask. No SAM model/backend is bundled; arbitrary edge detectors are not
+mask; xdog_lines() is the built-in classical provider (a flow-based
+difference of Gaussians,
+[`vignette("line-extraction")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md)).
+No SAM model/backend is bundled; arbitrary edge detectors are not
 silently substituted for SAM. MATLAB serialized regression models,
 general SVG paint effects and MAT v7.3/HDF5 import are outside the
 current adapters.

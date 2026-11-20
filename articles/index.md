@@ -21,5 +21,7 @@
 
 - [File input, extraction and feature
   recipes](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.md):
+- [From an image to a line
+  drawing](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md):
 - [Matched conditions across a stimulus
   set](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.md):

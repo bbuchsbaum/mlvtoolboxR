@@ -29,6 +29,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Workflows</h6></li>
     <li><a class="dropdown-item" href="../articles/workflows.html">File input, extraction and feature recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/line-extraction.html">From an image to a line drawing</a></li>
     <li><a class="dropdown-item" href="../articles/stimulus-design.html">Matched conditions across a stimulus set</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -84,6 +85,20 @@
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A drawing. Model weights and preprocessing belong to the provider.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>A backend may attach an `"extraction"` attribute to its mask,
+  `list(method = &lt;version string&gt;, parameters = &lt;list&gt;)`, as
+  [extract_lines()] does. Without a specification the drawing then records
+  that version as `source$provider_version` and the parameters as
+  `source$extraction_parameters`. A specification whose extraction settings
+  carry line-extraction parameters (`extraction$lines`, see
+  [feature_spec()]) passes them to the backend, which must not also receive
+  them through `...`, and the mask's attribute must then match the
+  specification's version and parameters exactly. With any specification, a
+  backend whose attribute names a version other than the specification's
+  `provider_version` is an error.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

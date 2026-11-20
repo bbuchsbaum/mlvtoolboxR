@@ -45,6 +45,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Workflows</h6></li>
     <li><a class="dropdown-item" href="../articles/workflows.html">File input, extraction and feature recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/line-extraction.html">From an image to a line drawing</a></li>
     <li><a class="dropdown-item" href="../articles/stimulus-design.html">Matched conditions across a stimulus set</a></li>
   </ul>
 </li>
@@ -206,10 +207,13 @@ measurements of a traced drawing are not interchangeable with
 measurements of its vector source.</p>
 <p>For colour photographs, <code><a href="../reference/trace_rgb.html">trace_rgb()</a></code> takes an RGB image
 and a <code>backend</code> function that returns a logical ink mask. The
-package does not bundle an edge or segmentation model; whatever produces
-the mask (and its weights and preprocessing) is the backend’s
-responsibility, and the backend’s name is recorded in the drawing’s
-provenance.</p>
+package provides one classical backend, <code><a href="../reference/xdog_lines.html">xdog_lines()</a></code>, a
+flow-based difference of Gaussians described in
+<code><a href="../articles/line-extraction.html">vignette("line-extraction", package = "mlvtoolbox")</a></code>; it
+bundles no learned edge or segmentation model. For any other backend,
+whatever produces the mask (and its weights and preprocessing) is the
+backend’s responsibility, and the backend’s name is recorded in the
+drawing’s provenance.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="../reference/read_mlv_image.html">read_mlv_image</a></span><span class="op">(</span><span class="va">png_file</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">dark_pixels</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">image</span>, <span class="va">level</span> <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">image</span>, dims <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">level</span></span>

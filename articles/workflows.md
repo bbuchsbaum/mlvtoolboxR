@@ -154,7 +154,11 @@ measurements of its vector source.
 For colour photographs,
 [`trace_rgb()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/trace_rgb.md)
 takes an RGB image and a `backend` function that returns a logical ink
-mask. The package does not bundle an edge or segmentation model;
+mask. The package provides one classical backend,
+[`xdog_lines()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/xdog_lines.md),
+a flow-based difference of Gaussians described in
+[`vignette("line-extraction", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md);
+it bundles no learned edge or segmentation model. For any other backend,
 whatever produces the mask (and its weights and preprocessing) is the
 backend’s responsibility, and the backend’s name is recorded in the
 drawing’s provenance.

@@ -44,6 +44,8 @@
   : Exact Euclidean distance to the nearest feature pixel
 - [`draw_mat_axis()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/draw_mat_axis.md)
   : Add the medial axis to a plot
+- [`extract_lines()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/extract_lines.md)
+  : Extract a line drawing from an image
 - [`feature_density()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_density.md)
   : Feature density on a pixel grid
 - [`feature_schema()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_schema.md)
@@ -58,6 +60,8 @@
   : Summarize topology and geometric contour relations
 - [`labels_to_edges()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/labels_to_edges.md)
   : Convert segmentation labels to an ink boundary mask
+- [`line_extraction_stages()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/line_extraction_stages.md)
+  : Intermediate images of the line extractor
 - [`map_mat_properties()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/map_mat_properties.md)
   : Map branch ratings back to drawing contours
 - [`mlv_drawing()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/mlv_drawing.md)
@@ -114,3 +118,5 @@
   : Export image or contour statistics
 - [`write_mlv_png()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/write_mlv_png.md)
   : Export a drawing or image to PNG
+- [`xdog_lines()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/xdog_lines.md)
+  : Line extraction as a trace_rgb() backend

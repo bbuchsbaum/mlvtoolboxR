@@ -29,6 +29,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Workflows</h6></li>
     <li><a class="dropdown-item" href="../articles/workflows.html">File input, extraction and feature recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/line-extraction.html">From an image to a line drawing</a></li>
     <li><a class="dropdown-item" href="../articles/stimulus-design.html">Matched conditions across a stimulus set</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -52,6 +53,17 @@
 <div class="section level3">
 <h3 id="qualified-against-stored-matlab-outputs-0-3-0">Qualified against stored MATLAB outputs<a class="anchor" aria-label="anchor" href="#qualified-against-stored-matlab-outputs-0-3-0"></a></h3>
 <ul><li>The package was compared with outputs the original lab computed in MATLAB for 3,017 line drawings (2,757 with medial-axis scores). Published-compatible options now reproduce them: <code>detect_junctions(rule = "mlv2023")</code> matches 395,125 of 395,134 junctions exactly, and <code>compute_mat(aof = "mlv2023", morphology = "hmt8", branch_rule = "mlv2023", threshold_angle = asin(0.3 * pi / 2) * 180 / pi)</code> reproduces Forest_DBW’s distance map, flux and skeleton exactly and 99.1-99.4% of all stored per-pixel symmetry scores within 1e-4; with <code>estimator = "mlv2023"</code> all 2,284,239 stored segment orientations, lengths and curvatures agree within 1e-9. See <code>docs/PARITY.md</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="line-drawings-from-images-0-3-0">Line drawings from images<a class="anchor" aria-label="anchor" href="#line-drawings-from-images-0-3-0"></a></h3>
+<ul><li>New <code><a href="../reference/extract_lines.html">extract_lines()</a></code> turns a photograph or an image of a painting into a binary ink mask: CIE L* lightness, an anisotropic Kuwahara pre-filter against brush texture, the structure-tensor edge tangent flow, a flow-based difference of Gaussians integrated along the flow, and the XDoG threshold (Kyprianidis, Kang and Döllner 2009; Kyprianidis and Döllner 2008; Kang, Lee and Chui 2007; Winnemöller, Kyprianidis and Olsen 2012). Two further steps are this package’s own: lines are placed on edges rather than in the dark-side XDoG band, and thin dark or light strokes are drawn once, as their centre lines. The default pre-filter removes dark strokes thinner than about 2 pixels that do not lie along a pixel row or column, so use <code>smooth = 0</code> for thin line art. It is deterministic and needs no model weights or new dependencies. Without the pre-filter, quarter turns and reflections of the image transform every stage exactly; with it, the intermediate images agree to rounding and the masks have agreed exactly in every test. The mask records its definition, <code>"fdog-xdog-1"</code>, and every parameter in an <code>"extraction"</code> attribute.</li>
+<li>
+<code><a href="../reference/xdog_lines.html">xdog_lines()</a></code> is the same extractor shaped as a <code><a href="../reference/trace_rgb.html">trace_rgb()</a></code> backend, and <code><a href="../reference/line_extraction_stages.html">line_extraction_stages()</a></code> returns the intermediate images.</li>
+<li>
+<code><a href="../reference/trace_rgb.html">trace_rgb()</a></code> records a backend’s <code>"extraction"</code> attribute, when present, as <code>source$provider_version</code> and <code>source$extraction_parameters</code>.</li>
+<li>
+<code>feature_spec(extraction = list(lines = list(...)))</code> fixes the line extractor’s parameters; the specification records <code>definitions["lines"]</code>, <code><a href="../reference/trace_rgb.html">trace_rgb()</a></code> passes the parameters to the backend and checks its output, and specifications naming another version of the extractor are rejected. With any specification, <code><a href="../reference/trace_rgb.html">trace_rgb()</a></code> refuses a backend whose <code>"extraction"</code> attribute names a version other than the specification’s <code>provider_version</code>. Specifications without line settings are unchanged.</li>
+<li>New vignette <code>line-extraction</code> (“From an image to a line drawing”), with a public-domain (CC0) painting from The Cleveland Museum of Art bundled in <code>inst/extdata</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="behaviour-changes-new-default-methods-0-3-0">Behaviour changes (new default methods)<a class="anchor" aria-label="anchor" href="#behaviour-changes-new-default-methods-0-3-0"></a></h3>

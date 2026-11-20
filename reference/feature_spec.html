@@ -39,6 +39,7 @@ compatibility after conversion to the target units."><link href="../albers.css" 
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Workflows</h6></li>
     <li><a class="dropdown-item" href="../articles/workflows.html">File input, extraction and feature recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/line-extraction.html">From an image to a line drawing</a></li>
     <li><a class="dropdown-item" href="../articles/stimulus-design.html">Matched conditions across a stimulus set</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -178,7 +179,13 @@ in pixels; rasterization is explicitly a pixel-grid operation.</p></dd>
 
 <dt id="arg-extraction">extraction<a class="anchor" aria-label="anchor" href="#arg-extraction"></a></dt>
 <dd><p>Named extraction settings: method, threshold, thin,
-min_points, simplify, provider, provider_version. Simplification is in pixels.</p></dd>
+min_points, simplify, provider, provider_version and lines. Simplification
+is in pixels. `lines` is a named list of [extract_lines()] parameters; the
+specification then records the line extractor's definition
+(`definitions["lines"]`, currently `"fdog-xdog-1"`) with every parameter
+filled in, the provider defaults to `"xdog_lines"`, and [trace_rgb()]
+passes the parameters to the backend. A provider version naming another
+definition of this extractor is rejected.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -150,6 +150,8 @@ status](https://bbuchsbaum.github.io/mlvtoolboxR/IMPLEMENTATION_STATUS.md).
   reproducing published MLV values.
 - [`vignette("workflows", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.md):
   file input, extraction and feature recipes.
+- [`vignette("line-extraction", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md):
+  from an image or painting to a line drawing.
 - [`vignette("stimulus-design", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.md):
   matched conditions across a stimulus set.
 
@@ -195,7 +197,10 @@ sizes. A model can instead receive its training schema via
 `check_spec = FALSE` warns that compatibility was not checked.
 
 trace_rgb() requires an explicitly supplied provider returning an ink
-mask. No SAM model/backend is bundled; arbitrary edge detectors are not
+mask; xdog_lines() is the built-in classical provider (a flow-based
+difference of Gaussians,
+[`vignette("line-extraction")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md)).
+No SAM model/backend is bundled; arbitrary edge detectors are not
 silently substituted for SAM. MATLAB serialized regression models,
 general SVG paint effects and MAT v7.3/HDF5 import are outside the
 current adapters.
@@ -324,6 +329,8 @@ data are not copied into the build workspace.
   : Exact Euclidean distance to the nearest feature pixel
 - [`draw_mat_axis()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/draw_mat_axis.md)
   : Add the medial axis to a plot
+- [`extract_lines()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/extract_lines.md)
+  : Extract a line drawing from an image
 - [`feature_density()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_density.md)
   : Feature density on a pixel grid
 - [`feature_schema()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_schema.md)
@@ -338,6 +345,8 @@ data are not copied into the build workspace.
   : Summarize topology and geometric contour relations
 - [`labels_to_edges()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/labels_to_edges.md)
   : Convert segmentation labels to an ink boundary mask
+- [`line_extraction_stages()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/line_extraction_stages.md)
+  : Intermediate images of the line extractor
 - [`map_mat_properties()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/map_mat_properties.md)
   : Map branch ratings back to drawing contours
 - [`mlv_drawing()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/mlv_drawing.md)
@@ -394,6 +403,8 @@ data are not copied into the build workspace.
   : Export image or contour statistics
 - [`write_mlv_png()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/write_mlv_png.md)
   : Export a drawing or image to PNG
+- [`xdog_lines()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/xdog_lines.md)
+  : Line extraction as a trace_rgb() backend
 
 # Articles
 
@@ -418,5 +429,7 @@ data are not copied into the build workspace.
 
 - [File input, extraction and feature
   recipes](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.md):
+- [From an image to a line
+  drawing](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md):
 - [Matched conditions across a stimulus
   set](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.md):
