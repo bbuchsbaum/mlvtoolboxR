@@ -108,3 +108,7 @@ src/*.dll
 /tests/testthat/_problems/
 /tests/testthat/testthat-problems.rds
 /pkgdown-site/
+# Internal planning and design material (kept locally, not published)
+/docs/plans/
+/PRODUCT.md
+/.impeccable/

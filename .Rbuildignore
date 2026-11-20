@@ -6,8 +6,6 @@
 ^\.dashboard$
 ^\.agent-work$
 ^\.cleanup-staging$
-^PORTING_PLAN\.md$
-^ASSESSMENT_EVIDENCE\.md$
 ^VENDOR_.*$
 ^CLEANUP_RECEIPT\.json$
 ^DIFFERENCES\.md$

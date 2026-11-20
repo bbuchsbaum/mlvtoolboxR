@@ -1,6 +1,6 @@
 # Medial-axis (MAT) qualification against stored MATLAB outputs (track B)
 
-Plan: docs/plans/mlv-reference-qualification.md, phase P3. Date 2026-11-19.
+Plan: internal qualification plan (not in the repository), phase P3. Date 2026-11-19.
 Principle: agreement with MLV is evidence, not the goal; each divergence names its oracle and the implementation that oracle supports. IDs follow track A's (M018–M026, R005–R009): MLV-M027–M031 and MLV-R010–R013.
 
 ## Summary

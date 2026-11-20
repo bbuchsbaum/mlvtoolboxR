@@ -1,6 +1,6 @@
 # Track A: geometry and junctions against real MATLAB MLV outputs
 
-Plan: `docs/plans/mlv-reference-qualification.md`, phases P1 (version drift) and P2 (geometry and junctions). Date 2026-11-19. Base commit 5fa7fa5 plus the working-tree changes listed at the end. Runtimes: R 4.5.1 (aarch64 macOS), GNU Octave 11.1.0 with image 2.20.0, pinned MLV MATLAB source f12418a (`vendor/MLV_toolbox/MLVcode`). Natural data are not redistributable and are not committed; this directory holds only aggregate receipts and the synthetic suite.
+Plan: internal qualification plan (not in the repository), phases P1 (version drift) and P2 (geometry and junctions). Date 2026-11-19. Base commit 5fa7fa5 plus the working-tree changes listed at the end. Runtimes: R 4.5.1 (aarch64 macOS), GNU Octave 11.1.0 with image 2.20.0, pinned MLV MATLAB source f12418a (`vendor/MLV_toolbox/MLVcode`). Natural data are not redistributable and are not committed; this directory holds only aggregate receipts and the synthetic suite.
 
 ## Summary
 - **No version drift.** The stored MATLAB fields are what the pinned source computes.

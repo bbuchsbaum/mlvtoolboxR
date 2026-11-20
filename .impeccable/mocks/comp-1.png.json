@@ -1,6 +1,0 @@
-{
-  "prompt": "Desktop application UI screenshot, 1536x1024 landscape, for \"MLV Studio\", a scientific tool for measuring line drawings (contour orientation, length, curvature, junctions, medial-axis symmetry). The central content is a black line drawing of a simple scene (a house with a door, windows, a tree, a fence) made of a few dozen contours, rendered on a white rectangular canvas, with contours coloured by orientation using a cyclic colour map and a legend in degrees. Real readable UI text in English. Flat UI, crisp, production quality, no device frame, no people, no photographs.\nVisual world: the calibrated psychophysics display. The whole application ground is a uniform mid-grey (#7F7F7F), like a mean-luminance experiment screen. The white stimulus canvas floats centred in the grey with the line drawing on it; a thin red fixation cross marks the cursor position over the drawing. Controls recede: grey-on-grey left rail listing drawings as small white thumbnails; right rail with a compact measurement readout in light grey text (contour c17, length 84.2 px, orientation 37.5°, curvature 1.8 °/px); bottom: a gamma-ramp style greyscale legend and an orientation histogram. Minimal, quiet, exact, one red accent only.\n",
-  "createdAt": "2026-10-26T13:07:32.352Z",
-  "tool": "impeccable generate-image",
-  "model": "gpt-image-2.5-flare"
-}
