@@ -1,5 +1,5 @@
 .score_branch_arclength <- function(branch,property,window,power,reference_radius,
-                                    fit_tolerance,units,pixels_per_degree) {
+                                    fit_tolerance,units,pixels_per_degree,undefined="zero") {
  X<-branch$x;Y<-branch$y;R<-branch$radius;n<-length(X)
  if(!is.numeric(X)||!is.numeric(Y)||!is.numeric(R)||length(Y)!=n||length(R)!=n||
     any(!is.finite(c(X,Y,R)))||any(R<0))stop("branch coordinates/radii must be finite, nonnegative and equally sized",call.=FALSE)
@@ -30,7 +30,9 @@
   if(property=="parallelism")return(width/sum(sqrt(w^2+diff(radius)^2)))
   if(property=="mirror") {
    dx<-tail(px,1)-px[1];dy<-tail(py,1)-py[1];chord<-sqrt(dx^2+dy^2)
-   if(chord==0)return(0)
+   # A window whose ends coincide (a closed stretch) has no chord direction:
+   # undefined, NA under branch_rule = "invariant"; 0 as before otherwise.
+   if(chord==0)return(if(undefined=="na")NA_real_ else 0)
    perpendicular<-((px-px[1])*dy-(py-py[1])*dx)/chord
    error2<-integral_square(perpendicular,w)/width
    return((chord/width)/(1+error2/fit_tolerance^2))

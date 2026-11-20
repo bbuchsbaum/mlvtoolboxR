@@ -1,5 +1,5 @@
 # Default branch tracer (branch_rule = "invariant", definition
-# "direction-symmetric-tiemax-graph-2"): order-free spur pruning that never
+# "direction-symmetric-tiemax-graph-2" onwards): order-free spur pruning that never
 # deletes a skeleton component, merging through degree-two pixels.
 
 poly <- function(xy) { xy <- rbind(xy, xy[1, ]); cbind(xy[-nrow(xy), , drop = FALSE], xy[-1, , drop = FALSE]) }

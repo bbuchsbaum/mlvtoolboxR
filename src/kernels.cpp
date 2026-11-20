@@ -262,7 +262,7 @@ List cpp_trace_graph(LogicalMatrix mask,int minimum){
  List out(paths.size());for(size_t i=0;i<paths.size();++i)out[i]=wrap(paths[i]);return out;
 }
 // Default medial-axis branch graph (branch_rule = "invariant"; definition
-// "direction-symmetric-tiemax-graph-2"). The pixel graph (diagonal steps only
+// "direction-symmetric-tiemax-graph-2" onwards). The pixel graph (diagonal steps only
 // where no orthogonal pixel connects) is decomposed into maximal paths between
 // node pixels (graph degree != 2); cycles without a node are closed paths. Then,
 // to a fixed point:

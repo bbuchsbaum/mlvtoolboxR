@@ -61,8 +61,10 @@ removable 2x2 blocks) or `"pratt"`.}
 `"invariant"` (default): pixel-graph tracing without repeated points and
 order-free spur pruning that keeps every skeleton component of two or more pixels (see
 [trace_skeleton()]),
-branch scores averaged over both traversal directions, tangent samples
-carrying the mean score of their segment's two points, the maximum over
+branch scores NA where undefined (branch ends before smoothing, branches
+too short for a property) instead of the published zeros and averaged over
+both traversal directions, tangent samples
+carrying the mean defined score of their segment's two points, the maximum over
 exact nearest-sample ties and over branches, and valid zeros retained;
 an isolated closed loop (no end or junction pixel) is scored with circular
 windows for local estimators (it has no start) and, for the mlv2023 mirror

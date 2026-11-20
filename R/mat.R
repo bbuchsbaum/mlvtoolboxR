@@ -76,8 +76,10 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #'   `"invariant"` (default): pixel-graph tracing without repeated points and
 #'   order-free spur pruning that keeps every skeleton component of two or more pixels (see
 #'   [trace_skeleton()]),
-#'   branch scores averaged over both traversal directions, tangent samples
-#'   carrying the mean score of their segment's two points, the maximum over
+#'   branch scores NA where undefined (branch ends before smoothing, branches
+#'   too short for a property) instead of the published zeros and averaged over
+#'   both traversal directions, tangent samples
+#'   carrying the mean defined score of their segment's two points, the maximum over
 #'   exact nearest-sample ties and over branches, and valid zeros retained;
 #'   an isolated closed loop (no end or junction pixel) is scored with circular
 #'   windows for local estimators (it has no start) and, for the mlv2023 mirror
@@ -252,6 +254,22 @@ fit_line_segments <- function(xy,tolerance=1) {
 #' derivative stages; this replaces the upstream unspecified adaptive smoothing.
 #' Final scores use a width-three moving mean and power ten. Separation radii
 #' below one pixel are undefined and return NA.
+#'
+#' With `estimator="mlv2023"` this function returns the published values:
+#' points where the score is undefined (the two end points for parallelism and
+#' taper, whose window has zero width; every point of a branch with fewer than
+#' three points, or of a mirror branch with three or fewer) are scored 0, and
+#' that 0 enters the final moving mean, lowering the scores next to it.
+#' [compute_mat_properties()] under the default `branch_rule="invariant"`
+#' instead marks those points NA and averages only the defined values in each
+#' moving-mean window (NA where none is defined), so a branch end takes the
+#' value of its defined neighbour (before smoothing) and a branch too short for
+#' a property is NA, not 0. The corrected estimator also sums every window
+#' directly rather than as a difference of cumulative sums: the published
+#' form can round a radius pair (1, 1) to 0.99999999999999989 < 1 and so turn
+#' an exact separation of 0 into NA. A raw value of exactly 0 is a defined
+#' value in both modes; it is never replaced by NA, and smoothing averages it
+#' like any other value. Elsewhere the two modes agree up to rounding.
 #' @param branch A data frame/list with x, y and radius vectors.
 #' @param property Parallelism, separation, mirror or taper.
 #' @param window Local derivative integration half-window.
@@ -280,8 +298,12 @@ score_branch <- function(branch,property=c("parallelism","separation","mirror","
                          pixels_per_degree=NULL) {
  property<-match.arg(property)
  estimator<-match.arg(estimator);units<-match.arg(units)
+ .score_branch(branch,property,window,power,estimator,reference_radius,fit_tolerance,units,pixels_per_degree,"zero")
+}
+.score_branch <- function(branch,property,window,power,estimator,reference_radius,fit_tolerance,units,
+                          pixels_per_degree,undefined) {
  if(estimator=="arclength")return(.score_branch_arclength(branch,property,window,power,
-  reference_radius,fit_tolerance,units,pixels_per_degree))
+  reference_radius,fit_tolerance,units,pixels_per_degree,undefined))
  if(units!="pixels"||!is.null(pixels_per_degree)||!identical(as.double(reference_radius),1)||
     !identical(as.double(fit_tolerance),1))stop("new units/references require estimator='arclength'",call.=FALSE)
  X<-branch$x;Y<-branch$y;R<-branch$radius;n<-length(X)
@@ -290,34 +312,83 @@ score_branch <- function(branch,property=c("parallelism","separation","mirror","
  if(length(window)!=1L||!is.finite(window)||window<1||window!=floor(window) ||
     length(power)!=1L||!is.finite(power)||power<=0)
   stop("invalid window or power",call.=FALSE)
+ .score_branch_sample(X,Y,R,property,window,power,undefined)
+}
+# Sample-based (mlv2023) branch scores on validated inputs. undefined = "zero"
+# is the published estimator: points without a defined value (end points of
+# parallelism/taper, whose window has zero width; branches with fewer than 3
+# points, or mirror with 3 or fewer) are scored 0 and that 0 enters the
+# width-3 moving mean; an undefined separation (radius < 1) makes every window
+# containing it NA. undefined = "na" (branch_rule = "invariant") marks those
+# points NA, and the width-3 moving mean averages only the defined values in
+# each window (NA when none is defined). Defined values, including genuine
+# zeros, are identical in both modes before smoothing.
+.score_branch_sample <- function(X,Y,R,property,window,power,undefined=c("zero","na")) {
+ undefined<-match.arg(undefined);na<-undefined=="na";n<-length(X)
  if(!n)return(numeric())
- R<-.moving_mean(R,2L);dx<-.pad_diff(X);dy<-.pad_diff(Y);dr<-.pad_diff(R)
- out<-numeric(n)
+ # The published estimator forms window sums as cumulative-sum differences,
+ # whose rounding can turn a radius pair (1, 1) into 0.99999999999999989 and so
+ # an exact separation 0 into NA. The corrected estimator sums every window
+ # directly.
+ mm<-if(na).moving_mean_direct else .moving_mean
+ R<-mm(R,2L);dx<-.pad_diff(X);dy<-.pad_diff(Y);dr<-.pad_diff(R)
+ out<-if(na)rep(NA_real_,n) else numeric(n)
  if(property=="separation") {
   out<-ifelse(R>=1,1-1/R,NA_real_)
  } else if(property=="mirror") {
   if(n>3L)out<-fit_line_segments(cbind(X,Y))$scores
  } else {
-  derivative<-if(property=="taper").moving_mean(.pad_diff(.moving_mean(dr,3L)),3L) else dr
+  derivative<-if(property=="taper")mm(.pad_diff(mm(dr,3L)),3L) else dr
   axis<-sqrt(dx^2+dy^2);arc<-sqrt(dx^2+dy^2+derivative^2)
   if(n>=3L) {
    ii<-2:(n-1L);k<-pmin(ii-1L,n-ii,window);lo<-ii-k;hi<-ii+k
-   a<-c(0,cumsum(axis));b<-c(0,cumsum(arc))
-   den<-b[hi+1L]-b[lo];out[ii]<-ifelse(den>0,(a[hi+1L]-a[lo])/den,0)
+   if(na) {
+    num<-.window_sum(axis,lo,hi);den<-.window_sum(arc,lo,hi)
+   } else {
+    a<-c(0,cumsum(axis));b<-c(0,cumsum(arc));num<-a[hi+1L]-a[lo];den<-b[hi+1L]-b[lo]
+   }
+   out[ii]<-ifelse(den>0,num/den,if(na)NA_real_ else 0)
   }
  }
- # Missingness is not allowed to contaminate every later cumulative window.
- if(anyNA(out)) {
+ if(na) {
+  defined<-!is.na(out);v<-ifelse(defined,out,0)
+  sum3<-v+c(0,v[-n])+c(v[-1],0);cnt<-defined+c(FALSE,defined[-n])+c(defined[-1],FALSE)
+  # windows truncated at the branch ends, as in .moving_mean
+  out<-ifelse(cnt>0,sum3/cnt,NA_real_)
+ } else if(anyNA(out)) {
+  # Missingness is not allowed to contaminate every later cumulative window.
   out<-vapply(seq_len(n),function(i){v<-out[max(1,i-1):min(n,i+1)];if(anyNA(v))NA_real_ else mean(v)},double(1))
  } else out<-.moving_mean(out,3L)
  out^power
 }
+# Sums of x[lo[i]..hi[i]], each formed directly from left to right.
+.window_sum <- function(x,lo,hi) {
+ out<-numeric(length(lo));if(!length(lo))return(out)
+ for(d in 0:max(hi-lo)){j<-lo+d;use<-j<=hi;out[use]<-out[use]+x[j[use]]}
+ out
+}
+# .moving_mean with each window summed directly (no cumulative-sum rounding).
+.moving_mean_direct <- function(x,k) {
+ n<-length(x);if(!n)return(numeric())
+ left<-floor(k/2);right<-k-left-1L
+ lo<-pmax(1L,seq_len(n)-left);hi<-pmin(n,seq_len(n)+right)
+ .window_sum(x,lo,hi)/(hi-lo+1L)
+}
+# Mean of two score vectors over their defined values: NA only where both are.
+.mean_defined <- function(a,b) ifelse(is.na(a),b,ifelse(is.na(b),a,(a+b)/2))
 #' Compute medial-axis symmetry scores
 #' @param mat An mlv_mat object.
 #' @param properties Requested branch score names.
 #' @param window,power Branch score parameters.
 #' @param spec Optional feature specification, exclusive of individual settings.
 #' @param pixels_per_degree Optional input calibration override.
+#' @details Under `branch_rule="invariant"` (default) a branch score is NA
+#'   where its estimator is undefined (see [score_branch()]). The scores of the
+#'   two traversal directions are averaged over the defined ones; a score image
+#'   pixel is the maximum of the defined scores at that pixel over all branches
+#'   (and over both occurrences of a junction pixel closing a loop), NA if none
+#'   is defined. For contour mapping see [map_mat_properties()]. Under
+#'   `branch_rule="mlv2023"` undefined points carry the published zeros.
 #' @return An mlv_mat with branch scores and score images; unmapped pixels are NA.
 #' @export
 compute_mat_properties <- function(mat,properties=c("parallelism","separation","mirror"),
@@ -344,9 +415,13 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
  if(!length(mat$branches)&&any(mat$skeleton))mat$branches<-trace_skeleton(mat,mat$parameters$min_branch_points)
  estimator<-if(is.null(spec))"mlv2023" else s$branch_estimator
  loop_window<-window*(if(!is.null(spec)&&identical(s$units,"visual_degrees")&&!is.null(spec$settings$pixels_per_degree))spec$settings$pixels_per_degree else 1)
- one<-function(b,prop)if(is.null(spec))score_branch(b,prop,window,power) else score_branch(b,prop,window,power,
-    estimator=s$branch_estimator,reference_radius=s$reference_radius,fit_tolerance=s$fit_tolerance,
-    units=s$units,pixels_per_degree=if(s$branch_estimator=="mlv2023")NULL else spec$settings$pixels_per_degree)
+ # The published rule keeps the published zeros for undefined points; the
+ # invariant rule scores them NA (see .score_branch_sample).
+ undefined<-if(rule=="mlv2023")"zero" else "na"
+ one<-function(b,prop)if(is.null(spec)).score_branch(b,prop,window,power,"mlv2023",1,1,"pixels",NULL,undefined) else
+  .score_branch(b,prop,window,power,estimator=s$branch_estimator,reference_radius=s$reference_radius,
+    fit_tolerance=s$fit_tolerance,units=s$units,
+    pixels_per_degree=if(s$branch_estimator=="mlv2023")NULL else spec$settings$pixels_per_degree,undefined=undefined)
  isolated<-.isolated_loops(mat$branches)
  mat$score_images<-list()
  for(prop in properties) {
@@ -363,7 +438,7 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
     n<-nrow(b)
     if(isolated[i]).score_loop(b,function(z)one(z,prop),prop,estimator,power,loop_window) else {
      f<-one(b,prop)
-     if(n>1L)(f+rev(one(b[n:1,,drop=FALSE],prop)))/2 else f
+     if(n>1L).mean_defined(f,rev(one(b[n:1,,drop=FALSE],prop))) else f
     }
    }
    mat$branches[[i]][[prop]]<-scores
@@ -419,6 +494,17 @@ compute_mat_properties <- function(mat,properties=c("parallelism","separation","
 #' Uses exact nearest tangent samples per branch, then the maximum across
 #' contributing branches. An explicit mapping mask distinguishes valid zero
 #' ratings from missing samples. Geometry is reused across requested properties.
+#'
+#' Under the default `branch_rule="invariant"`, each tangent sample of segment
+#' (i, i+1) carries the mean of the defined scores at i and i+1 (NA if both are
+#' undefined). For each branch, an ink pixel takes its nearest tangent samples
+#' of that branch (all samples within 1e-9 px of the minimum distance) if that
+#' distance is below `radius`; its value from the branch is the maximum of the
+#' defined scores among those nearest samples, or NA if all of them are
+#' undefined. A farther defined sample of the same branch is not used. The
+#' pixel's score is the maximum over branches of these values, NA if no branch
+#' gives a defined value. Under `branch_rule="mlv2023"` the published
+#' first-point, lowest-index and zeros-as-missing rules apply.
 #' @param x A drawing.
 #' @param mat An mlv_mat with computed branch properties.
 #' @param radius Maximum tangent mapping distance in pixels.
@@ -467,7 +553,7 @@ map_mat_properties <- function(x,mat,radius=4,spec=mat$feature_spec,pixels_per_d
    # scores at i and i+1; exact distance ties take the maximum; samples beyond
    # radius (less a rounding tolerance) are ignored.
    seg<-vapply(props,function(prop){v<-branch[[prop]];if(is.null(v))v<-rep(NA_real_,nrow(branch))
-    (head(v,-1)+tail(v,-1))/2},double(nrow(branch)-1L))
+    .mean_defined(head(v,-1),tail(v,-1))},double(nrow(branch)-1L))
    seg<-matrix(seg,ncol=length(props))
    nn<-cpp_nearest_max(fp$points,rc[near,,drop=FALSE],seg[fp$source,,drop=FALSE],tol)
    within<-which(nn$distance<radius-tol);if(!length(within))next
@@ -565,7 +651,7 @@ print.mlv_mat <- function(x,...) {
   mid<-P+seq_len(end-start+1L)
   f<-score(u[idx,,drop=FALSE])[mid]
   r<-rev(score(u[rev(idx),,drop=FALSE]))[mid]
-  s[start:end]<-(f+r)/2
+  s[start:end]<-.mean_defined(f,r)
  }
  c(s,s[1])
 }

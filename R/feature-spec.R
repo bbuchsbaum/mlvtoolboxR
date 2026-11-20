@@ -185,7 +185,7 @@ validate_feature_spec <- function(spec) {
 # identifiers (including the 0.2.x Pratt default) fail canonical validation.
 .aof_definition <- function(aof) switch(aof,centered="centered-tie-mean-1",mlv2023="mlv2023-computeAOF-lowest-index")
 .branch_rule_definition <- function(rule) switch(rule,
- invariant="direction-symmetric-tiemax-graph-2",mlv2023="mlv2023-edgelink-lastwriter-1")
+ invariant="direction-symmetric-tiemax-graph-defined-3",mlv2023="mlv2023-edgelink-lastwriter-1")
 .morphology_definition <- function(morphology) switch(morphology,
  minimal="hmt8-then-sequential-simple-pixel-removal-1",
  hmt8="sequential_hmt8_matlab_skel_order-1",pratt="octave_image_pratt_2.20.0")

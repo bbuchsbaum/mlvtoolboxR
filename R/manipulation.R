@@ -175,8 +175,9 @@ split_junction_regions <- function(x) {
    junctions=sum(vapply(junctions$members,function(m)i %in% m$contour_index,logical(1))),
    random=stats::runif(1),
    {.checked_mat_measurements(x,x$feature_spec);z<-x$mat_properties[[property]][[i]]
-    if(is.null(z)||!any(is.finite(z)))stop("missing contour criterion: ",property,call.=FALSE)
-    mean(z[is.finite(z)])})
+    if(is.null(z))stop("missing contour criterion: ",property,call.=FALSE)
+    # A contour with no defined mapped score has no criterion value (NA).
+    if(any(is.finite(z)))mean(z[is.finite(z)]) else NA_real_})
  },double(1))
 }
 #' Split ranked contours under a whole-contour length budget
@@ -185,12 +186,20 @@ split_junction_regions <- function(x) {
 #' total contour length. A contour that would exceed the budget stops that
 #' prefix. Ties use contour IDs. Curvature ranks by a length-weighted mean;
 #' integrated_curvature explicitly exposes the upstream length-weighted sum.
+#' Medial-axis criteria rank by the mean of a contour's finite mapped scores. A
+#' contour with no finite mapped score (no defined branch score reaches any of
+#' its pixels) cannot be ranked: it is left unassigned, its score is NA, and
+#' it is listed in `unranked`. Ranks are taken among the rankable contours
+#' only; the length budget remains a fraction of the total length of all
+#' contours.
 #' @param x A drawing.
 #' @param property One or more criterion names.
 #' @param fraction Length fraction in [0,1] for each group.
 #' @param weights Criterion rank weights.
 #' @param scores Optional finite per-contour scores, bypassing rank combination.
-#' @return List with top, bottom, unassigned drawings, overlap IDs and scores.
+#' @return List with top, bottom, unassigned drawings, overlap IDs, scores
+#'   (NA for unrankable contours) and `unranked`, the IDs of contours without
+#'   a criterion value (always empty when `scores` is supplied).
 #' @export
 split_contours <- function(x,property="length",fraction=.5,weights=NULL,scores=NULL) {
  .check_drawing(x);n<-length(x$ids)
@@ -200,24 +209,31 @@ split_contours <- function(x,property="length",fraction=.5,weights=NULL,scores=N
   if(!length(property))stop("supply at least one property",call.=FALSE)
   if(is.null(weights))weights<-rep(1,length(property))
   if(length(weights)!=length(property)||any(!is.finite(weights)))stop("invalid weights",call.=FALSE)
+  values<-lapply(property,function(p).contour_criterion(x,p))
+  rankable<-Reduce(`&`,lapply(values,is.finite))
   scores<-numeric(n)
   for(p in seq_along(property)) {
-   values<-.contour_criterion(x,property[p]);ord<-order(values,x$ids)
-   ranks<-numeric(n);ranks[ord]<-seq_len(n);scores<-scores+weights[p]*ranks
+   ord<-order(values[[p]][rankable],x$ids[rankable])
+   ranks<-numeric(sum(rankable));ranks[ord]<-seq_len(sum(rankable))
+   scores[rankable]<-scores[rankable]+weights[p]*ranks
   }
+  scores[!rankable]<-NA_real_
+ } else {
+  if(!is.numeric(scores)||length(scores)!=n||any(!is.finite(scores)))stop("invalid scores",call.=FALSE)
+  rankable<-rep(TRUE,n)
  }
- if(!is.numeric(scores)||length(scores)!=n||any(!is.finite(scores)))stop("invalid scores",call.=FALSE)
  lens<-.contour_criterion(x,"length");budget<-fraction*sum(lens)
  take<-function(order) {
   if(fraction==1)return(order)
   if(!length(order))return(integer())
   order[cumsum(lens[order])<=budget+64*.Machine$double.eps*max(1,budget)]
  }
- bottom<-take(order(scores,x$ids));top<-take(order(-scores,x$ids))
+ ok<-which(rankable)
+ bottom<-take(ok[order(scores[ok],x$ids[ok])]);top<-take(ok[order(-scores[ok],x$ids[ok])])
  unused<-setdiff(seq_len(n),union(top,bottom))
  list(top=subset_contours(x,top),bottom=subset_contours(x,bottom),
       unassigned=subset_contours(x,unused),overlap=x$ids[intersect(top,bottom)],
-      scores=stats::setNames(scores,x$ids))
+      scores=stats::setNames(scores,x$ids),unranked=x$ids[!rankable])
 }
 #' Split contours using weighted feature histograms
 #' @param x A drawing.

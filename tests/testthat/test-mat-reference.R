@@ -117,9 +117,9 @@ test_that("MAT methods are recorded, specification-controlled and versioned", {
                   "kovesi_edgelink_cleanedgelist")
  expect_identical(unname(s$definitions[["tracing"]]), "pixel_graph_no_corner_cut")
  expect_identical(s$settings$mat$branch_rule, "invariant")
- expect_identical(unname(s$definitions[["branch_rule"]]), "direction-symmetric-tiemax-graph-2")
+ expect_identical(unname(s$definitions[["branch_rule"]]), "direction-symmetric-tiemax-graph-defined-3")
  expect_identical(x$parameters[c("branch_rule", "branch_rule_definition", "tracing")],
-   list(branch_rule = "invariant", branch_rule_definition = "direction-symmetric-tiemax-graph-2", tracing = "pixel_graph_no_corner_cut"))
+   list(branch_rule = "invariant", branch_rule_definition = "direction-symmetric-tiemax-graph-defined-3", tracing = "pixel_graph_no_corner_cut"))
  compat <- feature_spec("parallelism", mat = list(aof = "mlv2023", branch_rule = "mlv2023"))
  mc <- compute_mat(d, spec = compat)
  expect_identical(mc$parameters[c("branch_rule", "branch_rule_definition", "tracing")],

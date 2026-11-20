@@ -110,10 +110,12 @@ test_that("spatially filtered MAT mapping agrees with exhaustive nearest samples
  for(radius in c(.1,1,4,100)) {
   expected<-matrix(NA_real_,20,40)
   # Default (invariant) rule: a tangent sample of segment (i,i+1) carries the mean
-  # of the scores at i and i+1; exact distance ties (1e-9) take the maximum.
+  # of the defined scores at i and i+1 (NA only if both are NA); exact distance
+  # ties (1e-9) take the maximum over defined values.
   for(b in branches) {
    fp<-mlvtoolbox:::.tangent_points(b)
-   seg<-(head(b$parallelism,-1)+tail(b$parallelism,-1))/2
+   a<-head(b$parallelism,-1);z<-tail(b$parallelism,-1)
+   seg<-ifelse(is.na(a),z,ifelse(is.na(z),a,(a+z)/2))
    for(q in seq_along(ink)) {
     ds<-sqrt(rowSums(sweep(fp$points,2,rc[q,],"-")^2));tied<-ds<=min(ds)+1e-9
     v<-seg[fp$source[tied]];value<-if(any(is.finite(v)))max(v[is.finite(v)]) else NA

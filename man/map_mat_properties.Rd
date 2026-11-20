@@ -31,3 +31,15 @@ Uses exact nearest tangent samples per branch, then the maximum across
 contributing branches. An explicit mapping mask distinguishes valid zero
 ratings from missing samples. Geometry is reused across requested properties.
 }
+\details{
+Under the default `branch_rule="invariant"`, each tangent sample of segment
+(i, i+1) carries the mean of the defined scores at i and i+1 (NA if both are
+undefined). For each branch, an ink pixel takes its nearest tangent samples
+of that branch (all samples within 1e-9 px of the minimum distance) if that
+distance is below `radius`; its value from the branch is the maximum of the
+defined scores among those nearest samples, or NA if all of them are
+undefined. A farther defined sample of the same branch is not used. The
+pixel's score is the maximum over branches of these values, NA if no branch
+gives a defined value. Under `branch_rule="mlv2023"` the published
+first-point, lowest-index and zeros-as-missing rules apply.
+}
