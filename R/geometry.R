@@ -87,8 +87,8 @@ compute_contour_properties <- function(x,
 #'   diagonal.
 #' @param rule Junction definition. `"exit"` (default) is the definition
 #'   described in Details. `"mlv2023"` reproduces the MLV MATLAB toolbox
-#'   (commit f12418a) including its recorded defects (MLV-M006 to M008, M019,
-#'   M021 to M026 in UPSTREAM_BUGS.md): endpoint snapping, discarded negative
+#'   (commit f12418a), including each recorded difference (MLV-M006 to M008, M019,
+#'   M021 to M026 in DIFFERENCES.md): endpoint snapping, discarded negative
 #'   coordinates, order-dependent merging, start-first arm attachment and
 #'   adjacent-segment arms, no wrapping of closed contours, and its
 #'   interior-arm angle convention. It always uses the Chebyshev gap and the

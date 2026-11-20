@@ -19,16 +19,20 @@ library(mlvtoolbox)
 okabe <- c(blue = "#0072B2", orange = "#E69F00", vermillion = "#D55E00")
 ```
 
-`mlvtoolbox` is a corrected port of the Mid-Level Vision (MLV) toolbox, the
-MATLAB code of the Bernhardt-Walther lab described by Walther et al. (2023).
-Its defaults fix defects found in that code while qualifying the port against
-outputs the lab computed in MATLAB. Some of those fixes change the numbers,
-which matters when you want to compare new data with published MLV values or
-rerun a published analysis. For that case the package keeps a
+`mlvtoolbox` is an R port and extension of the Mid-Level Vision (MLV)
+toolbox, the MATLAB code of the Bernhardt-Walther lab described by Walther et
+al. (2023), qualified against outputs the lab computed in MATLAB. For several
+measures the package defaults use alternative definitions, chosen, for
+example, so that junctions and branch scores do not depend on contour
+direction or on the start vertex of a closed contour, and so that each
+curvature turn is counted once. Some of those definitions change the
+numbers, which matters when you want to compare new data with published MLV
+values or rerun a published analysis. For that case the package keeps a
 *published-compatible mode*: explicit `mlv2023` options that reproduce the
-MATLAB results, defects included.
+MATLAB results, including the behaviours in which the defaults differ (the
+two exceptions, which differ in both modes, are listed below).
 
-This vignette gives the exact recipe for each mode, lists what each correction
+This vignette gives the exact recipe for each mode, lists what each default
 changes and why, shows on small synthetic drawings where the two modes differ
 and where they agree, shows how feature specifications keep the two apart, and
 summarizes the qualification evidence. It ends with a short guide to choosing
@@ -36,7 +40,7 @@ a mode and describing it in a methods section.
 
 ## The two modes
 
-The *corrected defaults* need no arguments. The *published-compatible mode*
+The *package defaults* need no arguments. The *published-compatible mode*
 sets six options: the contour curvature estimator, the junction rule and four
 medial-axis settings.
 
@@ -57,7 +61,7 @@ compute_mat(drawing, aof = "mlv2023", morphology = "hmt8", branch_rule = "mlv202
 and `compute_mat_properties()` and `map_mat_properties()` follow the
 `branch_rule` recorded in the `mlv_mat`. The threshold angle is explained
 below. Contour orientation and length need no option; they are the same in
-both modes. Curvature does: the corrected default counts each vertex turn
+both modes. Curvature does: the default counts each vertex turn
 once (`estimator = "turning"`), and `estimator = "mlv2023"` reproduces the
 published values.
 
@@ -68,12 +72,12 @@ function that measures a drawing uses them:
 angle_03 <- asin(0.3 * pi / 2) * 180 / pi   # 28.11°, flux threshold 0.3
 props <- c("orientation", "length", "curvature", "junction_type",
            "parallelism", "separation", "mirror")
-corrected <- feature_spec(props, bins = 4)
+default <- feature_spec(props, bins = 4)
 published <- feature_spec(props, bins = 4, estimator = "mlv2023",
   junction = list(rule = "mlv2023"),
   mat = list(aof = "mlv2023", morphology = "hmt8", branch_rule = "mlv2023",
              threshold_angle = angle_03))
-knitr::kable(data.frame(corrected = corrected$definitions,
+knitr::kable(data.frame(default = default$definitions,
                         published = published$definitions))
 ```
 
@@ -106,16 +110,16 @@ With the default angle, pixels whose flux lies between the two thresholds
 MATLAB excluded them. How often that happens on natural drawings has not
 been measured; use the full recipe when you need the stored values.
 
-## What each correction changes
+## What each default changes
 
-Each default corrects a behaviour of the pinned MATLAB source (commit
-`f12418a`) that is demonstrated by a synthetic reproducer with an
-independently derived answer. The identifiers refer to the
-[upstream bug register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/UPSTREAM_BUGS.md),
+Each default below departs from a behaviour of the pinned MATLAB source
+(commit `f12418a`), and each departure is demonstrated by a synthetic
+reproducer with an independently derived answer. The identifiers refer to the
+[register of differences from the reference implementations](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/DIFFERENCES.md),
 which gives the reproducer and the number of affected items in the stored
 datasets for each.
 
-| Stage | MLV behaviour, reproduced by `mlv2023` | Corrected default | ID |
+| Stage | MLV behaviour, reproduced by `mlv2023` | Package default | ID |
 |---|---|---|---|
 | Contour curvature | Each segment receives the whole turn to the next segment divided by its own length; the last segment repeats the previous turn, so one vertex per contour is counted twice (on a closed contour the closing vertex is not counted), and values depend on how the curve is sampled | Each vertex turn spread once over its dual cell, from the midpoint of the segment before it to the midpoint of the segment after it (`estimator = "turning"`) | M032 |
 | Junction merging and angles | Merging depends on the order of the intersections; interior arms use a different y convention from endpoint arms; intersections at negative coordinates are discarded | Transitive merging; one angle convention; any coordinates | M006–M008 |
@@ -126,21 +130,21 @@ datasets for each.
 | Junction arms | Splitting one stroke into two contours with a short middle piece creates a junction | Contours ending inside the neighbourhood contribute no arm | M023 |
 | Junction arms | Every segment of a contour inside the neighbourhood counts as an arm; a slight overshoot reads as X | One arm per exit | M024, M025 |
 | Junction arms | Closed contours end at their first vertex | Closed contours wrap around | M026 |
-| Flux | Sampling circle centred on the pixel corner, labels read from the containing cell: ridges displaced by half a pixel | Circle centred on the pixel, mean over equidistant boundary pixels (`aof = "centered"`) | M027 |
-| Thinning | MATLAB `bwmorph("skel", Inf)`, reproduced by `morphology = "hmt8"`; can leave removable pixels and 2 x 2 blocks | `morphology = "minimal"`: no removable pixel remains | not an MLV defect |
+| Flux | Sampling circle centred on the pixel corner, labels read from the containing cell: ridges offset by half a pixel | Circle centred on the pixel, mean over equidistant boundary pixels (`aof = "centered"`) | M027 |
+| Thinning | MATLAB `bwmorph("skel", Inf)`, reproduced by `morphology = "hmt8"`; can leave removable pixels and 2 x 2 blocks | `morphology = "minimal"`: no removable pixel remains | design choice |
 | Branch scores | Forward differences: scores depend on the direction in which a branch was traced | Mean over both directions (`branch_rule = "invariant"`) | M028 |
-| Mapping | Scores read from a last-writer-wins image; exact nearest-point ties broken by enumeration order | Each branch keeps its own scores; ties take the maximum | M029 |
+| Mapping | Scores read from a last-writer-wins image; exact nearest-point ties resolved by enumeration order | Each branch keeps its own scores; ties take the maximum | M029 |
 | Tracing | Junction points duplicated when edges are merged | No point repeated within a branch | M030 |
-| Mirror score | The line fit forces the last one or two points into the final span even when that exceeds the 1 px error tolerance | The fit stops before the failing point | M016 |
+| Mirror score | The line fit assigns the last one or two points to the final span even when that exceeds the 1 px distance tolerance | The fit ends the span before the point that would exceed the tolerance | M016 |
 | Branch scores | Undefined points (branch end points for parallelism and taper, branches of fewer than three points, mirror on three or fewer) scored 0, and that 0 averaged into neighbouring points | Undefined points NA; smoothing averages defined values only | M033 |
 | Mapping | Every mapped score of exactly zero treated as missing | Valid zeros kept; missing is NA | M011 |
 
-The thinning row is a choice rather than a defect: `"hmt8"` is the thinning
+The thinning row records a choice of this package rather than a difference in MLV's behaviour: `"hmt8"` is the thinning
 that reproduces MATLAB's skeleton, and the default removes the pixels it
 leaves that are not needed to keep the skeleton connected.
 
-Two behaviours are corrected in both modes, because reproducing them would
-produce invalid values rather than different ones: separation is NA below a
+Two behaviours differ from MLV in both modes, because reproducing them would
+produce out-of-range or undefined values rather than different ones: separation is NA below a
 radius of 1 pixel instead of exceeding 1 or becoming infinite (M031), and
 zero-length segments are rejected or dropped instead of producing undefined
 angles and curvatures (M015, M020).
@@ -163,10 +167,10 @@ drawing <- mlv_drawing(list(
 Orientation and length do not depend on the mode:
 
 ```{r geometry}
-table_corrected <- feature_table(analyse_mat(drawing, spec = corrected)$drawing)
+table_default <- feature_table(analyse_mat(drawing, spec = default)$drawing)
 table_published <- feature_table(analyse_mat(drawing, spec = published)$drawing)
-geometry <- grep("^(orientation|length)_", names(table_corrected), value = TRUE)
-identical(table_corrected[geometry], table_published[geometry])
+geometry <- grep("^(orientation|length)_", names(table_default), value = TRUE)
+identical(table_default[geometry], table_published[geometry])
 ```
 
 The contours of this drawing are straight, so their curvature is zero in both
@@ -178,11 +182,11 @@ corners turns by 180 degrees in all:
 hook <- mlv_drawing(list(rbind(c(10, 40, 30, 40), c(30, 40, 30, 20), c(30, 20, 50, 20))),
                     width = 60, height = 50)
 integrated <- function(spec) with(as.data.frame(hook, spec = spec), sum(curvature * length))
-c(corrected = integrated(corrected), published = integrated(published))
+c(default = integrated(default), published = integrated(published))
 ```
 
 ```{r curvature-modes-check, include = FALSE}
-stopifnot(isTRUE(all.equal(unname(c(integrated(corrected), integrated(published))), c(180, 270))))
+stopifnot(isTRUE(all.equal(unname(c(integrated(default), integrated(published))), c(180, 270))))
 ```
 
 ### Junctions
@@ -194,7 +198,7 @@ drawing.
 
 ### Medial-axis scores differ by design
 
-The medial-axis corrections change values at many pixels, because they
+The medial-axis defaults change values at many pixels, because they
 move the ridge (M027), average the two traversal directions (M028) and change
 how scores reach the contour (M029, M030). Per-contour means remain
 correlated across modes. The comparison below uses eight random synthetic
@@ -226,13 +230,13 @@ r <- sapply(P, function(p) cor(a[ok, p], b[ok, p]))
 round(r, 3)
 ```
 
-```{r fig-random, fig.width = 7, fig.height = 2.7, fig.cap = sprintf("Per-contour mean scores in the published-compatible mode (x) and the corrected defaults (y) for %d contours of eight random synthetic drawings, with the identity line in grey. The modes are correlated (r = %.2f, %.2f and %.2f here) but rarely give the same value.", sum(ok), r[1], r[2], r[3])}
+```{r fig-random, fig.width = 7, fig.height = 2.7, fig.cap = sprintf("Per-contour mean scores in the published-compatible mode (x) and the package defaults (y) for %d contours of eight random synthetic drawings, with the identity line in grey. The modes are correlated (r = %.2f, %.2f and %.2f here) but rarely give the same value.", sum(ok), r[1], r[2], r[3])}
 op <- par(mfrow = c(1, 3), mar = c(3.2, 3.4, 2, 0.8), mgp = c(2, 0.5, 0),
           las = 1, cex.axis = 0.8, cex.lab = 0.85, cex.main = 1, font.main = 1)
 for (p in P) {
   plot(b[ok, p], a[ok, p], xlim = c(0, 1), ylim = c(0, 1), asp = 1,
        pch = 16, cex = 0.7, col = adjustcolor(okabe[["blue"]], 0.7),
-       xlab = "published-compatible", ylab = "corrected default", main = p, bty = "l")
+       xlab = "published-compatible", ylab = "package default", main = p, bty = "l")
   abline(0, 1, col = "grey60")
 }
 par(op)
@@ -243,13 +247,13 @@ For these random drawings the per-contour correlations between modes are
 (separation) and `r round(r[["mirror"]], 2)` (mirror). Random line segments
 make many short, irregular branches, so these values say nothing about natural
 drawings; the qualification figures for natural drawings are in the evidence
-section below. Corrected parallelism lies above the published values because
+section below. Default parallelism lies above the published values because
 the published estimator scores every branch end 0 and averages that 0 into
 the neighbouring point (MLV-M033); short branches are mostly ends.
 
 ### Valid zeros
 
-The corrected mode keeps scores that are exactly zero; the published mode,
+The default mode keeps scores that are exactly zero; the published mode,
 like `MATpropertiesToContours.m`, turns every zero into a missing value
 (MLV-M011). Two lines three pixels apart have a separation of exactly 0 along
 their whole length (`vignette("medial-axis", package = "mlvtoolbox")` explains
@@ -262,7 +266,7 @@ separation <- function(...) {
   v <- unlist(x$mat_properties$separation)
   c(zero = sum(v == 0, na.rm = TRUE), missing = sum(is.na(v)))
 }
-rbind(corrected = separation(),
+rbind(default = separation(),
       published = separation(aof = "mlv2023", morphology = "hmt8",
                              branch_rule = "mlv2023", threshold_angle = angle_03))
 ```
@@ -273,18 +277,18 @@ A feature specification travels with the measurements it produced. Functions
 that accept one check that the inputs they receive were computed under the
 same definitions and stop otherwise, so values from the two modes cannot be
 combined by accident. A medial axis computed in published mode cannot be
-scored under the corrected specification:
+scored under the default specification:
 
 ```{r reject-mat, error = TRUE}
 published_mat <- compute_mat(drawing, spec = published)
-compute_mat_properties(published_mat, spec = corrected)
+compute_mat_properties(published_mat, spec = default)
 ```
 
 Scores computed under one specification cannot be mapped under the other:
 
 ```{r reject-scores, error = TRUE}
 scored <- compute_mat_properties(compute_mat(drawing, spec = published), spec = published)
-map_mat_properties(drawing, scored, spec = corrected)
+map_mat_properties(drawing, scored, spec = default)
 ```
 
 A specification is also checked against the definitions that the installed
@@ -295,7 +299,7 @@ silently reinterpreted. The example below changes one recorded definition to
 the 0.2.x value:
 
 ```{r reject-old, error = TRUE}
-old <- corrected
+old <- default
 old$definitions[["morphology"]] <- "octave_image_pratt_2.20.0"
 validate_feature_spec(old)
 ```
@@ -319,10 +323,10 @@ scores, plus the complete distance map, flux and skeleton of one drawing
 reproduced every stored geometry value and all junctions checked, so the
 stored outputs correspond to that source revision.
 
-| Stage | Published-compatible mode vs stored MATLAB | Corrected defaults vs stored MATLAB |
+| Stage | Published-compatible mode vs stored MATLAB | Package defaults vs stored MATLAB |
 |---|---|---|
 | Segment orientation, length, curvature | All 2,284,239 segments within 1e-9 | Orientation and length the same; curvature differs by design (each turn counted once, M032) |
-| Junctions | 395,125 of 395,134 identical in position, type, members and angles; the other 9 depend on zero-length segments | 356,113 (90.1%) identical; every difference attributed to a named defect or definition |
+| Junctions | 395,125 of 395,134 identical in position, type, members and angles; the other 9 depend on zero-length segments | 356,113 (90.1%) identical; every difference attributed to a recorded MLV difference or a package definition |
 | Distance map, flux, skeleton (Forest_DBW) | Distances identical, flux within 2.1e-14, skeleton identical (24,904 px) | Different by design (M027, thinning) |
 | Per-pixel scores (2,757 drawings) | 99.1%, 99.4% and 99.3% of pixels within 1e-4 (parallelism, separation, mirror); per-contour r = 0.9993, 0.9999, 0.9986 | Per-contour r = 0.811, 0.982, 0.864 |
 
@@ -336,7 +340,7 @@ integer endpoints; and extracting drawings from photographs is not qualified.
 
 ## Choosing a mode
 
-Use the **corrected defaults** for new studies. Their junctions and
+Use the **package defaults** for new studies. Their junctions and
 medial-axis scores do not depend on contour direction, contour numbering, the
 start vertex of a closed contour or the direction in which a branch was
 traced, and rotating or reflecting the ink raster by a multiple of 90° rotates
@@ -368,13 +372,15 @@ gives the references:
 print(citation("mlvtoolbox"), style = "text")
 ```
 
-Example sentence for the corrected defaults:
+Example sentence for the package defaults:
 
 > Contour orientation, length, curvature, junctions and medial-axis
 > parallelism, separation and mirror symmetry were computed with mlvtoolbox
 > `r packageVersion("mlvtoolbox")` (Buchsbaum, 2026), an R implementation of
 > the Mid-Level Vision Toolbox (Walther et al., 2023), using its default
-> definitions, which correct documented defects of the MATLAB implementation;
+> definitions, which differ from the MATLAB implementation in documented ways
+> so that junctions and medial-axis scores do not depend on contour direction
+> or numbering and each vertex turn is counted once in curvature;
 > medial-axis scores follow Rezanejad et al. (2019).
 
 Example sentence for the published-compatible mode:
@@ -397,8 +403,8 @@ deposit the feature specification (for example as the sidecar written by
 - `vignette("junctions", package = "mlvtoolbox")`: the junction rules of both
   modes, case by case.
 - [`docs/PARITY.md`](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/docs/PARITY.md)
-  and the [upstream bug register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/UPSTREAM_BUGS.md):
-  the qualification evidence and every recorded defect.
+  and the [differences register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/DIFFERENCES.md):
+  the qualification evidence and every recorded difference.
 
 ## References
 

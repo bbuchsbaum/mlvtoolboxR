@@ -90,7 +90,7 @@ An `mlv_mat` with distance_map, nearest_boundary, AOF, skeleton,
 }
 \description{
 Uses the MLV signed-distance construction and a 60-sample average outward
-flux. The defaults are the corrected methods: a pixel-centred, tie-invariant
+flux. The defaults are the package methods: a pixel-centred, tie-invariant
 flux (`aof="centered"`), a topology-preserving thinning that leaves no
 removable (simple) non-end pixel (`morphology="minimal"`) and order-invariant branch handling
 (`branch_rule="invariant"`). The published-compatible recipe is

@@ -44,7 +44,8 @@ Geometry computes length, directed orientation and curvature in both libraries.
 Straight integer-coordinate inputs have analytically known unit segment lengths
 and zero orientations/curvatures. Both outputs are checked before timing.
 These inputs deliberately avoid the demonstrated Python subpixel truncation
-defect: incorrect outputs are not credited as a fast result.
+difference: outputs that disagree with the analytical values are not credited
+as a fast result.
 
 The rectangular EDT uses one feature pixel. Every distance is checked against
 the analytical Euclidean distance (absolute error below 1e-12), and every nearest
@@ -79,7 +80,7 @@ pixel-identical. All checks passed at both sizes.
 The reference harness makes exactly two temporary syntax substitutions,
 `jj++m_Neighbors8` → `jj + m_Neighbors8`, so Octave can parse the upstream
 gradient code. The pinned vendor snapshot remains unchanged.
-The default/explicit threshold discrepancy is recorded in the bug register;
+The default/explicit threshold discrepancy is recorded in the differences register;
 both benchmark paths receive the explicit threshold.
 
 Raw results: [Octave](evidence/benchmark-octave.csv),
@@ -130,8 +131,8 @@ Input generation, imports, model loading, disk I/O and validation are excluded
 from the timed region. Peak RSS and parallel scaling were not measured.
 
 The full Python image pipeline is incomplete at this pinned revision; missing
-helpers, schema defects and side effects are recorded in
-[UPSTREAM_BUGS](../UPSTREAM_BUGS.md). No timing win is claimed for a failing
+helpers, schema differences and side effects are recorded in
+[DIFFERENCES](../DIFFERENCES.md). No timing win is claimed for a failing
 Python pipeline. Rasterization and graph-tracing method differences also
 preclude unqualified end-to-end equivalence claims.
 

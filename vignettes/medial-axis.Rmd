@@ -45,7 +45,7 @@ The computation has five stages, each stored in the `mlv_mat` object that
 `map_mat_properties()` transfers the scores to the contours. This vignette
 follows one small drawing through every stage with `plot()` on the `mlv_mat`,
 then explains each score with a pair of drawings that differ in only that
-respect. All values come from the corrected defaults;
+respect. All values come from the package defaults;
 `vignette("mlv-compatibility", package = "mlvtoolbox")` shows how to reproduce
 values published with the MATLAB toolbox.
 
@@ -509,7 +509,7 @@ rbind(single = coverage(single),
 Treat missing scores as missing: exclude them from means and histograms rather
 than counting them as zero. The published MATLAB code treats every zero as
 missing (MLV-M011 in the
-[upstream bug register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/UPSTREAM_BUGS.md));
+[differences register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/DIFFERENCES.md));
 `branch_rule = "mlv2023"` reproduces that, so in that mode the close pair would
 have no separation values at all.
 
@@ -547,18 +547,18 @@ be the single row 16. The comparison below changes only the flux definition,
 
 ```{r midline}
 lines2 <- mlv_drawing(list(seg(5, 10, 45, 10), seg(5, 22, 45, 22)), 50, 32)
-corrected <- compute_mat(lines2)
+default_flux <- compute_mat(lines2)
 mlv_flux <- compute_mat(lines2, aof = "mlv2023")
-cut <- corrected$parameters$threshold * corrected$parameters$samples
+cut <- default_flux$parameters$threshold * default_flux$parameters$samples
 above <- function(m) which(m$AOF[, 25] > cut)   # rows above threshold in column 25
-list(centered = above(corrected), mlv2023 = above(mlv_flux))
-list(centered = table(row(corrected$skeleton)[corrected$skeleton]),
+list(centered = above(default_flux), mlv2023 = above(mlv_flux))
+list(centered = table(row(default_flux$skeleton)[default_flux$skeleton]),
      mlv2023 = table(row(mlv_flux$skeleton)[mlv_flux$skeleton]))
 ```
 
 ```{r midline-check, include = FALSE}
-stopifnot(identical(above(corrected), 16L), identical(above(mlv_flux), 16:17),
-          isTRUE(all.equal(corrected$AOF[15, 25], corrected$AOF[17, 25])))
+stopifnot(identical(above(default_flux), 16L), identical(above(mlv_flux), 16:17),
+          isTRUE(all.equal(default_flux$AOF[15, 25], default_flux$AOF[17, 25])))
 ```
 
 The default flux exceeds the threshold only on row 16, and its neighbours on
@@ -571,12 +571,12 @@ rows (MLV-M027). Thinning removes most of the second row, but
 `r sum(row(mlv_flux$skeleton)[mlv_flux$skeleton] == 17)` skeleton pixels
 remain on row 17.
 
-```{r fig-midline, fig.width = 6, fig.height = 3.2, fig.cap = "Flux across the gap between two lines (column 25). The corrected flux (blue) peaks on the analytical medial row 16 with symmetric neighbours; the MATLAB flux, aof = \"mlv2023\" (orange), exceeds the threshold (dashed) on rows 16 and 17."}
+```{r fig-midline, fig.width = 6, fig.height = 3.2, fig.cap = "Flux across the gap between two lines (column 25). The default flux (blue) peaks on the analytical medial row 16 with symmetric neighbours; the MATLAB flux, aof = \"mlv2023\" (orange), exceeds the threshold (dashed) on rows 16 and 17."}
 rows <- 11:21
 op <- par(mar = c(3.2, 3.6, 1, 1), mgp = c(2.1, 0.6, 0), las = 1, cex.axis = 0.85,
           cex.main = 1, font.main = 1)
-plot(rows, corrected$AOF[rows, 25], type = "o", pch = 16, col = okabe[["blue"]],
-     ylim = range(c(corrected$AOF[rows, 25], mlv_flux$AOF[rows, 25], 0)),
+plot(rows, default_flux$AOF[rows, 25], type = "o", pch = 16, col = okabe[["blue"]],
+     ylim = range(c(default_flux$AOF[rows, 25], mlv_flux$AOF[rows, 25], 0)),
      xlab = "image row y (px)", ylab = "flux (sum of 60 samples)", bty = "l", xaxt = "n")
 axis(1, at = rows)
 lines(rows, mlv_flux$AOF[rows, 25], type = "o", pch = 17, col = okabe[["orange"]])

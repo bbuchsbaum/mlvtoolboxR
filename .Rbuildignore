@@ -10,7 +10,7 @@
 ^ASSESSMENT_EVIDENCE\.md$
 ^VENDOR_.*$
 ^CLEANUP_RECEIPT\.json$
-^UPSTREAM_BUGS\.md$
+^DIFFERENCES\.md$
 ^IMPLEMENTATION_STATUS\.md$
 ^\.git$
 ^\.gitignore$

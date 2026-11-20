@@ -3,7 +3,7 @@
 All 62 top-level MATLAB functions are accounted for below. Functions are
 consolidated into R workflows rather than exported as one-for-one wrappers.
 Mapping a capability does not assert identical morphology, rasterization,
-tracing or model behavior; see UPSTREAM_BUGS.md and IMPLEMENTATION_STATUS.md.
+tracing or model behavior; see DIFFERENCES.md and IMPLEMENTATION_STATUS.md.
 
 | MATLAB function | R implementation / scope |
 |---|---|

@@ -77,7 +77,7 @@ test_that("diverse MAT stages agree when the nearest-boundary field is shared", 
  expect_equal(compute_mat(ink,aof="mlv2023",morphology="pratt")$distance_map[ink],c(-1,-1))
  expect_equal(compute_mat(ink)$distance_map[ink],c(-1,-1))
 })
-test_that("branch comparisons preserve correct contracts and expose the terminal fit defect", {
+test_that("branch comparisons preserve shared contracts and expose the terminal fit difference", {
  for(name in c("constant","varying","curved","terminal_bend","short")) {
   z<-parity_read(paste0(name,".branch.csv"));b<-data.frame(x=z[,1],y=z[,2],radius=z[,3])
   ref<-parity_read(paste0(name,".octave.scores.csv"))

@@ -30,9 +30,9 @@ The full check also passed examples and vignette rebuilds. No test skip or warni
 suppression was introduced. The installed testthat binary reports being built
 under R 4.5.2 while this runtime is 4.5.1; test assertions themselves emit no warnings.
 
-Two R defects were found and fixed: isolated-pixel signed distances and odd-bin
+Two R-port revisions were made: isolated-pixel signed distances and odd-bin
 axial histogram boundaries. Six new upstream findings are recorded in
-[UPSTREAM_BUGS](../UPSTREAM_BUGS.md), with raw failures and numerical differences
+[DIFFERENCES](../DIFFERENCES.md), with raw failures and numerical differences
 retained. No upstream issue was submitted.
 
 ## Resources and evidence

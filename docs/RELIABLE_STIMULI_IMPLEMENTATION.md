@@ -8,7 +8,7 @@ compatibility and introduces explicit new measurement and construction APIs.
 |---|---|
 | Training/measurement compatibility | `feature_schema()`, `bind_feature_model()`, checked `predict_contours()`; missing/mismatched metadata fails before model invocation |
 | Reusable units and methods | `feature_spec()`, pixels-per-degree calibration, estimator versions, fixed bins, metadata/export sidecars; [contract](FEATURE_SPEC.md) |
-| Corrected optional estimators | `contour_turning()`, `curvature_profile()`, physical `score_branch()` windows; [frozen acceptance](ESTIMATOR_ACCEPTANCE.md), [Release A](QUALIFICATION_0.2.0.md) |
+| Alternative optional estimators | `contour_turning()`, `curvature_profile()`, physical `score_branch()` windows; [frozen acceptance](ESTIMATOR_ACCEPTANCE.md), [Release A](QUALIFICATION_0.2.0.md) |
 | Matched whole-contour subsets | `design_subsets()`, set-level/per-drawing constraints, exact bounded search, explicit feasibility/budget status; [guide](SUBSET_DESIGNER.md), [Release B](QUALIFICATION_DESIGNER.md) |
 | Spatial relationships | `contour_graph()`, `graph_features()`, source spans, connectivity/continuation/parallel/enclosure relations; [guide](CONTOUR_GRAPHS.md), [qualification](QUALIFICATION_GRAPHS.md) |
 | Backend research decision | [Boost segment-Voronoi spike](VORONOI_SPIKE.md): narrow-gap and correspondence evidence supports a separate implementation study; no production backend/default/dependency change |

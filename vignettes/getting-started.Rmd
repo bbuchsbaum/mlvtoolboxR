@@ -386,7 +386,7 @@ stopifnot(isTRUE(all.equal(unname(totals), c(180, 90, 90))))
 
 The integrated curvature of the roof, the sum of curvature times length, is
 `r totals[["mlv2023"]]` degrees under the published estimator and
-`r totals[["turning"]]` degrees under both corrected estimators, which matches
+`r totals[["turning"]]` degrees under the turning and arc-length estimators, which matches
 the single 90 degree turn at the apex. `contour_turning()` lists the
 unsmoothed vertex turns directly.
 
@@ -460,11 +460,11 @@ specification can express physical units: `units = "visual_degrees"` with a
 ## Where to go next
 
 - `vignette("junctions", package = "mlvtoolbox")`: how junctions are found,
-  what an arm is, and where the corrected rule differs from MLV.
+  what an arm is, and where the default rule differs from MLV.
 - `vignette("medial-axis", package = "mlvtoolbox")`: the medial axis and the
   parallelism, separation, mirror and taper scores mapped back onto contours.
 - `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing
-  published MLV values and what each correction changes.
+  published MLV values and what each default changes.
 - `vignette("workflows", package = "mlvtoolbox")`: reading SVG, MAT and image
   files, and fitting and applying models to feature tables.
 - `vignette("stimulus-design", package = "mlvtoolbox")`: selecting matched

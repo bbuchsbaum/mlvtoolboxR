@@ -28,7 +28,7 @@ average_outward_flux <- function(distance,index,samples=60L,epsilon=1) {
 #' Construct an AOF medial-axis representation
 #'
 #' Uses the MLV signed-distance construction and a 60-sample average outward
-#' flux. The defaults are the corrected methods: a pixel-centred, tie-invariant
+#' flux. The defaults are the package methods: a pixel-centred, tie-invariant
 #' flux (`aof="centered"`), a topology-preserving thinning that leaves no
 #' removable (simple) non-end pixel (`morphology="minimal"`) and order-invariant branch handling
 #' (`branch_rule="invariant"`). The published-compatible recipe is
@@ -264,7 +264,7 @@ fit_line_segments <- function(xy,tolerance=1) {
 #' instead marks those points NA and averages only the defined values in each
 #' moving-mean window (NA where none is defined), so a branch end takes the
 #' value of its defined neighbour (before smoothing) and a branch too short for
-#' a property is NA, not 0. The corrected estimator also sums every window
+#' a property is NA, not 0. The default estimator also sums every window
 #' directly rather than as a difference of cumulative sums: the published
 #' form can round a radius pair (1, 1) to 0.99999999999999989 < 1 and so turn
 #' an exact separation of 0 into NA. A raw value of exactly 0 is a defined
@@ -328,7 +328,7 @@ score_branch <- function(branch,property=c("parallelism","separation","mirror","
  if(!n)return(numeric())
  # The published estimator forms window sums as cumulative-sum differences,
  # whose rounding can turn a radius pair (1, 1) into 0.99999999999999989 and so
- # an exact separation 0 into NA. The corrected estimator sums every window
+ # an exact separation 0 into NA. The default estimator sums every window
  # directly.
  mm<-if(na).moving_mean_direct else .moving_mean
  R<-mm(R,2L);dx<-.pad_diff(X);dy<-.pad_diff(Y);dr<-.pad_diff(R)

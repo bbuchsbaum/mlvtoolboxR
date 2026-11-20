@@ -4,7 +4,7 @@ The cleanup and R implementation are complete, with a qualified 0.1.1
 performance/parity follow-up. See [IMPLEMENTATION_STATUS](IMPLEMENTATION_STATUS.md),
 [qualification](docs/QUALIFICATION_0.1.1.md),
 [performance](docs/PERFORMANCE_0.1.1.md), [parity](docs/PARITY.md) and the
-[bug register](UPSTREAM_BUGS.md). Current evidence: 583 assertions, 92.8989%
+[differences register](DIFFERENCES.md). Current evidence: 583 assertions, 92.8989%
 R/C++ coverage, check 0 errors / 0 warnings, 18 synthetic reference cases and
 a retained forest drawing. Default MAT tie differences are explicitly retained.
 The assessment below is the historical design baseline; its no-implementation
@@ -23,17 +23,18 @@ input adapters. Keep photograph-to-contour extraction optional. This order gives
 a useful package early while testing the hardest scientific dependency before
 spending time on peripheral plotting and import features.
 
-The intended outcome is a more robust, faster implementation with demonstrated
-bugs corrected by default. Preserve the scientific quantities and make all
-method changes explicit. Upstream outputs help explain existing behavior;
-independent analytical and numerical evidence decides correctness when an
-upstream implementation is defective.
+The intended outcome is a more robust, faster implementation that, by default,
+uses an alternative definition wherever a demonstrated difference from the
+stated method exists. Preserve the scientific quantities and make all method
+changes explicit. Upstream outputs help explain existing behavior; independent
+analytical and numerical evidence decides the R behavior when an upstream
+implementation departs from that evidence.
 
 This is a feasible medium-sized scientific software project. Source translation
 is the smaller part of the work. Correctness, robustness, computational cost,
 and reproducibility are acceptance criteria for each delivered capability.
-Record compatibility differences instead of reproducing defects to obtain
-matching output. Claims of equivalence or speedup require executed evidence
+Record compatibility differences instead of reproducing documented edge-case
+behavior to obtain matching output. Claims of equivalence or speedup require executed evidence
 for the stated inputs, source revisions, runtimes and backends.
 
 This document is a plan, not an implementation or a numerical qualification
@@ -153,8 +154,9 @@ whole photograph extraction stack.
 ## Scientific definitions and explicit changes
 
 The definitions below establish the reference method. They do not require
-preserving demonstrated mistakes. Fix implementation defects by default,
-document the changed results, and test the corrected invariant. A substantive
+preserving behavior demonstrated to depart from the stated definition. Use the
+stated definition by default, document the changed results, and test the
+invariant. A substantive
 new estimator, skeleton method or approximation must have an explicit method
 identity and its own validation.
 
@@ -179,7 +181,7 @@ identity and its own validation.
    length bins collect whole-contour length. Junction type and angle histograms
    count events, with per-contour participation tracked separately. Several
    normalized statistics are scaled per 10,000 pixels of contour length.
-   Specify correct bin-edge and overflow behavior, characterize upstream
+   Specify bin-edge and overflow behavior explicitly, characterize upstream
    differences, and test boundaries explicitly instead of inheriting the
    default settings of R's `hist()`.
 
@@ -213,20 +215,20 @@ Source anchors:
 Horizontal/vertical histogram loss, the empty junction-angle dimensions, and
 split-budget overshoot were reproduced by running the upstream MATLAB functions
 in Octave. Other entries below remain source-level findings or arithmetic
-checks. The Python subpixel-orientation defect was executed separately.
+checks. The Python subpixel-orientation difference was executed separately.
 
 | Finding | Evidence | Proposed treatment |
 |---|---|---|
 | Exactly horizontal segments disappear from the horizontal/vertical histogram | The Octave call on a length-10 horizontal segment returned total 0; the strict comparison excludes thisHV=1 | Include the upper endpoint and require histogram mass conservation |
-| Empty junction-angle output has the wrong default size | The Octave call returned 5 histogram entries and 8 centers | Return a consistent zero vector of the requested length |
+| Empty junction-angle output has inconsistent default dimensions | The Octave call returned 5 histogram entries and 8 centers | Return a consistent zero vector of the requested length |
 | Omitted MAT threshold differs from explicit 28 degrees | `computeMAT` uses 0.3 when omitted, versus `2/pi*sin(28*pi/180)=0.2988749` | Make omitted and explicit threshold_angle=28 use the same conversion; retain raw-threshold control for replication |
 | A split's top group can exceed its requested length fraction | The Octave length-ranked split of lengths 4,4,2 at fraction 0.5 retained length 8/10 at the top after sorting | Enforce the documented whole-contour length budget, with deterministic ties and explicit unassigned contours |
 | Curvature ranking description and calculation differ | `splitLDbyProperties` describes an average but computes a length-weighted sum without dividing by contour length | Preserve the actual criterion under an explicit name; add a separately named mean if useful |
 | Zero scores and missing projections are conflated | `MATpropertiesToContours` marks `thisProp~=0` as valid | Carry a separate mapping mask and test the effects of retaining valid zeros |
 | RGB function help and actual default differ | Help mentions structured-edge detection; the arguments block sets SAM | Make the backend explicit and store its identity and settings |
 
-Corrected behavior is the default. For each demonstrated bug, retain the
-minimal failing input, upstream behavior, independent expected result and
+The R definition is the default. For each demonstrated difference, retain the
+minimal reproducing input, upstream behavior, independent expected result and
 regression test. Maintain a concise table of intentional differences.
 
 Do not add a package-wide “legacy mode” prematurely. Add a narrow replication
@@ -343,11 +345,12 @@ reference runners and adapters, and `vignettes/` for reproducible workflows.
   Enumerate supported functions, unavailable operations and diagnostic adapters.
   Prefer `octave-cli` for headless runs.
 - Compare selected runnable Python paths at their pinned SHA. Record independent
-  analytical expectations alongside the two upstream outputs; shared defects
-  must not become the expected R result.
+  analytical expectations alongside the two upstream outputs; behavior the two
+  share must not become the expected R result when it departs from the
+  analytical expectation.
 - Capture MATLAB-specific reference evidence when available and useful for
   proprietary raster/morphology behavior. Its absence is a qualification
-  boundary, not a blocker for the corrected R package.
+  boundary, not a blocker for the R package.
 - Generate synthetic fixtures in the drawing representation and as binary
   matrices. Export intermediate arrays, event records, bin boundaries, and
   branch data, not only screenshots or final image summaries.
@@ -376,7 +379,7 @@ be visible and version-bound. Do not label an Octave run as MATLAB evidence.
   Candidate rejection must account for the existing gap tolerances.
 
 **Gate:** independent analytical fixtures and qualified upstream comparisons
-for supported cases, regression tests for corrected defects, and a
+for supported cases, regression tests for each documented difference, and a
 runnable “drawing to feature table” example. This is the first useful release
 scope even if the MAT pipeline is still under development.
 
@@ -449,8 +452,8 @@ scope. Publication, registry submission and deployment remain separate actions.
 
 ## Verification design
 
-Use both upstream comparisons and independent evidence; reproducing an
-upstream defect is not scientific validation.
+Use both upstream comparisons and independent evidence; reproducing
+upstream behavior on a documented edge case is not scientific validation.
 
 - Geometry fixtures: horizontal/vertical/diagonal and subpixel segments,
   directed reversal, one-segment contours, corners, closed loops, zero-length
@@ -554,9 +557,9 @@ and runtime dependencies and should be estimated separately.
 ## First implementation task
 
 Start with manifests for both reference checkouts, the Octave runner/adaptation
-specification, the known-bug regression cases and the `mlv_drawing` contract.
+specification, the regression cases for known differences and the `mlv_drawing` contract.
 Implement constructors and orientation/length/curvature with subpixel and
-degenerate-input tests, then fix histogram boundaries and junction output
+degenerate-input tests, then define histogram boundaries and junction output
 shapes as those APIs are added. Establish the correctness and timing harness
 before optimizing the expensive kernels.
 

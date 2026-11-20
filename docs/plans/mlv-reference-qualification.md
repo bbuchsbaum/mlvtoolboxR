@@ -1,6 +1,6 @@
 # Plan: qualify mlvtoolbox against real MATLAB MLV outputs
 
-Status: completed 2026-11-20 (approved 2026-11-19: "shore things up; if MLV is wrong we get it right"). Results: docs/PARITY.md and docs/evidence/mlvref/.
+Status: completed 2026-11-20 (approved 2026-11-19, with the instruction to strengthen the package and to adopt the analytically supported behaviour wherever it differs from MLV). Results: docs/PARITY.md and docs/evidence/mlvref/.
 
 ## Principle
 
@@ -8,9 +8,10 @@ Agreement with MLV is evidence, not the goal. Every divergence is adjudicated
 against an independent oracle (analytical construction, exhaustive search,
 hand-enumerated geometry or an invariance argument):
 
-- R wrong → fix R, add a regression test, record as MLV-R00x.
-- MLV wrong → keep the correct R behavior, add a minimal synthetic reproducer
-  with the analytically correct answer, record as MLV-M0xx.
+- Oracle disagrees with R → fix R, add a regression test, record as MLV-R00x.
+- Oracle disagrees with MLV → keep the R behavior as the default, add a
+  minimal synthetic reproducer with the analytical answer, record the
+  difference as MLV-M0xx.
 - Underdetermined (ties, unspecified smoothing, rasterizer) → choose a
   principled definition, document it, and quantify its effect on natural data.
 
@@ -56,7 +57,7 @@ MLV values".
 - Synthetic junction suite (L, T, X, Y, arrow, ψ, near-miss, collinear
   continuation, endpoint-on-interior, multi-way, negative coords, merge chains)
   with analytical expectations; run R and Octave.
-- Adjudicate every mismatch class; fix R or record MLV defects.
+- Adjudicate every mismatch class; fix R or record MLV differences.
 
 ### P3 Medial axis (track B)
 - Forest_DBW: recover MATLAB's binary raster from `distance_map` (ink ⇔ d ≤ 0,
@@ -72,7 +73,7 @@ MLV values".
 - Adjudicate and fix as in P2.
 
 ### P4 Integration
-Update PARITY.md, UPSTREAM_BUGS.md, IMPLEMENTATION_STATUS.md, tests and NEWS;
+Update PARITY.md, DIFFERENCES.md, IMPLEMENTATION_STATUS.md, tests and NEWS;
 fresh-context review subagent; full test suite; CI green on all platforms.
 
 ## Constraints

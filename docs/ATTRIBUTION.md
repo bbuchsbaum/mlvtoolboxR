@@ -6,8 +6,9 @@ contour structure, inspect the resulting geometry, and construct stimulus sets
 whose chosen properties and matching constraints can be reproduced in R.
 
 The scientific starting point is the original MLV Toolbox. This port keeps its
-published estimators available, documents numerical conventions, fixes
-demonstrated defects, adds explicitly named estimators and workflow tools,
+published estimators available, documents numerical conventions, uses
+alternative definitions by default where tests demonstrated a difference in
+behavior, adds explicitly named estimators and workflow tools,
 and measures performance while preserving tested numerical behavior.
 Bradley Buchsbaum maintains the R implementation. Upstream credits do not imply
 that those authors maintain or endorse this port.
@@ -39,7 +40,7 @@ validation.
 | Area | Original/reference behavior | This R implementation |
 |---|---|---|
 | Core measurements | Length, orientation, curvature, junctions and medial-axis salience | Keeps these concepts and the `mlv2023` estimator family; exposes R drawing objects and tables with explicit parameter metadata. |
-| Numerical conventions | Some routines truncate coordinates, mishandle boundaries or conflate missing and zero scores | Preserves subpixel geometry, validates degeneracies and missingness, and corrects documented bins and geometry. Evidence is in the [bug ledger](../UPSTREAM_BUGS.md). |
+| Numerical conventions | Some routines truncate coordinates (MLV-P001), leave the upper endpoint out of a histogram (MLV-M001), discard a segment whose endpoints both lie outside a circular aperture (MLV-M005), or do not distinguish missing from zero scores (MLV-M011, MLV-M033) | Preserves subpixel geometry, validates degeneracies and missingness, and uses alternative bin and geometry definitions where a difference is documented. Evidence is in the [differences register](../DIFFERENCES.md). |
 | Alternative estimators | Published contour and branch formulas | Uses vertex-turning curvature by default (published curvature via `estimator = "mlv2023"`) and adds an opt-in `arclength` estimator, calibrated physical units and fixed feature schemas. See the [measurement contract](FEATURE_SPEC.md). |
 | Execution | MATLAB toolboxes and the Python stack | Uses R and Rcpp/C++17 for the ordinary pipeline. Compiled geometry and fused histograms have [workload-specific performance and equality evidence](FUSED_STATISTICS.md). |
 | Raster and MAT behavior | MATLAB morphology, rasterization and boundary choices | Uses Octave-derived Pratt morphology, Bresenham rasterization, deterministic EDT ties and a pixel-graph tracer. These choices can change flux and skeletons despite equal distances. |
@@ -53,8 +54,8 @@ Actual MATLAB was not available for qualification. Executed references use
 pinned MATLAB sources through Octave and selected Python functions with
 explicitly recorded adapters.
 
-[Parity evidence](PARITY.md) separates matches, upstream defects and method
-differences. Nearest-boundary ties change default MAT skeletons on 4/6 test
+[Parity evidence](PARITY.md) separates matches, documented edge cases in the
+reference implementations and method differences. Nearest-boundary ties change default MAT skeletons on 4/6 test
 masks; matching boundary labels resolves those six cases. Tests establish the
 stated computational behavior on their fixtures, not perceptual validity,
 broad natural-image equivalence, all-platform qualification or identical

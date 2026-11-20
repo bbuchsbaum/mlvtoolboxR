@@ -98,7 +98,7 @@ and [row-sum implementation](https://raw.githubusercontent.com/wch/r-source/R-4-
 Native shape/index guards and finite positive segment-length checks reject
 malformed manually edited drawings before bin indexing. Two pre-release safety
 hazards found during source review are recorded separately from upstream
-findings in [the bug ledger](../UPSTREAM_BUGS.md).
+findings in [the differences register](../DIFFERENCES.md).
 
 ## Verification
 
@@ -127,7 +127,7 @@ findings in [the bug ledger](../UPSTREAM_BUGS.md).
 
 The 63 differences remain visible; they are not relabeled as parity.
 The [parity report](PARITY.md) explains nearest-label ties and upstream
-formula/binning defects. Default MAT skeletons differ on 4/6 masks because
+formula/binning differences. Default MAT skeletons differ on 4/6 masks because
 equidistant boundary labels can differ; aligning those labels gives all six
 matches. Actual MATLAB was not executed. This qualification is macOS arm64,
 R 4.5.1; Linux, Windows and platforms with extended `long double` still need

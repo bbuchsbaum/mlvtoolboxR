@@ -636,7 +636,7 @@ List cpp_cleanedgelist(List edgelist,double minlength){
  List o(out.size());for(size_t i=0;i<out.size();++i)o[i]=out[i];return o;
 }
 // Published-compatible mirror fit: port of MLV fitLineSegments.m and
-// getDistanceFromLineSegment.m, including the forced terminal span (MLV-M016).
+// getDistanceFromLineSegment.m, including its terminal-span rule (MLV-M016).
 // [[Rcpp::export]]
 NumericVector cpp_fit_lines_mlv(NumericMatrix xy){
  int n=xy.nrow();NumericVector scores(n);

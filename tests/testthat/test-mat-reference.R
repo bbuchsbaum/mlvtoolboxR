@@ -48,7 +48,7 @@ test_that("hmt8 thinning removes Pratt ribbons and preserves topology", {
  expect_error(skeletonize(m, method = "nope"))
 })
 
-test_that("MLV AOF sampling is misregistered; the default centred tie-mean AOF finds the medial row (MLV-M027)", {
+test_that("MLV AOF sampling is offset by half a pixel; the default centred tie-mean AOF finds the medial row (MLV-M027)", {
  m <- matrix(FALSE, 41, 41); m[10, 4:38] <- m[22, 4:38] <- TRUE   # exact medial row 16
  thr <- 2 / pi * sin(28 * pi / 180) * 60
  a <- compute_mat(m, trace_branches = FALSE, aof = "mlv2023")

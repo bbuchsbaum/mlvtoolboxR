@@ -13,9 +13,10 @@ assessment's statements that no implementation exists.
   1e-9; 395,125/395,134 junctions exactly; Forest distance map, flux and
   skeleton exactly; 99.1–99.4% of stored per-pixel symmetry scores within 1e-4,
   with the residual traced to MLV's single-precision arithmetic.
-- Defaults correct 14 newly documented MLV defects (MLV-M018–M031) and are
+- Defaults use alternative definitions for 14 newly documented differences from
+  MLV (MLV-M018–M031) and are
   tested for invariance to contour/branch direction and numbering and to lattice
-  symmetries. Thirteen R defects were found and fixed (MLV-R005–R017), four of them by an independent review.
+  symmetries. Thirteen R-port revisions were made (MLV-R005–R017), four of them by an independent review.
 - The installed suite passes locally (macOS arm64, R 4.5.1); hosted CI covers
   macOS, Windows and Ubuntu (R-devel, release, oldrel-1).
 - 77 retained upstream MATLAB files have no explicit license grant and are not
@@ -54,14 +55,14 @@ for parity claims.
   tolerances. Python length histograms require a labeled shape adaptation.
 - Six MAT distance maps agree. Default skeletons differ on four masks at exact
   nearest-boundary ties. Keeping R distances and substituting Octave labels
-  makes all six skeletons identical, with AOF error below 1.5e-14.
-- Analytical boundary and distance tests caught two R defects, now fixed:
+  makes all six skeletons identical, with AOF differences below 1.5e-14.
+- Analytical boundary and distance tests led to two R-port revisions:
   odd-bin axial histogram boundaries and isolated-pixel signed distances.
 - Exact old-output witnesses cover grouped statistics and tangent samples;
   filtered mapping agrees with exhaustive nearest-sample search.
 
 See [PARITY](docs/PARITY.md) for the stage matrix, plots, tolerances, adapters,
-natural drawing and reproduced upstream defects. Actual MATLAB was not executed.
+natural drawing and the reference-implementation differences it reproduces. Actual MATLAB was not executed.
 
 ## Qualification (0.1.1)
 
@@ -90,7 +91,7 @@ The full Python image pipeline and actual MATLAB have not run. Natural-image
 scientific acceptance, peak RSS, parallel scaling, general SVG paint effects,
 MAT v7.3/HDF5 and bundled SAM extraction remain outside this qualification.
 Rasterization, graph tracing, EDT ties, taper smoothing and axial mean orientation
-have explicit method choices documented in UPSTREAM_BUGS.md.
+have explicit method choices documented in DIFFERENCES.md.
 
 ## Storage and provenance
 

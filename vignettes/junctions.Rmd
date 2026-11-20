@@ -411,12 +411,13 @@ par(op)
 ## Where `rule = "mlv2023"` differs
 
 `rule = "mlv2023"` reproduces the junction code of the MLV MATLAB toolbox
-(commit f12418a), including behaviours recorded as defects in the package's
-[upstream bug register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/UPSTREAM_BUGS.md). Use it only when your numbers must match published MLV
+(commit f12418a), including the behaviours in which the default rule differs,
+as recorded in the package's
+[differences register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/DIFFERENCES.md). Use it only when your numbers must match published MLV
 values. Against junctions stored by the original lab's MATLAB runs on 3,017
 drawings, it reproduces 395,125 of 395,134 exactly, while the default rule
-agrees on 90.1%, every difference being attributed to a named MLV defect or
-definition (qualification results recorded in
+agrees on 90.1%, every difference being attributed to a recorded MLV difference
+or a package definition (qualification results recorded in
 [docs/PARITY.md](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/docs/PARITY.md), not recomputed here). The three drawings below show where the definitions part.
 
 ```{r mlv-cases}
@@ -450,8 +451,8 @@ stopifnot(identical(compare$exit_type, c("T", "T", "X")),
   arms, at 135 and 315 degrees, are mirrored to
   `r paste(round(setdiff(round(mlv_arms_t, 6), 45)), collapse = " and ")` and
   45 degrees, so one of them coincides with the stem and `min_angle` is
-  `r compare$mlv_min[1]`. The type is still T, which hides the error unless
-  angles are analysed.
+  `r compare$mlv_min[1]`. The type is still T, so the difference shows only
+  when angles are analysed.
 - **Overshoot with a vertex inside the neighbourhood (MLV-M024).** The stem
   overshoots the bar by 1 pixel, as before, but is drawn as two segments with
   a vertex at y = 11. MLV makes every segment of a contour inside the
@@ -575,7 +576,7 @@ contour_statistics(sheet, properties = "junction_angle", bins = 5)[, c("lower", 
 ## Where to go next
 
 - `vignette("mlv-compatibility", package = "mlvtoolbox")`: the
-  published-compatible settings for every stage and what each correction
+  published-compatible settings for every stage and what each default
   changes.
 - `vignette("getting-started", package = "mlvtoolbox")`: segment
   measurements, histograms and feature specifications.

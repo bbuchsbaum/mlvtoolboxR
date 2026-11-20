@@ -54,7 +54,7 @@ that 0 enters the final moving mean, lowering the scores next to it.
 instead marks those points NA and averages only the defined values in each
 moving-mean window (NA where none is defined), so a branch end takes the
 value of its defined neighbour (before smoothing) and a branch too short for
-a property is NA, not 0. The corrected estimator also sums every window
+a property is NA, not 0. The default estimator also sums every window
 directly rather than as a difference of cumulative sums: the published
 form can round a radius pair (1, 1) to 0.99999999999999989 < 1 and so turn
 an exact separation of 0 into NA. A raw value of exactly 0 is a defined

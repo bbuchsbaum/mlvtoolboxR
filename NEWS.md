@@ -12,10 +12,12 @@
   1e-4; with `estimator = "mlv2023"` all 2,284,239 stored segment orientations,
   lengths and curvatures agree within 1e-9. See `docs/PARITY.md`.
 
-## Behaviour changes (corrected defaults)
+## Behaviour changes (new default methods)
 
-Defaults now correct demonstrated MLV defects (MLV-M018-M032 in
-`UPSTREAM_BUGS.md`). Feature specifications record the new method definitions,
+The defaults now follow the alternative definitions recorded as MLV-M018-M032
+in `DIFFERENCES.md` (for example, junctions and branch scores that do not
+depend on contour direction, and curvature that counts each vertex turn once);
+the `mlv2023` options keep the published behaviour. Feature specifications record the new method definitions,
 so specifications and cached MATs from 0.2.x are rejected and must be rebuilt.
 
 * Curvature: the default estimator is now vertex turning (`estimator =
@@ -109,7 +111,7 @@ so specifications and cached MATs from 0.2.x are rejected and must be rebuilt.
   pairs that the published sums round below 1; elsewhere they agree to
   rounding (at most 3.1e-13 on twelve sampled Forest drawings). On the 2,757
   stored drawings per-contour parallelism correlates 0.811 with the published
-  values (0.926 before), whose branch ends are depressed by those zeros;
+  values (0.926 before), whose branch ends are lowered by those zeros;
   separation and mirror are unchanged (0.982, 0.864). Specifications and
   cached MATs with the `-graph-2` definition are rejected.
 * `split_contours()` no longer fails when a contour has no finite medial-axis
@@ -135,10 +137,10 @@ so specifications and cached MATs from 0.2.x are rejected and must be rebuilt.
 * `detect_junctions()` returns an `arms` list-column with each junction's arm
   directions; `angles` are the gaps between consecutive arms.
 
-## Bug fixes
+## Revisions in this port
 
 * Junction arm angles no longer depend on the merged junction position, and
-  gapped T-junctions no longer gain a phantom arm (MLV-R005-R008, R014).
+  gapped T-junctions no longer gain an additional arm (MLV-R005-R008, R014).
 * Sweep and exhaustive junction search agree exactly, including gaps exactly at
   the extension limit, independent of segment direction (MLV-R015).
 * Dropping rounding-residue segments keeps contours exactly connected and

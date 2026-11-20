@@ -14,14 +14,15 @@ receipts are committed. Evidence:
 [junctions and geometry](evidence/mlvref/junctions/REPORT.md) and
 [medial axis](evidence/mlvref/mat/REPORT.md).
 
-The package offers two modes. Defaults correct demonstrated MLV defects
-([register](../UPSTREAM_BUGS.md), MLV-M018–M032); explicit `mlv2023` options
-reproduce published values.
+The package offers two modes. The defaults use alternative definitions where
+the original toolbox's behavior was demonstrated to differ
+([differences register](../DIFFERENCES.md), MLV-M018–M032); explicit `mlv2023`
+options reproduce published values.
 
-| Stage | Published-compatible mode vs stored MATLAB | Corrected defaults vs stored MATLAB |
+| Stage | Published-compatible mode vs stored MATLAB | Package defaults vs stored MATLAB |
 |---|---|---|
 | Segment orientation, length, curvature | `estimator = "mlv2023"`: all 2,284,239 segments within 1e-9 (571 zero-length/residue segments are dropped by contract) | Orientation and length the same. Curvature by vertex turning (`estimator = "turning"`, each turn counted once, MLV-M032): defined on all 3,017 drawings, including 178 with exact retracing; the published estimator's integrated curvature is a median 1.22 times larger, and normalized 8-bin curvature histograms differ by a median L1 of 1,650 per 10,000 |
-| Junctions | `rule = "mlv2023"`: 395,125 / 395,134 exact (position, type, contour/segment lists, angles); the 9 others need zero-length segments a drawing cannot hold | `rule = "exit"`, Euclidean gap: 356,113 (90.1%) exact; every difference attributed to a named MLV defect or definition |
+| Junctions | `rule = "mlv2023"`: 395,125 / 395,134 exact (position, type, contour/segment lists, angles); the 9 others need zero-length segments a drawing cannot hold | `rule = "exit"`, Euclidean gap: 356,113 (90.1%) exact; every difference attributed to a named register entry (MLV behavior) or R definition |
 | Distance map, AOF, skeleton (Forest_DBW, from the vector drawing) | `aof = "mlv2023"`, `morphology = "hmt8"`: bit-exact distances, AOF within 2.1e-14, skeleton identical (24,904 px) | Centred, tie-invariant AOF; thinning that leaves no removable (simple) pixel (`morphology = "minimal"`) |
 | Per-pixel MAT scores (all 2,757 drawings) | `branch_rule = "mlv2023"`: 99.1% / 99.4% / 99.3% of pixels within 1e-4 (parallelism / separation / mirror); per-contour r 0.9993 / 0.9999 / 0.9986; residual is MLV single precision | Invariant to branch direction and numbering, loop start and lattice transforms of the MAT fields; per-contour r 0.811 / 0.982 / 0.864 against published values (parallelism lower because undefined branch-end scores are NA rather than the published zeros, MLV-M033) |
 
@@ -56,10 +57,11 @@ on integer endpoints only; photograph-to-drawing extraction is not qualified.
 The statements below describe 0.1.1. Its MAT conclusions are superseded by the 0.3.0 section above.
 
 The R port agrees with the runnable reference geometry and histograms on the
-retained forest demonstration, and with the correct stages of a broader synthetic
-suite. Default end-to-end MAT parity is **not** established: four of six new
+retained forest demonstration, and with every stage of a broader synthetic
+suite that no recorded difference affects. Default end-to-end MAT parity is **not** established: four of six new
 masks produce different skeletons because equally near boundary pixels receive
-different labels. Known upstream defects are recorded rather than reproduced.
+different labels. Known differences in the reference implementations are recorded rather than
+reproduced.
 
 This report qualifies R source `d83ed952fdc9f639b98e849b0d8697259894de46`.
 The references are MATLAB source
@@ -84,7 +86,7 @@ outputs. See the [case list](../inst/fixtures/parity/cases.csv),
 | MAT flux and morphology | Six masks, identical upstream distance/label fields or flux | All AOF comparisons within 1e-10; skeletons pixel-identical |
 | Default MAT outputs | Six masks, each implementation's own nearest labels | Four skeletons differ; all disagreeing labels have identical exact squared distances |
 | EDT and AOF sampling | Two spatially varying fields, AOF radii 1 and 2 | EDT agrees with both references; AOF agrees with Octave; Python exposes MLV-P012 |
-| Branch scores | Constant/varying radii, curved, terminal bend, short | Parallelism/separation agree; three mirror cases agree; two expose upstream terminal line-fit defect MLV-M016 |
+| Branch scores | Constant/varying radii, curved, terminal bend, short | Parallelism/separation agree; three mirror cases agree; two expose the terminal line-fit difference MLV-M016 |
 
 The receipt contains 226 matching and 63 differing comparisons: Octave
 151/22, Python 75/41. These counts are diagnostic, not a percentage of
@@ -99,7 +101,8 @@ scores, 1e-9 for synthetic histogram sums, and 2e-6 for Octave distances
 except exact labels/skeletons. Python curvature allows 3e-8 because its formula
 adds 1e-10 to the length denominator. Label squared distances are checked exactly.
 Analytical boundary, conservation, exhaustive-search and projection tests
-independently decide behavior where upstream outputs are defective.
+independently decide behavior where the reference outputs depart from the
+analytical expectation.
 
 ### Default MAT differences and a controlled explanation
 
@@ -119,7 +122,7 @@ on these masks; they are not dismissed as floating-point noise.
 
 A controlled substitution keeps R's distance map and supplies Octave's nearest
 labels to R's AOF kernel. All six skeletons then match exactly and the maximum
-AOF error is below 1.5e-14. This isolates the label choice as the cause for these
+AOF difference is below 1.5e-14. This isolates the label choice as the cause for these
 fixtures. It does not establish that either default label policy gives a
 scientifically preferable skeleton.
 
@@ -139,7 +142,7 @@ It removes one zero-length segment/contour identically for all implementations,
 leaving 562 contours and 2,072 segments. This witnesses the existing degenerate
 geometry issue MLV-M015. Canonical data and reference sources are unchanged.
 
-| Comparison | Values compared | Maximum absolute error |
+| Comparison | Values compared | Maximum absolute difference |
 |---|---:|---:|
 | Geometry vs Octave | 6,216 | 5.68e-14 |
 | Geometry vs Python | 6,216 | 2.17e-9 |
@@ -177,8 +180,8 @@ acceptance or a complete photograph-to-feature comparison.
   the incomplete Python image pipeline remain outside the executed evidence.
 - Actual MATLAB, Windows/Linux and hosted CI remain unexecuted.
 
-New upstream findings MLV-M016/M017 and MLV-P012–P015, and R defects
-MLV-R001/R002, are in [UPSTREAM_BUGS](../UPSTREAM_BUGS.md).
+New reference-implementation findings MLV-M016/M017 and MLV-P012–P015, and R-port revisions
+MLV-R001/R002, are in [DIFFERENCES](../DIFFERENCES.md).
 The ordinary installed test suite uses the committed synthetic fixtures and
 does not require Octave, Python or the large reference collection.
 

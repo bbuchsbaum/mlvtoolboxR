@@ -183,6 +183,6 @@ tests, while each numerical path needs its own correctness evidence.
 
 No package tests, cross-language end-to-end parity checks, speedups, memory
 benchmarks, scientific method improvements, hosted CI or distribution checks
-are claimed. The demonstrated bugs should become regressions in the R
+are claimed. The demonstrated differences should become regression tests in the R
 implementation. Passing the adapted MAT smoke is evidence of executability
 on this input only.

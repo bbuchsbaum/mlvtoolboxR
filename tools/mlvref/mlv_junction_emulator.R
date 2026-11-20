@@ -1,6 +1,6 @@
 # Independent R transcription of the pinned MLV junction pipeline
 # (detectJunctions.m, lineIntersection.m, cleanupJunctions.m,
-# computeJunctionAnglesTypes.m at f12418a). Each upstream heuristic or defect
+# computeJunctionAnglesTypes.m at f12418a). Each upstream heuristic or behaviour that differs
 # is a switch, so that a difference between mlvtoolbox and MATLAB can be
 # attributed to one mechanism at a time:
 #

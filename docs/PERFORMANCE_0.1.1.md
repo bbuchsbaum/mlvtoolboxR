@@ -3,7 +3,7 @@
 Grouped histogram construction and MAT mapping are faster while preserving the
 complete outputs of all five representative old/new workloads exactly.
 The full installed test suite and the expanded [parity study](PARITY.md)
-qualify the changes; performance does not override corrected behavior.
+qualify the changes; performance does not override the defined behavior.
 
 ## Measured changes from 0.1.0
 

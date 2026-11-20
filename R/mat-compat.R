@@ -1,6 +1,6 @@
 # Published-compatible ("mlv2023") branch rule: MLV traceSkeleton via Kovesi
 # edgelink + cleanedgelist, MLV fitLineSegments, and mapMATtoContour order.
-# These reproduce published MLV values, including recorded defects
+# These reproduce published MLV values, including the recorded differences
 # (MLV-M016; MLV-M028 direction dependence; MLV-M029 last-writer mapping and
 # enumeration-order ties; MLV-M030 duplicated merge points).
 

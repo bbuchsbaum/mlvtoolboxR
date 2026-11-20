@@ -1,9 +1,9 @@
 # MLV-compatible junction rule (detect_junctions(rule = "mlv2023")).
 # A port of detectJunctions.m, lineIntersection.m, cleanupJunctions.m and
-# computeJunctionAnglesTypes.m at MLV f12418a, including their documented
-# defects (MLV-M006, M007, M008, M019, M021-M026; see UPSTREAM_BUGS.md).
+# computeJunctionAnglesTypes.m at MLV f12418a, including the documented
+# differences from the default rule (MLV-M006, M007, M008, M019, M021-M026; see DIFFERENCES.md).
 # It exists to reproduce published MLV junction values; the default rule
-# ("exit") is the corrected definition. Zero-length segments cannot occur in
+# ("exit") is the package definition. Zero-length segments cannot occur in
 # an mlv_drawing, so MLV-M020 has no counterpart here.
 .junctions_mlv2023 <- function(x, AE, RE, merge_radius, endpoint_radius) {
   contours <- x$contours; nc <- length(contours)

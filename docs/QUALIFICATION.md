@@ -65,9 +65,9 @@ The final tarball excludes vendor snapshots, reference data, tracker state and
 development evidence, while including the prebuilt vignette index.
 
 The first Octave benchmark attempt omitted loading the image package and failed.
-Its [log](evidence/benchmark-octave-first-attempt.log) is retained; the corrected
-run completed all four cases. Unsupported or incorrect Python paths were
-documented rather than assigned benchmark scores.
+Its [log](evidence/benchmark-octave-first-attempt.log) is retained; the repeated
+run completed all four cases. Unsupported Python paths, and paths whose outputs differ from
+analytical values, were documented rather than assigned benchmark scores.
 
 The cleanup removed 2,824,190,787 logical bytes (about 2.63 GiB) of redundant
 reference/history/generated content. One local canonical collection remains at
@@ -97,8 +97,8 @@ library are removed. No reference sources or canonical data are removed.
   MATLAB models are not bundled.
 - Manual/PDF generation was omitted with `--no-manual`.
 - No upstream issue, repository push, package submission or site publication
-  occurred. Findings distinguish executed bugs from source findings and
-  scientific contract questions in [UPSTREAM_BUGS](../UPSTREAM_BUGS.md).
+  occurred. Findings distinguish executed differences from source findings and
+  scientific contract questions in [DIFFERENCES](../DIFFERENCES.md).
 
 Machine-readable details: [qualification.json](evidence/qualification.json).
 Runtime metadata: [sessionInfo](evidence/sessionInfo.txt).

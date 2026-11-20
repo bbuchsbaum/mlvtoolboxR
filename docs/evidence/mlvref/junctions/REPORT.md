@@ -13,16 +13,16 @@ Plan: `docs/plans/mlv-reference-qualification.md`, phases P1 (version drift) and
   - On all 41 synthetic cases it reproduces pinned Octave exactly; this is a committed test.
 - **Default rule.** The default is `rule = "exit"`, `gap_metric = "euclidean"`.
   - Exact agreement with stored MATLAB: 345,018 (87.3%) at the base commit; 356,113 (90.1%) under the new defaults.
-  - Every difference is attributed to one named cause: an MLV defect, the documented R definition, M018 (the gap metric, now a deliberate default), or one of 5 floating-point ties at the 2 px radius.
+  - Every difference is attributed to one named cause: a documented MLV difference, the documented R definition, M018 (the gap metric, now a deliberate default), or one of 5 floating-point ties at the 2 px radius.
   - R equals an emulation of its documented definition except for 5 floating-point ties at the 2 px radius (389,974 junctions).
 - **Segment geometry.** R matches the stored values within 1e-9 on all 2,284,239 segments, except:
   - 571 segments R drops: 552 exact zero-length (M015) and 19 rounding-residue segments (R009);
   - 99 curvatures next to those segments.
-- **R defects fixed:** MLV-R005 to R009, and MLV-R014 to R017 after independent review.
-- **New MLV findings:** M018 (anisotropic gap, a contract clarification) and M019–M026 (executed defects). Re-checked: M006, M007, M008, M015.
+- **R-port revisions:** MLV-R005 to R009, and MLV-R014 to R017 after independent review.
+- **New MLV findings:** M018 (anisotropic gap, a contract clarification) and M019–M026 (executed differences). Re-checked: M006, M007, M008, M015.
 - **Synthetic suite (41 cases):**
   - default rule matches the hand-derived answer in 41/41;
-  - pinned MLV under Octave in 24/41 (`gap_diag_1.2` counts against MLV under the Euclidean default);
+  - pinned MLV under Octave in 24/41 (`gap_diag_1.2` is counted as a mismatch under the Euclidean default);
   - `rule = "mlv2023"` matches pinned MLV in 41/41.
 - **Tests:** 3,355 expectations on the current working tree, 0 failures, 0 errors. `tests/testthat/test-junction-oracle.R` holds 1,049 of them.
 
@@ -71,7 +71,7 @@ Receipt `drift-pinned-vs-stored.csv`: 120 drawings, 87,961 segments, 1,822 s of 
 Full-corpus corroboration: the faithful emulation (V0) reproduces 395,134/395,134 stored junctions. Every stored field can therefore support claims about the pinned code; none needs "published but drifted" status.
 
 ## MLV-compatible rule (`rule = "mlv2023"`)
-`R/junctions-mlv2023.R` ports the transcription that reproduces all stored junctions, including every recorded defect:
+`R/junctions-mlv2023.R` ports the transcription that reproduces all stored junctions, including every recorded difference:
 - Chebyshev gap with contours shorter than AE skipped;
 - 1e-4 endpoint snapping (M019) and discarded negative coordinates (M008);
 - upper-triangular recursive merging (M006);
@@ -102,7 +102,7 @@ Each step changes one cause. "Changed" = max(n_A, n_B) − exact matches.
 | Step | Cause | Changed | Junctions after |
 |---|---|---|---|
 | S>V0 | faithful emulation of pinned MLV | 0 | 395,134 |
-| V0>V1 | interior-arm y convention fixed (M007) | 24,759 | 395,134 |
+| V0>V1 | interior-arm y convention changed (M007) | 24,759 | 395,134 |
 | V1>V2 | transitive merging (M006) | 462 | 394,910 |
 | V2>V3 | keep negative-coordinate intersections (M008) | 0 | 394,910 |
 | V3>V4 | no 1e-4 snapping (M019) | 29 | 394,911 |
@@ -136,24 +136,24 @@ Receipts: `summary-stored-before.csv` (base commit), `summary-stored-after.csv` 
 
 - Per-family rows are from the final4 run; totals are from final5. The default rule now matches stored MATLAB on 69 fewer junctions, from the R014/R015 rule changes; the split between the two was not measured.
 - The large MLV-only count is mostly M018. Under the Euclidean default, diagonal gaps of 1–1.41 px are no longer joined; that is 4,725 fewer junctions (Toronto 4,438, IAPS 181, OASIS 62, Snodgrass 31, Architectural 13; step V7>V8).
-- The rest are MLV pseudo-junctions with fewer than three arms leaving the neighbourhood (M023/M024).
+- The rest are MLV junctions with fewer than three arms leaving the neighbourhood (M023/M024).
 - R-only junctions involve closed contours that MLV does not wrap (M026). Gap-metric changes add a few.
 - With `gap_metric = "chebyshev"`, the exact count is 362,075 (91.6%), 601 MLV-only and 164 R-only.
 
 Arm-definition class, V6 vs V7 (from the final4 run; final5 adds R014/R015), with features in `residual-features-final5.csv`:
 
-| Sub-class | Junctions | Who is right |
+| Sub-class | Junctions | Oracle adjudication |
 |---|---|---|
-| MLV has more arms (1,255 of them include an exact duplicate direction) | 7,484 | MLV wrong: M022/M023/M024/M025 |
-| R has more arms (closed-contour wrap) | 68 | MLV wrong: M026 |
-| Same count, interior arm measured from an offset merged centroid | 960 | MLV wrong: M021 |
+| MLV has more arms (1,255 of them include an exact duplicate direction) | 7,484 | Oracle agrees with R: M022/M023/M024/M025 |
+| R has more arms (closed-contour wrap) | 68 | Oracle agrees with R: M026 |
+| Same count, interior arm measured from an offset merged centroid | 960 | Oracle agrees with R: M021 |
 | Same count, arm leaves via a later segment than MLV's incident one | 444 | Underdetermined at sub-radius scale; R definition documented |
-| MLV junctions with <3 arms leaving the neighbourhood | 376 | MLV wrong: M023/M024 |
-| R junctions MLV lacks (closed contours) | 164 | MLV wrong: M026 |
+| MLV junctions with <3 arms leaving the neighbourhood | 376 | Oracle agrees with R: M023/M024 |
+| R junctions MLV lacks (closed contours) | 164 | Oracle agrees with R: M026 |
 
 The commonest transition is MLV Star (5 arms) → R X (4 arms), 5,659 times. In these, one contour passes the crossing with a vertex within 2 px, and MLV counts both of its segments as forward arms (M024).
 
-Natural effect of R007/R008 alone (final2 → final3): 419 junctions changed, 247 of them involving a closed contour (R007) and 172 phantom-arm removals (R008). R's junction count went from 394,529 to 394,697.
+Natural effect of R007/R008 alone (final2 → final3): 419 junctions changed, 247 of them involving a closed contour (R007) and 172 removals of an additional arm (R008). R's junction count went from 394,529 to 394,697.
 
 ## Adjudications
 Each class lists its oracle and minimal reproducer. Every reproducer is a case in `synthetic_junctions.R`; the R behaviour is asserted in `test-junction-oracle.R` or `test-geometry.R`.
@@ -169,18 +169,18 @@ Each class lists its oracle and minimal reproducer. Every reproducer is a case i
 - **MLV-M015 (zero-length segments):** 552 segments, 81 curvatures, and 8 junctions via M020.
 
 ### New MLV findings (proposed register entries)
-- **MLV-M018 (contract clarification, not a defect claim).**
+- **MLV-M018 (contract clarification only).**
   - Finding: lineIntersection.m converts AE to a parameter fraction using max(|dx|,|dy|). The absolute gap is therefore Chebyshev, up to √2 px along a diagonal, though the help text says "1 pixel".
   - Trigger: a 45° stem 1.2 px (Euclidean) short of a bar is joined; the same stem rotated to 0° is not.
   - Natural effect: a Euclidean rule would change 7,768 junctions (4,731 fewer).
   - R: default `gap_metric="chebyshev"` keeps the MLV semantics (one raster step); `"euclidean"` is rotation-invariant. Both are tested.
-- **MLV-M019, endpoint snapping.** When the intersection parameter is within 1e-4 of 0 or 1, MLV returns the segment endpoint, an error of up to 1e-4 × length.
+- **MLV-M019, endpoint snapping.** When the intersection parameter is within 1e-4 of 0 or 1, MLV returns the segment endpoint, a displacement of up to 1e-4 × length.
   - Bar (0,5)–(40000,5) crossed at x=3: MLV gives Y at (0,5); analytical X at (3,5).
   - 29 natural junctions. R computes the exact intersection.
 - **MLV-M020, zero-length neighbour arm.** A zero-length neighbour adds an arm of orientation atan2d(0,0)=0.
   - MLV gives X [0 90 90 180]; analytical T [90 90 180].
   - 8 natural junctions. R drops zero-length segments explicitly.
-- **MLV-M021, interior arms from the merged centroid.** MLV measures interior arms from the merged centroid, biased by offset/length.
+- **MLV-M021, interior arms from the merged centroid.** MLV measures interior arms from the merged centroid, which shifts their angles by an amount set by offset/length.
   - Three lines crossing pairwise within 1.5 px: MLV gaps 43.5–46.4° and 88.1/91.9°; analytical exactly 45° ×4 and 90° ×2.
   - 960 natural junctions. R takes the arm direction from the leaving segment.
 - **MLV-M022, start-first attachment.** MLV attaches a segment at its start whenever the start is within 2 px, even when the end is nearer, so reversing a contour changes the result.
@@ -193,14 +193,14 @@ Each class lists its oracle and minimal reproducer. Every reproducer is a case i
   - Straight line with vertices 1 px either side of a crossing: MLV gives a Star with a 0° gap; analytical X [90×4].
   - 1 px overshoot: MLV gives X [0 90 90 180]; analytical T.
   - Natural: 1,255 exact duplicates, and most of the 5,659 Star→X cases.
-- **MLV-M025, phantom arm.** A member segment with both endpoints more than 2 px away is always treated as crossing (two arms), even when it lies wholly beyond the junction.
-  - Merged chain at default settings (bar; crossings at x=10, 11.9, 13.8; T stem from (15.7,10)): MLV gives 10 arms with M021-biased gaps; analytical 9 arms, gaps [0×5, 90×4].
+- **MLV-M025, additional arm.** A member segment with both endpoints more than 2 px away is always treated as crossing (two arms), even when it lies wholly beyond the junction.
+  - Merged chain at default settings (bar; crossings at x=10, 11.9, 13.8; T stem from (15.7,10)): MLV gives 10 arms with gaps shifted by M021; analytical 9 arms, gaps [0×5, 90×4].
   - Natural: part of the 7,484.
 - **MLV-M026, closed contours.** MLV treats a closed polygon as ending at its first vertex.
   - Bar plus the polygon (10,11),(10,0),(30,0),(20,20): MLV gives T started at (10,11), X from any other start. Analytical X with gaps [pb, 90, 90, 180−pb], where pb = atan2(9,10)·180/π.
   - Natural: 68 R-more-arms plus 164 R-only junctions.
 
-### R defects found and fixed
+### R-port revisions
 - **MLV-R005, arm direction.** The arm direction was the chord from the merged junction position to the first vertex outside the radius. Straight-arm angles were biased by up to 0.4° in the offset-rays case. This was the dominant base-version class: 28,975 junctions.
   - Oracle: for straight arms, the angles between the lines do not depend on where the merged position falls.
   - Fix: the arm direction is the orientation of the segment through which the contour leaves the neighbourhood.
@@ -211,7 +211,7 @@ Each class lists its oracle and minimal reproducer. Every reproducer is a case i
 - **MLV-R007, closed contours** (found by the independent reviewer). Closed contours did not wrap, so the result depended on the start vertex.
   - Oracle: start-vertex and reversal invariance (4 rotations × 2 directions).
   - Fix: indices wrap when the last end equals the first start; a closed contour wholly inside the disc gives no arm. 247 natural junctions.
-- **MLV-R008, phantom arm** (found by the reviewer). A member segment that never enters the disc and lies wholly beyond the junction got an arm pointing back across it. A gapped T with gap > `endpoint_radius` read as X, and merged chains gained arms.
+- **MLV-R008, additional arm** (found by the reviewer). A member segment that never enters the disc and lies wholly beyond the junction got an arm pointing back across it. A gapped T with gap > `endpoint_radius` read as X, and merged chains gained arms.
   - Oracle: a gapped T has exactly one stem arm.
   - Fix: if the segment does not reach the disc and the junction's projection lies at or beyond an endpoint, only the arm leading away is counted. 172 natural junctions.
 
@@ -237,7 +237,7 @@ Each class lists its oracle and minimal reproducer. Every reproducer is a case i
 - **MLV-R017, merge order in `rule = "mlv2023"`** (found by the independent review).
   - Failure: recursiveClasses visited merge partners in x-sorted sweep order; MATLAB `find` uses ascending index (contours `1,2,4,5,3,5,5` vs Octave's `1;2;3;5;4;5;5`, and different angles).
   - Fix: partners sorted ascending; the recursion is iterative (explicit stack, same pre-order), so long chains cannot exhaust expression depth.
-  - Tests: the repro is asserted exactly against Octave and added to the synthetic suite and committed fixture (41 cases, 41/41 exact). A 3,000-crossing chain gives one junction with 6,002 arms under both rules. The same ordering defect was in the harness emulator and is fixed there; the stored corpus never exercised it (the faithful emulation still reproduces 395,134/395,134).
+  - Tests: the repro is asserted exactly against Octave and added to the synthetic suite and committed fixture (41 cases, 41/41 exact). A 3,000-crossing chain gives one junction with 6,002 arms under both rules. The same ordering also occurred in the harness emulator and was revised there; the stored corpus never exercised it (the faithful emulation still reproduces 395,134/395,134).
 
 ### Underdetermined, documented definitions
 - **Sub-radius arm direction (444 junctions):** MLV uses the incident segment; R uses the first segment that leaves the disc. Both are scale choices.
@@ -262,7 +262,7 @@ For each case the suite records three results:
 
 Results:
 - **Default rule:** 41/41.
-- **Pinned MLV:** 24/41. The 17 failures (the 41st case is MLV-R017's order case, where MLV reports a junction):
+- **Pinned MLV:** 24/41. The 17 mismatches (the 41st case is MLV-R017's order case, where MLV reports a junction):
   - M006 ×2, M007, M008, M018 (`gap_diag_1.2`, under the Euclidean definition), M019, M020, M021;
   - M022, M023, M024 ×4, M025, M026.
 - **`rule = "mlv2023"`:** 41/41. For `zero_length_neighbour`, the reference is Octave on the cleaned geometry, the only input an `mlv_drawing` can hold. The uncleaned Octave run documents M020.
@@ -297,4 +297,4 @@ The committed fixtures `inst/fixtures/octave/junction_cases.csv` and `junction_o
 ## Open questions for the maintainer
 1. **Zero-length segments under `rule = "mlv2023"`.** Nine stored junctions (M020) depend on zero-length segments, which an `mlv_drawing` cannot hold. Representing them would weaken the constructor invariant, so `rule = "mlv2023"` reproduces MLV on the cleaned geometry; this is the documented boundary of the compatibility rule.
 
-Resolved: arm-rule compatibility option (added), gap default (Euclidean), near-zero segments (R009), drawing count (3,017; the plan's 3,357 was an arithmetic error, now corrected).
+Resolved: arm-rule compatibility option (added), gap default (Euclidean), near-zero segments (R009), drawing count (3,017; the plan's figure of 3,357 has been revised).

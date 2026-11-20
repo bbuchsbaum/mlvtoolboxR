@@ -5,7 +5,7 @@
 Vision scientists and their students who use R but are not computational
 geometers. They want to measure line drawings, understand what each number
 means well enough to defend it in a methods section, and choose between the
-corrected defaults and published-compatible MLV values. Voice (PRODUCT.md):
+package defaults and published-compatible MLV values. Voice (PRODUCT.md):
 precise, technical, peer-to-peer; units always shown; no hype. Follow the
 `write-with-judgment` technical guidance: begin with the thing itself, name real
 functions and values, explain cause and consequence, define terms at first use,
@@ -18,9 +18,9 @@ seamless/robust" as praise.
 | File | Title | Job |
 |---|---|---|
 | `getting-started.Rmd` | From a line drawing to contour features | Build a drawing, measure orientation, length and curvature, read histograms and feature tables, use a feature specification. |
-| `junctions.Rmd` | Junctions: how they are found and what they measure | Junction types, the gap allowance, the arm rule, merging; where the corrected rule and `rule = "mlv2023"` differ, shown on small drawings. |
+| `junctions.Rmd` | Junctions: how they are found and what they measure | Junction types, the gap allowance, the arm rule, merging; where the default rule and `rule = "mlv2023"` differ, shown on small drawings. |
 | `medial-axis.Rmd` | Medial axis and symmetry scores | Distance map → average outward flux → skeleton → branches → parallelism, separation, mirror, taper → mapped contour scores. |
-| `mlv-compatibility.Rmd` | Reproducing published MLV values | The two modes, the exact compatible recipe, what each correction changes and why, cache/spec rejection, and the qualification evidence. |
+| `mlv-compatibility.Rmd` | Reproducing published MLV values | The two modes, the exact compatible recipe, what each default changes and why, cache/spec rejection, and the qualification evidence. |
 | `workflows.Rmd` | (revise) File input, extraction and feature recipes | Keep the I/O, extraction and checked-prediction material; remove anything now covered elsewhere and correct stale claims (it still says the Pratt backend is used and MATLAB morphology equivalence is unestablished). |
 | `stimulus-design.Rmd` | unchanged | Cross-link only. |
 
@@ -35,7 +35,7 @@ modulo 180 for histograms), length (pixels), curvature (degrees per pixel);
 junction, arm, junction neighbourhood, gap allowance; distance map, average
 outward flux (AOF, "flux"), skeleton, branch, branch score; parallelism,
 separation, mirror, taper; mapped (contour) score; feature specification;
-"corrected defaults" vs "published-compatible mode" (`mlv2023` options).
+"package defaults" vs "published-compatible mode" (`mlv2023` options).
 Image coordinates: x rightward, y downward, pixel centres at integers.
 
 ## Figures

@@ -7,11 +7,15 @@ maintained R port and extension of the Bernhardt-Walther Lab's
 [pyMLV](https://github.com/bwlabToronto/pyMLV) as an additional reference.
 
 The aim is to make the [original MLV methods](https://doi.org/10.3389/fcomp.2023.1140723)
-usable in R with explicit measurement choices, documented bug fixes, tested
-native performance improvements, and tools for matching stimulus sets.
-Corrected definitions are the defaults; the published behaviour remains
-available through explicit `mlv2023` options, and graph/design workflows are
-named extensions. Numerical equivalence is qualified
+available in R with explicit measurement choices, tested native performance
+improvements, and tools for matching stimulus sets. Where this package defines
+a measure differently from the original toolbox, for example so that
+junctions and branch scores do not depend on contour direction or on the start
+vertex of a closed contour, or so that each curvature turn is counted once,
+the package definition is the default and the published behaviour remains available
+through explicit `mlv2023` options. Each difference is recorded, with a
+reproducer, in the [differences register](DIFFERENCES.md). Graph/design
+workflows are named extensions. Numerical equivalence is qualified
 against specific fixtures, not promised for every upstream output.
 
 [Purpose and differences](docs/ATTRIBUTION.md) ·
@@ -62,7 +66,7 @@ remain distinct from missing scores.
 
 - **An R workflow:** drawing objects, feature tables and model compatibility
   metadata; Python and MATLAB serve as references.
-- **Explicit methods and corrections:** subpixel geometry, validated
+- **Explicit method definitions:** subpixel geometry, validated
   degeneracies and missingness, vertex-turning curvature by default (each turn
   counted once), an arc-length estimator at a stated scale, and physical
   calibration. `estimator = "mlv2023"` retains the published curvature.
@@ -70,7 +74,7 @@ remain distinct from missing scores.
   descriptors for closure, continuation and enclosure.
 - **Measured implementation changes:** compiled geometry and fused histograms,
   with [performance and equality evidence](docs/FUSED_STATISTICS.md).
-- **Two modes for curvature, junctions and the medial axis:** corrected defaults, and
+- **Two modes for curvature, junctions and the medial axis:** the package defaults, and
   explicit `mlv2023` options that reproduce outputs the original lab computed
   in MATLAB (see [parity evidence](docs/PARITY.md)). No bundled SAM weights or
   MATLAB serialized models.
@@ -179,10 +183,11 @@ Physical measurement uses `units = "visual_degrees"` with an explicit
 See the [measurement contract](docs/FEATURE_SPEC.md) for definitions, migration,
 metadata, and the limits of raster resolution invariance.
 
-## References, storage and bugs
+## Differences, provenance and storage
 
-- [Upstream bug register](UPSTREAM_BUGS.md): stable IDs, executed reproducers,
-  source findings and R regressions. No upstream reports have been submitted.
+- [Differences from the reference implementations](DIFFERENCES.md): stable
+  IDs, executed reproducers, source findings and R regressions. No upstream
+  reports have been submitted.
 - [Source provenance](vendor/SOURCES.json): pinned source-only snapshots,
   retained-file checksums and reference-data custody.
 - [Cleanup receipt](CLEANUP_RECEIPT.json): one verified shared collection at
