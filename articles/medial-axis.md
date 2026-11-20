@@ -29,9 +29,10 @@ transfers the scores to the contours. This vignette follows one small
 drawing through every stage with
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) on the
 `mlv_mat`, then explains each score with a pair of drawings that differ
-in only that respect. All values come from the package defaults;
-[`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md)
-shows how to reproduce values published with the MATLAB toolbox.
+in only that respect. All values come from the package defaults; the
+[MLV
+compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md)
+article shows how to reproduce values published with the MATLAB toolbox.
 
 ## The running example
 
@@ -1226,8 +1227,9 @@ and 22 − r from the lower one, so the two distances are equal, and the
 distance map has its ridge, at r = (10 + 22)/2 = 16. The medial axis
 should therefore be the single row 16. The comparison below changes only
 the flux definition, `aof`; the full published-compatible recipe is
-given in
-[`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md).
+given in the [MLV
+compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md)
+article.
 
 ``` r
 
@@ -1348,7 +1350,8 @@ axis is straight and is fitted by one span in either direction.
 
 ## Where to go next
 
-- [`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
+- [MLV
+  compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
   reproducing published MLV values and choosing between the two modes.
 - [`feature_spec()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/feature_spec.md)
   records every medial-axis setting so that a feature table can be

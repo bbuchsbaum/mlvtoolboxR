@@ -72,7 +72,7 @@
       <h1>File input, extraction and feature recipes</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/workflows.Rmd" class="external-link"><code>vignettes/workflows.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/articles/workflows.Rmd" class="external-link"><code>vignettes/articles/workflows.Rmd</code></a></small>
       <div class="d-none name"><code>workflows.Rmd</code></div>
     </div>
 
@@ -82,8 +82,7 @@
 into R from SVG, MATLAB and image files, editing them, fixing a
 measurement recipe for a study, and applying a fitted model to new
 drawings with a check that the features were measured the same way. It
-assumes the drawing, segment and histogram vocabulary of
-<code><a href="../articles/getting-started.html">vignette("getting-started", package = "mlvtoolbox")</a></code>.</p>
+assumes the drawing, segment and histogram vocabulary of the <a href="getting-started.html">Getting started</a> article.</p>
 <p>The file adapters use optional packages: xml2 for SVG, R.matlab for
 MAT files, and png or jpeg for images. Chunks that need a missing
 package are skipped when this vignette is built.</p>
@@ -129,8 +128,7 @@ measurements MLV stored in the structure are ignored and recomputed.</p>
 <code class="sourceCode R"><span><span class="va">drawings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mlv_mat.html">read_mlv_mat</a></span><span class="op">(</span><span class="st">"drawings.mat"</span>, variable <span class="op">=</span> <span class="st">"vecLD"</span><span class="op">)</span></span>
 <span><span class="co"># MLV files occasionally contain zero-length segments; drop them explicitly.</span></span>
 <span><span class="va">drawings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mlv_mat.html">read_mlv_mat</a></span><span class="op">(</span><span class="st">"drawings.mat"</span>, zero_length <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span></code></pre></div>
-<p>To reproduce values that MLV published for such files, see
-<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>.</p>
+<p>To reproduce values that MLV published for such files, see the <a href="mlv-compatibility.html">MLV compatibility</a> article.</p>
 </div>
 <div class="section level2">
 <h2 id="tracing-raster-line-drawings">Tracing raster line drawings<a class="anchor" aria-label="anchor" href="#tracing-raster-line-drawings"></a>
@@ -208,12 +206,11 @@ measurements of its vector source.</p>
 <p>For colour photographs, <code><a href="../reference/trace_rgb.html">trace_rgb()</a></code> takes an RGB image
 and a <code>backend</code> function that returns a logical ink mask. The
 package provides one classical backend, <code><a href="../reference/xdog_lines.html">xdog_lines()</a></code>, a
-flow-based difference of Gaussians described in
-<code><a href="../articles/line-extraction.html">vignette("line-extraction", package = "mlvtoolbox")</a></code>; it
-bundles no learned edge or segmentation model. For any other backend,
-whatever produces the mask (and its weights and preprocessing) is the
-backend’s responsibility, and the backend’s name is recorded in the
-drawing’s provenance.</p>
+flow-based difference of Gaussians described in the <a href="line-extraction.html">Line extraction</a> article; it bundles no
+learned edge or segmentation model. For any other backend, whatever
+produces the mask (and its weights and preprocessing) is the backend’s
+responsibility, and the backend’s name is recorded in the drawing’s
+provenance.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="../reference/read_mlv_image.html">read_mlv_image</a></span><span class="op">(</span><span class="va">png_file</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">dark_pixels</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">image</span>, <span class="va">level</span> <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">image</span>, dims <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">level</span></span>
@@ -305,9 +302,8 @@ result.</p>
 <span><span class="co">#&gt; $branch_rule</span></span>
 <span><span class="co">#&gt; [1] "invariant"</span></span></code></pre></div>
 <p>Each stage and score, and how to read these parameters, is explained
-in <code><a href="../articles/medial-axis.html">vignette("medial-axis", package = "mlvtoolbox")</a></code>. The
-settings that reproduce published MLV values are given in
-<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>.</p>
+in the <a href="medial-axis.html">Medial axis</a> article. The settings
+that reproduce published MLV values are given in the <a href="mlv-compatibility.html">MLV compatibility</a> article.</p>
 </div>
 <div class="section level2">
 <h2 id="feature-recipes-and-checked-prediction">Feature recipes and checked prediction<a class="anchor" aria-label="anchor" href="#feature-recipes-and-checked-prediction"></a>
@@ -400,17 +396,17 @@ back later can still be checked.</p>
 </h2>
 <ul>
 <li>
-<code><a href="../articles/getting-started.html">vignette("getting-started", package = "mlvtoolbox")</a></code>:
-segment measurements, histograms and feature specifications.</li>
+<a href="getting-started.html">Getting started</a>: segment
+measurements, histograms and feature specifications.</li>
 <li>
-<code><a href="../articles/junctions.html">vignette("junctions", package = "mlvtoolbox")</a></code>: how
-junctions are found and what they measure.</li>
+<a href="junctions.html">Junctions</a>: how junctions are found and
+what they measure.</li>
 <li>
-<code><a href="../articles/medial-axis.html">vignette("medial-axis", package = "mlvtoolbox")</a></code>:
-medial-axis symmetry scores.</li>
+<a href="medial-axis.html">Medial axis</a>: medial-axis symmetry
+scores.</li>
 <li>
-<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>:
-reproducing published MLV values.</li>
+<a href="mlv-compatibility.html">MLV compatibility</a>: reproducing
+published MLV values.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

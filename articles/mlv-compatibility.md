@@ -203,9 +203,9 @@ c(default = integrated(default), published = integrated(published))
 
 Junctions differ wherever one of MLV’s arm rules applies, for example
 when a short segment at the end of a stem makes a T read as an X
-(MLV-M024).
-[`vignette("junctions", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md)
-shows each case on a small drawing.
+(MLV-M024). the
+[Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md)
+article shows each case on a small drawing.
 
 ### Medial-axis scores differ by design
 
@@ -306,10 +306,10 @@ short branches are mostly ends.
 The default mode keeps scores that are exactly zero; the published mode,
 like `MATpropertiesToContours.m`, turns every zero into a missing value
 (MLV-M011). Two lines three pixels apart have a separation of exactly 0
-along their whole length
-([`vignette("medial-axis", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md)
-explains why), so the same pixels are zeros in one mode and missing in
-the other:
+along their whole length (the [Medial
+axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md)
+article explains why), so the same pixels are zeros in one mode and
+missing in the other:
 
 ``` r
 
@@ -418,7 +418,9 @@ a multiple of 90° rotates or reflects the flux field in the same way.
 Their curvature counts every vertex turn once and does not change when a
 curve is resampled; when curvature should be stated at a physical scale,
 use `feature_spec(estimator = "arclength", curvature_scale = ...)` (see
-[`vignette("getting-started", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md)).
+the [Getting
+started](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md)
+article).
 
 Use the **published-compatible mode** when values must be comparable
 with numbers computed by the MATLAB toolbox: extending or replicating a
@@ -488,9 +490,10 @@ with the data.
 
 ## Where to go next
 
-- [`vignette("medial-axis", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
+- [Medial
+  axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
   what each medial-axis stage and score measures, on small drawings.
-- [`vignette("junctions", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md):
+- [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md):
   the junction rules of both modes, case by case.
 - [`docs/PARITY.md`](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/docs/PARITY.md)
   and the [differences

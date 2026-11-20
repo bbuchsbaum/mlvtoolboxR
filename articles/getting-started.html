@@ -87,13 +87,13 @@ predictors in behavioural and neuroimaging analyses. Every number quoted
 below is computed when the vignette is built, and each is small enough
 to check by hand.</p>
 <div class="figure" style="text-align: center">
-<img src="getting-started_files/figure-html/fig-showcase-1.png" class="r-plt" alt="What the package measures, on one synthetic room of 17 contours. Top: the 10 junctions it finds, coloured by type, and segment orientation. Bottom: the medial axis (red) between the contours, with 5 of its inscribed discs, and the parallelism of the space beside each contour, mapped back onto it (drawn 3 px wide; added pixels copy the nearest ink pixel). Each panel names its vignette." width="100%"><img class="albers-phone-twin" src="getting-started_files/figure-html/fig-showcase-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden><p class="caption">
+<img src="getting-started_files/figure-html/fig-showcase-1.png" class="r-plt" alt="What the package measures, on one synthetic room of 17 contours. Top: the 10 junctions it finds, coloured by type, and segment orientation. Bottom: the medial axis (red) between the contours, with 5 of its inscribed discs, and the parallelism of the space beside each contour, mapped back onto it (drawn 3 px wide; added pixels copy the nearest ink pixel). Each panel names the article that explains it." width="100%"><img class="albers-phone-twin" src="getting-started_files/figure-html/fig-showcase-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden><p class="caption">
 What the package measures, on one synthetic room of 17 contours. Top:
 the 10 junctions it finds, coloured by type, and segment orientation.
 Bottom: the medial axis (red) between the contours, with 5 of its
 inscribed discs, and the parallelism of the space beside each contour,
 mapped back onto it (drawn 3 px wide; added pixels copy the nearest ink
-pixel). Each panel names its vignette.
+pixel). Each panel names the article that explains it.
 </p>
 </div>
 <p>The code for this scene and figure is in the appendix at the end of
@@ -298,8 +298,8 @@ contour, and the junctions between contours.</p>
 junctions, both T-junctions: the horizon contributes two arms and the
 roof slope a third, at 45 degrees to the horizon. How junctions are
 found, what an arm is and how the type and angles are defined are the
-subject of
-<code><a href="../articles/junctions.html">vignette("junctions", package = "mlvtoolbox")</a></code>.</p>
+subject of the <a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html">Junctions</a>
+article.</p>
 </div>
 <div class="section level2">
 <h2 id="histograms">Histograms<a class="anchor" aria-label="anchor" href="#histograms"></a>
@@ -416,8 +416,8 @@ eight bins holds 1,250.</p>
 <p>The table carries a schema that records each column’s bin edges,
 weights, units and normalization. <code>feature_schema(features)</code>
 returns it, and model prediction uses it to refuse tables measured
-differently from the training data (see
-<code><a href="../articles/workflows.html">vignette("workflows", package = "mlvtoolbox")</a></code>).</p>
+differently from the training data (see the <a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html">Workflows</a>
+article).</p>
 </div>
 <div class="section level2">
 <h2 id="feature-specifications">Feature specifications<a class="anchor" aria-label="anchor" href="#feature-specifications"></a>
@@ -585,10 +585,9 @@ curvature scale chosen for the stimulus resolution when curvature should
 be stated at a spatial scale; choose a scale longer than the typical
 segment so that the values do not depend on how finely contours were
 sampled. The published estimator is the right choice only when results
-must be comparable with published MLV values
-(<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>).
-The same specification can express physical units:
-<code>units = "visual_degrees"</code> with a
+must be comparable with published MLV values (the <a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html">MLV
+compatibility</a> article). The same specification can express physical
+units: <code>units = "visual_degrees"</code> with a
 <code>pixels_per_degree</code> calibration reports lengths in degrees of
 visual angle (curvature stays in geometric degrees per unit length).</p>
 </div>
@@ -597,23 +596,25 @@ visual angle (curvature stays in geometric degrees per unit length).</p>
 </h2>
 <ul>
 <li>
-<code><a href="../articles/junctions.html">vignette("junctions", package = "mlvtoolbox")</a></code>: how
-junctions are found, what an arm is, and where the default rule differs
-from MLV.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html">Junctions</a>:
+how junctions are found, what an arm is, and where the default rule
+differs from MLV.</li>
 <li>
-<code><a href="../articles/medial-axis.html">vignette("medial-axis", package = "mlvtoolbox")</a></code>: the
-medial axis and the parallelism, separation, mirror and taper scores
-mapped back onto contours.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.html">Medial
+axis</a>: the medial axis and the parallelism, separation, mirror and
+taper scores mapped back onto contours.</li>
 <li>
-<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>:
-reproducing published MLV values and what each default changes.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html">MLV
+compatibility</a>: reproducing published MLV values and what each
+default changes.</li>
 <li>
-<code><a href="../articles/workflows.html">vignette("workflows", package = "mlvtoolbox")</a></code>: reading
-SVG, MAT and image files, and fitting and applying models to feature
-tables.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html">Workflows</a>:
+reading SVG, MAT and image files, and fitting and applying models to
+feature tables.</li>
 <li>
-<code><a href="../articles/stimulus-design.html">vignette("stimulus-design", package = "mlvtoolbox")</a></code>:
-selecting matched subsets of contours across a stimulus set.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html">Stimulus
+design</a>: selecting matched subsets of contours across a stimulus
+set.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -724,11 +725,11 @@ selecting matched subsets of contours across a stimulus set.</li>
 <span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">2.2</span>, <span class="fl">0.2</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="co"># Column 1: junctions, then the medial axis.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scene</span>, lwd <span class="op">=</span> <span class="fl">1.2</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Junctions"</span>, <span class="st">"vignette(\"junctions\")"</span><span class="op">)</span></span>
+<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Junctions"</span>, <span class="st">"article: Junctions"</span><span class="op">)</span></span>
 <span><span class="fu">badges</span><span class="op">(</span><span class="va">scene_junctions</span><span class="op">)</span></span>
 <span><span class="fu">type_key</span><span class="op">(</span><span class="va">scene_junctions</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scene</span>, lwd <span class="op">=</span> <span class="fl">1.2</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Medial axis"</span>, <span class="st">"vignette(\"medial-axis\")"</span><span class="op">)</span></span>
+<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Medial axis"</span>, <span class="st">"article: Medial axis"</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">k</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">disc_points</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/symbols.html" class="external-link">symbols</a></span><span class="op">(</span><span class="va">disc_points</span><span class="op">$</span><span class="va">x</span><span class="op">[</span><span class="va">k</span><span class="op">]</span>, <span class="va">disc_points</span><span class="op">$</span><span class="va">y</span><span class="op">[</span><span class="va">k</span><span class="op">]</span>, circles <span class="op">=</span> <span class="va">disc_points</span><span class="op">$</span><span class="va">radius</span><span class="op">[</span><span class="va">k</span><span class="op">]</span>,</span>
 <span>          inches <span class="op">=</span> <span class="cn">FALSE</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, fg <span class="op">=</span> <span class="st">"grey55"</span>, lwd <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
@@ -736,10 +737,10 @@ selecting matched subsets of contours across a stimulus set.</li>
 <span><span class="fu">axis_key</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># Column 2: orientation, then parallelism mapped onto the contours.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scene</span>, property <span class="op">=</span> <span class="st">"orientation"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, frame <span class="op">=</span> <span class="cn">FALSE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Orientation"</span>, <span class="st">"vignette(\"getting-started\")"</span><span class="op">)</span></span>
+<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Orientation"</span>, <span class="st">"this vignette"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/colour_key.html">colour_key</a></span><span class="op">(</span><span class="va">scene</span>, <span class="st">"orientation"</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scene</span>, col <span class="op">=</span> <span class="cn">NA</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Parallelism on the contours"</span>, <span class="st">"vignette(\"medial-axis\")"</span><span class="op">)</span></span>
+<span><span class="fu">panel</span><span class="op">(</span><span class="st">"Parallelism on the contours"</span>, <span class="st">"article: Medial axis"</span><span class="op">)</span></span>
 <span><span class="fu">mapped_wide</span><span class="op">(</span><span class="va">scene_mat</span><span class="op">$</span><span class="va">drawing</span>, <span class="st">"parallelism"</span>, <span class="va">widen</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/colour_key.html">colour_key</a></span><span class="op">(</span><span class="va">scene_mat</span><span class="op">$</span><span class="va">drawing</span>, <span class="st">"parallelism"</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span>

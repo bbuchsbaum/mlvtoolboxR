@@ -14,15 +14,15 @@ the 10 junctions it finds, coloured by type, and segment orientation.
 Bottom: the medial axis (red) between the contours, with 5 of its
 inscribed discs, and the parallelism of the space beside each contour,
 mapped back onto it (drawn 3 px wide; added pixels copy the nearest ink
-pixel). Each panel names its
-vignette.](getting-started_files/figure-html/fig-showcase-1.png)![](getting-started_files/figure-html/fig-showcase-1.phone.png)
+pixel). Each panel names the article that explains
+it.](getting-started_files/figure-html/fig-showcase-1.png)![](getting-started_files/figure-html/fig-showcase-1.phone.png)
 
 What the package measures, on one synthetic room of 17 contours. Top:
 the 10 junctions it finds, coloured by type, and segment orientation.
 Bottom: the medial axis (red) between the contours, with 5 of its
 inscribed discs, and the parallelism of the space beside each contour,
 mapped back onto it (drawn 3 px wide; added pixels copy the nearest ink
-pixel). Each panel names its vignette.
+pixel). Each panel names the article that explains it.
 
 The code for this scene and figure is in the appendix at the end of this
 vignette; the sections below build up each measure on a smaller drawing.
@@ -263,8 +263,9 @@ The roof ends on the horizon at both eaves, so the drawing has 2
 junctions, both T-junctions: the horizon contributes two arms and the
 roof slope a third, at 45 degrees to the horizon. How junctions are
 found, what an arm is and how the type and angles are defined are the
-subject of
-[`vignette("junctions", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md).
+subject of the
+[Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html)
+article.
 
 ## Histograms
 
@@ -399,8 +400,9 @@ eight bins holds 1,250.
 The table carries a schema that records each column’s bin edges,
 weights, units and normalization. `feature_schema(features)` returns it,
 and model prediction uses it to refuse tables measured differently from
-the training data (see
-[`vignette("workflows", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.md)).
+the training data (see the
+[Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html)
+article).
 
 ## Feature specifications
 
@@ -596,27 +598,30 @@ curvature scale chosen for the stimulus resolution when curvature should
 be stated at a spatial scale; choose a scale longer than the typical
 segment so that the values do not depend on how finely contours were
 sampled. The published estimator is the right choice only when results
-must be comparable with published MLV values
-([`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md)).
-The same specification can express physical units:
+must be comparable with published MLV values (the [MLV
+compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html)
+article). The same specification can express physical units:
 `units = "visual_degrees"` with a `pixels_per_degree` calibration
 reports lengths in degrees of visual angle (curvature stays in geometric
 degrees per unit length).
 
 ## Where to go next
 
-- [`vignette("junctions", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md):
+- [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html):
   how junctions are found, what an arm is, and where the default rule
   differs from MLV.
-- [`vignette("medial-axis", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
+- [Medial
+  axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.html):
   the medial axis and the parallelism, separation, mirror and taper
   scores mapped back onto contours.
-- [`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
+- [MLV
+  compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html):
   reproducing published MLV values and what each default changes.
-- [`vignette("workflows", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.md):
+- [Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html):
   reading SVG, MAT and image files, and fitting and applying models to
   feature tables.
-- [`vignette("stimulus-design", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.md):
+- [Stimulus
+  design](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html):
   selecting matched subsets of contours across a stimulus set.
 
 ## Appendix: the opening figure
@@ -728,11 +733,11 @@ layout(matrix(1:8, 4), heights = c(1, lcm(1.25), 1, lcm(1.25)))
 op <- par(mar = c(0.2, 0.2, 2.2, 0.2), cex = 0.8)
 # Column 1: junctions, then the medial axis.
 plot(scene, lwd = 1.2, axes = FALSE, frame = FALSE)
-panel("Junctions", "vignette(\"junctions\")")
+panel("Junctions", "article: Junctions")
 badges(scene_junctions)
 type_key(scene_junctions)
 plot(scene, lwd = 1.2, axes = FALSE, frame = FALSE)
-panel("Medial axis", "vignette(\"medial-axis\")")
+panel("Medial axis", "article: Medial axis")
 for (k in seq_len(nrow(disc_points)))
   symbols(disc_points$x[k], disc_points$y[k], circles = disc_points$radius[k],
           inches = FALSE, add = TRUE, fg = "grey55", lwd = 0.8)
@@ -740,10 +745,10 @@ draw_mat_axis(scene_mat$mat, width = 0.9)
 axis_key()
 # Column 2: orientation, then parallelism mapped onto the contours.
 plot(scene, property = "orientation", lwd = 2, axes = FALSE, frame = FALSE, legend = FALSE)
-panel("Orientation", "vignette(\"getting-started\")")
+panel("Orientation", "this vignette")
 colour_key(scene, "orientation", cex = 0.7)
 plot(scene, col = NA, axes = FALSE, frame = FALSE)
-panel("Parallelism on the contours", "vignette(\"medial-axis\")")
+panel("Parallelism on the contours", "article: Medial axis")
 mapped_wide(scene_mat$drawing, "parallelism", widen)
 colour_key(scene_mat$drawing, "parallelism", cex = 0.7)
 par(op)

@@ -72,7 +72,7 @@
       <h1>Reproducing published MLV values</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/mlv-compatibility.Rmd" class="external-link"><code>vignettes/mlv-compatibility.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/articles/mlv-compatibility.Rmd" class="external-link"><code>vignettes/articles/mlv-compatibility.Rmd</code></a></small>
       <div class="d-none name"><code>mlv-compatibility.Rmd</code></div>
     </div>
 
@@ -428,8 +428,8 @@ degrees at each of its two corners turns by 180 degrees in all:</p>
 </h3>
 <p>Junctions differ wherever one of MLV’s arm rules applies, for example
 when a short segment at the end of a stem makes a T read as an X
-(MLV-M024). <code><a href="../articles/junctions.html">vignette("junctions", package = "mlvtoolbox")</a></code>
-shows each case on a small drawing.</p>
+(MLV-M024). the <a href="junctions.html">Junctions</a> article shows
+each case on a small drawing.</p>
 </div>
 <div class="section level3">
 <h3 id="medial-axis-scores-differ-by-design">Medial-axis scores differ by design<a class="anchor" aria-label="anchor" href="#medial-axis-scores-differ-by-design"></a>
@@ -515,10 +515,8 @@ every branch end 0 and averages that 0 into the neighbouring point
 <p>The default mode keeps scores that are exactly zero; the published
 mode, like <code>MATpropertiesToContours.m</code>, turns every zero into
 a missing value (MLV-M011). Two lines three pixels apart have a
-separation of exactly 0 along their whole length
-(<code><a href="../articles/medial-axis.html">vignette("medial-axis", package = "mlvtoolbox")</a></code> explains
-why), so the same pixels are zeros in one mode and missing in the
-other:</p>
+separation of exactly 0 along their whole length (the <a href="medial-axis.html">Medial axis</a> article explains why), so the
+same pixels are zeros in one mode and missing in the other:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">close_pair</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mlv_drawing.html">mlv_drawing</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">seg</span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">50</span>, <span class="fl">20</span><span class="op">)</span>, <span class="fu">seg</span><span class="op">(</span><span class="fl">10</span>, <span class="fl">23</span>, <span class="fl">50</span>, <span class="fl">23</span><span class="op">)</span><span class="op">)</span>, <span class="fl">60</span>, <span class="fl">40</span><span class="op">)</span></span>
 <span><span class="va">separation</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -645,8 +643,8 @@ Their curvature counts every vertex turn once and does not change when a
 curve is resampled; when curvature should be stated at a physical scale,
 use
 <code>feature_spec(estimator = "arclength", curvature_scale = ...)</code>
-(see
-<code><a href="../articles/getting-started.html">vignette("getting-started", package = "mlvtoolbox")</a></code>).</p>
+(see the <a href="getting-started.html">Getting started</a>
+article).</p>
 <p>Use the <strong>published-compatible mode</strong> when values must
 be comparable with numbers computed by the MATLAB toolbox: extending or
 replicating a published dataset, comparing against published norms, or
@@ -712,11 +710,11 @@ written by <code><a href="../reference/write_feature_csv.html">write_feature_csv
 </h2>
 <ul>
 <li>
-<code><a href="../articles/medial-axis.html">vignette("medial-axis", package = "mlvtoolbox")</a></code>: what
-each medial-axis stage and score measures, on small drawings.</li>
+<a href="medial-axis.html">Medial axis</a>: what each medial-axis
+stage and score measures, on small drawings.</li>
 <li>
-<code><a href="../articles/junctions.html">vignette("junctions", package = "mlvtoolbox")</a></code>: the
-junction rules of both modes, case by case.</li>
+<a href="junctions.html">Junctions</a>: the junction rules of both
+modes, case by case.</li>
 <li>
 <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/docs/PARITY.md" class="external-link"><code>docs/PARITY.md</code></a>
 and the <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/DIFFERENCES.md" class="external-link">differences

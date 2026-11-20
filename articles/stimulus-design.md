@@ -16,7 +16,7 @@ result <- design_subsets(drawings,spec,length_bounds=c(10,10),
 result
 #> Whole-contour subset design: optimal 
 #> Target difference: 90  | upper bound: 90 
-#> Search nodes: 7  | elapsed: 0 seconds
+#> Search nodes: 7  | elapsed: 0.001 seconds
 as.data.frame(result)
 #>   image_id contour_id condition
 #> 1   corner          1         A

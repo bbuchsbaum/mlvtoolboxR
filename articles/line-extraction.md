@@ -118,7 +118,7 @@ edge tangent (Kyprianidis and Döllner 2008). Its anisotropy, from 0 to
 head; in the background they follow faint streaks and turn from patch to
 patch. Blue segments at every fifth pixel over the faded pre-filtered
 image, 1 to 5 px long as the anisotropy rises from 0 to 1 (median 0.72
-here).](line-extraction_files/figure-html/stage-flow-1.png)![](line-extraction_files/figure-html/stage-flow-1.phone.png)
+here).](line-extraction_files/figure-html/stage-flow-1.jpg)
 
 Stage 3. The tangents ring the eye and run along the outlines of the
 head; in the background they follow faint streaks and turn from patch to
@@ -198,7 +198,7 @@ beside it: the outline of the head, the pupil and the curves of the gill
 are each one or a few contours. Traced contours (black; 42 touch this
 window) over the faded painting. The lines are pixel chains; simplify in
 trace_contours() turns them into fewer, straighter
-segments.](line-extraction_files/figure-html/stage-traced-1.png)![](line-extraction_files/figure-html/stage-traced-1.phone.png)
+segments.](line-extraction_files/figure-html/stage-traced-1.jpg)
 
 Stage 6. Each contour runs along the boundary it came from rather than
 beside it: the outline of the head, the pupil and the curves of the gill

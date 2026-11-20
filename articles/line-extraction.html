@@ -72,7 +72,7 @@
       <h1>From an image to a line drawing</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/line-extraction.Rmd" class="external-link"><code>vignettes/line-extraction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/articles/line-extraction.Rmd" class="external-link"><code>vignettes/articles/line-extraction.Rmd</code></a></small>
       <div class="d-none name"><code>line-extraction.Rmd</code></div>
     </div>
 
@@ -171,7 +171,7 @@ which lightness changes least: the edge tangent (Kyprianidis and Döllner
 2008). Its anisotropy, from 0 to 1, says how clearly one direction
 dominates.</p>
 <div class="figure" style="text-align: center">
-<img src="line-extraction_files/figure-html/stage-flow-1.png" class="r-plt" alt="Stage 3. The tangents ring the eye and run along the outlines of the head; in the background they follow faint streaks and turn from patch to patch. Blue segments at every fifth pixel over the faded pre-filtered image, 1 to 5 px long as the anisotropy rises from 0 to 1 (median 0.72 here)." width="100%"><img class="albers-phone-twin" src="line-extraction_files/figure-html/stage-flow-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden><p class="caption">
+<img src="line-extraction_files/figure-html/stage-flow-1.jpg" class="r-plt" alt="Stage 3. The tangents ring the eye and run along the outlines of the head; in the background they follow faint streaks and turn from patch to patch. Blue segments at every fifth pixel over the faded pre-filtered image, 1 to 5 px long as the anisotropy rises from 0 to 1 (median 0.72 here)." width="100%"><p class="caption">
 Stage 3. The tangents ring the eye and run along the outlines of the
 head; in the background they follow faint streaks and turn from patch to
 patch. Blue segments at every fifth pixel over the faded pre-filtered
@@ -233,7 +233,7 @@ unless the outline has fewer than min_component = 20 pixels.
 then thins the mask to one pixel and traces it into contours, splitting
 them where lines meet.</p>
 <div class="figure" style="text-align: center">
-<img src="line-extraction_files/figure-html/stage-traced-1.png" class="r-plt" alt="Stage 6. Each contour runs along the boundary it came from rather than beside it: the outline of the head, the pupil and the curves of the gill are each one or a few contours. Traced contours (black; 42 touch this window) over the faded painting. The lines are pixel chains; simplify in trace_contours() turns them into fewer, straighter segments." width="100%"><img class="albers-phone-twin" src="line-extraction_files/figure-html/stage-traced-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden><p class="caption">
+<img src="line-extraction_files/figure-html/stage-traced-1.jpg" class="r-plt" alt="Stage 6. Each contour runs along the boundary it came from rather than beside it: the outline of the head, the pupil and the curves of the gill are each one or a few contours. Traced contours (black; 42 touch this window) over the faded painting. The lines are pixel chains; simplify in trace_contours() turns them into fewer, straighter segments." width="100%"><p class="caption">
 Stage 6. Each contour runs along the boundary it came from rather than
 beside it: the outline of the head, the pupil and the curves of the gill
 are each one or a few contours. Traced contours (black; 42 touch this

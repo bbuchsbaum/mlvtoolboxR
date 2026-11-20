@@ -72,7 +72,7 @@
       <h1>Medial axis and symmetry scores</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/medial-axis.Rmd" class="external-link"><code>vignettes/medial-axis.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/vignettes/articles/medial-axis.Rmd" class="external-link"><code>vignettes/articles/medial-axis.Rmd</code></a></small>
       <div class="d-none name"><code>medial-axis.Rmd</code></div>
     </div>
 
@@ -103,9 +103,8 @@ and <code><a href="../reference/map_mat_properties.html">map_mat_properties()</a
 contours. This vignette follows one small drawing through every stage
 with <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the <code>mlv_mat</code>, then explains each
 score with a pair of drawings that differ in only that respect. All
-values come from the package defaults;
-<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code> shows
-how to reproduce values published with the MATLAB toolbox.</p>
+values come from the package defaults; the <a href="mlv-compatibility.html">MLV compatibility</a> article shows how to
+reproduce values published with the MATLAB toolbox.</p>
 <div class="section level2">
 <h2 id="the-running-example">The running example<a class="anchor" aria-label="anchor" href="#the-running-example"></a>
 </h2>
@@ -1142,8 +1141,8 @@ line and 22 − r from the lower one, so the two distances are equal, and
 the distance map has its ridge, at r = (10 + 22)/2 = 16. The medial axis
 should therefore be the single row 16. The comparison below changes only
 the flux definition, <code>aof</code>; the full published-compatible
-recipe is given in
-<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>.</p>
+recipe is given in the <a href="mlv-compatibility.html">MLV
+compatibility</a> article.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lines2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mlv_drawing.html">mlv_drawing</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">seg</span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">45</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu">seg</span><span class="op">(</span><span class="fl">5</span>, <span class="fl">22</span>, <span class="fl">45</span>, <span class="fl">22</span><span class="op">)</span><span class="op">)</span>, <span class="fl">50</span>, <span class="fl">32</span><span class="op">)</span></span>
 <span><span class="va">default_flux</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_mat.html">compute_mat</a></span><span class="op">(</span><span class="va">lines2</span><span class="op">)</span></span>
@@ -1253,9 +1252,8 @@ either direction.</p>
 </h2>
 <ul>
 <li>
-<code><a href="../articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>:
-reproducing published MLV values and choosing between the two
-modes.</li>
+<a href="mlv-compatibility.html">MLV compatibility</a>: reproducing
+published MLV values and choosing between the two modes.</li>
 <li>
 <code><a href="../reference/feature_spec.html">feature_spec()</a></code> records every medial-axis setting so
 that a feature table can be rebuilt exactly;

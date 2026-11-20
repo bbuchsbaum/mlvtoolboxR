@@ -142,17 +142,21 @@ status](https://bbuchsbaum.github.io/mlvtoolboxR/IMPLEMENTATION_STATUS.md).
 
 - [`vignette("getting-started", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md):
   from a line drawing to contour features.
-- [`vignette("junctions", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md):
+- [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html):
   how junctions are found and what they measure.
-- [`vignette("medial-axis", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
+- [Medial
+  axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.html):
   medial axis and symmetry scores.
-- [`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
+- [MLV
+  compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html):
   reproducing published MLV values.
-- [`vignette("workflows", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.md):
+- [Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html):
   file input, extraction and feature recipes.
-- [`vignette("line-extraction", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md):
+- [Line
+  extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html):
   from an image or painting to a line drawing.
-- [`vignette("stimulus-design", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.md):
+- [Stimulus
+  design](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html):
   matched conditions across a stimulus set.
 
 ## Manipulate and import
@@ -198,10 +202,10 @@ sizes. A model can instead receive its training schema via
 
 trace_rgb() requires an explicitly supplied provider returning an ink
 mask; xdog_lines() is the built-in classical provider (a flow-based
-difference of Gaussians,
-[`vignette("line-extraction")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md)).
-No SAM model/backend is bundled; arbitrary edge detectors are not
-silently substituted for SAM. MATLAB serialized regression models,
+difference of Gaussians, the [Line
+extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html)
+article). No SAM model/backend is bundled; arbitrary edge detectors are
+not silently substituted for SAM. MATLAB serialized regression models,
 general SVG paint effects and MAT v7.3/HDF5 import are outside the
 current adapters.
 

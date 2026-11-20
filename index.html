@@ -143,17 +143,17 @@
 <li>
 <code><a href="articles/getting-started.html">vignette("getting-started", package = "mlvtoolbox")</a></code>: from a line drawing to contour features.</li>
 <li>
-<code><a href="articles/junctions.html">vignette("junctions", package = "mlvtoolbox")</a></code>: how junctions are found and what they measure.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html">Junctions</a>: how junctions are found and what they measure.</li>
 <li>
-<code><a href="articles/medial-axis.html">vignette("medial-axis", package = "mlvtoolbox")</a></code>: medial axis and symmetry scores.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.html">Medial axis</a>: medial axis and symmetry scores.</li>
 <li>
-<code><a href="articles/mlv-compatibility.html">vignette("mlv-compatibility", package = "mlvtoolbox")</a></code>: reproducing published MLV values.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html">MLV compatibility</a>: reproducing published MLV values.</li>
 <li>
-<code><a href="articles/workflows.html">vignette("workflows", package = "mlvtoolbox")</a></code>: file input, extraction and feature recipes.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html">Workflows</a>: file input, extraction and feature recipes.</li>
 <li>
-<code><a href="articles/line-extraction.html">vignette("line-extraction", package = "mlvtoolbox")</a></code>: from an image or painting to a line drawing.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html">Line extraction</a>: from an image or painting to a line drawing.</li>
 <li>
-<code><a href="articles/stimulus-design.html">vignette("stimulus-design", package = "mlvtoolbox")</a></code>: matched conditions across a stimulus set.</li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html">Stimulus design</a>: matched conditions across a stimulus set.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -178,7 +178,7 @@
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bind_feature_model.html">bind_feature_model</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="va">z</span><span class="op">$</span><span class="va">length_1</span>, <span class="va">features</span><span class="op">)</span></span>
 <span><span class="va">scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/predict_contours.html">predict_contours</a></span><span class="op">(</span><span class="va">drawing</span>, <span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <p>The schema records predictor order, bin edges, weights, units and normalization. Prediction rejects missing or incompatible training metadata before calling the model. Use fixed <code>length_range</code> and <code>curvature_range</code> values when comparing drawings with different canvas sizes. A model can instead receive its training schema via <code>expected_spec = feature_schema(features)</code>. The explicit legacy option <code>check_spec = FALSE</code> warns that compatibility was not checked.</p>
-<p>trace_rgb() requires an explicitly supplied provider returning an ink mask; xdog_lines() is the built-in classical provider (a flow-based difference of Gaussians, <code><a href="articles/line-extraction.html">vignette("line-extraction")</a></code>). No SAM model/backend is bundled; arbitrary edge detectors are not silently substituted for SAM. MATLAB serialized regression models, general SVG paint effects and MAT v7.3/HDF5 import are outside the current adapters.</p>
+<p>trace_rgb() requires an explicitly supplied provider returning an ink mask; xdog_lines() is the built-in classical provider (a flow-based difference of Gaussians, the <a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html">Line extraction</a> article). No SAM model/backend is bundled; arbitrary edge detectors are not silently substituted for SAM. MATLAB serialized regression models, general SVG paint effects and MAT v7.3/HDF5 import are outside the current adapters.</p>
 <p>For reproducible measurements, use a fixed specification:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/feature_spec.html">feature_spec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"length"</span>, <span class="st">"curvature"</span>, <span class="st">"orientation"</span><span class="op">)</span>,</span>

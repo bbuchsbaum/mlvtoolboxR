@@ -854,10 +854,13 @@ contour_statistics(sheet, properties = "junction_angle", bins = 5)[, c("lower", 
 
 ## Where to go next
 
-- [`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
+- [MLV
+  compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
   the published-compatible settings for every stage and what each
   default changes.
-- [`vignette("getting-started", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md):
+- [Getting
+  started](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md):
   segment measurements, histograms and feature specifications.
-- [`vignette("medial-axis", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
+- [Medial
+  axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
   medial-axis symmetry scores.

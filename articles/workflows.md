@@ -4,8 +4,9 @@ This vignette covers the steps around measurement: getting drawings into
 R from SVG, MATLAB and image files, editing them, fixing a measurement
 recipe for a study, and applying a fitted model to new drawings with a
 check that the features were measured the same way. It assumes the
-drawing, segment and histogram vocabulary of
-[`vignette("getting-started", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md).
+drawing, segment and histogram vocabulary of the [Getting
+started](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md)
+article.
 
 The file adapters use optional packages: xml2 for SVG, R.matlab for MAT
 files, and png or jpeg for images. Chunks that need a missing package
@@ -59,8 +60,9 @@ drawings <- read_mlv_mat("drawings.mat", variable = "vecLD")
 drawings <- read_mlv_mat("drawings.mat", zero_length = "drop")
 ```
 
-To reproduce values that MLV published for such files, see
-[`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md).
+To reproduce values that MLV published for such files, see the [MLV
+compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md)
+article.
 
 ## Tracing raster line drawings
 
@@ -156,12 +158,12 @@ For colour photographs,
 takes an RGB image and a `backend` function that returns a logical ink
 mask. The package provides one classical backend,
 [`xdog_lines()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/xdog_lines.md),
-a flow-based difference of Gaussians described in
-[`vignette("line-extraction", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md);
-it bundles no learned edge or segmentation model. For any other backend,
-whatever produces the mask (and its weights and preprocessing) is the
-backend’s responsibility, and the backend’s name is recorded in the
-drawing’s provenance.
+a flow-based difference of Gaussians described in the [Line
+extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.md)
+article; it bundles no learned edge or segmentation model. For any other
+backend, whatever produces the mask (and its weights and preprocessing)
+is the backend’s responsibility, and the backend’s name is recorded in
+the drawing’s provenance.
 
 ``` r
 
@@ -275,9 +277,12 @@ result$mat$parameters[c("aof", "morphology", "branch_rule")]
 ```
 
 Each stage and score, and how to read these parameters, is explained in
-[`vignette("medial-axis", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md).
-The settings that reproduce published MLV values are given in
-[`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md).
+the [Medial
+axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md)
+article. The settings that reproduce published MLV values are given in
+the [MLV
+compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md)
+article.
 
 ## Feature recipes and checked prediction
 
@@ -388,11 +393,14 @@ file.exists(paste0(csv_file, ".schema.rds"))
 
 ## Where to go next
 
-- [`vignette("getting-started", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md):
+- [Getting
+  started](https://bbuchsbaum.github.io/mlvtoolboxR/articles/getting-started.md):
   segment measurements, histograms and feature specifications.
-- [`vignette("junctions", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md):
+- [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.md):
   how junctions are found and what they measure.
-- [`vignette("medial-axis", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
+- [Medial
+  axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.md):
   medial-axis symmetry scores.
-- [`vignette("mlv-compatibility", package = "mlvtoolbox")`](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
+- [MLV
+  compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.md):
   reproducing published MLV values.
