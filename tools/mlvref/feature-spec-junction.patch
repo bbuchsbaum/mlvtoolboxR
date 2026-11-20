@@ -1,0 +1,65 @@
+--- a/R/feature-spec.R	2026-11-19 16:38:34
++++ b/R/feature-spec.R	2026-11-19 16:38:34
+@@ -39,7 +39,9 @@
+ #' @param fit_tolerance Straightness tolerance in target spatial units for the
+ #'   new branch estimator; published mirror fitting retains its one-pixel rule.
+ #' @param junction Named overrides of absolute_epsilon, relative_epsilon,
+-#'   merge_radius, endpoint_radius and method. Spatial tolerances use target units.
++#'   merge_radius, endpoint_radius, method, rule (`"exit"` or `"mlv2023"`) and
++#'   gap_metric (`"euclidean"` or `"chebyshev"`; defaults to `"chebyshev"` for
++#'   rule `"mlv2023"`); see [detect_junctions()]. Spatial tolerances use target units.
+ #' @param mat Named overrides of threshold_angle, samples, epsilon,
+ #'   min_component, min_branch_points, aof (`"centered"` or `"mlv2023"`) and
+ #'   morphology (`"hmt8"` or `"pratt"`); see [compute_mat()]. Epsilon and
+@@ -82,9 +84,16 @@
+  if(units=="visual_degrees"&&branch_estimator=="mlv2023"&&any(properties%in%c("mirror","parallelism","separation","taper")))
+   stop("physical branch scores require branch_estimator='arclength'",call.=FALSE)
+  junction<-.spec_options(junction,list(absolute_epsilon=1,relative_epsilon=.3,merge_radius=2,
+-  endpoint_radius=2,method="sweep"),"junction")
+- for(k in setdiff(names(junction),"method"))junction[[k]]<-.spec_number(junction[[k]],paste0("junction.",k))
++  endpoint_radius=2,method="sweep",rule="exit",gap_metric=NULL),"junction")
++ for(k in setdiff(names(junction),c("method","rule","gap_metric")))junction[[k]]<-.spec_number(junction[[k]],paste0("junction.",k))
+  junction$method<-match.arg(junction$method,c("sweep","exhaustive"))
++ for(k in c("rule","gap_metric"))if(!is.null(junction[[k]])&&(!is.character(junction[[k]])||length(junction[[k]])!=1L||is.na(junction[[k]])))
++  stop("junction.",k," must be a single string",call.=FALSE)
++ junction$rule<-match.arg(junction$rule,c("exit","mlv2023"))
++ if(is.null(junction$gap_metric))junction$gap_metric<-if(junction$rule=="mlv2023")"chebyshev" else "euclidean"
++ junction$gap_metric<-match.arg(junction$gap_metric,c("euclidean","chebyshev"))
++ if(junction$rule=="mlv2023"&&junction$gap_metric!="chebyshev")
++  stop("junction.rule = 'mlv2023' requires junction.gap_metric = 'chebyshev'",call.=FALSE)
+  mat<-.spec_options(mat,list(threshold_angle=28,samples=60L,epsilon=1,min_component=NULL,min_branch_points=10L,
+   aof="centered",morphology="hmt8"),"mat")
+  for(k in c("aof","morphology")) {
+@@ -120,6 +129,7 @@
+   turning="vertex-dual-1",arclength="tent-source-normalized-1"),
+   branch=if(branch_estimator=="mlv2023")"mlv2023-port-0.1.1" else "physical-integrals-1",histogram="1",
+   aof=.aof_definition(mat$aof),morphology=.morphology_definition(mat$morphology),
++  junction=if(junction$rule=="mlv2023")"mlv2023-port-f12418a" else paste0("exit-neighbourhood-1-",junction$gap_metric),
+   tracing="pixel_graph_no_corner_cut"),settings=args),class="mlv_feature_spec")
+ }
+ #' Validate a feature specification
+--- /dev/null
++++ b/tests/testthat/test-junction-spec.R	2026-11-19 16:41:25
+@@ -0,0 +1,22 @@
++test_that("feature specifications carry the junction rule and gap metric", {
++  s <- feature_spec("junction_type")
++  expect_equal(s$settings$junction$rule, "exit")
++  expect_equal(s$settings$junction$gap_metric, "euclidean")
++  expect_equal(unname(s$definitions["junction"]), "exit-neighbourhood-1-euclidean")
++  m <- feature_spec("junction_type", junction = list(rule = "mlv2023"))
++  expect_equal(m$settings$junction$gap_metric, "chebyshev")
++  expect_equal(unname(m$definitions["junction"]), "mlv2023-port-f12418a")
++  expect_error(feature_spec(junction = list(rule = "mlv2023", gap_metric = "euclidean")), "chebyshev")
++  expect_error(feature_spec(junction = list(rule = "other")))
++  expect_silent(validate_feature_spec(m))
++  old <- s; old$definitions <- old$definitions[names(old$definitions) != "junction"]
++  expect_error(validate_feature_spec(old), "noncanonical")
++  # The specification's rule reaches detect_junctions.
++  d <- mlv_drawing(list(matrix(c(0, 0, 10, 10), 1), matrix(c(5, 5, 10, 0), 1)), 20, 20)
++  a <- contour_statistics(d, spec = feature_spec("junction_angle", bins = 4, normalize = FALSE))
++  b <- contour_statistics(d, spec = feature_spec("junction_angle", bins = 4, normalize = FALSE, junction = list(rule = "mlv2023")))
++  # Diagonal T: minimum arm gap 90 (exit) vs 0 under MLV-M007; the
++  # junction_angle histogram bins the minimum angle over [0, 120].
++  expect_equal(a$value, c(0, 0, 0, 1))
++  expect_equal(b$value, c(1, 0, 0, 0))
++})

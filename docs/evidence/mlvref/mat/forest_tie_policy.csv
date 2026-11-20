@@ -1,0 +1,5 @@
+"policy","max_abs_vs_matlab","n_diff_1e9","thr_mask_n","thr_mask_changed"
+"mlv_lowest",1.59872115546023e-14,0,51183,0
+"mlv_highest",51.7218758744197,163437,52051,10224
+"mlv_tie_mean",27.5785359871648,163514,49643,5204
+"centered_tie_mean",35.6986408282984,781065,50311,6122
