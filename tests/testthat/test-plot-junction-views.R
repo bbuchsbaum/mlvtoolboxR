@@ -65,15 +65,27 @@ test_that("arms are drawn beneath the ink, so they never hide a stroke", {
   expect_false(is_white(band)); expect_false(is_dark(band))
 })
 
-test_that("reach draws the metric's ball: a square reaches further on the diagonal", {
-  # A stem ending at (20, 20); the point 0.9 px right and 0.9 px down lies
-  # inside the Chebyshev square of half-width 1 but outside the unit disc.
+test_that("reach draws the extension along the stem, longer on the diagonal under Chebyshev", {
+  # A stem ending at (20, 20) and running up-right at 45 degrees; its end
+  # extends down-left along its own line. 1.2 px along that line lies beyond
+  # the 1 px Euclidean reach but within the sqrt(2) px Chebyshev reach.
   d <- mlv_drawing(list(sg(20, 20, 32, 8)), 40, 40)
   draw <- function(metric) function()
     plot(d, reach = metric, axes = FALSE, frame = FALSE, lwd = 0.5)
-  corner <- c(20 + 0.9, 20 + 0.9)
-  expect_false(is_white(at(shoot(draw("chebyshev"), 40, 40), corner[1], corner[2])))
-  expect_true(is_white(at(shoot(draw("euclidean"), 40, 40), corner[1], corner[2])))
+  probe <- c(20, 20) + 1.2 * c(-1, 1) / sqrt(2)
+  blue <- function(rgb) rgb[3] > rgb[1] + 0.2
+  expect_true(blue(at(shoot(draw("chebyshev"), 40, 40), probe[1], probe[2])))
+  expect_false(blue(at(shoot(draw("euclidean"), 40, 40), probe[1], probe[2])))
+  # Under both metrics the extension covers 0.6 px along the line.
+  mid <- c(20, 20) + 0.6 * c(-1, 1) / sqrt(2)
+  expect_true(blue(at(shoot(draw("euclidean"), 40, 40), mid[1], mid[2])))
+  # The outline is not filled: a point inside the disc but off the line stays white.
+  expect_true(is_white(at(shoot(draw("euclidean"), 40, 40), 19.6, 19.4)))
+  # The reach length follows detect_junctions(): metric, then relative cap.
+  len <- mlvtoolbox:::.reach_length
+  expect_equal(len(c(1, 1) / sqrt(2), 20, "chebyshev", c(1, 0.3)), sqrt(2))
+  expect_equal(len(c(1, 0), 20, "chebyshev", c(1, 0.3)), 1)
+  expect_equal(len(c(1, 1) / sqrt(2), 2, "euclidean", c(1, 0.3)), 0.6)
   # Closed contours have no free ends and get no allowance drawn.
   ring <- mlv_drawing(list(rbind(sg(10, 10, 30, 10), sg(30, 10, 20, 30), sg(20, 30, 10, 10))), 40, 40)
   plain <- shoot(function() plot(ring, axes = FALSE, frame = FALSE), 40, 40)
@@ -160,4 +172,47 @@ test_that("palettes with a missing colour are repaired, never painted as no data
   }
   expect_false(anyNA(mlvtoolbox:::.no_na_colours(c(NA, "#000000", NA))))
   expect_error(mlvtoolbox:::.no_na_colours(c(NA, NA)), "no colours")
+})
+
+test_that("gaps can be limited to the smallest or the largest gap", {
+  arrow <- mlv_drawing(list(rbind(c(8, 26, 20, 20), c(20, 20, 32, 26)), sg(20, 20, 20, 34)), 40, 40)
+  with_png({
+    expect_silent(plot(arrow, arms = TRUE, gaps = "min"))
+    expect_silent(plot(arrow, arms = TRUE, gaps = "max"))
+    expect_error(plot(arrow, arms = TRUE, gaps = "all"), "TRUE or FALSE")
+  })
+  # Only the largest gap's sector is shaded under "max"; "min" shades none.
+  shade_at <- function(gaps) {
+    at(shoot(function() plot(arrow, property = "junctions", arms = TRUE, gaps = gaps,
+                             arm_length = 10, axes = FALSE, frame = FALSE), 40, 40), 20, 18)
+  }
+  expect_false(is_white(shade_at("max")))
+  expect_true(is_white(shade_at("min")))
+})
+
+test_that("coincident arms keep their direction and stack their heads", {
+  # The published rule gives this overshoot two coincident downward arms.
+  d <- mlv_drawing(list(sg(5, 10, 35, 10), rbind(c(20, 9, 20, 11), c(20, 11, 20, 30))), 40, 32)
+  d <- compute_contour_properties(d, rule = "mlv2023")
+  shot <- shoot(function() plot(d, property = "junctions", arms = TRUE, arm_length = 8,
+                                axes = FALSE, frame = FALSE), 40, 32)
+  # Both heads lie on the stem's line (x = 20), one behind the other; nothing
+  # is drawn at the fanned positions either side.
+  orange <- function(rgb) rgb[1] > 0.6 && rgb[3] < 0.3
+  expect_true(orange(at(shot, 20.25, 17.6)))
+  expect_false(orange(at(shot, 21.5, 17.6)))
+  expect_false(orange(at(shot, 18.5, 17.6)))
+})
+
+test_that("ink distance measures to the nearest segment", {
+  ink <- rbind(c(0, 0, 10, 0), c(0, 5, 10, 5))
+  expect_equal(mlvtoolbox:::.ink_distance(c(5, 1), ink), 1)
+  expect_equal(mlvtoolbox:::.ink_distance(c(13, 0), ink), 3)
+  expect_identical(mlvtoolbox:::.ink_distance(c(1, 1), ink[0, , drop = FALSE]), Inf)
+})
+
+test_that("legend labels use the degree sign", {
+  d <- mlv_drawing(list(sg(5, 10, 35, 10)), 40, 40)
+  expect_match(mlvtoolbox:::.plot_label(d, "orientation"), "°, mod 180", fixed = TRUE)
+  expect_match(mlvtoolbox:::.plot_label(d, "curvature"), "°/px", fixed = TRUE)
 })

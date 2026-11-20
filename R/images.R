@@ -206,8 +206,9 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #' drawn beneath the ink, so the contour stays visible along the arm, with an
 #' arrowhead at its end. An arm that lies on no ink, which some rules
 #' produce, shows as a band without a stroke. Arms that share an orientation
-#' are fanned `fan` degrees apart and labelled with their count, so
-#' every arm can be counted. `gaps = TRUE` draws each angular gap between
+#' are drawn on one line with one arrowhead each, stacked along the arm, and
+#' labelled with their count ("x2" drawn with a multiplication sign), so every
+#' arm can be counted; `fan` spreads them by an angle instead. `gaps = TRUE` draws each angular gap between
 #' consecutive arms as an arc labelled in degrees and shades the largest gap
 #' when it is unique, the gap that separates Y, T and Arrow junctions.
 #' Junctions come from the drawing's stored `junctions` (for example from
@@ -218,12 +219,16 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #' `pixel_grid = TRUE` draws the pixel boundaries, which lie half-way between
 #' the integer pixel centres, and `reach` draws the gap allowance of
 #' [detect_junctions()] at each free end of an open contour: the set of
-#' points within `reach_epsilon[1]` of the end under the chosen metric (a disc
-#' for `"euclidean"`, an axis-aligned square for `"chebyshev"`) and, dashed,
-#' the extension of the end segment to the edge of that set, shortened to
-#' `reach_epsilon[2]` of the segment's length when that is stricter. Along a
-#' diagonal the Chebyshev square reaches `sqrt(2)` times further than the
-#' disc.
+#' extension of the end segment along its own line (solid, with a tick at its
+#' end) as far as the allowance lets it reach, and, as a dashed grey outline,
+#' the set of points within `reach_epsilon[1]` of the end under the chosen
+#' metric (a disc for `"euclidean"`, an axis-aligned square for
+#' `"chebyshev"`). The extension stops where the segment's line leaves that
+#' set, or at `reach_epsilon[2]` of the segment's length when that is
+#' stricter. Only the extension decides whether a junction is found: another
+#' contour that crosses the outline but not the extension is not met. Along a
+#' diagonal the Chebyshev square lets the extension reach `sqrt(2)` times
+#' further than the disc.
 #' @param x A drawing.
 #' @param property Optional segment property (`"orientation"`, `"length"`,
 #'   `"curvature"`), `"junctions"`, or a mapped MAT property.
@@ -245,8 +250,11 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #' @param frame Outline the canvas in light grey.
 #' @param arm_lwd Width of the arm bands; defaults to `2.5 * lwd`, at least 3.
 #' @param fan Angle in degrees between drawn arms that share an orientation;
-#'   0 draws them on top of each other.
-#' @param gaps Draw and label the angular gaps between arms.
+#'   0 (default) draws them on one line with stacked arrowheads.
+#' @param gaps Draw and label the angular gaps between arms: `TRUE` for every
+#'   gap (shading the unique largest), `"min"` for the smallest gap only, the
+#'   one reported as `min_angle`, or `"max"` for the largest gap only, the one
+#'   that decides between Y, T and Arrow.
 #' @param reference_junctions Optional junction table, for example
 #'   `detect_junctions(x)` under another rule, whose arms are drawn as thin
 #'   grey dashed arrows beneath the drawn arms for comparison.
@@ -255,7 +263,7 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #'   allowance under that metric at each free contour end.
 #' @param reach_epsilon The absolute (pixels) and relative limits of the
 #'   allowance, as `absolute_epsilon` and `relative_epsilon` of
-#'   [detect_junctions()].
+#'   [detect_junctions()]; defaults to that function's defaults.
 #' @param add Draw onto the current plot, in its coordinates, instead of
 #'   starting a new one; no axes, frame or colour bar are drawn. Useful for
 #'   overlaying a drawing on another, for example a transformed copy on its
@@ -275,15 +283,20 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
 #' plot(rotate_drawing(d, 30), add = TRUE, lwd = 2)
 plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
                              palette=NULL,zlim=NULL,arms=FALSE,arm_length=NULL,
-                             junction_col="#D55E00",frame=TRUE,arm_lwd=NULL,fan=6,
+                             junction_col="#D55E00",frame=TRUE,arm_lwd=NULL,fan=0,
                              gaps=FALSE,reference_junctions=NULL,pixel_grid=FALSE,
-                             reach=NULL,reach_epsilon=c(1,0.3),add=FALSE) {
+                             reach=NULL,reach_epsilon=NULL,add=FALSE) {
  .check_drawing(x)
+ gap_set<-if(is.character(gaps)&&length(gaps)==1L&&gaps%in%c("min","max"))gaps else "all"
+ if(gap_set!="all")gaps<-TRUE
  for(flag in list(legend,arms,frame,gaps,pixel_grid,add))
   if(!is.logical(flag)||length(flag)!=1L||is.na(flag))
    stop("legend, arms, frame, gaps, pixel_grid and add must be TRUE or FALSE",call.=FALSE)
  if(length(fan)!=1L||!is.finite(fan)||fan<0)stop("fan must be a nonnegative angle",call.=FALSE)
  if(!is.null(reach))reach<-match.arg(reach,c("euclidean","chebyshev"))
+ if(is.null(reach_epsilon)) {
+  f<-formals(detect_junctions);reach_epsilon<-c(f$absolute_epsilon,f$relative_epsilon)
+ }
  if(!is.numeric(reach_epsilon)||length(reach_epsilon)!=2L||any(!is.finite(reach_epsilon))||any(reach_epsilon<0))
   stop("reach_epsilon must be two nonnegative numbers",call.=FALSE)
  if(!is.null(reference_junctions)&&(!is.data.frame(reference_junctions)||
@@ -315,7 +328,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  }
  if(pixel_grid).pixel_grid()
  if(frame)graphics::rect(.5,x$height+.5,x$width+.5,.5,border="grey75",lwd=.75)
- if(!is.null(reach)).draw_reach(x,reach,reach_epsilon)
+ if(!is.null(reach)).replayable(.draw_reach,x=x,metric=reach,epsilon=reach_epsilon)
  show_junctions<-identical(property,"junctions")||arms
  j<-if(show_junctions).measurement_junctions(x,x$feature_spec) else NULL
  if(arms) {
@@ -329,7 +342,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  # arrowheads, gap arcs and labels, junction markers. Arms never hide ink.
  # Sizes in inches (arrowheads, label offsets) are computed when the
  # display list is replayed, so they survive resizing and re-rendering.
- if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=TRUE)
+ if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=TRUE,only=gap_set)
  if(arms&&!is.null(reference_junctions)&&nrow(reference_junctions))
   .replayable(.draw_arms,j=reference_junctions,len=arm_length,col="grey45",lwd=arm_lwd,fan=fan,part="ghost")
  if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="bands")
@@ -345,8 +358,9 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  } else graphics::segments(st$x1,st$y1,st$x2,st$y2,col=colors,lwd=lwd)
  if(!is.null(bar)).colour_bar(x,bar)
  if(show_junctions) {
-  if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="heads")
-  if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=FALSE)
+  if(arms&&nrow(j)).replayable(.draw_arms,j=j,len=arm_length,col=junction_col,lwd=arm_lwd,fan=fan,part="heads",
+                               ink=as.matrix(st[,c("x1","y1","x2","y2")]))
+  if(arms&&gaps&&nrow(j)).replayable(.draw_gaps,j=j,rad=.45*arm_length,sectors=FALSE,only=gap_set)
   graphics::points(j$x,j$y,pch=21,bg=junction_col,col="white",cex=1.1)
  }
  invisible(x)
@@ -393,7 +407,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
 # Arms from each junction, coincident arms fanned and counted. part =
 # "bands" draws translucent bands (beneath the ink), "heads" the arrowheads
 # and counts (above it), "ghost" thin dashed grey arrows for comparison.
-.draw_arms <- function(j,len,col,lwd,fan,part=c("bands","heads","ghost")) {
+.draw_arms <- function(j,len,col,lwd,fan,part=c("bands","heads","ghost"),ink=NULL) {
  part<-match.arg(part)
  upi<-.user_per_inch();head<-.075*upi;half<-.045*upi
  for(k in seq_len(nrow(j))) {
@@ -415,17 +429,27 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
                         col=grDevices::adjustcolor(col,.45),lwd=lwd,lend=1)
     } else {
      .arrowhead(ex,ey,r,head,half,col,NA)
-     # The count sits beside the last tip of a fanned group, clear of the arm.
+     # Unfanned coincident arms stack their heads along the arm (">>").
+     if(fan==0&&i>1L).arrowhead(ex-(i-1)*.8*head*cos(r),ey+(i-1)*.8*head*sin(r),r,head,half,col,NA)
+     # The count goes beyond the tip or to either side of it, whichever
+     # spot lies farthest from the ink.
      if(m>1L&&i==m) {
-      q<-r+pi/2
-      graphics::text(ex+.13*upi*cos(q),ey-.13*upi*sin(q),paste0("\u00d7",m),
-                     cex=.8,col=col,font=2,xpd=NA)
+      cand<-cbind(ex+.15*upi*cos(r+c(0,pi/2,-pi/2)),ey-.15*upi*sin(r+c(0,pi/2,-pi/2)))
+      best<-if(is.null(ink))1L else which.max(apply(cand,1L,function(q).ink_distance(q,ink)))
+      graphics::text(cand[best,1],cand[best,2],paste0("\u00d7",m),cex=.8,col=col,font=2,xpd=NA)
      }
     }
    }
   }
  }
  invisible(NULL)
+}
+# Distance from point q to the nearest of the segments in ink (x1, y1, x2, y2).
+.ink_distance <- function(q,ink) {
+ if(!nrow(ink))return(Inf)
+ dx<-ink[,3]-ink[,1];dy<-ink[,4]-ink[,2];l2<-dx^2+dy^2
+ t<-ifelse(l2>0,pmin(1,pmax(0,((q[1]-ink[,1])*dx+(q[2]-ink[,2])*dy)/l2)),0)
+ min(sqrt((ink[,1]+t*dx-q[1])^2+(ink[,2]+t*dy-q[2])^2))
 }
 .arrowhead <- function(x,y,r,len,half,fill,border) {
  bx<-x-len*cos(r);by<-y+len*sin(r)
@@ -435,13 +459,16 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
 # Gaps between consecutive arms: arcs at radius rad, each labelled in
 # degrees on its bisector; with sectors = TRUE only the unique largest gap is
 # shaded (drawn beneath the ink).
-.draw_gaps <- function(j,rad,sectors) {
+.draw_gaps <- function(j,rad,sectors,only=c("all","min","max")) {
+ only<-match.arg(only)
  upi<-.user_per_inch()
  for(k in seq_len(nrow(j))) {
   a<-unlist(j$arms[[k]],use.names=FALSE);g<-unlist(j$angles[[k]],use.names=FALSE)
   if(length(a)<2L||length(g)!=length(a))next
   big<-which.max(g);unique_big<-sum(abs(g-g[big])<1e-6)==1L
-  for(i in seq_along(a)) {
+  keep<-switch(only,all=seq_along(a),min=which.min(g),max=which(abs(g-g[big])<1e-6))
+  if(only=="min")unique_big<-FALSE
+  for(i in keep) {
    if(g[i]<1)next
    t<-seq(a[i],a[i]+g[i],length.out=max(8L,ceiling(g[i]/3)))*pi/180
    if(sectors) {
@@ -460,10 +487,13 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
   }
  }
 }
-# Gap allowance at the free ends of open contours: the metric's ball of
-# radius epsilon[1] (light fill) and the reachable extension of the end
-# segment (dashed).
+# Gap allowance at the free ends of open contours: the outline of the
+# metric's ball of radius epsilon[1] (grey; it shows the metric, but touching
+# it decides nothing) and, as the strong mark, the extension of the end
+# segment along its own line to where that line leaves the ball, capped by
+# the relative limit, with a tick at its end.
 .draw_reach <- function(x,metric,epsilon,col="#0072B2") {
+ upi<-.user_per_inch()
  for(z in x$contours) {
   n<-nrow(z);if(!n)next
   if(all(z[1,1:2]==z[n,3:4]))next
@@ -473,17 +503,22 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
    u<-d/seg;r<-epsilon[1]
    if(metric=="euclidean") {
     t<-seq(0,2*pi,length.out=97)
-    graphics::polygon(p[1]+r*cos(t),p[2]+r*sin(t),col=grDevices::adjustcolor(col,.12),border=col,lwd=.7)
-    reach<-r
-   } else {
-    graphics::rect(p[1]-r,p[2]-r,p[1]+r,p[2]+r,col=grDevices::adjustcolor(col,.12),border=col,lwd=.7)
-    reach<-r/max(abs(u))
-   }
-   reach<-min(reach,epsilon[2]*seg)
-   graphics::segments(p[1],p[2],p[1]+reach*u[1],p[2]+reach*u[2],col=col,lwd=1.6,lty=2)
+    graphics::polygon(p[1]+r*cos(t),p[2]+r*sin(t),col=NA,border="grey55",lwd=.8,lty=2)
+   } else graphics::rect(p[1]-r,p[2]-r,p[1]+r,p[2]+r,col=NA,border="grey55",lwd=.8,lty=2)
+   reach<-.reach_length(u,seg,metric,epsilon)
+   q<-p+reach*u;nrm<-c(-u[2],u[1])*.045*upi
+   graphics::segments(p[1],p[2],q[1],q[2],col=col,lwd=2.6,lend=1)
+   graphics::segments(q[1]-nrm[1],q[2]-nrm[2],q[1]+nrm[1],q[2]+nrm[2],col=col,lwd=1.4,lend=1)
   }
  }
  invisible(NULL)
+}
+# How far detect_junctions() may extend a segment end in direction u (unit
+# vector): absolute_epsilon measured in the metric, capped at relative_epsilon
+# of the segment's length.
+.reach_length <- function(u,seg,metric,epsilon) {
+ r<-if(metric=="euclidean")epsilon[1] else epsilon[1]/max(abs(u))
+ min(r,epsilon[2]*seg)
 }
 # Cyclic hue wheel at constant chroma and luminance: hue 0 and 360 coincide,
 # so axial orientations 0 and 180 degrees receive the same colour.
@@ -505,8 +540,10 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
 }
 .plot_label <- function(x,property) {
  unit<-if(!is.null(x$feature_spec)&&identical(x$feature_spec$settings$units,"visual_degrees"))"deg visual angle" else "px"
- switch(property,orientation="orientation\n(deg, mod 180)",length=paste0("length\n(",unit,")"),
-        curvature=paste0("curvature\n(deg/",if(unit=="px")"px" else "deg visual angle",")"))
+ # The degree sign is in every device's encoding, including pdf()'s Latin-1.
+ deg<-"\u00b0"
+ switch(property,orientation=paste0("orientation\n(",deg,", mod 180)"),length=paste0("length\n(",unit,")"),
+        curvature=paste0("curvature\n(",deg,"/",if(unit=="px")"px" else "deg visual angle",")"))
 }
 # An en dash for value ranges, except on the pdf() and postscript() devices,
 # whose default single-byte encodings lack it and would warn and substitute.

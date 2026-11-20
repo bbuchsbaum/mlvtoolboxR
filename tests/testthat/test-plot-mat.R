@@ -128,8 +128,7 @@ test_that("default palettes contain no missing colours", {
     expect_length(pal, 101L)
     expect_false(anyNA(pal))
   }
-  expect_false(anyNA(mlvtoolbox:::.safe_hcl(101, "Blue-Red 3")))
-  expect_identical(mlvtoolbox:::.safe_hcl(5, "Viridis"), grDevices::hcl.colors(5, "Viridis"))
+  expect_false(anyNA(mlvtoolbox:::.no_na_colours(grDevices::hcl.colors(101, "Blue-Red 3"))))
   # The flux midpoint is a neutral near-white, not missing.
   mid <- grDevices::col2rgb(mlvtoolbox:::.mat_palette("flux")[51])
   expect_true(all(mid > 230))
@@ -239,4 +238,25 @@ test_that("colour_key() for a MAT matches the stage's colours, limits and thresh
   expect_false(anyNA(mlvtoolbox:::.mat_scale(f$mat, "flux")$colours))
   expect_equal(mlvtoolbox:::.mat_scale(f$mat, "flux")$mark,
                f$mat$parameters$threshold * f$mat$parameters$samples)
+})
+
+test_that("discs crossing the shown region are omitted and the flux stage draws ink black", {
+  b <- data.frame(x = c(5, 20), y = c(10, 10), radius = c(8, 3))
+  view <- list(x = c(0.5, 40.5), y = c(0.5, 20.5))
+  with_png({
+    plot.new(); plot.window(c(0, 40), c(0, 20))
+    drawn <- mlvtoolbox:::.mat_draw_discs(list(b), 1, view)
+    expect_identical(drawn[[1]], 2L)          # the disc at x = 5 (radius 8) crosses x = 0.5
+    expect_identical(mlvtoolbox:::.mat_draw_discs(list(b), 1)[[1]], 1:2)
+  })
+  skip_if_not_installed("png")
+  f <- plot_fixture()
+  file <- tempfile(fileext = ".png")
+  grDevices::png(file, width = 500, height = 320)
+  par(mar = c(0, 0, 0, 0))
+  plot(f$mat, "flux", legend = FALSE, main = "", levels = numeric(0))
+  ink <- which(f$mat$mask, arr.ind = TRUE)[1, ]
+  px <- grconvertX(ink[2], "user", "device"); py <- grconvertY(ink[1], "user", "device")
+  grDevices::dev.off(); on.exit(unlink(file))
+  expect_true(all(png::readPNG(file)[round(py), round(px), 1:3] < 0.1))
 })

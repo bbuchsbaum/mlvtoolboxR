@@ -36,7 +36,7 @@ of the number of colours (default method); a drawing (drawing method).}
 \item{limits}{Two increasing finite numbers: the values of the first and
 last colour.}
 
-\item{label}{The quantity and its unit, for example `"curvature (deg/px)"`.}
+\item{label}{The quantity and its unit, for example `"length (px)"`.}
 
 \item{horizontal}{Draw the bar horizontally (default) or vertically.}
 

@@ -26,6 +26,77 @@ and per-contour feature tables used as predictors in behavioural and
 neuroimaging analyses. Every number quoted below is computed when the vignette
 is built, and each is small enough to check by hand.
 
+```{r showcase-scene, include = FALSE}
+# A synthetic room: a wall corner, a window with mullions and a curtain, a
+# picture, a table, a hanging lamp and a box, as 17 contours.
+sc_line <- function(x, y) { n <- length(x); cbind(x1 = x[-n], y1 = y[-n], x2 = x[-1], y2 = y[-1]) }
+sc_closed <- function(x, y) sc_line(c(x, x[1]), c(y, y[1]))
+curtain_y <- seq(25, 85, by = 2.5); bulb_t <- seq(0, 2 * pi, length.out = 25)
+scene <- mlv_drawing(list(
+  corner = sc_line(c(120, 120), c(5, 105)),
+  floor_left = sc_line(c(120, 5), c(105, 140)),
+  floor_right = sc_line(c(120, 235), c(105, 140)),
+  window = sc_closed(c(30, 80, 80, 30), c(40, 30, 70, 80)),
+  mullion_v = sc_line(c(55, 55), c(35, 75)),
+  mullion_h = sc_line(c(30, 80), c(60, 50)),
+  curtain = sc_line(91 + 3 * sin(curtain_y / 5), curtain_y),
+  picture = sc_closed(c(198, 228, 228, 198), c(40, 46, 76, 82)),
+  table_top = sc_line(c(140, 205), c(135, 135)),
+  leg_left = sc_line(c(150, 150), c(135, 155)),
+  leg_right = sc_line(c(195, 195), c(135, 155)),
+  cord = sc_line(c(165, 165), c(5, 40)),
+  shade = sc_line(c(150, 165, 180), c(52, 40, 52)),
+  bulb = sc_line(165 + 6 * cos(bulb_t), 60 - 6 * sin(bulb_t)),
+  box_left = sc_line(c(60, 42), c(128, 135)),
+  box_right = sc_line(c(60, 78), c(128, 135)),
+  box_front = sc_line(c(60, 60), c(128, 148))),
+  width = 240, height = 160)
+scene_junctions <- detect_junctions(scene)
+scene_mat <- analyse_mat(scene, properties = "parallelism")
+stopifnot(all(c("T", "Y", "X", "Arrow") %in% scene_junctions$type))
+```
+
+```{r fig-showcase, echo = FALSE, fig.height = 6.6, fig.cap = sprintf("What the package measures, on one synthetic room of %d contours. Top left: the %d junctions it finds, labelled by type (%s). Top right: orientation of every segment. Bottom left: the medial axis between the contours (black), with some of its inscribed discs. Bottom right: parallelism of the space beside each contour, mapped back onto its ink.", length(scene$contours), nrow(scene_junctions), paste(sprintf("%d %s", as.integer(table(scene_junctions$type)), names(table(scene_junctions$type))), collapse = ", "))}
+layout(matrix(1:8, 4), heights = c(1, lcm(1.3), 1, lcm(1.3)))
+panel <- function(title, tag) {
+  title(main = title, cex.main = 1, font.main = 1, line = 1.15)
+  mtext(tag, side = 3, line = 0.2, cex = 0.7, col = "grey40")
+}
+note <- function(text) { plot.new(); text(0.5, 0.55, text, cex = 0.75, col = "grey30") }
+op <- par(mar = c(0.2, 0.2, 2.2, 0.2), cex = 0.8)
+# Column 1: junctions, then the medial axis.
+plot(scene, lwd = 1.2, axes = FALSE, frame = FALSE)
+panel("Junctions", "vignette(\"junctions\")")
+type_code <- c(T = "T", Y = "Y", X = "X", Arrow = "A")
+points(scene_junctions$x, scene_junctions$y, pch = 21, bg = "white", cex = 1.9, lwd = 0.8)
+text(scene_junctions$x, scene_junctions$y, type_code[scene_junctions$type], cex = 0.6, font = 2)
+note("letters: junction type (A = Arrow)")
+plot(scene, col = "grey65", lwd = 1, axes = FALSE, frame = FALSE)
+panel("Medial axis", "vignette(\"medial-axis\")")
+circle <- seq(0, 2 * pi, length.out = 49)
+for (b in scene_mat$mat$branches) {
+  points(b$x, b$y, pch = 15, cex = 0.3)
+  for (k in seq(1, nrow(b), by = 14)) {
+    r <- b$radius[k]
+    if (b$x[k] - r > 0.5 && b$x[k] + r < 240.5 && b$y[k] - r > 0.5 && b$y[k] + r < 160.5)
+      lines(b$x[k] + r * cos(circle), b$y[k] + r * sin(circle), col = "grey55", lwd = 0.5)
+  }
+}
+note("circles: inscribed discs")
+# Column 2: orientation, then parallelism mapped onto the contours.
+plot(scene, property = "orientation", lwd = 2, axes = FALSE, frame = FALSE, legend = FALSE)
+panel("Orientation", "vignette(\"getting-started\")")
+colour_key(scene, "orientation", cex = 0.7)
+plot(scene_mat$drawing, property = "parallelism", axes = FALSE, frame = FALSE, legend = FALSE)
+panel("Parallelism on the ink", "vignette(\"medial-axis\")")
+colour_key(scene_mat$drawing, "parallelism", cex = 0.7)
+par(op)
+layout(1)
+```
+
+The code for this scene and figure is in the appendix at the end of this
+vignette; the sections below build up each measure on a smaller drawing.
+
 ## A drawing is a list of contours
 
 A *contour* is one continuous stroke, stored as a matrix with one row per
@@ -105,7 +176,7 @@ orientation_glyphs <- function(at, degrees) replay(function(at, degrees) {
   text(at[show], y - 0.2 * vpi, paste0(degrees[show], "°"), xpd = NA, cex = 0.75)
 }, at = at, degrees = degrees)
 ```
-```{r fig-drawing, fig.height = 4.3, fig.cap = sprintf("The drawing on its %d × %d pixel canvas. The y axis points down, as in an image, and dots mark the vertices: the horizon has %d, the roof %d and the sun %d. The roof's vertices are labelled, for the hand calculations below; the coloured squares key each contour to the histograms further down.", drawing$width, drawing$height, nrow(drawing$contours[[1]]) + 1L, nrow(drawing$contours[[2]]) + 1L, nrow(drawing$contours[[4]]))}
+```{r fig-drawing, fig.height = 4, fig.cap = sprintf("The drawing on its %d × %d pixel canvas. The y axis points down, as in an image, and dots mark the vertices: the horizon has %d, the roof %d and the sun %d. The roof's vertices are labelled, for the hand calculations below; the coloured squares key each contour to the histograms further down.", drawing$width, drawing$height, nrow(drawing$contours[[1]]) + 1L, nrow(drawing$contours[[2]]) + 1L, nrow(drawing$contours[[4]]))}
 op <- par(mar = c(3, 3.2, 0.3, 0.5))
 plot(drawing, lwd = 1.5, frame = FALSE)
 canvas_titles(drawing, "x (px)", "y (px), pointing down")
@@ -218,7 +289,7 @@ In the figure below each panel is drawn with `legend = FALSE` and its key by
 `colour_key()` in a layout cell of its own, which keeps the key off the
 drawing; `colour_key()` also lets several panels share one key.
 
-```{r fig-properties, fig.height = 2.7, fig.cap = sprintf("Each segment coloured by its orientation (left) and by its mean curvature (right). The orientation palette wraps, so 0° and 180° share a colour, and the roof's slopes, at 45° and 135°, sit on opposite sides of the wheel (the glyphs under the key show each angle). The straight horizon has zero curvature, the roof's two slopes share the apex turn equally (%.2f deg/px each), and the wave curves most at its peaks and troughs.", roof$curvature[1])}
+```{r fig-properties, fig.height = 2.7, fig.cap = sprintf("Each segment coloured by its orientation (left) and by its mean curvature (right). The orientation palette wraps, so 0° and 180° share a colour, and the roof's slopes, at 45° and 135°, sit on opposite sides of the key. The straight horizon has zero curvature, the roof's two slopes share the apex turn equally (%.2f°/px each), and the wave curves most at its peaks and troughs.", roof$curvature[1])}
 layout(matrix(1:4, 2), heights = c(1, lcm(2)))
 op <- par(mar = c(0.3, 0.3, 1.6, 0.3), cex.main = 1, font.main = 1)
 # Crop to the ink, which fills the canvas only between rows 15 and 60.
@@ -325,7 +396,7 @@ histogram the horizon alone fills the bin from
 the other three contours, `r round(min(other_lengths))` to
 `r round(max(other_lengths))` pixels long, share the bin below it.
 
-```{r fig-histograms, fig.height = 3.4, fig.cap = sprintf("Histograms for the whole drawing, each bar split by contour (colours as keyed in the first figure). Left: segment length per orientation bin; the horizontal bin dominates, with %.1f px of ink. Right: whole-contour length per logarithmic length bin, drawn at the bins' true widths; the horizon alone fills one bin, and the other three contours share the bin below it.", ori$value[1])}
+```{r fig-histograms, fig.height = 3.4, fig.cap = sprintf("Histograms for the whole drawing, each bar split by contour. Left: segment length per orientation bin; the horizontal bin dominates, with %.1f px of ink. Right: whole-contour length per length bin, drawn at the bins' true widths on a log10(1 + length) axis; the horizon alone fills one bin, and the other three contours share the bin below it.", ori$value[1])}
 ids <- names(contour_cols)
 len_by_contour <- contour_statistics(measured, properties = "length", by = "contour")
 per_contour <- function(tab, bins) t(sapply(ids, function(id)
@@ -358,12 +429,12 @@ for (k in seq_along(ids)) {
        border = ifelse(h > 0, "white", NA), lwd = 0.5)
   base <- base + h
 }
-ticks <- c(2, 5, 10, 20, 50, 100, 200)
-axis(1, at = tx(ticks), labels = ticks, col = "grey55", col.ticks = "grey55", tcl = -0.3,
-     mgp = c(3, 0.5, 0))
+axis(1, at = tx(c(2, 5, 10, 20, 50, 100, 200)), labels = FALSE, col = "grey55",
+     col.ticks = "grey55", tcl = -0.3)
+axis(1, at = tx(c(2, 10, 50, 200)), labels = c(2, 10, 50, 200), lwd = 0, mgp = c(3, 0.5, 0))
 axis(2, at = pretty(c(0, top)), col = "grey55", col.ticks = "grey55", tcl = -0.3)
 title(ylab = "summed contour length (px)", line = 2.6, cex.lab = 0.85)
-mtext("length (px, log scale)", side = 1, line = 2, cex = 0.7, col = "grey30")
+mtext("length (px)", side = 1, line = 2, cex = 0.7, col = "grey30")
 par(op)
 layout(1)
 ```
@@ -469,7 +540,7 @@ The integrated curvature of the roof, the sum of curvature times length, is
 the single 90 degree turn at the apex. `contour_turning()` lists the
 unsmoothed vertex turns directly.
 
-```{r fig-estimators, fig.height = 3.4, fig.cap = sprintf("Turning accumulated along the roof, from its left end, under three estimators; the dotted line marks the apex. The height each curve reaches is the total turning it assigns. The published estimator (mlv2023) spreads the apex turn over both whole slopes and counts it twice, reaching %g°; the turning estimator spreads it over the slopes' inner halves and the arc-length estimator over %g px either side of the apex, and both reach the single %g° turn.", totals[["mlv2023"]], 2, totals[["turning"]])}
+```{r fig-estimators, fig.height = 3.4, fig.cap = sprintf("Turning accumulated along the roof under three estimators. The height each curve reaches is the total turning it assigns. The published estimator (mlv2023) spreads the apex turn over both whole slopes and counts it twice, reaching %g°; the turning estimator spreads it over the slopes' inner halves and the arc-length estimator over %g px either side of the apex, and both reach the single %g° turn.", totals[["mlv2023"]], 2, totals[["turning"]])}
 # Exact running integral of a piecewise-linear curvature profile.
 cumulative <- function(p, n = 40) {
   s0 <- if (is.null(p$s_start)) c(0, cumsum(p$length)[-nrow(p)]) else p$s_start
@@ -487,26 +558,32 @@ cumulative <- function(p, n = 40) {
 curves <- lapply(profiles, cumulative)
 stopifnot(isTRUE(all.equal(vapply(curves, function(z) z$turn[length(z$turn)], 0),
                            totals)))
-est_cols <- c(mlv2023 = "#D55E00", turning = "#0072B2", arclength = "#009E73")
+# Three estimators of one roof: line weights and types, not hues (the hues of
+# this page belong to the four contours).
+est_style <- list(mlv2023 = list(col = "grey60", lwd = 3.2, lty = 1),
+                  turning = list(col = "black", lwd = 1.8, lty = 1),
+                  arclength = list(col = "black", lwd = 1.8, lty = 2))
 apex <- sqrt(800); roof_length <- 2 * apex
-op <- par(mar = c(3.4, 3.8, 0.6, 0.8), las = 1, cex.axis = 0.8)
+op <- par(mar = c(3.4, 3.8, 0.6, 2.6), las = 1, cex.axis = 0.8)
 plot(NA, xlim = c(0, roof_length), ylim = c(0, 190), xaxs = "i", yaxs = "i",
      axes = FALSE, xlab = "", ylab = "")
 abline(h = c(90, 180), col = "grey90", lwd = 0.8)
 abline(v = apex, lty = 3, col = "grey40")
-for (e in names(curves)) lines(curves[[e]]$s, curves[[e]]$turn, lwd = 2.2,
-                                col = est_cols[[e]])
-axis(1, at = c(0, 10, 20, 30, 40, 50), col = "grey55", col.ticks = "grey55", tcl = -0.3,
-     mgp = c(3, 0.5, 0))
+for (e in c("mlv2023", "arclength", "turning"))
+  lines(curves[[e]]$s, curves[[e]]$turn, lwd = est_style[[e]]$lwd,
+        col = est_style[[e]]$col, lty = est_style[[e]]$lty)
+axis(1, at = c(seq(0, 50, by = 10), roof_length),
+     labels = c(seq(0, 50, by = 10), round(roof_length, 1)), col = "grey55",
+     col.ticks = "grey55", tcl = -0.3, mgp = c(3, 0.5, 0))
 axis(2, at = c(0, 45, 90, 135, 180), col = "grey55", col.ticks = "grey55", tcl = -0.3)
 title(xlab = "arc length along the roof (px)", line = 2, cex.lab = 0.85)
 title(ylab = "accumulated turning (°)", line = 2.6, cex.lab = 0.85)
 text(apex, 186, "apex", pos = 4, cex = 0.75, col = "grey30", offset = 0.3)
-labels <- c(mlv2023 = "published (mlv2023)", turning = "turning", arclength = "arc length")
-labels <- sprintf("%s\n%g°", labels, totals)
-text(1, 178, labels[1], adj = c(0, 1), cex = 0.8, col = est_cols[1])
-text(roof_length - 0.5, 80, labels[2], adj = c(1, 1), cex = 0.8, col = est_cols[2])
-text(31, 38, labels[3], adj = c(0, 1), cex = 0.8, col = est_cols[3])
+# Names beside each curve where it rises; totals at the right-hand ends.
+text(c(1, 38, 31), c(130, 45, 18), c("published (mlv2023)", "turning", "arc length"),
+     adj = c(0, 0.5), cex = 0.8)
+text(roof_length, unique(totals), paste0(unique(totals), "°"), pos = 4, xpd = NA, cex = 0.8,
+     offset = 0.3)
 par(op)
 ```
 The estimators also differ in how they respond to sampling. A circle of
@@ -564,3 +641,10 @@ specification can express physical units: `units = "visual_degrees"` with a
   files, and fitting and applying models to feature tables.
 - `vignette("stimulus-design", package = "mlvtoolbox")`: selecting matched
   subsets of contours across a stimulus set.
+
+## Appendix: the opening figure
+
+The scene and the four panels at the top of this vignette:
+
+```{r showcase-code, ref.label = c("showcase-scene", "fig-showcase"), eval = FALSE}
+```

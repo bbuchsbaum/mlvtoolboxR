@@ -12,7 +12,7 @@
 #'   negative.
 #' * `"flux"`: the average outward flux, stored as the sum of `samples`
 #'   dot products (diverging palette with limits symmetric about zero, zero
-#'   drawn as a neutral near-white). The skeleton threshold,
+#'   drawn as a neutral near-white; ink in black). The skeleton threshold,
 #'   `threshold * samples`, is marked on the colour bar and drawn as a dashed
 #'   isoline in the image.
 #' * `"skeleton"`: the pixels whose flux exceeds the threshold (light red) and
@@ -46,8 +46,9 @@
 #' @param axes Draw light pixel axes.
 #' @param overlay_col,overlay_lwd Colour and width of the `drawing` overlay.
 #' @param discs Draw the maximal inscribed disc (radius = the branch radius)
-#'   at every `discs`-th point of every branch, as faint circles; `0` (the
-#'   default) draws none. Each disc is centred on the axis and touches the
+#'   at every `discs`-th point of every branch, as faint circles, omitting any
+#'   disc that would cross the edge of the region shown; `0` (the default)
+#'   draws none. Each disc is centred on the axis and touches the
 #'   nearest ink, so its size shows the radius that every branch score is
 #'   computed from.
 #' @param levels Isolines drawn over the image: `NULL` (the default) draws
@@ -157,7 +158,7 @@ plot.mlv_mat <- function(x, what = "flux", drawing = NULL, legend = TRUE,
     layer(x$mask, "black")
   } else if (!is.null(z)) {
     if (!is.null(limits)) draw(.mat_colour_matrix(z, colours, limits))
-    if (what == "distance") layer(x$mask, "black")
+    if (what %in% c("distance", "flux")) layer(x$mask, "black")
     if (what %in% scores) {
       layer(x$mask, "black"); layer(unscored, .mat_unscored_colour)
     }
@@ -171,7 +172,7 @@ plot.mlv_mat <- function(x, what = "flux", drawing = NULL, legend = TRUE,
     pal <- if (!is.null(col)) col else .mat_branch_colours
     n <- length(x$branches)
     if (!n) note <- "no branches" else {
-      if (discs > 0) .mat_draw_discs(x$branches, discs)
+      if (discs > 0) .mat_draw_discs(x$branches, discs, view)
       for (i in seq_len(n)) {
         b <- x$branches[[i]]
         graphics::rect(b$x - 0.5, b$y - 0.5, b$x + 0.5, b$y + 0.5,
@@ -181,7 +182,7 @@ plot.mlv_mat <- function(x, what = "flux", drawing = NULL, legend = TRUE,
     }
   }
   if (discs > 0 && what != "branches" && length(x$branches))
-    .mat_draw_discs(x$branches, discs)
+    .mat_draw_discs(x$branches, discs, view)
   if (grid) .mat_pixel_grid(view)
   if (!is.null(z) && !is.null(limits)) {
     lv <- if (is.null(levels)) (if (what == "flux") bar$mark) else levels
@@ -258,27 +259,19 @@ colour_key.mlv_mat <- function(x, what = "flux", zlim = NULL, col = NULL, ...) {
 .mat_unscored_colour <- "grey75"
 
 # Okabe-Ito colours (without black), recycled over branches in index order.
-.mat_branch_colours <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#D55E00",
-                         "#CC79A7", "#F0E442")
+# Blue and orange come late: blue means negative flux in the stages before,
+# and the vignettes reserve blue and orange for default and published values.
+.mat_branch_colours <- c("#CC79A7", "#009E73", "#D55E00", "#56B4E9", "#E69F00",
+                         "#0072B2", "#F0E442")
 
 # Default 101-colour palettes. hcl.colors() can return NA for a colour whose
 # HCL coordinates fall outside sRGB (in R 4.5.1 the neutral midpoint of
-# "Blue-Red 3" is NA), and an NA colour is drawn transparent. Interpolating
-# between the valid colours of a finer sampling never gives NA.
+# "Blue-Red 3" is NA), and an NA colour is drawn transparent;
+# .no_na_colours() (shared with the drawing keys) interpolates such entries.
 .mat_palette <- function(what, n = 101L) {
   spec <- switch(what, distance = list("Purples 3", TRUE), flux = list("Blue-Red 3", FALSE),
                  list("Viridis", FALSE))
-  .safe_hcl(n, spec[[1]], rev = spec[[2]])
-}
-.safe_hcl <- function(n, palette, rev = FALSE) {
-  cols <- grDevices::hcl.colors(n, palette, rev = rev)
-  if (!anyNA(cols)) return(cols)
-  fine <- grDevices::hcl.colors(4L * n + 1L, palette, rev = rev)
-  at <- which(!is.na(fine))
-  rgb <- grDevices::col2rgb(fine[at])
-  u <- (at - 1) / (length(fine) - 1); v <- seq(0, 1, length.out = n)
-  ch <- vapply(1:3, function(k) stats::approx(u, rgb[k, ], v, rule = 2)$y, numeric(n))
-  grDevices::rgb(ch[, 1], ch[, 2], ch[, 3], maxColorValue = 255)
+  .no_na_colours(grDevices::hcl.colors(n, spec[[1]], rev = spec[[2]]))
 }
 
 # Colour index of each value; values outside the limits take the end colours
@@ -322,21 +315,29 @@ colour_key.mlv_mat <- function(x, what = "flux", zlim = NULL, col = NULL, ...) {
   list(labels = c("ink", labels), fill = c("black", fill))
 }
 
-# Maximal inscribed discs at every k-th point of each branch.
-.mat_draw_discs <- function(branches, every, col = "grey35") {
+# Maximal inscribed discs (outlines) at every k-th point of each branch; with a
+# view, only discs that lie wholly inside it, so none is cut by the frame.
+.mat_draw_discs <- function(branches, every, view = NULL, col = "grey35") {
   every <- max(1L, as.integer(round(every)))
   t <- seq(0, 2 * pi, length.out = 73L)
-  for (b in branches) {
+  drawn <- vector("list", length(branches))
+  for (k in seq_along(branches)) {
+    b <- branches[[k]]
     n <- nrow(b); if (!n) next
     start <- ceiling(every / 2)
     i <- if (start > n) ceiling(n / 2) else seq(start, n, by = every)
     i <- i[i >= 1 & i <= n & is.finite(b$radius[i]) & b$radius[i] > 0]
+    if (!is.null(view)) i <- i[b$x[i] - b$radius[i] >= view$x[1] &
+      b$x[i] + b$radius[i] <= view$x[2] & b$y[i] - b$radius[i] >= view$y[1] &
+      b$y[i] + b$radius[i] <= view$y[2]]
     for (j in i) graphics::polygon(b$x[j] + b$radius[j] * cos(t),
-      b$y[j] + b$radius[j] * sin(t), border = grDevices::adjustcolor(col, 0.6),
-      col = grDevices::adjustcolor(col, 0.05), lwd = 0.6)
+      b$y[j] + b$radius[j] * sin(t), border = grDevices::adjustcolor(col, 0.55),
+      col = NA, lwd = 0.6)
     if (length(i)) graphics::points(b$x[i], b$y[i], pch = 16, cex = 0.25,
                                     col = grDevices::adjustcolor(col, 0.8))
+    drawn[[k]] <- as.integer(i)
   }
+  invisible(drawn)
 }
 
 # Branch index labels with a white halo, each placed at the candidate spot

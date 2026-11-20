@@ -16,7 +16,9 @@ plot_branch_profile(
   main = NULL,
   panel = NULL,
   cex = NULL,
-  lwd = 1.6
+  lwd = 1.6,
+  context = FALSE,
+  blank = character()
 )
 }
 \arguments{
@@ -42,7 +44,8 @@ list of pairs keyed by `what`. The default is `c(0, 1)` for scores and
 from zero to the largest value for `"radius"`.}
 
 \item{band}{Optional x range (two numbers, in pixels) shaded in every
-profile panel, for example the stretch over which a summary is computed.}
+panel, drawing included, for example the stretch over which a summary is
+computed.}
 
 \item{labels}{Label each line with its branch index at its right end when
 a column shows more than one branch.}
@@ -57,6 +60,13 @@ add annotations.}
 \item{cex}{Text size; the default scales with the device width.}
 
 \item{lwd}{Width of the profile lines.}
+
+\item{context}{Draw the other columns' curves faintly behind each profile,
+so that every column can be compared with the rest.}
+
+\item{blank}{Names in `what` that are not branch quantities but empty rows,
+drawn with only their row label on the shared x scale, for `panel` to
+fill (for example a diagram of fitted spans). Their y range is 0 to 1.}
 }
 \value{
 Invisibly, a data frame with one row per plotted point: `column`,

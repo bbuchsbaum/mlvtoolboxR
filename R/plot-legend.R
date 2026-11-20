@@ -20,7 +20,7 @@
 #'   of the number of colours (default method); a drawing (drawing method).
 #' @param limits Two increasing finite numbers: the values of the first and
 #'   last colour.
-#' @param label The quantity and its unit, for example `"curvature (deg/px)"`.
+#' @param label The quantity and its unit, for example `"length (px)"`.
 #' @param horizontal Draw the bar horizontally (default) or vertically.
 #' @param ticks Tick positions; defaults to [pretty()] values within `limits`,
 #'   or five equally spaced values for a cyclic key.

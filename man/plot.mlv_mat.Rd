@@ -48,8 +48,9 @@ index order.}
 \item{overlay_col, overlay_lwd}{Colour and width of the `drawing` overlay.}
 
 \item{discs}{Draw the maximal inscribed disc (radius = the branch radius)
-at every `discs`-th point of every branch, as faint circles; `0` (the
-default) draws none. Each disc is centred on the axis and touches the
+at every `discs`-th point of every branch, as faint circles, omitting any
+disc that would cross the edge of the region shown; `0` (the default)
+draws none. Each disc is centred on the axis and touches the
 nearest ink, so its size shows the radius that every branch score is
 computed from.}
 
@@ -85,7 +86,7 @@ unit:
   negative.
 * `"flux"`: the average outward flux, stored as the sum of `samples`
   dot products (diverging palette with limits symmetric about zero, zero
-  drawn as a neutral near-white). The skeleton threshold,
+  drawn as a neutral near-white; ink in black). The skeleton threshold,
   `threshold * samples`, is marked on the colour bar and drawn as a dashed
   isoline in the image.
 * `"skeleton"`: the pixels whose flux exceeds the threshold (light red) and

@@ -77,3 +77,26 @@ test_that("an unscored MAT and a MAT without branches are handled", {
                                            matrix(c(5, 30, 75, 22), 1)), 80, 36))
   expect_error(with_png(plot_branch_profile(unscored, "parallelism")), "compute_mat_properties")
 })
+
+test_that("blank rows, context curves and equal drawing heights work", {
+  m <- profile_fixture()
+  calls <- character()
+  with_png(out <- plot_branch_profile(list(a = m, b = m), c("notes", "parallelism"),
+    blank = "notes", context = TRUE,
+    panel = function(column, row) calls <<- c(calls, paste(column, row))))
+  expect_identical(calls, c("1 drawing", "1 notes", "1 parallelism",
+                            "2 drawing", "2 notes", "2 parallelism"))
+  expect_false("notes" %in% out$what)
+  with_png({
+    expect_error(plot_branch_profile(m, "notes"), "no column notes")
+    expect_error(plot_branch_profile(m, context = NA), "context")
+    expect_error(plot_branch_profile(m, blank = 1), "blank")
+  })
+  # Drawings of different canvas heights get equal panel heights.
+  tall <- compute_mat_properties(compute_mat(mlv_drawing(list(
+    matrix(c(5, 4, 75, 4), 1), matrix(c(5, 40, 75, 30), 1)), 80, 46)), "parallelism")
+  heights <- numeric()
+  with_png(plot_branch_profile(list(m, tall), "parallelism", panel = function(column, row)
+    if (row == "drawing") heights[column] <<- abs(diff(par("usr")[3:4]))), width = 700)
+  expect_equal(heights[1], heights[2], tolerance = 1e-6)
+})
