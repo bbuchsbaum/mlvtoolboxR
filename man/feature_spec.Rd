@@ -113,5 +113,5 @@ from the previous one. The last vertex of every contour is therefore counted
 twice (the 90 degree apex of a two-segment roof integrates to 180 degrees),
 the closing vertex of a closed contour is not counted, and the value at a
 vertex depends on the length of one adjacent segment only. Use it to
-reproduce published values (`vignette("mlv-compatibility")`).
+reproduce published values (the \href{https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html}{MLV compatibility} article).
 }

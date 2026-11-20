@@ -13,7 +13,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
-                      fig.retina = 2, fig.width = 7, fig.height = 3.4,
+                      fig.retina = 1.5, fig.width = 7, fig.height = 3.4,
                       fig.align = "center")
 library(mlvtoolbox)
 # Panels drawn by plot() on an mlv_mat need little margin; knitr resets par()
@@ -56,7 +56,7 @@ The computation has five stages, each stored in the `mlv_mat` object that
 follows one small drawing through every stage with `plot()` on the `mlv_mat`,
 then explains each score with a pair of drawings that differ in only that
 respect. All values come from the package defaults;
-`vignette("mlv-compatibility", package = "mlvtoolbox")` shows how to reproduce
+the [MLV compatibility](mlv-compatibility.html) article shows how to reproduce
 values published with the MATLAB toolbox.
 
 ## The running example
@@ -930,7 +930,7 @@ A pixel in row r between them is r − 10 pixels from the upper line and
 map has its ridge, at r = (10 + 22)/2 = 16. The medial axis should therefore
 be the single row 16. The comparison below changes only the flux definition,
 `aof`; the full published-compatible recipe is given in
-`vignette("mlv-compatibility", package = "mlvtoolbox")`.
+the [MLV compatibility](mlv-compatibility.html) article.
 
 ```{r midline}
 lines2 <- mlv_drawing(list(seg(5, 10, 45, 10), seg(5, 22, 45, 22)), 50, 32)
@@ -1020,7 +1020,7 @@ straight and is fitted by one span in either direction.
 
 ## Where to go next
 
-- `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing
+- [MLV compatibility](mlv-compatibility.html): reproducing
   published MLV values and choosing between the two modes.
 - `feature_spec()` records every medial-axis setting so that a feature table
   can be rebuilt exactly; `analyse_mat(drawing, spec = spec)` applies it.

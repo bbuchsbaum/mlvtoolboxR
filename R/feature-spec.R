@@ -36,7 +36,7 @@
 #' twice (the 90 degree apex of a two-segment roof integrates to 180 degrees),
 #' the closing vertex of a closed contour is not counted, and the value at a
 #' vertex depends on the length of one adjacent segment only. Use it to
-#' reproduce published values (`vignette("mlv-compatibility")`).
+#' reproduce published values (the \href{https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html}{MLV compatibility} article).
 #' @param properties Ordered feature names.
 #' @param bins Histogram bin count; junction types always use five categories.
 #' @param normalize Normalize length/count weights per 10,000 target length units.

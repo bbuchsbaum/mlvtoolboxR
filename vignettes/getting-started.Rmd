@@ -13,7 +13,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
-                      fig.retina = 2, fig.width = 7, fig.height = 3.5,
+                      fig.retina = 1.5, fig.width = 7, fig.height = 3.5,
                       fig.align = "center")
 library(mlvtoolbox)
 ```
@@ -128,16 +128,16 @@ mapped_wide <- function(d, property, w) {
 }
 ```
 
-```{r fig-showcase, echo = FALSE, fig.height = 6.9, fig.cap = sprintf("What the package measures, on one synthetic room of %d contours. Top: the %d junctions it finds, coloured by type, and segment orientation. Bottom: the medial axis (red) between the contours, with %d of its inscribed discs, and the parallelism of the space beside each contour, mapped back onto it (drawn %d px wide; added pixels copy the nearest ink pixel). Each panel names its vignette.", length(scene$contours), nrow(scene_junctions), nrow(disc_points), 2 * widen + 1)}
+```{r fig-showcase, echo = FALSE, fig.height = 6.9, fig.cap = sprintf("What the package measures, on one synthetic room of %d contours. Top: the %d junctions it finds, coloured by type, and segment orientation. Bottom: the medial axis (red) between the contours, with %d of its inscribed discs, and the parallelism of the space beside each contour, mapped back onto it (drawn %d px wide; added pixels copy the nearest ink pixel). Each panel names the article that explains it.", length(scene$contours), nrow(scene_junctions), nrow(disc_points), 2 * widen + 1)}
 layout(matrix(1:8, 4), heights = c(1, lcm(1.25), 1, lcm(1.25)))
 op <- par(mar = c(0.2, 0.2, 2.2, 0.2), cex = 0.8)
 # Column 1: junctions, then the medial axis.
 plot(scene, lwd = 1.2, axes = FALSE, frame = FALSE)
-panel("Junctions", "vignette(\"junctions\")")
+panel("Junctions", "article: Junctions")
 badges(scene_junctions)
 type_key(scene_junctions)
 plot(scene, lwd = 1.2, axes = FALSE, frame = FALSE)
-panel("Medial axis", "vignette(\"medial-axis\")")
+panel("Medial axis", "article: Medial axis")
 for (k in seq_len(nrow(disc_points)))
   symbols(disc_points$x[k], disc_points$y[k], circles = disc_points$radius[k],
           inches = FALSE, add = TRUE, fg = "grey55", lwd = 0.8)
@@ -145,10 +145,10 @@ draw_mat_axis(scene_mat$mat, width = 0.9)
 axis_key()
 # Column 2: orientation, then parallelism mapped onto the contours.
 plot(scene, property = "orientation", lwd = 2, axes = FALSE, frame = FALSE, legend = FALSE)
-panel("Orientation", "vignette(\"getting-started\")")
+panel("Orientation", "this vignette")
 colour_key(scene, "orientation", cex = 0.7)
 plot(scene, col = NA, axes = FALSE, frame = FALSE)
-panel("Parallelism on the contours", "vignette(\"medial-axis\")")
+panel("Parallelism on the contours", "article: Medial axis")
 mapped_wide(scene_mat$drawing, "parallelism", widen)
 colour_key(scene_mat$drawing, "parallelism", cex = 0.7)
 par(op)
@@ -422,7 +422,7 @@ The roof ends on the horizon at both eaves, so the drawing has
 contributes two arms and the roof slope a third, at
 `r round(measured$junctions$min_angle[1])` degrees to the horizon. How
 junctions are found, what an arm is and how the type and angles are defined
-are the subject of `vignette("junctions", package = "mlvtoolbox")`.
+are the subject of the [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html) article.
 
 ## Histograms
 
@@ -550,7 +550,7 @@ each of the eight bins holds `r format(features$orientation_1[4], big.mark = ","
 The table carries a schema that records each column's bin edges, weights,
 units and normalization. `feature_schema(features)` returns it, and model
 prediction uses it to refuse tables measured differently from the training
-data (see `vignette("workflows", package = "mlvtoolbox")`).
+data (see the [Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html) article).
 
 ## Feature specifications
 
@@ -704,22 +704,22 @@ resolution when curvature should be stated at a spatial scale; choose a scale
 longer than the typical segment so that the values do not depend on how finely
 contours were sampled. The published estimator is the right choice only when
 results must be comparable with published MLV values
-(`vignette("mlv-compatibility", package = "mlvtoolbox")`). The same
+(the [MLV compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html) article). The same
 specification can express physical units: `units = "visual_degrees"` with a
 `pixels_per_degree` calibration reports lengths in degrees of visual angle
 (curvature stays in geometric degrees per unit length).
 
 ## Where to go next
 
-- `vignette("junctions", package = "mlvtoolbox")`: how junctions are found,
+- [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html): how junctions are found,
   what an arm is, and where the default rule differs from MLV.
-- `vignette("medial-axis", package = "mlvtoolbox")`: the medial axis and the
+- [Medial axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.html): the medial axis and the
   parallelism, separation, mirror and taper scores mapped back onto contours.
-- `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing
+- [MLV compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html): reproducing
   published MLV values and what each default changes.
-- `vignette("workflows", package = "mlvtoolbox")`: reading SVG, MAT and image
+- [Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html): reading SVG, MAT and image
   files, and fitting and applying models to feature tables.
-- `vignette("stimulus-design", package = "mlvtoolbox")`: selecting matched
+- [Stimulus design](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html): selecting matched
   subsets of contours across a stimulus set.
 
 ## Appendix: the opening figure

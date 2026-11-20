@@ -13,7 +13,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
-                      fig.retina = 2, fig.width = 7, fig.height = 3.6,
+                      fig.retina = 1.5, fig.width = 7, fig.height = 3.6,
                       fig.align = "center")
 library(mlvtoolbox)
 has_jpeg <- requireNamespace("jpeg", quietly = TRUE)
@@ -183,7 +183,7 @@ pixel the direction along which lightness changes least: the edge tangent
 (Kyprianidis and Döllner 2008). Its anisotropy, from 0 to 1, says how clearly
 one direction dominates.
 
-```{r stage-flow, echo = FALSE, fig.cap = sprintf("Stage 3. The tangents ring the eye and run along the outlines of the head; in the background they follow faint streaks and turn from patch to patch. Blue segments at every fifth pixel over the faded pre-filtered image, 1 to 5 px long as the anisotropy rises from 0 to 1 (median %.2f here).", median(anis))}
+```{r stage-flow, echo = FALSE, dev = "jpeg", fig.ext = "jpg", dev.args = list(quality = 90), fig.cap = sprintf("Stage 3. The tangents ring the eye and run along the outlines of the head; in the background they follow faint streaks and turn from patch to patch. Blue segments at every fifth pixel over the faded pre-filtered image, 1 to 5 px long as the anisotropy rises from 0 to 1 (median %.2f here).", median(anis))}
 par(mar = c(0.2, 0.2, 1.6, 0.2))
 canvas(cx, cy, "3  Edge tangent flow")
 paint(grey_of(stretch(stages$smoothed), faint = 0.55), cx, cy)
@@ -239,7 +239,7 @@ paint(ifelse(stages$mask, "black", ifelse(stages$band, "#C6D4EE", "white")), cx,
 `trace_contours()`, which `trace_rgb()` calls, then thins the mask to one
 pixel and traces it into contours, splitting them where lines meet.
 
-```{r stage-traced, echo = FALSE, fig.cap = sprintf("Stage 6. Each contour runs along the boundary it came from rather than beside it: the outline of the head, the pupil and the curves of the gill are each one or a few contours. Traced contours (black; %d touch this window) over the faded painting. The lines are pixel chains; simplify in trace_contours() turns them into fewer, straighter segments.", sum(vapply(drawing$contours, function(z) any(z[, 1] >= cx[1] & z[, 1] <= cx[2] & z[, 2] >= cy[1] & z[, 2] <= cy[2]), TRUE)))}
+```{r stage-traced, echo = FALSE, dev = "jpeg", fig.ext = "jpg", dev.args = list(quality = 90), fig.cap = sprintf("Stage 6. Each contour runs along the boundary it came from rather than beside it: the outline of the head, the pupil and the curves of the gill are each one or a few contours. Traced contours (black; %d touch this window) over the faded painting. The lines are pixel chains; simplify in trace_contours() turns them into fewer, straighter segments.", sum(vapply(drawing$contours, function(z) any(z[, 1] >= cx[1] & z[, 1] <= cx[2] & z[, 2] >= cy[1] & z[, 2] <= cy[2]), TRUE)))}
 par(mar = c(0.2, 0.2, 1.6, 0.2))
 canvas(cx, cy, "6  Traced contours")
 faint <- img; for (k in 1:3) faint[, , k] <- 0.45 + 0.55 * img[, , k]

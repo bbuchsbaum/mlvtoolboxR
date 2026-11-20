@@ -22,15 +22,15 @@ articles:
 - title: Measures
   navbar: Measures
   contents:
-  - junctions
-  - medial-axis
+  - articles/junctions
+  - articles/medial-axis
 - title: Reproducing published values
   navbar: Compatibility
   contents:
-  - mlv-compatibility
+  - articles/mlv-compatibility
 - title: Workflows
   navbar: Workflows
   contents:
-  - workflows
-  - line-extraction
-  - stimulus-design
+  - articles/workflows
+  - articles/line-extraction
+  - articles/stimulus-design

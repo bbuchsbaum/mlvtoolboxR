@@ -13,7 +13,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
-                      fig.retina = 2, fig.width = 7, fig.height = 3.4,
+                      fig.retina = 1.5, fig.width = 7, fig.height = 3.4,
                       fig.align = "center")
 library(mlvtoolbox)
 okabe <- c(blue = "#0072B2", orange = "#E69F00", vermillion = "#D55E00")
@@ -193,7 +193,7 @@ stopifnot(isTRUE(all.equal(unname(c(integrated(default), integrated(published)))
 
 Junctions differ wherever one of MLV's arm rules applies, for example when a
 short segment at the end of a stem makes a T read as an X (MLV-M024).
-`vignette("junctions", package = "mlvtoolbox")` shows each case on a small
+the [Junctions](junctions.html) article shows each case on a small
 drawing.
 
 ### Medial-axis scores differ by design
@@ -271,7 +271,7 @@ the neighbouring point (MLV-M033); short branches are mostly ends.
 The default mode keeps scores that are exactly zero; the published mode,
 like `MATpropertiesToContours.m`, turns every zero into a missing value
 (MLV-M011). Two lines three pixels apart have a separation of exactly 0 along
-their whole length (`vignette("medial-axis", package = "mlvtoolbox")` explains
+their whole length (the [Medial axis](medial-axis.html) article explains
 why), so the same pixels are zeros in one mode and missing in the other:
 
 ```{r zeros}
@@ -363,7 +363,7 @@ or reflects the flux field in the same way. Their curvature counts every
 vertex turn once and does not change when a curve is resampled; when
 curvature should be stated at a physical scale, use
 `feature_spec(estimator = "arclength", curvature_scale = ...)` (see
-`vignette("getting-started", package = "mlvtoolbox")`).
+the [Getting started](getting-started.html) article).
 
 Use the **published-compatible mode** when values must be comparable with
 numbers computed by the MATLAB toolbox: extending or replicating a published
@@ -413,9 +413,9 @@ deposit the feature specification (for example as the sidecar written by
 
 ## Where to go next
 
-- `vignette("medial-axis", package = "mlvtoolbox")`: what each medial-axis
+- [Medial axis](medial-axis.html): what each medial-axis
   stage and score measures, on small drawings.
-- `vignette("junctions", package = "mlvtoolbox")`: the junction rules of both
+- [Junctions](junctions.html): the junction rules of both
   modes, case by case.
 - [`docs/PARITY.md`](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/docs/PARITY.md)
   and the [differences register](https://github.com/bbuchsbaum/mlvtoolboxR/blob/main/DIFFERENCES.md):

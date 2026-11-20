@@ -123,12 +123,12 @@ perceptual validity of the measures. See [parity evidence](docs/PARITY.md) and
 ## Learn more
 
 - `vignette("getting-started", package = "mlvtoolbox")`: from a line drawing to contour features.
-- `vignette("junctions", package = "mlvtoolbox")`: how junctions are found and what they measure.
-- `vignette("medial-axis", package = "mlvtoolbox")`: medial axis and symmetry scores.
-- `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing published MLV values.
-- `vignette("workflows", package = "mlvtoolbox")`: file input, extraction and feature recipes.
-- `vignette("line-extraction", package = "mlvtoolbox")`: from an image or painting to a line drawing.
-- `vignette("stimulus-design", package = "mlvtoolbox")`: matched conditions across a stimulus set.
+- [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html): how junctions are found and what they measure.
+- [Medial axis](https://bbuchsbaum.github.io/mlvtoolboxR/articles/medial-axis.html): medial axis and symmetry scores.
+- [MLV compatibility](https://bbuchsbaum.github.io/mlvtoolboxR/articles/mlv-compatibility.html): reproducing published MLV values.
+- [Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html): file input, extraction and feature recipes.
+- [Line extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html): from an image or painting to a line drawing.
+- [Stimulus design](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html): matched conditions across a stimulus set.
 
 ## Manipulate and import
 
@@ -168,7 +168,7 @@ option `check_spec = FALSE` warns that compatibility was not checked.
 
 trace_rgb() requires an explicitly supplied provider returning an ink mask;
 xdog_lines() is the built-in classical provider (a flow-based difference of
-Gaussians, `vignette("line-extraction")`). No SAM model/backend is bundled;
+Gaussians, the [Line extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html) article). No SAM model/backend is bundled;
 arbitrary edge detectors are not silently substituted for SAM. MATLAB serialized regression models, general SVG paint
 effects and MAT v7.3/HDF5 import are outside the current adapters.
 

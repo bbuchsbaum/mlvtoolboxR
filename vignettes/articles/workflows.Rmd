@@ -13,7 +13,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
-                      fig.retina = 2, fig.width = 7, fig.height = 3,
+                      fig.retina = 1.5, fig.width = 7, fig.height = 3,
                       fig.align = "center")
 library(mlvtoolbox)
 has_xml2 <- requireNamespace("xml2", quietly = TRUE)
@@ -24,7 +24,7 @@ This vignette covers the steps around measurement: getting drawings into R
 from SVG, MATLAB and image files, editing them, fixing a measurement recipe
 for a study, and applying a fitted model to new drawings with a check that
 the features were measured the same way. It assumes the drawing, segment and
-histogram vocabulary of `vignette("getting-started", package = "mlvtoolbox")`.
+histogram vocabulary of the [Getting started](getting-started.html) article.
 
 The file adapters use optional packages: xml2 for SVG, R.matlab for MAT
 files, and png or jpeg for images. Chunks that need a missing package are
@@ -72,7 +72,7 @@ drawings <- read_mlv_mat("drawings.mat", zero_length = "drop")
 ```
 
 To reproduce values that MLV published for such files, see
-`vignette("mlv-compatibility", package = "mlvtoolbox")`.
+the [MLV compatibility](mlv-compatibility.html) article.
 
 ## Tracing raster line drawings
 
@@ -140,7 +140,7 @@ interchangeable with measurements of its vector source.
 For colour photographs, `trace_rgb()` takes an RGB image and a `backend`
 function that returns a logical ink mask. The package provides one classical
 backend, `xdog_lines()`, a flow-based difference of Gaussians described in
-`vignette("line-extraction", package = "mlvtoolbox")`; it bundles no learned
+the [Line extraction](line-extraction.html) article; it bundles no learned
 edge or segmentation model. For any other backend, whatever produces the mask
 (and its weights and preprocessing) is the backend's responsibility, and the
 backend's name is recorded in the drawing's provenance.
@@ -218,9 +218,9 @@ result$mat$parameters[c("aof", "morphology", "branch_rule")]
 ```
 
 Each stage and score, and how to read these parameters, is explained in
-`vignette("medial-axis", package = "mlvtoolbox")`. The settings that reproduce
+the [Medial axis](medial-axis.html) article. The settings that reproduce
 published MLV values are given in
-`vignette("mlv-compatibility", package = "mlvtoolbox")`.
+the [MLV compatibility](mlv-compatibility.html) article.
 
 ## Feature recipes and checked prediction
 
@@ -312,11 +312,11 @@ file.exists(paste0(csv_file, ".schema.rds"))
 
 ## Where to go next
 
-- `vignette("getting-started", package = "mlvtoolbox")`: segment
+- [Getting started](getting-started.html): segment
   measurements, histograms and feature specifications.
-- `vignette("junctions", package = "mlvtoolbox")`: how junctions are found and
+- [Junctions](junctions.html): how junctions are found and
   what they measure.
-- `vignette("medial-axis", package = "mlvtoolbox")`: medial-axis symmetry
+- [Medial axis](medial-axis.html): medial-axis symmetry
   scores.
-- `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing
+- [MLV compatibility](mlv-compatibility.html): reproducing
   published MLV values.

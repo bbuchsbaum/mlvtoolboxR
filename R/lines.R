@@ -203,7 +203,7 @@
 #' not drawn.
 #'
 #' The defaults were chosen by a visual review of four public-domain
-#' paintings 640 pixels wide (see `vignette("line-extraction")`).
+#' paintings 640 pixels wide (see the \href{https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html}{Line extraction} article).
 #' `sigma`, `sigma_c`, `sigma_m` and `smooth` are in pixels, so images at other
 #' resolutions want them scaled with the image.
 #'

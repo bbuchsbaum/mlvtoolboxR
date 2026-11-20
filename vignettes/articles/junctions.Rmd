@@ -13,7 +13,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
-                      fig.retina = 2, fig.width = 7, fig.height = 3.5,
+                      fig.retina = 1.5, fig.width = 7, fig.height = 3.5,
                       fig.align = "center")
 library(mlvtoolbox)
 ```
@@ -794,10 +794,10 @@ contour_statistics(sheet, properties = "junction_angle", bins = 5)[, c("lower", 
 
 ## Where to go next
 
-- `vignette("mlv-compatibility", package = "mlvtoolbox")`: the
+- [MLV compatibility](mlv-compatibility.html): the
   published-compatible settings for every stage and what each default
   changes.
-- `vignette("getting-started", package = "mlvtoolbox")`: segment
+- [Getting started](getting-started.html): segment
   measurements, histograms and feature specifications.
-- `vignette("medial-axis", package = "mlvtoolbox")`: medial-axis symmetry
+- [Medial axis](medial-axis.html): medial-axis symmetry
   scores.

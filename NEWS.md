@@ -1,5 +1,13 @@
 # mlvtoolbox 0.3.0
 
+## Documentation
+
+* `vignette("getting-started")` is the one installed vignette. The guides to
+  junctions, the medial axis, MLV compatibility, workflows, line extraction and
+  stimulus design are articles on the package website
+  (https://bbuchsbaum.github.io/mlvtoolboxR/articles/), which keeps the
+  installed documentation small (about 1.2 MB, down from 12.6 MB).
+
 ## Qualified against stored MATLAB outputs
 
 * The package was compared with outputs the original lab computed in MATLAB
