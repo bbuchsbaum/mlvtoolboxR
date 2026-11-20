@@ -33,7 +33,7 @@ compute_contour_properties <- function(x,
 .empty_junctions <- function() {
   z <- data.frame(junction_id=integer(),x=double(),y=double(),type=character(),
                   min_angle=double(),max_angle=double())
-  z$angles <- I(list()); z$members <- I(list()); z
+  z$angles <- I(list()); z$arms <- I(list()); z$members <- I(list()); z
 }
 #' Detect and classify intersections between distinct contours
 #'
@@ -81,7 +81,31 @@ compute_contour_properties <- function(x,
 #'   exhaustive pair order; `method` is ignored and `gap_metric` may only be
 #'   `"chebyshev"`. Its members list the adjacent segments MLV adds. Use it
 #'   only to reproduce published MLV values.
-#' @return A data frame with positions, types, angles and incident segment lists.
+#' @return A data frame with one row per junction: `junction_id`, position
+#'   `x`, `y`, `type`, `min_angle` and `max_angle` (degrees), and three list
+#'   columns:
+#'   \describe{
+#'   \item{`arms`}{The orientation of each arm, in degrees from 0 to 360,
+#'     counterclockwise from the positive x axis in the drawing convention
+#'     (image y pointing down, so 90 points up the screen), sorted
+#'     increasing. Two arms can share an orientation.}
+#'   \item{`angles`}{The gaps between consecutive arms. With `n` arms,
+#'     `angles[k] = arms[k + 1] - arms[k]` for `k < n`, and the last gap wraps
+#'     around: `angles[n] = arms[1] + 360 - arms[n]`. Under the default rule
+#'     the gaps sum to 360.}
+#'   \item{`members`}{The incident contour and segment indices.}
+#'   }
+#'
+#'   Under `rule = "mlv2023"`, `arms` are the directions MLV itself assigns,
+#'   not directions in the drawing convention. A segment that starts or ends
+#'   within `endpoint_radius` of the junction position contributes its
+#'   orientation pointing away from that end, and its neighbouring segment in
+#'   the contour contributes one more arm (MLV-M024). A segment that passes
+#'   the junction contributes, for each of its two ends, the direction from
+#'   that end towards the junction position computed with y pointing up
+#'   (MLV-M007). On diagonal segments these arms are therefore
+#'   mirrored, and they can coincide with other arms. `angles` are computed
+#'   from these arms exactly as above, modulo 360.
 #' @export
 detect_junctions <- function(x,absolute_epsilon=1,relative_epsilon=0.3,
                             merge_radius=2,endpoint_radius=2,
@@ -161,7 +185,7 @@ detect_junctions <- function(x,absolute_epsilon=1,relative_epsilon=0.3,
     z <- data.frame(junction_id=length(result)+1L,x=p[1],y=p[2],type=type,
                     min_angle=min(angles),max_angle=mx)
     members$contour_id <- x$ids[members$contour_index]
-    z$angles <- I(list(angles)); z$members <- I(list(members))
+    z$angles <- I(list(angles)); z$arms <- I(list(ori)); z$members <- I(list(members))
     result[[length(result)+1L]] <- z
   }
   if(!length(result)) .empty_junctions() else do.call(rbind,result)

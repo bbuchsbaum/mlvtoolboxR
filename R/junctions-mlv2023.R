@@ -118,7 +118,7 @@
     type <- if (k == 3L) { if (mx < 160) "Y" else if (mx <= 200) "T" else "Arrow" } else if (k == 4L) "X" else "Star"
     z <- data.frame(junction_id = length(result) + 1L, x = unname(p[1]), y = unname(p[2]), type = type,
                     min_angle = min(angles), max_angle = mx)
-    z$angles <- I(list(angles))
+    z$angles <- I(list(angles)); z$arms <- I(list(o))
     z$members <- I(list(data.frame(contour_index = cc, segment_index = ss, contour_id = x$ids[cc])))
     result[[length(result) + 1L]] <- z
   }

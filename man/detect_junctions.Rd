@@ -48,7 +48,31 @@ exhaustive pair order; `method` is ignored and `gap_metric` may only be
 only to reproduce published MLV values.}
 }
 \value{
-A data frame with positions, types, angles and incident segment lists.
+A data frame with one row per junction: `junction_id`, position
+  `x`, `y`, `type`, `min_angle` and `max_angle` (degrees), and three list
+  columns:
+  \describe{
+  \item{`arms`}{The orientation of each arm, in degrees from 0 to 360,
+    counterclockwise from the positive x axis in the drawing convention
+    (image y pointing down, so 90 points up the screen), sorted
+    increasing. Two arms can share an orientation.}
+  \item{`angles`}{The gaps between consecutive arms. With `n` arms,
+    `angles[k] = arms[k + 1] - arms[k]` for `k < n`, and the last gap wraps
+    around: `angles[n] = arms[1] + 360 - arms[n]`. Under the default rule
+    the gaps sum to 360.}
+  \item{`members`}{The incident contour and segment indices.}
+  }
+
+  Under `rule = "mlv2023"`, `arms` are the directions MLV itself assigns,
+  not directions in the drawing convention. A segment that starts or ends
+  within `endpoint_radius` of the junction position contributes its
+  orientation pointing away from that end, and its neighbouring segment in
+  the contour contributes one more arm (MLV-M024). A segment that passes
+  the junction contributes, for each of its two ends, the direction from
+  that end towards the junction position computed with y pointing up
+  (MLV-M007). On diagonal segments these arms are therefore
+  mirrored, and they can coincide with other arms. `angles` are computed
+  from these arms exactly as above, modulo 360.
 }
 \description{
 Returns T, Y, X, Arrow and Star junctions. Same-contour self crossings and

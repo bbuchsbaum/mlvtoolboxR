@@ -182,45 +182,171 @@ trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
  x
 }
 #' Plot vector contours or properties
+#'
+#' Draws the drawing on its canvas in image coordinates (x rightward, y
+#' downward, equal aspect ratio). The canvas spans the raster extent, 0.5 to
+#' `width + 0.5` and 0.5 to `height + 0.5`, because pixel centres lie at
+#' integers starting at 1; the plot coordinates are those of
+#' [plot.mlv_mat()], so MAT stages and drawings overlay exactly. With a `property`, segments are coloured by
+#' that quantity and, by default, a colour bar naming the quantity and its unit
+#' is drawn to the right of the canvas, inside the plot region, so later
+#' low-level calls (`points()`, `text()`) use the same coordinates.
+#'
+#' Orientation is axial: a segment at 10 degrees and one at 190 degrees have
+#' the same colour, and the default palette is a cyclic hue wheel over 0 to
+#' 180 degrees, so 0 and 180 share a colour. Length and curvature use the
+#' sequential Viridis palette over `zlim`. Mapped medial-axis scores are drawn
+#' as filled mapped pixels on a 0 to 1 Viridis scale over grey contours. With
+#' `property = "junctions"`, or `arms = TRUE`, junction positions are marked;
+#' `arms = TRUE` also draws each arm as an arrow leaving the junction along its
+#' orientation (the `arms` column of [detect_junctions()]). Junctions come from
+#' the drawing's stored `junctions` (for example from
+#' [compute_contour_properties()] with `rule = "mlv2023"`), its feature
+#' specification, or default [detect_junctions()].
 #' @param x A drawing.
-#' @param property Optional segment property or mapped MAT property.
-#' @param col Default contour color.
+#' @param property Optional segment property (`"orientation"`, `"length"`,
+#'   `"curvature"`), `"junctions"`, or a mapped MAT property.
+#' @param col Contour colour when no segment property is shown.
 #' @param lwd Line width.
-#' @param ... Arguments to the initial plot.
+#' @param ... Arguments to the initial plot, such as `main`, `xlim` or
+#'   `axes = FALSE`.
+#' @param legend Draw a colour bar when colour encodes a quantity.
+#' @param palette Optional palette: a function of the number of colours, or a
+#'   character vector of colours. Defaults are described above.
+#' @param zlim Value range mapped onto the palette for length and curvature;
+#'   values outside it take the end colours. Defaults to the finite data range.
+#'   Ignored for orientation (always 0 to 180 degrees) and MAT scores (0 to 1).
+#' @param arms Draw junction arms.
+#' @param arm_length Drawn arm length in pixels; defaults to 8% of the shorter
+#'   canvas side.
+#' @param junction_col Colour of junction markers and arms.
+#' @param frame Outline the canvas in light grey.
 #' @return The drawing invisibly.
 #' @export
-plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...) {
+#' @examples
+#' d <- mlv_drawing(list(rbind(c(5, 10, 35, 10)), rbind(c(20, 10, 20, 35))), 40, 40)
+#' plot(d, property = "orientation")
+#' plot(d, property = "junctions", arms = TRUE, axes = FALSE)
+plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
+                             palette=NULL,zlim=NULL,arms=FALSE,arm_length=NULL,
+                             junction_col="#D55E00",frame=TRUE) {
  .check_drawing(x)
- arguments<-utils::modifyList(list(x=NA_real_,xlim=c(0,x$width),ylim=c(x$height,0),
-                                   asp=1,xlab="",ylab="",type="n"),list(...))
- do.call(graphics::plot,arguments)
+ for(flag in list(legend,arms,frame))
+  if(!is.logical(flag)||length(flag)!=1L||is.na(flag))stop("legend, arms and frame must be TRUE or FALSE",call.=FALSE)
  st<-.measurement_table(x,x$feature_spec)
- colors<-rep(col,nrow(st))
- if(!is.null(property)) {
-  if(property %in% c("length","orientation","curvature")) {
-   value<-st[[property]]
-   if(length(value)) {
-    rr<-range(value,finite=TRUE)
-    scaled<-if(diff(rr)==0)rep(0.5,length(value)) else (value-rr[1])/diff(rr)
-    colors<-grDevices::hcl.colors(256,"Viridis")[1L+pmin(255L,as.integer(255*scaled))]
-   }
-  } else if(property=="junctions") {
-   j<-.measurement_junctions(x,x$feature_spec)
-   graphics::segments(st$x1,st$y1,st$x2,st$y2,col=colors,lwd=lwd)
-   graphics::points(j$x,j$y,pch=21,bg="red")
-   return(invisible(x))
-  } else if(!is.null(x$mat_properties[[property]])) {
-   .checked_mat_measurements(x,x$feature_spec)
-   image<-x$mat_images[[property]];where<-which(is.finite(image));rc<-arrayInd(where,dim(image))
-   graphics::segments(st$x1,st$y1,st$x2,st$y2,col="gray70",lwd=lwd)
-   palette<-grDevices::hcl.colors(256,"Viridis")
-   mapped_colors<-palette[pmax(1L,pmin(256L,1L+as.integer(image[where]*255)))]
-   graphics::points(rc[,2],rc[,1],pch=15,cex=.4,col=mapped_colors)
-   return(invisible(x))
-  } else stop("unknown or unmapped plot property",call.=FALSE)
+ colors<-rep(col,nrow(st));bar<-NULL;mat<-FALSE
+ segment_property<-!is.null(property)&&property %in% c("length","orientation","curvature")
+ if(!is.null(property)&&!segment_property&&property!="junctions") {
+  if(is.null(x$mat_properties[[property]]))stop("unknown or unmapped plot property",call.=FALSE)
+  .checked_mat_measurements(x,x$feature_spec);mat<-TRUE
  }
- graphics::segments(st$x1,st$y1,st$x2,st$y2,col=colors,lwd=lwd)
+ if(segment_property) {
+  value<-st[[property]]
+  if(property=="orientation") {
+   pal<-.plot_palette(palette,.orientation_colours);range<-c(0,180);value<-value%%180
+   colors<-.map_colours(value,range,pal,cyclic=TRUE)
+  } else {
+   pal<-.plot_palette(palette,function(n)grDevices::hcl.colors(n,"Viridis"))
+   range<-if(is.null(zlim)) {if(any(is.finite(value)))range(value,finite=TRUE) else c(0,1)} else zlim
+   if(length(range)!=2L||any(!is.finite(range))||range[2]<range[1])stop("zlim must be an increasing finite range",call.=FALSE)
+   colors<-.map_colours(value,range,pal)
+  }
+  bar<-list(palette=pal,range=range,label=.plot_label(x,property),cyclic=property=="orientation")
+ } else if(mat) {
+  pal<-.plot_palette(palette,function(n)grDevices::hcl.colors(n,"Viridis"))
+  bar<-list(palette=pal,range=c(0,1),label=paste0(property,"\n(0",.range_dash(),"1)"),cyclic=FALSE)
+ }
+ if(!legend)bar<-NULL
+ # The canvas is the raster extent: pixel centres at 1..width and 1..height,
+ # so edges at 0.5 and width + 0.5, exactly as in plot.mlv_mat(), and a
+ # colour bar takes the same room, so drawings and MAT stages overlay.
+ side<-max(x$width,x$height)
+ defaults<-list(x=NA_real_,xlim=c(.5,x$width+.5+if(is.null(bar))0 else .3*side),
+                ylim=c(x$height+.5,.5),asp=1,xaxs="i",yaxs="i",xlab="",ylab="",type="n")
+ arguments<-utils::modifyList(defaults,list(...))
+ axes<-if(is.null(arguments$axes))TRUE else isTRUE(arguments$axes)
+ arguments$axes<-FALSE;arguments$frame.plot<-FALSE
+ do.call(graphics::plot,arguments)
+ if(axes) {
+  # Axes sit on the canvas edges, not the plot-region edges that asp = 1 moves.
+  style<-list(col="grey55",col.ticks="grey55",col.axis="grey30",cex.axis=.8,tcl=-.3,mgp=c(3,.5,0))
+  do.call(graphics::axis,c(list(1,at=.canvas_ticks(x$width),pos=x$height+.5),style))
+  do.call(graphics::axis,c(list(2,at=.canvas_ticks(x$height),pos=.5,las=1),style))
+ }
+ if(frame)graphics::rect(.5,x$height+.5,x$width+.5,.5,border="grey75",lwd=.75)
+ if(mat) {
+  image<-x$mat_images[[property]];where<-which(is.finite(image))
+  graphics::segments(st$x1,st$y1,st$x2,st$y2,col="gray70",lwd=lwd)
+  # Each mapped pixel is a filled unit square on the raster extent
+  # (0.5..width + 0.5), so mapped contours read as continuous strokes.
+  fill<-matrix("transparent",nrow(image),ncol(image))
+  fill[where]<-.map_colours(image[where],c(0,1),pal)
+  graphics::rasterImage(grDevices::as.raster(fill),.5,nrow(image)+.5,ncol(image)+.5,.5,
+                        interpolate=FALSE)
+ } else graphics::segments(st$x1,st$y1,st$x2,st$y2,col=colors,lwd=lwd)
+ if(!is.null(bar)).colour_bar(x,bar)
+ if(identical(property,"junctions")||arms) {
+  j<-.measurement_junctions(x,x$feature_spec)
+  if(arms&&nrow(j)) {
+   if(is.null(j$arms))stop("junctions lack arm directions; recompute them",call.=FALSE)
+   if(is.null(arm_length))arm_length<-.08*min(x$width,x$height)
+   if(length(arm_length)!=1L||!is.finite(arm_length)||arm_length<=0)stop("arm_length must be positive",call.=FALSE)
+   k<-rep.int(seq_len(nrow(j)),lengths(j$arms));a<-unlist(j$arms,use.names=FALSE)*pi/180
+   graphics::arrows(j$x[k],j$y[k],j$x[k]+arm_length*cos(a),j$y[k]-arm_length*sin(a),
+                    length=.06,angle=25,col=junction_col,lwd=1.5*lwd)
+  }
+  graphics::points(j$x,j$y,pch=21,bg=junction_col,col="white",cex=1.1)
+ }
  invisible(x)
+}
+# Cyclic hue wheel at constant chroma and luminance: hue 0 and 360 coincide,
+# so axial orientations 0 and 180 degrees receive the same colour.
+.orientation_colours <- function(n) grDevices::hcl(h=(15+360*(seq_len(n)-1)/n)%%360,c=70,l=55)
+.plot_palette <- function(palette,default) {
+ if(is.null(palette))return(default)
+ if(is.function(palette))return(palette)
+ if(is.character(palette)&&length(palette)>=2L)return(grDevices::colorRampPalette(palette))
+ stop("palette must be a function or at least two colours",call.=FALSE)
+}
+# Map values onto n palette colours. Cyclic ranges wrap, so both ends of the
+# range share the first colour; otherwise values are clamped to the range.
+.map_colours <- function(value,range,palette,n=256L,cyclic=FALSE) {
+ cols<-palette(n);out<-rep(NA_character_,length(value));ok<-is.finite(value)
+ span<-diff(range)
+ t<-if(span>0)(value[ok]-range[1])/span else rep(.5,sum(ok))
+ index<-if(cyclic)as.integer(floor((t%%1)*n))%%n+1L else 1L+pmin(n-1L,pmax(0L,as.integer(floor(t*n))))
+ out[ok]<-cols[index];out
+}
+.plot_label <- function(x,property) {
+ unit<-if(!is.null(x$feature_spec)&&identical(x$feature_spec$settings$units,"visual_degrees"))"deg visual angle" else "px"
+ switch(property,orientation="orientation\n(deg, mod 180)",length=paste0("length\n(",unit,")"),
+        curvature=paste0("curvature\n(deg/",if(unit=="px")"px" else "deg visual angle",")"))
+}
+# An en dash for value ranges, except on the pdf() and postscript() devices,
+# whose default single-byte encodings lack it and would warn and substitute.
+.range_dash <- function() {
+ if(names(grDevices::dev.cur())%in%c("pdf","postscript"))"-" else "\u2013"
+}
+.canvas_ticks <- function(n) {z<-pretty(c(1,n));unique(c(1,z[z>=1&z<=n]))}
+.colour_bar <- function(x,bar,n=64L) {
+ side<-max(x$width,x$height);x0<-x$width+.5+.05*side;x1<-x0+.035*side
+ top<-.5+.3*x$height;bottom<-x$height+.5
+ cols<-bar$palette(n)
+ if(bar$cyclic)cols<-.map_colours((seq_len(n)-.5)/n*diff(bar$range)+bar$range[1],bar$range,bar$palette,cyclic=TRUE)
+ # One raster, highest value in the first (top) row: adjacent rectangles
+ # leave antialiasing seams on bitmap devices.
+ graphics::rasterImage(grDevices::as.raster(matrix(rev(cols),ncol=1L)),x0,bottom,x1,top,
+                       interpolate=FALSE,xpd=NA)
+ graphics::rect(x0,top,x1,bottom,border="grey40",lwd=.5,xpd=NA)
+ ticks<-if(bar$cyclic)seq(bar$range[1],bar$range[2],length.out=5L) else {
+  z<-pretty(bar$range,4L);z[z>=bar$range[1]-1e-12&z<=bar$range[2]+1e-12]}
+ if(diff(bar$range)>0) {
+  y<-bottom-(ticks-bar$range[1])/diff(bar$range)*(bottom-top)
+  graphics::segments(x1,y,x1+.012*side,y,col="grey40",lwd=.5,xpd=NA)
+  graphics::text(x1+.02*side,y,format(ticks,trim=TRUE),adj=c(0,.5),cex=.7,xpd=NA)
+ } else graphics::text(x1+.02*side,(top+bottom)/2,format(bar$range[1]),adj=c(0,.5),cex=.7,xpd=NA)
+ graphics::text(x0,top-.04*side,bar$label,adj=c(0,0),cex=.72,xpd=NA)
+ invisible(NULL)
 }
 #' Feature density on a pixel grid
 #' @param x A drawing.
