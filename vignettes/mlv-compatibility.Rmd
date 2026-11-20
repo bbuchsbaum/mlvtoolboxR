@@ -1,6 +1,10 @@
 ---
 title: "Reproducing published MLV values"
-output: rmarkdown::html_vignette
+output:
+  albersdown::albers_vignette:
+    family: red
+    preset: interaction
+    plot_theme: false
 vignette: >
   %\VignetteIndexEntry{Reproducing published MLV values}
   %\VignetteEngine{knitr::rmarkdown}
@@ -33,9 +37,14 @@ a mode and describing it in a methods section.
 ## The two modes
 
 The *corrected defaults* need no arguments. The *published-compatible mode*
-sets five options, on two functions:
+sets six options: the contour curvature estimator, the junction rule and four
+medial-axis settings.
 
 ```{r recipe, eval = FALSE}
+# Contour curvature: also as.data.frame(), compute_contour_properties(),
+# feature_table() and average_property()
+contour_statistics(drawing, estimator = "mlv2023")
+
 # Junctions
 detect_junctions(drawing, rule = "mlv2023")      # implies gap_metric = "chebyshev"
 
@@ -47,9 +56,10 @@ compute_mat(drawing, aof = "mlv2023", morphology = "hmt8", branch_rule = "mlv202
 `analyse_mat()` passes the medial-axis options through to `compute_mat()`,
 and `compute_mat_properties()` and `map_mat_properties()` follow the
 `branch_rule` recorded in the `mlv_mat`. The threshold angle is explained
-below. Contour orientation, length and curvature need no option: the
-published contour estimator (`estimator = "mlv2023"` in `feature_spec()`) is
-the default in both modes.
+below. Contour orientation and length need no option; they are the same in
+both modes. Curvature does: the corrected default counts each vertex turn
+once (`estimator = "turning"`), and `estimator = "mlv2023"` reproduces the
+published values.
 
 A feature specification declares the same choices once, so that every
 function that measures a drawing uses them:
@@ -59,7 +69,7 @@ angle_03 <- asin(0.3 * pi / 2) * 180 / pi   # 28.11°, flux threshold 0.3
 props <- c("orientation", "length", "curvature", "junction_type",
            "parallelism", "separation", "mirror")
 corrected <- feature_spec(props, bins = 4)
-published <- feature_spec(props, bins = 4,
+published <- feature_spec(props, bins = 4, estimator = "mlv2023",
   junction = list(rule = "mlv2023"),
   mat = list(aof = "mlv2023", morphology = "hmt8", branch_rule = "mlv2023",
              threshold_angle = angle_03))
@@ -68,9 +78,9 @@ knitr::kable(data.frame(corrected = corrected$definitions,
 ```
 
 Every specification records a versioned *definition* for each method. The
-table shows that the two modes differ in five of them (AOF, morphology, branch
-rule, junction rule and branch tracing) and share the contour, branch-score and
-histogram definitions.
+table shows that the two modes differ in six of them (contour curvature, AOF,
+morphology, branch rule, junction rule and branch tracing) and share the
+branch-score and histogram definitions.
 
 ### Why the recipe sets the threshold angle
 
@@ -107,6 +117,7 @@ datasets for each.
 
 | Stage | MLV behaviour, reproduced by `mlv2023` | Corrected default | ID |
 |---|---|---|---|
+| Contour curvature | Each segment receives the whole turn to the next segment divided by its own length; the last segment repeats the previous turn, so one vertex per contour is counted twice (on a closed contour the closing vertex is not counted), and values depend on how the curve is sampled | Each vertex turn spread once over its dual cell, from the midpoint of the segment before it to the midpoint of the segment after it (`estimator = "turning"`) | M032 |
 | Junction merging and angles | Merging depends on the order of the intersections; interior arms use a different y convention from endpoint arms; intersections at negative coordinates are discarded | Transitive merging; one angle convention; any coordinates | M006–M008 |
 | Junction gap | A 1 px gap allowance measured along the larger coordinate change, so up to 1.41 px on a diagonal | Euclidean gap (`gap_metric = "euclidean"`), the same in every direction | M018 |
 | Junction position | Intersections within 1e-4 of a segment end snap to the endpoint | Exact intersection | M019 |
@@ -146,15 +157,31 @@ drawing <- mlv_drawing(list(
   seg(10, 32, 30, 32)), width = 80, height = 50)
 ```
 
-### Contour geometry is identical
+### Orientation and length are identical; curvature is counted once
 
-Orientation, length and curvature do not depend on the mode:
+Orientation and length do not depend on the mode:
 
 ```{r geometry}
 table_corrected <- feature_table(analyse_mat(drawing, spec = corrected)$drawing)
 table_published <- feature_table(analyse_mat(drawing, spec = published)$drawing)
-geometry <- grep("^(orientation|length|curvature)_", names(table_corrected), value = TRUE)
+geometry <- grep("^(orientation|length)_", names(table_corrected), value = TRUE)
 identical(table_corrected[geometry], table_published[geometry])
+```
+
+The contours of this drawing are straight, so their curvature is zero in both
+modes. On a contour that turns, the published estimator counts the turn at the
+last vertex twice. An open contour that turns by 90 degrees at each of its two
+corners turns by 180 degrees in all:
+
+```{r curvature-modes}
+hook <- mlv_drawing(list(rbind(c(10, 40, 30, 40), c(30, 40, 30, 20), c(30, 20, 50, 20))),
+                    width = 60, height = 50)
+integrated <- function(spec) with(as.data.frame(hook, spec = spec), sum(curvature * length))
+c(corrected = integrated(corrected), published = integrated(published))
+```
+
+```{r curvature-modes-check, include = FALSE}
+stopifnot(isTRUE(all.equal(unname(c(integrated(corrected), integrated(published))), c(180, 270))))
 ```
 
 ### Junctions
@@ -291,10 +318,10 @@ stored outputs correspond to that source revision.
 
 | Stage | Published-compatible mode vs stored MATLAB | Corrected defaults vs stored MATLAB |
 |---|---|---|
-| Segment orientation, length, curvature | All 2,284,239 segments within 1e-9 | Same |
+| Segment orientation, length, curvature | All 2,284,239 segments within 1e-9 | Orientation and length the same; curvature differs by design (each turn counted once, M032) |
 | Junctions | 395,125 of 395,134 identical in position, type, members and angles; the other 9 depend on zero-length segments | 356,113 (90.1%) identical; every difference attributed to a named defect or definition |
 | Distance map, flux, skeleton (Forest_DBW) | Distances identical, flux within 2.1e-14, skeleton identical (24,904 px) | Different by design (M027, thinning) |
-| Per-pixel scores (2,757 drawings) | 99.1%, 99.4% and 99.3% of pixels within 1e-4 (parallelism, separation, mirror); per-contour r = 0.9993, 0.9999, 0.9986 | Per-contour r = 0.889, 0.972, 0.836 |
+| Per-pixel scores (2,757 drawings) | 99.1%, 99.4% and 99.3% of pixels within 1e-4 (parallelism, separation, mirror); per-contour r = 0.9993, 0.9999, 0.9986 | Per-contour r = 0.926, 0.982, 0.864 |
 
 The remaining per-pixel differences in published mode come from MLV's
 single-precision arithmetic, which occasionally flips an exact tie between
@@ -310,10 +337,10 @@ Use the **corrected defaults** for new studies. Their junctions and
 medial-axis scores do not depend on contour direction, contour numbering, the
 start vertex of a closed contour or the direction in which a branch was
 traced, and rotating or reflecting the ink raster by a multiple of 90° rotates
-or reflects the flux field in the same way. The corrected defaults keep the
-published contour curvature estimator; for new studies also consider
-`feature_spec(estimator = "arclength", curvature_scale = ...)`, which defines
-curvature at a stated physical scale (see
+or reflects the flux field in the same way. Their curvature counts every
+vertex turn once and does not change when a curve is resampled; when
+curvature should be stated at a physical scale, use
+`feature_spec(estimator = "arclength", curvature_scale = ...)` (see
 `vignette("getting-started", package = "mlvtoolbox")`).
 
 Use the **published-compatible mode** when values must be comparable with
@@ -322,10 +349,11 @@ dataset, comparing against published norms, or rerunning an analysis whose
 features were computed in MATLAB. Do not mix modes within one analysis; save
 the feature specification with the data, and the checks above enforce this.
 
-If a result depends on the mode, report both. Contour geometry is identical
-in the two modes, most junctions are identical, and per-contour medial-axis
-means are highly correlated but not equal, so an effect that appears in only
-one mode deserves a closer look at the drawings that drive it.
+If a result depends on the mode, report both. Contour orientation and length
+are identical in the two modes, curvature differs wherever a contour turns,
+most junctions are identical, and per-contour medial-axis means are highly
+correlated but not equal, so an effect that appears in only one mode deserves
+a closer look at the drawings that drive it.
 
 ### Describing the mode in a methods section
 
@@ -349,8 +377,8 @@ Example sentence for the corrected defaults:
 Example sentence for the published-compatible mode:
 
 > Features were computed with mlvtoolbox `r packageVersion("mlvtoolbox")`
-> (Buchsbaum, 2026) in its published-compatible mode (junction rule `mlv2023`;
-> medial axis with `aof = "mlv2023"`, `morphology = "hmt8"`,
+> (Buchsbaum, 2026) in its published-compatible mode (curvature estimator
+> `mlv2023`; junction rule `mlv2023`; medial axis with `aof = "mlv2023"`, `morphology = "hmt8"`,
 > `branch_rule = "mlv2023"` and an object-angle threshold of 28.11°, that is,
 > a flux threshold of 0.3), which reproduces the values of the MATLAB
 > Mid-Level Vision Toolbox (Walther et al., 2023; source revision f12418a).

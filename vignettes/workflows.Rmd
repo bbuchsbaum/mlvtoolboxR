@@ -1,6 +1,10 @@
 ---
 title: "File input, extraction and feature recipes"
-output: rmarkdown::html_vignette
+output:
+  albersdown::albers_vignette:
+    family: red
+    preset: interaction
+    plot_theme: false
 vignette: >
   %\VignetteIndexEntry{File input, extraction and feature recipes}
   %\VignetteEngine{knitr::rmarkdown}

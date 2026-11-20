@@ -1,6 +1,10 @@
 ---
 title: "Medial axis and symmetry scores"
-output: rmarkdown::html_vignette
+output:
+  albersdown::albers_vignette:
+    family: red
+    preset: interaction
+    plot_theme: false
 vignette: >
   %\VignetteIndexEntry{Medial axis and symmetry scores}
   %\VignetteEngine{knitr::rmarkdown}
@@ -143,11 +147,12 @@ c(above_threshold = sum(mat$AOF > mat$parameters$threshold * mat$parameters$samp
 ## Branches
 
 `trace_skeleton()`, called by `compute_mat()`, splits the skeleton into
-*branches*: maximal paths between end pixels and junction pixels, keeping
-those with at least `min_branch_points` pixels (default 10). Each branch is a
+*branches*: paths between end pixels and junction pixels. Each branch is a
 data frame with one row per skeleton pixel, in path order, holding its
 position and its *radius*, the distance map at that pixel. The radius is the
-radius of the largest disc centred on the axis that touches ink.
+radius of the largest disc centred on the axis that touches ink. A junction
+pixel belongs to every branch that meets there, but appears only once within
+a branch.
 
 ```{r branches}
 n_points <- vapply(mat$branches, nrow, integer(1))
@@ -155,8 +160,32 @@ n_points
 head(mat$branches[[1]])
 ```
 
-```{r stage-branches, tight = TRUE, fig.width = 6, fig.height = 3.4, fig.cap = "Stage 5. The traced branches, one colour per branch and labelled with their index in mat$branches. The short isolated piece of skeleton inside the V has fewer than min_branch_points pixels and was not traced."}
+```{r stage-branches, tight = TRUE, fig.width = 6, fig.height = 3.4, fig.cap = "Stage 5. The traced branches, one colour per branch and labelled with their index in mat$branches. The two-pixel piece of skeleton inside the V is a separate component; a component is never removed, however short, so it is branch 3."}
 plot(mat, "branches", drawing = drawing)
+```
+
+Small irregularities in a contour give the skeleton short side branches. A
+*spur* is a path from an end pixel to a junction, and spurs with fewer than
+`min_branch_points` pixels (default 10, junction included) are removed. The
+shortest spurs go first; after each removal, two paths that meet at a pixel
+where nothing else branches are joined into one branch, so a junction that
+has lost its spur no longer splits the axis. Two rules keep the result
+independent of tracing order and keep small shapes measurable. Spurs of equal
+length are treated alike: if removing all of a junction's shortest spurs would
+leave it with fewer than two paths, all of them are kept. And only spurs are
+removed, so no skeleton component loses its last path. The four equal arms of a
+small square's X-shaped skeleton are therefore all kept, while a spur on a
+long axis is removed.
+
+```{r spur, tight = TRUE, fig.width = 7, fig.height = 2.2, fig.cap = "A short stub on the upper of two lines gives the skeleton two 8-pixel spurs. With min_branch_points = 2 (left) the skeleton is traced as five branches; with the default 10 (right) both spurs are removed and the axis between the lines is a single branch."}
+stub <- mlv_drawing(list(seg(10, 10, 70, 10), seg(10, 30, 70, 30),
+                         seg(40, 10, 40, 15)), width = 80, height = 40)
+op <- par(mfrow = c(1, 2))
+plot(compute_mat(stub, min_branch_points = 2), "branches", drawing = stub,
+     main = "min_branch_points = 2")
+plot(compute_mat(stub), "branches", drawing = stub,
+     main = "min_branch_points = 10")
+par(op)
 ```
 
 ## Branch scores
@@ -176,7 +205,13 @@ between 0 and 1, and all four end in the same two steps: a moving mean over
 three neighbouring points, then a power of 10 (`power`), which spreads the
 values near 1. Under the default `branch_rule = "invariant"`, each score is
 the mean of the scores computed in the two traversal directions, so it does
-not depend on which end the tracer started from.
+not depend on which end the tracer started from. Parallelism, mirror and
+taper score a branch's two end points as zero before that moving mean, so the
+two-pixel branch 3, which has no interior point, scores zero on them. Its
+contour pixels near the V's apex are also reached by branch 2, and mapping
+keeps the larger score (see
+[Mapping scores onto contours](#mapping-scores-onto-contours)), so the zeros
+do not reach the contours.
 
 ```{r stage-scores, fig.width = 7, fig.height = 2.6, fig.cap = "Branch scores at each skeleton pixel. Parallelism (left) is near 1 along the middle of the upper channel and falls where the skeleton bends out of an open end; separation (right) is higher along the upper channel, where the gap is wider."}
 op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 2, 0.5))
@@ -432,8 +467,9 @@ The values are the fraction of ink pixels mapped at radii of 0.5, 1, 2, 4 and
 A mapped score can be missing (NA) or a valid zero, and the two mean different
 things. NA means that no branch explains the pixel. A single straight line has
 no partner contour, so its flux never exceeds the threshold and every pixel is
-NA. A 20-pixel square has a skeleton, but its four diagonal arms are shorter
-than `min_branch_points`, so nothing is traced unless the minimum is lowered.
+NA. A 20-pixel square is fully covered: its skeleton is an X whose four tied
+arms are all shorter than `min_branch_points`, and since removing them would
+delete the skeleton, all four are kept.
 
 A zero is a measurement. Two lines on rows 20 and 23 are three pixels apart,
 so their geometric medial radius is 1.5 pixels. The skeleton must lie on a
@@ -453,7 +489,6 @@ close_pair <- mlv_drawing(list(poly(c(10, 50), c(20, 20)),
                                poly(c(10, 50), c(23, 23))), 60, 40)
 rbind(single = coverage(single),
       square = coverage(square),
-      square_min2 = coverage(square, min_branch_points = 2),
       close_pair = coverage(close_pair))
 ```
 
@@ -472,7 +507,7 @@ have no separation values at all.
 | `samples` | 60 | Points on the flux circle; with `aof = "centered"` it must be a multiple of 4. |
 | `epsilon` | 1 px | Radius of the flux circle. |
 | `min_component` | 2.5% of the larger image side | Smallest skeleton component kept, in pixels. |
-| `min_branch_points` | 10 | Shortest traced branch, in pixels. |
+| `min_branch_points` | 10 | Shortest spur kept, in pixels; a component's last path is never removed. |
 | `window`, `power` | 5, 10 | Half-window (points) and exponent of the branch scores (`compute_mat_properties()`). |
 | `radius` | 4 px | Maximum distance from a tangent point to a mapped ink pixel (`map_mat_properties()`). |
 

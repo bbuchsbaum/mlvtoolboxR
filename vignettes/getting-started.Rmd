@@ -1,6 +1,10 @@
 ---
 title: "From a line drawing to contour features"
-output: rmarkdown::html_vignette
+output:
+  albersdown::albers_vignette:
+    family: red
+    preset: interaction
+    plot_theme: false
 vignette: >
   %\VignetteIndexEntry{From a line drawing to contour features}
   %\VignetteEngine{knitr::rmarkdown}
@@ -89,10 +93,14 @@ crossings count as junctions and which histogram a contour's length enters.
   the right has orientation 45. Orientation is directed (0 to 360); histograms
   treat it as axial, modulo 180, because a line has no direction.
 - **Length** is the Euclidean length in pixels.
-- **Curvature** is in degrees per pixel. Under the published MLV estimator,
-  which is the default, a segment's curvature is the turning angle to the next
-  segment divided by the segment's own length; the last segment of an open
-  contour uses the turn from its previous segment.
+- **Curvature** is in degrees per pixel. A polygon turns only at its
+  vertices, so curvature is defined by where each vertex's turning angle is
+  placed. The default *vertex turning* estimator spreads each turn evenly over
+  the vertex's *dual cell*, which runs from the midpoint of the segment before
+  the vertex to the midpoint of the segment after it, so every turn is counted
+  once. A segment's curvature is its mean curvature: the turning that falls
+  on the segment divided by its length. The two end halves of an open contour
+  belong to no vertex and carry no turning.
 
 ```{r segments}
 segments <- as.data.frame(drawing)
@@ -103,8 +111,12 @@ segments[segments$contour_id %in% c("horizon", "roof"),
 ```{r roof-check, include = FALSE}
 roof <- segments[segments$contour_id == "roof", ]
 stopifnot(isTRUE(all.equal(roof$orientation, c(45, 315))),
-          isTRUE(all.equal(roof$length, rep(sqrt(800), 2))))
+          isTRUE(all.equal(roof$length, rep(sqrt(800), 2))),
+          isTRUE(all.equal(roof$curvature, rep(45 / sqrt(800), 2))))
 sun <- segments[segments$contour_id == "sun", ]
+stopifnot(isTRUE(all.equal(sun$curvature, rep(11.25 / sun$length[1], nrow(sun)))))
+roof_profile <- curvature_profile(subset_contours(drawing, "roof"), "turning")
+stopifnot(isTRUE(all.equal(roof_profile$curvature, c(0, 90, 90, 0) / sqrt(800))))
 circle_curvature <- 180 / (pi * 10)
 ```
 
@@ -112,20 +124,50 @@ These values can be checked by hand. The left slope of the roof runs from
 (15, 60) to (35, 40): 20 pixels right and 20 pixels up the screen, so its
 orientation is 45 degrees and its length is √800 =
 `r round(roof$length[1], 2)` pixels. The right slope runs down and to the
-right, orientation 315. At the apex the direction changes by 90 degrees, so
-both slopes receive a curvature of 90 / `r round(roof$length[1], 2)` =
-`r round(roof$curvature[1], 2)` degrees per pixel. The sun's 32 vertices each
-turn by 360 / 32 = 11.25 degrees over segments
-`r round(sun$length[1], 3)` pixels long, a curvature of
-`r round(sun$curvature[1], 2)` degrees per pixel; a true circle of radius 10
-has curvature 180 / (10π) = `r round(circle_curvature, 2)` degrees per pixel.
+right, orientation 315. At the apex the direction changes by 90 degrees. The
+apex's dual cell is the inner half of each slope, √800 pixels in all, so
+each slope receives 45 degrees of turning and a mean curvature of
+45 / `r round(roof$length[1], 2)` = `r round(roof$curvature[1], 2)` degrees
+per pixel. The roof's length-weighted total curvature is
+`r round(sum(roof$curvature * roof$length), 1)` degrees, the single turn at
+the apex. The sun's 32 vertices each turn by 360 / 32 = 11.25 degrees; each
+side, `r round(sun$length[1], 3)` pixels long, receives half of the turn at
+each of its ends, a curvature of `r round(sun$curvature[1], 2)` degrees per
+pixel. A true circle of radius 10 has curvature 180 / (10π) =
+`r round(circle_curvature, 2)` degrees per pixel.
 
-The roof also shows a property of the published estimator that matters when
-curvature is summed. The single 90 degree turn at the apex is assigned to
-both slopes, so the roof's length-weighted total curvature is
-`r round(sum(roof$curvature * roof$length), 1)` degrees, twice the actual
-turn. The section on feature specifications below shows estimators that count
-each turn once.
+Within a segment the curvature is not uniform: the density is
+`r round(roof_profile$curvature[2], 2)` degrees per pixel on the roof's two
+inner halves and zero on its outer halves. `curvature_profile()` returns
+this piecewise density, one row per piece, and the curvature histograms
+below integrate it exactly.
+
+The published MLV estimator, `estimator = "mlv2023"`, is available for
+comparison with published values. It returns one row per segment and gives
+each segment the whole turn to the next segment divided by its own length;
+the last segment of an open contour, which has no next segment, repeats the
+turn from the one before it.
+
+```{r segments-mlv2023}
+published <- as.data.frame(drawing, estimator = "mlv2023")
+published_roof <- published[published$contour_id == "roof", ]
+published_roof[, c("segment_index", "length", "orientation", "curvature")]
+```
+
+```{r published-check, include = FALSE}
+stopifnot(isTRUE(all.equal(published_roof$curvature, rep(90 / sqrt(800), 2))),
+          isTRUE(all.equal(sum(published_roof$curvature * published_roof$length), 180)))
+```
+
+Both slopes now receive `r round(published_roof$curvature[1], 2)` degrees
+per pixel, the whole 90 degree turn each, so the roof's total curvature is
+`r round(sum(published_roof$curvature * published_roof$length), 1)` degrees,
+twice the actual turn. Because a vertex's turn is divided by the length of
+one neighbouring segment only, the published values also depend on how a
+curve is sampled: a circle whose vertices alternate between short and long
+spacings receives two different curvatures, where the turning estimator
+gives one. The section on feature specifications below compares the
+estimators.
 
 `plot()` colours segments by a measurement and adds a colour bar that names
 the quantity and its unit. Orientation uses a cyclic palette over 0 to 180
@@ -133,7 +175,7 @@ degrees, so the roof's two slopes (45 and 135 degrees, axially) sit on opposite
 sides of the colour wheel and a horizontal segment has the same colour
 whichever way it was drawn. Length and curvature use a sequential palette.
 
-```{r fig-properties, fig.height = 2.6, fig.cap = "Orientation (left, cyclic palette) and curvature (right) for each segment. The straight horizon has zero curvature; the wave is most curved at its peaks and troughs."}
+```{r fig-properties, fig.height = 2.6, fig.cap = "Orientation (left, cyclic palette) and curvature (right). Segments are coloured by their mean curvature. The straight horizon has zero curvature; the roof's two slopes share the apex turn equally; the wave is most curved at its peaks and troughs."}
 op <- par(mfrow = c(1, 2), mar = c(0.5, 0.5, 1.5, 3), cex.main = 1, font.main = 1)
 plot(drawing, property = "orientation", lwd = 2.5, axes = FALSE,
      main = "Orientation")
@@ -206,8 +248,9 @@ were chosen so that the histograms describe ink, not vertex counts:
   orientation, so a contour sampled with more vertices does not count more;
 - the length histogram adds each whole contour's length to the bin of that
   length;
-- the curvature histogram adds segment length to the bin of the segment's
-  curvature.
+- the curvature histogram adds length to the bin of the curvature density
+  along it, so the roof's inner halves enter one bin and its outer halves the
+  zero bin.
 
 Length and curvature bins are equally spaced in log10(1 + x) between the ends
 of `length_range` (by default 2 pixels and the canvas width plus height) and
@@ -300,7 +343,7 @@ rbind(small_canvas = default_small[1, -1], large_canvas = default_large[1, -1])
 
 ```{r spec}
 spec <- feature_spec(c("orientation", "length", "curvature"),
-                     length_range = c(2, 400), estimator = "turning")
+                     length_range = c(2, 400))
 identical(feature_table(drawing, spec = spec)[, -1],
           feature_table(larger, spec = spec)[, -1])
 spec$settings[c("estimator", "bins", "length_range", "normalize")]
@@ -317,24 +360,22 @@ estimator, the junction rule and the medial-axis stages, which is why a table
 built under one specification cannot silently be mixed with one built under
 another.
 
-The `estimator` setting selects the curvature definition. `"mlv2023"` is the
-published estimator described above and remains the default.
-`"turning"` assigns each vertex turn once, split evenly over the half-segments
-on either side of the vertex. `"arclength"` spreads each turn over a tent of
-half-width `curvature_scale` pixels along the contour, so curvature is
-expressed at a stated spatial scale and each turn is still counted once. Its
-values stop depending on vertex density once segments are shorter than that
-scale; a coarsely sampled contour still concentrates its turns at its few
-vertices. Both new estimators wrap around closed contours.
+The `estimator` setting selects the curvature definition. `"turning"`, the
+default, is the vertex turning estimator described above: each vertex turn
+is counted once, spread evenly over the vertex's dual cell, and it has no
+tuning parameter. `"arclength"` spreads each turn over
+a tent of half-width `curvature_scale` pixels along the contour, so curvature
+is expressed at a stated spatial scale and each turn is still counted once.
+Its values stop depending on vertex density once segments are shorter than
+that scale; a coarsely sampled contour still concentrates its turns at its
+few vertices. Both wrap around closed contours. `"mlv2023"` is the published
+estimator.
 
 ```{r estimators}
 roof_only <- subset_contours(drawing, "roof")
-profiles <- lapply(c("mlv2023", "turning", "arclength"), function(e) {
-  s <- feature_spec(c("length", "curvature"), estimator = e,
-                    curvature_scale = 2)
-  as.data.frame(roof_only, spec = s)
-})
-names(profiles) <- c("mlv2023", "turning", "arclength")
+profiles <- list(mlv2023 = as.data.frame(roof_only, estimator = "mlv2023"),
+                 turning = curvature_profile(roof_only, "turning"),
+                 arclength = curvature_profile(roof_only, "arclength", scale = 2))
 sapply(profiles, function(p) sum(p$curvature * p$length))
 ```
 
@@ -366,19 +407,52 @@ for (e in names(profiles)) {
   polygon(c(z$s, rev(z$s)), c(z$k, rep(0, length(z$k))),
           col = "grey85", border = NA)
   lines(z$s, z$k, lwd = 1.5)
-  abline(v = roof$length[1], lty = 3, col = "grey40")
-  text(roof$length[1], 48, "apex", pos = 4, cex = 0.8, col = "grey30")
+  abline(v = sqrt(800), lty = 3, col = "grey40")
+  text(sqrt(800), 48, "apex", pos = 4, cex = 0.8, col = "grey30")
   text(56, 20, sprintf("area %g deg", totals[[e]]), adj = 1, cex = 0.85)
 }
 par(op)
 ```
 
-For new studies, the arc-length estimator with a curvature scale chosen for
-the stimulus resolution states the spatial scale of every curvature value and
-counts each turn once; choose a scale longer than the typical segment so that
-the values do not depend on how finely contours were sampled. The published
-estimator is the right choice only when results must be comparable with
-published MLV values. The same
+The estimators also differ in how they respond to sampling. A circle of
+radius 10 drawn as a regular polygon has one curvature under every estimator,
+the polygon's turn over its side, which approaches 180 / (10π) degrees per
+pixel as vertices are added. If the vertices instead alternate between a
+short and a long spacing (1 : 2 in angle), the turning estimator still gives
+a single value, while the published estimator divides each vertex's turn by
+the length of the segment before it and splits the circle into two
+curvatures:
+
+```{r resampling}
+circle <- function(n, spacing) {
+  t <- c(0, cumsum(rep(spacing, length.out = n))) / sum(rep(spacing, length.out = n)) * 2 * pi
+  mlv_drawing(list(polyline(60 + 10 * cos(t), 40 - 10 * sin(t))), 120, 80)
+}
+occupied <- function(d, e) {
+  h <- contour_statistics(d, "curvature", estimator = e)
+  paste(sprintf("%.2f-%.2f", h$lower, h$upper)[h$value > 0], collapse = " and ")
+}
+resampled <- expand.grid(vertices = c(16, 32, 64, 128), estimator = c("turning", "mlv2023"),
+                         stringsAsFactors = FALSE)
+resampled$regular <- mapply(function(n, e) occupied(circle(n, 1), e), resampled$vertices, resampled$estimator)
+resampled$alternating <- mapply(function(n, e) occupied(circle(n, c(1, 2)), e), resampled$vertices, resampled$estimator)
+resampled
+```
+
+```{r resampling-check, include = FALSE}
+stopifnot(length(unique(resampled$regular)) == 1L,
+          all(resampled$alternating[resampled$estimator == "turning"] == resampled$regular[1]),
+          all(grepl(" and ", resampled$alternating[resampled$estimator == "mlv2023"])))
+```
+
+The table gives the range, in degrees per pixel, of each curvature bin that
+receives length (8 bins from 0 to 90 degrees per pixel). For new studies use the turning default,
+or the arc-length estimator with a curvature scale chosen for the stimulus
+resolution when curvature should be stated at a spatial scale; choose a scale
+longer than the typical segment so that the values do not depend on how finely
+contours were sampled. The published estimator is the right choice only when
+results must be comparable with published MLV values
+(`vignette("mlv-compatibility", package = "mlvtoolbox")`). The same
 specification can express physical units: `units = "visual_degrees"` with a
 `pixels_per_degree` calibration reports lengths in degrees of visual angle
 (curvature stays in geometric degrees per unit length).

@@ -1,6 +1,10 @@
 ---
 title: "Junctions: how they are found and what they measure"
-output: rmarkdown::html_vignette
+output:
+  albersdown::albers_vignette:
+    family: red
+    preset: interaction
+    plot_theme: false
 vignette: >
   %\VignetteIndexEntry{Junctions: how they are found and what they measure}
   %\VignetteEngine{knitr::rmarkdown}
@@ -526,7 +530,10 @@ average_property(sheet, "junctions")
 ```{r statistics-check, include = FALSE}
 total_length <- sum(as.data.frame(sheet)$length)
 angles5 <- contour_statistics(sheet, properties = "junction_angle", bins = 5)
-stopifnot(identical(angles5$value, c(0, 0, 2, 2, 1)))
+stopifnot(identical(angles5$value, c(0, 0, 2, 2, 1)),
+          identical(angles$value, c(0, 0, 0, 0, 2, 0, 2, 1)))
+gaps <- vapply(found[c("Y", "Arrow", "Star")], function(j) j$min_angle[1], 0)
+stopifnot(all(abs(gaps - c(120, 60, 60)) < 1e-12))
 stopifnot(all(types$value == 1),
           isTRUE(all.equal(average_property(sheet, "junctions"), 5 / total_length * 1e4)))
 ```
@@ -535,15 +542,20 @@ The sheet holds one junction of each type; the L contributes none. The
 density is 5 junctions over `r round(total_length, 1)` pixels of contour,
 `r round(average_property(sheet, "junctions"), 1)` per 10,000 pixels.
 
-The angle histogram needs care with its bin edges. A smallest gap that falls
-exactly on a bin edge enters the upper bin, and with the default 8 bins the
-edges fall every 15 degrees, exactly at 60, 90 and 120 degrees, the smallest
-gaps of the commonest junctions. A gap computed from trigonometry can come out
-a rounding error either side of such an edge, so which of two neighbouring
-bins it enters is not determined by the geometry. Choose a bin count whose
-edges avoid the angles you expect. With 5 bins (edges at 0, 24, 48, 72, 96
-and 120 degrees) the Arrow and Star (60) share one bin, the T and X (90) the
-next, and the Y (120) the last:
+With the default 8 bins the angle histogram's edges fall every 15 degrees,
+exactly at 60, 90 and 120 degrees, the smallest gaps of the commonest
+junctions. A gap that falls on an edge enters the upper bin. A gap computed
+from trigonometry can come out a rounding error either side of the exact
+angle; on the computer that built this page the smallest gaps of the Y, Arrow
+and Star above are `r paste(sprintf("%.17g", gaps), collapse = ", ")`
+degrees. Every histogram therefore treats a
+value within 1e-9 × max(1, |edge|) of a bin edge as lying on the edge, so
+mathematically equal gaps share a bin on every platform: here the Arrow and
+Star (60) share the bin from 60 to 75 degrees, the T and X (90) the bin from
+90 to 105, and the Y (120) the last bin. The tolerance is far above rounding
+residue and far below any difference between real gaps. A bin count whose
+edges avoid the expected angles, such as 5 (edges at 0, 24, 48, 72, 96 and
+120 degrees), keeps the bins away from the edges altogether:
 
 ```{r angle-bins}
 contour_statistics(sheet, properties = "junction_angle", bins = 5)[, c("lower", "upper", "value")]

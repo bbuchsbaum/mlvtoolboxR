@@ -1,6 +1,10 @@
 ---
 title: "Matched conditions across a stimulus set"
-output: rmarkdown::html_vignette
+output:
+  albersdown::albers_vignette:
+    family: red
+    preset: interaction
+    plot_theme: false
 vignette: >
   %\VignetteIndexEntry{Matched conditions across a stimulus set}
   %\VignetteEngine{knitr::rmarkdown}
