@@ -323,44 +323,21 @@ alone fills the bin from 69.3 to 117.8 pixels; the other three contours,
 
 ``` r
 
-ids <- names(contour_cols)
-len_by_contour <- contour_statistics(measured, properties = "length", by = "contour")
-per_contour <- function(tab, bins) t(sapply(ids, function(id)
-  vapply(bins, function(b) sum(tab$value[tab$contour_id == id & tab$bin == b]), 0)))
-ori_stack <- per_contour(by_contour, ori$bin); len_stack <- per_contour(len_by_contour, len$bin)
-stopifnot(isTRUE(all.equal(unname(colSums(ori_stack)), ori$value)),
-          isTRUE(all.equal(unname(colSums(len_stack)), len$value)))
 layout(matrix(c(1, 1, 2, 3), 2, byrow = TRUE), heights = c(lcm(0.9), 1))
 op <- par(mar = c(0, 0, 0, 0), las = 1, cex.axis = 0.8, cex.main = 1, font.main = 1)
 contour_legend()
 par(mar = c(3.6, 4, 1.6, 0.8))
+# Orientation: one stacked bar per bin, a short line under each showing its angle.
 top <- max(pretty(c(0, ori$value)))
 mids <- barplot(ori_stack, col = contour_cols, border = "white", lwd = 0.5, space = 0.15,
                 ylim = c(0, top), axes = FALSE, names.arg = rep("", ncol(ori_stack)),
                 main = "Orientation")
-axis(2, at = pretty(c(0, top)), col = "grey55", col.ticks = "grey55", tcl = -0.3)
-title(ylab = "segment length (px)", line = 2.6, cex.lab = 0.85)
-# A line under each bar shows the bin's orientation.
+value_axis(top, "segment length (px)")
 orientation_glyphs(mids, ori$center)
-# Length bins are equal in log10(1 + x); draw them at their true widths.
-tx <- function(v) log10(1 + v)
-top <- max(pretty(c(0, len$value)))
-plot(NA, xlim = tx(range(length_edges)), ylim = c(0, top), axes = FALSE, xaxs = "i",
-     yaxs = "i", xlab = "", ylab = "", main = "Length")
-abline(v = tx(length_edges), col = "grey90", lwd = 0.8)
-base <- 0
-for (k in seq_along(ids)) {
-  h <- len_stack[k, ]
-  rect(tx(len$lower), base, tx(len$upper), base + h, col = contour_cols[k],
-       border = ifelse(h > 0, "white", NA), lwd = 0.5)
-  base <- base + h
-}
-axis(1, at = tx(c(2, 5, 10, 20, 50, 100, 200)), labels = FALSE, col = "grey55",
-     col.ticks = "grey55", tcl = -0.3)
-axis(1, at = tx(c(2, 10, 50, 200)), labels = c(2, 10, 50, 200), lwd = 0, mgp = c(3, 0.5, 0))
-axis(2, at = pretty(c(0, top)), col = "grey55", col.ticks = "grey55", tcl = -0.3)
-title(ylab = "summed contour length (px)", line = 2.6, cex.lab = 0.85)
-mtext("length (px)", side = 1, line = 2, cex = 0.7, col = "grey30")
+# Length: bins equal in log10(1 + x), drawn at their true widths.
+top <- log_stacked_bars(len_stack, len$lower, len$upper, length_edges,
+                        main = "Length", xlab = "length (px)")
+value_axis(top, "summed contour length (px)")
 ```
 
 ![Histograms for the whole drawing, each bar split by contour. Left:
