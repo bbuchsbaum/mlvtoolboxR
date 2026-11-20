@@ -1,5 +1,12 @@
 # mlvtoolbox
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/bbuchsbaum/mlvtoolboxR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bbuchsbaum/mlvtoolboxR/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/bbuchsbaum/mlvtoolboxR/actions/workflows/pkgdown.yaml/badge.svg)](https://bbuchsbaum.github.io/mlvtoolboxR/)
+<!-- badges: end -->
+
+Documentation and articles: <https://bbuchsbaum.github.io/mlvtoolboxR/>
+
 `mlvtoolbox` is an R package for measuring contour geometry and constructing
 reproducible visual stimuli from line drawings. It is an independently
 maintained R port and extension of the Bernhardt-Walther Lab's

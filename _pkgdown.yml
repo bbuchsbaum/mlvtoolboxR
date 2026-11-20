@@ -1,0 +1,35 @@
+url: https://bbuchsbaum.github.io/mlvtoolboxR/
+
+destination: pkgdown-site
+
+template:
+  package: albersdown
+  bootstrap: 5
+  includes:
+    in_header: |
+      <script>window.albersdownDefaults = { family: "red", preset: "interaction" };</script>
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+
+articles:
+- title: Start here
+  navbar: ~
+  contents:
+  - getting-started
+- title: Measures
+  navbar: Measures
+  contents:
+  - junctions
+  - medial-axis
+- title: Reproducing published values
+  navbar: Compatibility
+  contents:
+  - mlv-compatibility
+- title: Workflows
+  navbar: Workflows
+  contents:
+  - workflows
+  - stimulus-design

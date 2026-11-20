@@ -24,3 +24,6 @@
 ^Rplots\.pdf$
 ^tests/testthat/_problems$
 ^tests/testthat/testthat-problems\.rds$
+^_pkgdown\.yml$
+^pkgdown-site$
+^pkgdown$
