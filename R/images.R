@@ -162,23 +162,50 @@ trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=
 #' @param ... Arguments passed to the provider.
 #' @param min_points Minimum traced path size.
 #' @param spec Optional specification, including explicit provider name/version.
+#' @details A backend may attach an `"extraction"` attribute to its mask,
+#'   `list(method = <version string>, parameters = <list>)`, as
+#'   [extract_lines()] does. Without a specification the drawing then records
+#'   that version as `source$provider_version` and the parameters as
+#'   `source$extraction_parameters`. A specification whose extraction settings
+#'   carry line-extraction parameters (`extraction$lines`, see
+#'   [feature_spec()]) passes them to the backend, which must not also receive
+#'   them through `...`, and the mask's attribute must then match the
+#'   specification's version and parameters exactly. With any specification, a
+#'   backend whose attribute names a version other than the specification's
+#'   `provider_version` is an error.
 #' @return A drawing. Model weights and preprocessing belong to the provider.
 #' @export
 trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
  if(!is.function(backend))stop("backend must be an explicitly supplied extraction function",call.=FALSE)
+ provider<-deparse(substitute(backend))
+ lines<-NULL
  if(!is.null(spec)) {
   validate_feature_spec(spec)
   if(!missing(min_points))stop("use spec or min_points, not both",call.=FALSE)
   if(is.null(spec$settings$extraction$provider))stop("RGB specification requires provider and provider_version",call.=FALSE)
+  lines<-spec$settings$extraction$lines
+  if(!is.null(lines)&&...length())stop("use spec or line extraction arguments, not both",call.=FALSE)
  }
  if(is.character(image))image<-read_mlv_image(image)
  if(length(dim(image))!=3L||dim(image)[3]<3L||any(!is.finite(image)))
   stop("image must be a finite RGB array",call.=FALSE)
- mask<-.check_mask(backend(image,...))
+ raw<-if(is.null(lines))backend(image,...) else do.call(backend,c(list(image),lines))
+ extraction<-attr(raw,"extraction",exact=TRUE)
+ mask<-.check_mask(raw)
  if(!identical(dim(mask),dim(image)[1:2]))stop("backend mask dimensions must match the image",call.=FALSE)
+ if(!is.null(extraction)&&(!is.list(extraction)||!is.character(extraction$method)||
+    length(extraction$method)!=1L||is.na(extraction$method)||!nzchar(extraction$method)))
+  stop("the backend's \"extraction\" attribute must be a list with a single method string",call.=FALSE)
+ if(!is.null(lines)&&(is.null(extraction)||!identical(extraction$method,spec$settings$extraction$provider_version)||
+    !identical(extraction$parameters,lines)))
+  stop("backend output does not match the specification's line extraction definition",call.=FALSE)
+ if(!is.null(spec)&&!is.null(extraction)&&!identical(extraction$method,spec$settings$extraction$provider_version))
+  stop("the backend reports extraction '",extraction$method,"' but the specification names provider_version '",
+       spec$settings$extraction$provider_version,"'",call.=FALSE)
  x<-if(is.null(spec))trace_contours(mask,min_points=min_points) else trace_contours(mask,spec=spec)
- x$source$extraction_provider<-if(is.null(spec))deparse(substitute(backend)) else spec$settings$extraction$provider
- x$source$provider_version<-if(is.null(spec))NULL else spec$settings$extraction$provider_version
+ x$source$extraction_provider<-if(is.null(spec))provider else spec$settings$extraction$provider
+ x$source$provider_version<-if(!is.null(spec))spec$settings$extraction$provider_version else extraction$method
+ if(!is.null(extraction$parameters))x$source$extraction_parameters<-extraction$parameters
  x
 }
 #' Plot vector contours or properties

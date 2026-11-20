@@ -127,6 +127,7 @@ perceptual validity of the measures. See [parity evidence](docs/PARITY.md) and
 - `vignette("medial-axis", package = "mlvtoolbox")`: medial axis and symmetry scores.
 - `vignette("mlv-compatibility", package = "mlvtoolbox")`: reproducing published MLV values.
 - `vignette("workflows", package = "mlvtoolbox")`: file input, extraction and feature recipes.
+- `vignette("line-extraction", package = "mlvtoolbox")`: from an image or painting to a line drawing.
 - `vignette("stimulus-design", package = "mlvtoolbox")`: matched conditions across a stimulus set.
 
 ## Manipulate and import
@@ -165,9 +166,10 @@ drawings with different canvas sizes. A model can instead receive its training
 schema via `expected_spec = feature_schema(features)`. The explicit legacy
 option `check_spec = FALSE` warns that compatibility was not checked.
 
-trace_rgb() requires an explicitly supplied provider returning an ink mask.
-No SAM model/backend is bundled; arbitrary edge detectors are not silently
-substituted for SAM. MATLAB serialized regression models, general SVG paint
+trace_rgb() requires an explicitly supplied provider returning an ink mask;
+xdog_lines() is the built-in classical provider (a flow-based difference of
+Gaussians, `vignette("line-extraction")`). No SAM model/backend is bundled;
+arbitrary edge detectors are not silently substituted for SAM. MATLAB serialized regression models, general SVG paint
 effects and MAT v7.3/HDF5 import are outside the current adapters.
 
 For reproducible measurements, use a fixed specification:

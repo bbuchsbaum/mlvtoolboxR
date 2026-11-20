@@ -70,7 +70,13 @@
 #' @param mapping_radius,raster_line_width Raster mapping distance and ink width
 #'   in pixels; rasterization is explicitly a pixel-grid operation.
 #' @param extraction Named extraction settings: method, threshold, thin,
-#'   min_points, simplify, provider, provider_version. Simplification is in pixels.
+#'   min_points, simplify, provider, provider_version and lines. Simplification
+#'   is in pixels. `lines` is a named list of [extract_lines()] parameters; the
+#'   specification then records the line extractor's definition
+#'   (`definitions["lines"]`, currently `"fdog-xdog-1"`) with every parameter
+#'   filled in, the provider defaults to `"xdog_lines"`, and [trace_rgb()]
+#'   passes the parameters to the backend. A provider version naming another
+#'   definition of this extractor is rejected.
 #' @return A validated `mlv_feature_spec`. It declares methods; constructing it
 #'   does not calculate features or infer extraction provenance for existing data.
 #' @export
@@ -130,7 +136,7 @@ feature_spec <- function(properties=c("orientation","length","curvature","juncti
  mapping_radius<-.spec_number(mapping_radius,"mapping_radius",strict=TRUE)
  raster_line_width<-.spec_number(raster_line_width,"raster_line_width",strict=TRUE)
  extraction<-.spec_options(extraction,list(method="pixel_graph_no_corner_cut",threshold=.5,
-  thin=TRUE,min_points=2L,simplify=NULL,provider=NULL,provider_version=NULL),"extraction")
+  thin=TRUE,min_points=2L,simplify=NULL,provider=NULL,provider_version=NULL,lines=NULL),"extraction")
  extraction$threshold<-.spec_number(extraction$threshold,"threshold",lower=-Inf)
  extraction$min_points<-.spec_number(extraction$min_points,"min_points",lower=2,integer=TRUE,upper=.Machine$integer.max)
  if(!is.null(extraction$simplify))extraction$simplify<-.spec_number(extraction$simplify,"simplify")
@@ -139,6 +145,7 @@ feature_spec <- function(properties=c("orientation","length","curvature","juncti
   v<-extraction[[k]]
   if((k=="method"||!is.null(v))&&(!is.character(v)||length(v)!=1L||is.na(v)||!nzchar(v)))stop("invalid extraction.",k,call.=FALSE)
  }
+ extraction<-.spec_lines(extraction)
  if(xor(is.null(extraction$provider),is.null(extraction$provider_version)))stop("provider and provider_version must be supplied together",call.=FALSE)
  args<-list(properties=properties,bins=bins,normalize=normalize,length_range=as.double(length_range),
   curvature_range=as.double(curvature_range),units=units,pixels_per_degree=pixels_per_degree,
@@ -151,7 +158,32 @@ feature_spec <- function(properties=c("orientation","length","curvature","juncti
   aof=.aof_definition(mat$aof),morphology=.morphology_definition(mat$morphology),
   branch_rule=.branch_rule_definition(mat$branch_rule),
   junction=if(junction$rule=="mlv2023")"mlv2023-port-f12418a" else paste0("exit-neighbourhood-1-",junction$gap_metric),
-  tracing=.tracing_definition(mat$branch_rule)),settings=args),class="mlv_feature_spec")
+  tracing=.tracing_definition(mat$branch_rule),
+  if(!is.null(extraction$lines))c(lines=.line_definition)),settings=args),class="mlv_feature_spec")
+}
+# Line-extraction settings of a specification. Parameters for the built-in
+# extractor are canonicalised; a version string of that extractor other than
+# the current definition is rejected, like stale MAT definitions.
+.spec_lines <- function(extraction) {
+ v<-extraction$provider_version;lines<-extraction$lines
+ named<-!is.null(v)&&grepl("^fdog-xdog-",v)
+ if(named&&!identical(v,.line_definition))
+  stop("unsupported line extraction definition '",v,"'; this version of mlvtoolbox provides '",
+       .line_definition,"'",call.=FALSE)
+ if(!is.null(extraction$provider)&&extraction$provider%in%.line_providers&&!is.null(v)&&!named)
+  stop("provider '",extraction$provider,"' requires provider_version '",.line_definition,"'",call.=FALSE)
+ # Without line settings the field is absent, so specifications built before
+ # it existed remain canonical.
+ if(is.null(lines)&&!named){extraction$lines<-NULL;return(extraction)}
+ if(!is.null(lines)&&!is.null(v)&&!identical(v,.line_definition))
+  stop("extraction.lines requires provider_version '",.line_definition,"', not '",v,"'",call.=FALSE)
+ if(is.null(lines))lines<-list()
+ if(!is.list(lines))stop("extraction.lines must be a named list of line extraction parameters",call.=FALSE)
+ extraction$lines<-.line_parameters(lines)
+ if(is.null(extraction$provider)&&is.null(v)){
+  extraction$provider<-"xdog_lines";extraction$provider_version<-.line_definition
+ }else if(is.null(v))stop("extraction.lines requires provider_version '",.line_definition,"'",call.=FALSE)
+ extraction
 }
 #' Validate a feature specification
 #' @param spec A feature specification.

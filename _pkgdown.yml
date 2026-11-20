@@ -32,4 +32,5 @@ articles:
   navbar: Workflows
   contents:
   - workflows
+  - line-extraction
   - stimulus-design

@@ -1,0 +1,472 @@
+---
+title: "From an image to a line drawing"
+output:
+  albersdown::albers_vignette:
+    family: red
+    preset: interaction
+    plot_theme: false
+vignette: >
+  %\VignetteIndexEntry{From an image to a line drawing}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dev = "png",
+                      fig.retina = 2, fig.width = 7, fig.height = 3.6,
+                      fig.align = "center")
+library(mlvtoolbox)
+has_jpeg <- requireNamespace("jpeg", quietly = TRUE)
+knitr::opts_chunk$set(eval = has_jpeg)
+# Drawing helpers. Every panel is a canvas in image coordinates (x rightward,
+# y downward, pixel centres at integers), so stages line up like the pages of
+# a flip-book.
+canvas <- function(xlim, ylim, main = NULL) {
+  plot.new()
+  plot.window(xlim + c(-0.5, 0.5), rev(ylim) + c(0.5, -0.5), asp = 1,
+              xaxs = "i", yaxs = "i")
+  if (!is.null(main)) title(main = main, cex.main = 1, font.main = 1, line = 0.5)
+}
+paint <- function(colours, xlim, ylim) {
+  rasterImage(as.raster(colours[ylim[1]:ylim[2], xlim[1]:xlim[2], drop = FALSE]),
+              xlim[1] - 0.5, ylim[2] + 0.5, xlim[2] + 0.5, ylim[1] - 0.5,
+              interpolate = FALSE)
+  rect(xlim[1] - 0.5, ylim[2] + 0.5, xlim[2] + 0.5, ylim[1] - 0.5, border = "grey70", lwd = 0.5)
+}
+grey_of <- function(v, faint = 0) {
+  v <- pmin(pmax(v, 0), 1); v <- faint + (1 - faint) * v
+  matrix(grDevices::grey(v), nrow(v), ncol(v))
+}
+# Signed values on a diverging palette, blue below zero and red above,
+# symmetric about zero.
+diverging <- function(v, limit) {
+  pal <- grDevices::hcl.colors(101, "Blue-Red 3")
+  k <- 51 + round(50 * pmin(pmax(v / limit, -1), 1))
+  matrix(pal[k], nrow(v), ncol(v))
+}
+contour_length <- function(d) vapply(d$contours, function(z)
+  sum(sqrt(rowSums((z[, 3:4, drop = FALSE] - z[, 1:2, drop = FALSE])^2))), 0)
+draw_contours <- function(d, lwd = 0.9, col = "black")
+  for (z in d$contours) segments(z[, 1], z[, 2], z[, 3], z[, 4], lwd = lwd, col = col)
+# Number of 8-connected groups of TRUE pixels in a logical matrix.
+count_groups <- function(m) {
+  lab <- matrix(NA_real_, nrow(m), ncol(m)); lab[m] <- which(m)
+  repeat {
+    old <- lab
+    for (dr in -1:1) for (dc in -1:1) {
+      sh <- matrix(NA_real_, nrow(m), ncol(m))
+      rr <- max(1, 1 + dr):min(nrow(m), nrow(m) + dr); cc <- max(1, 1 + dc):min(ncol(m), ncol(m) + dc)
+      sh[rr - dr, cc - dc] <- lab[rr, cc]
+      lab <- pmin(lab, sh, na.rm = TRUE); lab[!m] <- NA
+    }
+    if (identical(lab, old)) break
+  }
+  length(unique(lab[m]))
+}
+```
+
+To measure a photograph or a painting, you first need its line drawing. The
+Mid-Level Vision (MLV) Toolbox traces photographs with learned models
+(structured edges or the Segment Anything model). `mlvtoolbox` bundles no
+model weights; `trace_rgb()` takes the extractor as a `backend` function and
+records it with the drawing. This vignette describes the package's own
+extractor, which needs no weights, `extract_lines()`, and its backend form,
+`xdog_lines()`:
+
+```{r quick, eval = FALSE}
+img <- read_mlv_image("painting.jpg")
+drawing <- trace_rgb(img, backend = xdog_lines)
+```
+
+The extractor aims to follow the image's form (outlines, folds and major
+shading boundaries) rather than individual brush strokes, places each line on
+its edge to within about a pixel, and is deterministic. It is a filter, not a
+model. Each stage is a published image operation, except a small step of this
+package's own that places lines on the edges and draws thin strokes once, and
+all ten parameters are recorded with the result.
+
+```{r no-jpeg, include = !has_jpeg, eval = !has_jpeg, results = "asis"}
+cat("The rest of this vignette reads a JPEG image and needs the suggested",
+    "package 'jpeg', which is not installed.\n")
+knitr::knit_exit()
+```
+
+## The running example
+
+```{r example, include = FALSE}
+painting <- system.file("extdata", "melendez-still-life.jpg", package = "mlvtoolbox")
+img <- read_mlv_image(painting)
+h <- dim(img)[1]; w <- dim(img)[2]
+stages <- line_extraction_stages(img)
+drawing <- trace_rgb(img, backend = xdog_lines)
+stopifnot(identical(trace_contours(stages$mask)$contours, drawing$contours))
+```
+
+The example is Luis Meléndez's *Still Life with Fish, Bread, and Kettle*
+(c. 1772, oil on canvas; The Cleveland Museum of Art, accession 1983.97), a
+public-domain painting released under Creative Commons Zero (CC0) through the
+museum's Open Access programme. The package includes it downsampled to
+`r w` × `r h` pixels (`r round(file.size(painting) / 1024)` KB);
+`inst/extdata/README.md` gives its source and licence. That is the width at
+which the defaults were tuned.
+
+```{r fig-showcase, echo = FALSE, fig.retina = 1.5, fig.height = 2.75, fig.cap = sprintf("The painting (left) and its drawing at the default settings (right): %d contours, %.0f px of line, %d of them shorter than 15 px. The arc of the round copper vessel behind the fish, the fish's head, the loaves, the citrus fruit and the table edge are recognisable; the pewter vessel at right, dark on a dark wall, is broken into pieces, and the wall's streaks and the fish's scales leave many short marks.", length(drawing$contours), sum(contour_length(drawing)), sum(contour_length(drawing) < 15))}
+par(mfrow = c(1, 2), mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(c(1, w), c(1, h), "Painting")
+paint(as.raster(img), c(1, w), c(1, h))
+canvas(c(1, w), c(1, h), "Traced drawing")
+rect(0.5, h + 0.5, w + 0.5, 0.5, border = "grey70", lwd = 0.5)
+draw_contours(drawing, lwd = 1)
+```
+
+```{r read}
+painting <- system.file("extdata", "melendez-still-life.jpg", package = "mlvtoolbox")
+img <- read_mlv_image(painting)
+dim(img)
+drawing <- trace_rgb(img, backend = xdog_lines)
+drawing
+```
+
+## Stage by stage
+
+`line_extraction_stages()` runs the same computation as `extract_lines()` and
+returns every intermediate image. The figures below show them for the fish's
+head, numbered as the steps are taken, on the same canvas, so they can be
+compared like the pages of a flip-book.
+
+```{r crop, include = FALSE}
+cx <- c(200, 386); cy <- c(27, 174)
+win <- function(m) m[cy[1]:cy[2], cx[1]:cx[2]]
+changed <- mean(abs(win(stages$smoothed) - win(stages$lightness)) > 0.02)
+anis <- win(stages$flow$anisotropy)
+# Stages 4a and 4b share one diverging scale, saturating at a third of the
+# largest |DoG| in the image.
+dog_limit <- max(abs(stages$dog)) / 3
+clipped <- mean(abs(win(stages$dog)) > dog_limit)
+patches_dog <- count_groups(win(stages$dog) < 0)
+patches_response <- count_groups(win(stages$response) < 0)
+band_px <- sum(win(stages$band)); mask_px <- sum(win(stages$mask))
+# The painting is dark, so both lightness panels share one stretched grey
+# scale: the window's 1st to 99th percentile of lightness, black to white.
+lim <- unname(quantile(win(stages$lightness), c(0.01, 0.99)))
+stretch <- function(v) (v - lim[1]) / diff(lim)
+```
+
+**Lightness.** The image is converted from sRGB to CIE L\* lightness (white
+is 100), divided by 100. Lightness is close to perceived brightness, so equal
+steps are about equally visible across the range. With `colour = TRUE` the
+next two stages also use the colour axes a\* and b\*; the line decision itself
+always uses lightness.
+
+```{r stage-lightness, echo = FALSE, fig.retina = 1.5, fig.cap = sprintf("Stage 1. Brushwork is finer than form: the head's scales are speckled and the copper vessel behind it is mottled, both finer than the outlines the drawing should keep. CIE lightness of the fish's head, on a grey scale stretched from L* = %.0f (black) to %.0f (white), the window's 1st and 99th percentiles.", 100 * lim[1], 100 * lim[2])}
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(cx, cy, "1  Lightness")
+paint(grey_of(stretch(stages$lightness)), cx, cy)
+```
+
+**Pre-filter.** An anisotropic Kuwahara filter (Kyprianidis, Kang and
+Döllner 2009) replaces each pixel with the mean of the most uniform part of an
+elliptical neighbourhood, aligned with the local edge and split into eight
+overlapping sectors. Within a region it averages away texture; at a boundary,
+the uniform sectors lie on one side, so the boundary stays sharp. `smooth`
+sets the radius, here `r stages$extraction$parameters$smooth` px.
+
+```{r stage-smoothed, echo = FALSE, fig.retina = 1.5, fig.cap = sprintf("Stage 2. The pre-filter flattens texture but not outlines: the scales and the mottling merge into flat patches while the head, eye and gill stay sharp. Kuwahara radius %g px; %.0f%% of the window's pixels changed by more than 2 L* units. Grey scale as in Stage 1.", stages$extraction$parameters$smooth, 100 * changed)}
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(cx, cy, "2  Pre-filtered")
+paint(grey_of(stretch(stages$smoothed)), cx, cy)
+```
+
+**Edge tangent flow.** The structure tensor of the smoothed image, the local
+average of the gradient's outer product at scale `sigma_c`, gives at every
+pixel the direction along which lightness changes least: the edge tangent
+(Kyprianidis and Döllner 2008). Its anisotropy, from 0 to 1, says how clearly
+one direction dominates.
+
+```{r stage-flow, echo = FALSE, fig.cap = sprintf("Stage 3. The tangents ring the eye and run along the outlines of the head; in the background they follow faint streaks and turn from patch to patch. Blue segments at every fifth pixel over the faded pre-filtered image, 1 to 5 px long as the anisotropy rises from 0 to 1 (median %.2f here).", median(anis))}
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(cx, cy, "3  Edge tangent flow")
+paint(grey_of(stretch(stages$smoothed), faint = 0.55), cx, cy)
+gx <- seq(cx[1] + 2, cx[2] - 2, by = 5); gy <- seq(cy[1] + 2, cy[2] - 2, by = 5)
+pts <- expand.grid(x = gx, y = gy)
+tx <- stages$flow$x[cbind(pts$y, pts$x)]; ty <- stages$flow$y[cbind(pts$y, pts$x)]
+len <- 0.5 + 2 * stages$flow$anisotropy[cbind(pts$y, pts$x)]
+segments(pts$x - len * tx, pts$y - len * ty, pts$x + len * tx, pts$y + len * ty,
+         col = "#0072B2", lwd = 1.1)
+```
+
+**Flow-based difference of Gaussians.** At every pixel a one-dimensional
+difference of Gaussians, `G_sigma - tau * G_(k sigma)`, is taken across the
+flow (Kang, Lee and Chui 2007). It is negative on the dark side of an edge and
+positive on the light side. With `tau` just below 1, a uniform area keeps a
+small positive value, so faint texture does not cross zero.
+
+```{r stage-dog, echo = FALSE, fig.retina = 1.5, fig.cap = sprintf("Stage 4a. Each outline becomes a pair of bands, blue on its dark side and red on its light side; the background's remaining texture gives weak, broken responses. Difference of Gaussians across the flow (sigma = %g px, k = %g, tau = %g), blue below zero, red above, saturating at +/- %.3f, a third of the image's largest value (%.0f%% of this window is clipped).", stages$extraction$parameters$sigma, stages$extraction$parameters$k, stages$extraction$parameters$tau, dog_limit, 100 * clipped)}
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(cx, cy, "4a  Difference of Gaussians")
+paint(diverging(stages$dog, dog_limit), cx, cy)
+```
+
+The response is then averaged along the flow, over a Gaussian of scale
+`sigma_m` following each tangent streamline. Along an outline the averaging
+adds up responses of the same sign and joins short gaps; across texture it
+mixes signs and cancels. A streamline stops once it has turned more than 20
+degrees from where it started, so corners are not rounded off.
+
+```{r stage-response, echo = FALSE, fig.retina = 1.5, fig.cap = sprintf("Stage 4b. Averaging along the flow (sigma_m = %g px) joins the blue bands and thins the background speckle: the window's separate blue patches fall from %d to %d. Palette as in Stage 4a. The blue, where the response is below eps = %g, is the ink band of Stage 5.", stages$extraction$parameters$sigma_m, patches_dog, patches_response, stages$extraction$parameters$eps)}
+stopifnot(patches_response < patches_dog)
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(cx, cy, "4b  Averaged along the flow")
+paint(diverging(stages$response, dog_limit), cx, cy)
+```
+
+**Threshold and placement.** The XDoG threshold (Winnemöller, Kyprianidis
+and Olsen 2012) turns the response into an ink band, and the band lies on
+the dark side of each edge, about 1.2 `sigma` deep. A drawing traced from the
+band would sit beside the edges. The next step is this package's own: each
+line is drawn on the boundary between the band and its light side, at the
+pixel nearer the edge. A thin stroke is drawn once, along its middle: a dark
+band no wider than 3 `sigma` with light on both sides, or a narrower light gap
+(up to about 4 px at the default `sigma`) with dark on both sides. Groups of line pixels smaller than `min_component`
+pixels are removed.
+
+```{r stage-mask, echo = FALSE, fig.retina = 1.5, fig.cap = sprintf("Stage 5. The lines (black, %d px) run along the light-side edge of the ink band (pale blue, %d px), where the lightness changes, not through its middle. Isolated band patches in the background are outlined too, unless the outline has fewer than min_component = %d pixels.", mask_px, band_px, stages$extraction$parameters$min_component)}
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(cx, cy, "5  Band and lines")
+paint(ifelse(stages$mask, "black", ifelse(stages$band, "#C6D4EE", "white")), cx, cy)
+```
+
+`trace_contours()`, which `trace_rgb()` calls, then thins the mask to one
+pixel and traces it into contours, splitting them where lines meet.
+
+```{r stage-traced, echo = FALSE, fig.cap = sprintf("Stage 6. Each contour runs along the boundary it came from rather than beside it: the outline of the head, the pupil and the curves of the gill are each one or a few contours. Traced contours (black; %d touch this window) over the faded painting. The lines are pixel chains; simplify in trace_contours() turns them into fewer, straighter segments.", sum(vapply(drawing$contours, function(z) any(z[, 1] >= cx[1] & z[, 1] <= cx[2] & z[, 2] >= cy[1] & z[, 2] <= cy[2]), TRUE)))}
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(cx, cy, "6  Traced contours")
+faint <- img; for (k in 1:3) faint[, , k] <- 0.45 + 0.55 * img[, , k]
+paint(as.raster(faint), cx, cy)
+clip(cx[1] - 0.5, cx[2] + 0.5, cy[1] - 0.5, cy[2] + 0.5)
+for (z in drawing$contours) segments(z[, 1], z[, 2], z[, 3], z[, 4], lwd = 1.4)
+```
+
+## How the parameters change the drawing
+
+Two parameters do most of the work. `sigma` sets the scale of the edges that
+are drawn: small values follow fine detail, large values only broad
+boundaries. `smooth` sets the radius of the pre-filter: 0 turns it off and
+draws texture.
+
+```{r sweep, include = FALSE}
+sweep <- expand.grid(sigma = c(1, 2, 3), smooth = c(0, 3, 5))
+sweep$traced <- lapply(seq_len(nrow(sweep)), function(i)
+  trace_contours(extract_lines(img, sigma = sweep$sigma[i], smooth = sweep$smooth[i])))
+sweep$contours <- vapply(sweep$traced, function(d) length(d$contours), 0L)
+sweep$median <- vapply(sweep$traced, function(d) median(contour_length(d)), 0)
+corner_median <- function(sg, sm) sweep$median[sweep$sigma == sg & sweep$smooth == sm]
+sweep$short <- vapply(sweep$traced, function(d) sum(contour_length(d) < 15), 0L)
+# The caption's claim: medians rise down every column and along every row.
+med <- matrix(sweep$median, 3, dimnames = list(sigma = c(1, 2, 3), smooth = c(0, 3, 5)))
+stopifnot(all(diff(med) > 0), all(diff(t(med)) > 0))
+```
+
+```{r fig-sweep, echo = FALSE, fig.retina = 1.5, fig.height = 5.2, fig.cap = sprintf("Larger sigma and larger smooth both give fewer, longer lines. Columns: sigma = 1, 2, 3 px; rows: smooth = 0, 3, 5 px; the default is bottom middle; each panel gives its number of traced contours. The median contour grows from %.0f px (top left) to %.0f px (bottom right), and contours shorter than 15 px fall from %d to %d.", corner_median(1, 0), corner_median(3, 5), sweep$short[1], sweep$short[9])}
+par(mfrow = c(3, 3), mar = c(0.2, 0.2, 1.4, 0.2), oma = c(0, 1.8, 1.4, 0), xpd = NA)
+for (i in order(sweep$smooth, sweep$sigma)) {
+  canvas(c(1, w), c(1, h), sprintf("%d contours", sweep$contours[i]))
+  if (sweep$smooth[i] == 0) mtext(sprintf("sigma = %g", sweep$sigma[i]), side = 3, line = 1.5, cex = 0.85, font = 2)
+  if (sweep$sigma[i] == 1) mtext(sprintf("smooth = %g", sweep$smooth[i]), side = 2, line = 0.5, cex = 0.85, font = 2, las = 0)
+  rect(0.5, h + 0.5, w + 0.5, 0.5, border = "grey70", lwd = 0.5)
+  draw_contours(sweep$traced[[i]], lwd = 0.5)
+}
+```
+
+The defaults (`sigma = 2`, `smooth = 5`, `tau = 0.98`, `sigma_m = 3`,
+`min_component = 20`) were chosen by eye on four public-domain paintings
+640 px wide, this one among them: two still lifes with crisp outlines in dark rooms, a
+landscape built of thick directional strokes, and a landscape of broad colour
+fields. They are a judgment, not an optimum. `sigma`, `sigma_c`, `sigma_m` and
+`smooth` are in pixels, so an image twice as large wants them about twice as
+large.
+
+## Measuring the drawing
+
+A traced drawing is an ordinary `mlv_drawing`, so every measure in the package
+applies to it. Per-contour features:
+
+```{r features}
+features <- feature_table(drawing)
+dim(features)
+round(head(features[, c("orientation_1", "orientation_5", "length_4", "curvature_1")], 3), 3)
+```
+
+```{r features-check, include = FALSE}
+junctions <- detect_junctions(drawing)
+mat <- analyse_mat(drawing, properties = "parallelism")
+halves <- split_contours(mat$drawing, property = "parallelism", fraction = 0.5)
+n_top <- length(halves$top$contours); n_bottom <- length(halves$bottom$contours)
+len_top <- sum(contour_length(halves$top)); len_bottom <- sum(contour_length(halves$bottom))
+n_unassigned <- length(halves$unassigned$contours); len_unassigned <- sum(contour_length(halves$unassigned))
+n_unranked <- length(halves$unranked)
+# Each contour's mean parallelism: the mapped scores at its pixel centres
+# (traced vertices lie on pixel centres).
+mapped <- mat$drawing$mat_images$parallelism
+scores <- vapply(mat$drawing$contours, function(z) {
+  v <- mapped[cbind(c(z[, 2], z[nrow(z), 4]), c(z[, 1], z[nrow(z), 3]))]
+  if (any(is.finite(v))) mean(v, na.rm = TRUE) else NA_real_
+}, 0)
+```
+
+Junctions are few for so many contours (`r nrow(junctions)`): most outlines in
+the painting fade out rather than meet another line.
+
+```{r junctions}
+junctions <- detect_junctions(drawing)
+table(junctions$type)
+```
+
+The medial axis describes the space between the lines. Parallelism is high
+where two lines run alongside each other at a constant distance, such as the
+stripes of the fish's body or the sides of the pewter vessel:
+
+```{r mat}
+mat <- analyse_mat(drawing, properties = "parallelism")
+```
+
+```{r fig-parallelism, echo = FALSE, fig.retina = 1.5, fig.height = 3.9, fig.cap = sprintf("Each contour coloured by its mean parallelism, the mean of the scores mapped onto its pixels (Viridis, 0 to 1; median over contours %.2f%s). Lines that run beside another at a steady distance, such as the stripes of the fish's body, score near the top; outlines facing open space, such as the arc of the copper vessel, score lower.", median(scores, na.rm = TRUE), if (any(is.na(scores))) sprintf("; %d contours without a score in grey", sum(is.na(scores))) else "")}
+layout(matrix(1:2), heights = c(1, lcm(1.6)))
+par(mar = c(0.2, 0.2, 1.6, 0.2))
+canvas(c(1, w), c(1, h), "Parallelism")
+rect(0.5, h + 0.5, w + 0.5, 0.5, border = "grey70", lwd = 0.5)
+pal <- grDevices::hcl.colors(101, "Viridis")
+for (k in seq_along(mat$drawing$contours)) {
+  sc <- scores[k]; z <- mat$drawing$contours[[k]]
+  segments(z[, 1], z[, 2], z[, 3], z[, 4], lwd = 1.6,
+           col = if (is.na(sc)) "grey70" else pal[1 + round(100 * min(max(sc, 0), 1))])
+}
+par(mar = c(1.6, 6, 0.3, 6))
+plot.new(); plot.window(c(0, 1), c(0, 1), xaxs = "i", yaxs = "i")
+rasterImage(as.raster(matrix(pal, 1)), 0, 0.35, 1, 1)
+axis(1, at = c(0, 0.25, 0.5, 0.75, 1), labels = c("0", "0.25", "0.5", "0.75", "1"), cex.axis = 0.8,
+     mgp = c(1, 0.3, 0), tcl = -0.2)
+```
+
+Measurements can also select contours. Here the drawing is split by mean
+parallelism into two halves of at most equal total length. The split does not
+follow objects; it separates lines that run beside another line from lines
+that face open space.
+
+```{r split}
+halves <- split_contours(mat$drawing, property = "parallelism", fraction = 0.5)
+c(top = length(halves$top$contours), bottom = length(halves$bottom$contours))
+```
+
+```{r fig-split, echo = FALSE, fig.retina = 1.5, fig.height = 2.75, fig.cap = paste0(sprintf("The more parallel half of the drawing (left: %d contours, %.0f px) and the less parallel half (right: %d contours, %.0f px), each holding at most half the total length. ", n_top, len_top, n_bottom, len_bottom), if (n_unassigned - n_unranked > 0) sprintf("%s (%.0f px), ranked near the middle, would overflow either budget and belong%s to neither. ", if (n_unassigned - n_unranked == 1) "1 contour" else sprintf("%d contours", n_unassigned - n_unranked), len_unassigned, if (n_unassigned - n_unranked == 1) "s" else ""), if (n_unranked > 0) sprintf("%d without a score cannot be ranked. ", n_unranked), "Compare the stripes of the fish's body (left) with the arc of the copper vessel (right).")}
+par(mfrow = c(1, 2), mar = c(0.2, 0.2, 1.6, 0.2))
+for (part in list(list(halves$top, "More parallel"), list(halves$bottom, "Less parallel"))) {
+  canvas(c(1, w), c(1, h), part[[2]])
+  rect(0.5, h + 0.5, w + 0.5, 0.5, border = "grey70", lwd = 0.5)
+  draw_contours(part[[1]], lwd = 0.8)
+}
+```
+
+## Recording the extraction
+
+The mask carries its definition, and `trace_rgb()` copies it into the
+drawing, so a drawing states how it was made:
+
+```{r provenance}
+drawing$source$provider_version
+str(drawing$source$extraction_parameters[c("sigma", "smooth", "tau")])
+```
+
+A feature specification can fix the extraction as well as the measures.
+`trace_rgb()` then passes the specification's parameters to the backend and
+checks that the mask it returns was made with them; a specification naming
+another version of the extractor is rejected.
+
+```{r spec}
+spec <- feature_spec(extraction = list(lines = list(sigma = 2, smooth = 5)))
+spec$definitions[["lines"]]
+same <- trace_rgb(img, backend = xdog_lines, spec = spec)
+identical(same$contours, drawing$contours)
+try(feature_spec(extraction = list(provider = "xdog_lines", provider_version = "fdog-xdog-0")))
+```
+
+## Using a learned extractor
+
+A learned edge or contour model fits the same slot. A backend is any function
+that takes the RGB array and returns a logical ink mask of the same size; if
+it attaches an `"extraction"` attribute, `trace_rgb()` records its version
+and parameters. The package bundles no model weights, so the model, its
+weights and its preprocessing remain the backend's responsibility. A sketch,
+with a hypothetical `predict_edges()` that returns edge probabilities:
+
+```{r learned, eval = FALSE}
+model_lines <- function(image, threshold = 0.5) {
+  probability <- predict_edges(image)          # your model, your weights
+  mask <- probability > threshold
+  attr(mask, "extraction") <- list(method = "my-edge-model-2024-06",
+                                   parameters = list(threshold = threshold))
+  mask
+}
+drawing <- trace_rgb(img, backend = model_lines, threshold = 0.4)
+spec <- feature_spec(extraction = list(provider = "model_lines",
+                                       provider_version = "my-edge-model-2024-06"))
+```
+
+The same mechanism works for any function. Here a threshold on lightness
+stands in for a model: it marks the darkest twentieth of the painting as ink,
+which is only useful for showing the provenance it records.
+
+```{r toy-backend}
+dark_lines <- function(image, fraction = 0.05) {
+  lightness <- line_extraction_stages(image, smooth = 0)$lightness
+  mask <- lightness < quantile(lightness, fraction)
+  attr(mask, "extraction") <- list(method = "darkest-fraction-1",
+                                   parameters = list(fraction = fraction))
+  mask
+}
+toy <- trace_rgb(img, backend = dark_lines)
+toy$source[c("extraction_provider", "provider_version", "extraction_parameters")]
+```
+
+## Limits
+
+- Lines are decided on lightness. A boundary between two colours of equal
+  lightness is not drawn, with or without `colour = TRUE`, which only lets
+  colour steer the flow and the pre-filter.
+- The pre-filter rounds sharp corners slightly: at the default radius a
+  square's traced corner lies up to about 1.2 px inside the true corner.
+- It also removes dark strokes narrower than about 2 px unless they lie along
+  a pixel row or column; light strokes survive from 1 px. `smooth = 0` keeps
+  them, so use it for thin line art.
+- Parallel dark strokes 2 to 4 px apart (hatching) merge and are drawn as the
+  pair's two outer outlines, with no line between them.
+- Lines are placed to the nearest pixel. On synthetic edges the traced
+  contours lie within 1 px of the true boundary (about 0.5 px on straight
+  edges away from the image border), and a traced disc has the right length
+  to within 2% after `simplify = 1`.
+- All scales are in pixels. The defaults were tuned on four paintings 640 px
+  wide; images of other sizes want `sigma`, `sigma_c`, `sigma_m` and `smooth`
+  scaled with them.
+
+## References
+
+Kang, H., Lee, S. and Chui, C. K. (2007). Coherent line drawing.
+*Proceedings of the 5th International Symposium on Non-Photorealistic
+Animation and Rendering*, 43–50.
+
+Kyprianidis, J. E. and Döllner, J. (2008). Image abstraction by structure
+adaptive filtering. *Proceedings of EG UK Theory and Practice of Computer
+Graphics*, 51–58.
+
+Kyprianidis, J. E., Kang, H. and Döllner, J. (2009). Image and video
+abstraction by anisotropic Kuwahara filtering. *Computer Graphics Forum*,
+28(7), 1955–1963.
+
+Kyprianidis, J. E. (2010). Anisotropic Kuwahara filtering with polynomial
+weighting functions. *Proceedings of EG UK Theory and Practice of Computer
+Graphics*, 25–30.
+
+Winnemöller, H., Kyprianidis, J. E. and Olsen, S. C. (2012). XDoG: an
+eXtended difference-of-Gaussians compendium including advanced image
+stylization. *Computers & Graphics*, 36(6), 740–753.

@@ -81,6 +81,26 @@ cpp_mirror_loop <- function(xy, power, tolerance) {
     .Call(`_mlvtoolbox_cpp_mirror_loop`, xy, power, tolerance)
 }
 
+cpp_line_flow <- function(image, h, w, nc, sigma_c) {
+    .Call(`_mlvtoolbox_cpp_line_flow`, image, h, w, nc, sigma_c)
+}
+
+cpp_kuwahara <- function(image, h, w, nc, sigma_c, radius, q, s0) {
+    .Call(`_mlvtoolbox_cpp_kuwahara`, image, h, w, nc, sigma_c, radius, q, s0)
+}
+
+cpp_fdog <- function(L, smooth, nc, sigma_c, sigma, k, tau, sigma_m, cos_turn = -2) {
+    .Call(`_mlvtoolbox_cpp_fdog`, L, smooth, nc, sigma_c, sigma, k, tau, sigma_m, cos_turn)
+}
+
+cpp_band_edge <- function(band, blur, response, zero, thr, tx, ty, max_width, light_width, min_size) {
+    .Call(`_mlvtoolbox_cpp_band_edge`, band, blur, response, zero, thr, tx, ty, max_width, light_width, min_size)
+}
+
+cpp_fill_holes <- function(mask, max_size) {
+    .Call(`_mlvtoolbox_cpp_fill_holes`, mask, max_size)
+}
+
 cpp_grouped_sums <- function(weights, groups, bins, ng, nb) {
     .Call(`_mlvtoolbox_cpp_grouped_sums`, weights, groups, bins, ng, nb)
 }

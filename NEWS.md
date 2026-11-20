@@ -12,6 +12,39 @@
   1e-4; with `estimator = "mlv2023"` all 2,284,239 stored segment orientations,
   lengths and curvatures agree within 1e-9. See `docs/PARITY.md`.
 
+## Line drawings from images
+
+* New `extract_lines()` turns a photograph or an image of a painting into a
+  binary ink mask: CIE L* lightness, an anisotropic Kuwahara pre-filter
+  against brush texture, the structure-tensor edge tangent flow, a flow-based
+  difference of Gaussians integrated along the flow, and the XDoG threshold
+  (Kyprianidis, Kang and Döllner 2009; Kyprianidis and Döllner 2008; Kang, Lee
+  and Chui 2007; Winnemöller, Kyprianidis and Olsen 2012). Two further steps
+  are this package's own: lines are placed on edges rather than in the
+  dark-side XDoG band, and thin dark or light strokes are drawn once, as their
+  centre lines. The default pre-filter removes dark strokes thinner than about
+  2 pixels that do not lie along a pixel row or column, so use `smooth = 0`
+  for thin line art. It is deterministic and needs no model weights or new
+  dependencies. Without the pre-filter, quarter turns and reflections of the
+  image transform every stage exactly; with it, the intermediate images agree
+  to rounding and the masks have agreed exactly in every test. The mask
+  records its definition, `"fdog-xdog-1"`, and every parameter in an
+  `"extraction"` attribute.
+* `xdog_lines()` is the same extractor shaped as a `trace_rgb()` backend, and
+  `line_extraction_stages()` returns the intermediate images.
+* `trace_rgb()` records a backend's `"extraction"` attribute, when present, as
+  `source$provider_version` and `source$extraction_parameters`.
+* `feature_spec(extraction = list(lines = list(...)))` fixes the line
+  extractor's parameters; the specification records `definitions["lines"]`,
+  `trace_rgb()` passes the parameters to the backend and checks its output,
+  and specifications naming another version of the extractor are rejected. With
+  any specification, `trace_rgb()` refuses a backend whose `"extraction"`
+  attribute names a version other than the specification's `provider_version`.
+  Specifications without line settings are unchanged.
+* New vignette `line-extraction` ("From an image to a line drawing"), with a
+  public-domain (CC0) painting from The Cleveland Museum of Art bundled in
+  `inst/extdata`.
+
 ## Behaviour changes (new default methods)
 
 The defaults now follow the alternative definitions recorded as MLV-M018-M032

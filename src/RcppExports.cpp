@@ -257,6 +257,90 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_line_flow
+List cpp_line_flow(NumericVector image, int h, int w, int nc, double sigma_c);
+RcppExport SEXP _mlvtoolbox_cpp_line_flow(SEXP imageSEXP, SEXP hSEXP, SEXP wSEXP, SEXP ncSEXP, SEXP sigma_cSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type image(imageSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type w(wSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma_c(sigma_cSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_line_flow(image, h, w, nc, sigma_c));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_kuwahara
+NumericVector cpp_kuwahara(NumericVector image, int h, int w, int nc, double sigma_c, double radius, double q, double s0);
+RcppExport SEXP _mlvtoolbox_cpp_kuwahara(SEXP imageSEXP, SEXP hSEXP, SEXP wSEXP, SEXP ncSEXP, SEXP sigma_cSEXP, SEXP radiusSEXP, SEXP qSEXP, SEXP s0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type image(imageSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type w(wSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma_c(sigma_cSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type s0(s0SEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_kuwahara(image, h, w, nc, sigma_c, radius, q, s0));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_fdog
+List cpp_fdog(NumericMatrix L, NumericVector smooth, int nc, double sigma_c, double sigma, double k, double tau, double sigma_m, double cos_turn);
+RcppExport SEXP _mlvtoolbox_cpp_fdog(SEXP LSEXP, SEXP smoothSEXP, SEXP ncSEXP, SEXP sigma_cSEXP, SEXP sigmaSEXP, SEXP kSEXP, SEXP tauSEXP, SEXP sigma_mSEXP, SEXP cos_turnSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type L(LSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type smooth(smoothSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma_c(sigma_cSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< double >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma_m(sigma_mSEXP);
+    Rcpp::traits::input_parameter< double >::type cos_turn(cos_turnSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_fdog(L, smooth, nc, sigma_c, sigma, k, tau, sigma_m, cos_turn));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_band_edge
+LogicalMatrix cpp_band_edge(LogicalMatrix band, NumericMatrix blur, NumericMatrix response, NumericMatrix zero, double thr, NumericMatrix tx, NumericMatrix ty, double max_width, double light_width, int min_size);
+RcppExport SEXP _mlvtoolbox_cpp_band_edge(SEXP bandSEXP, SEXP blurSEXP, SEXP responseSEXP, SEXP zeroSEXP, SEXP thrSEXP, SEXP txSEXP, SEXP tySEXP, SEXP max_widthSEXP, SEXP light_widthSEXP, SEXP min_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalMatrix >::type band(bandSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type blur(blurSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type response(responseSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type zero(zeroSEXP);
+    Rcpp::traits::input_parameter< double >::type thr(thrSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type tx(txSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type ty(tySEXP);
+    Rcpp::traits::input_parameter< double >::type max_width(max_widthSEXP);
+    Rcpp::traits::input_parameter< double >::type light_width(light_widthSEXP);
+    Rcpp::traits::input_parameter< int >::type min_size(min_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_band_edge(band, blur, response, zero, thr, tx, ty, max_width, light_width, min_size));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_fill_holes
+LogicalMatrix cpp_fill_holes(LogicalMatrix mask, int max_size);
+RcppExport SEXP _mlvtoolbox_cpp_fill_holes(SEXP maskSEXP, SEXP max_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalMatrix >::type mask(maskSEXP);
+    Rcpp::traits::input_parameter< int >::type max_size(max_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_fill_holes(mask, max_size));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_grouped_sums
 NumericMatrix cpp_grouped_sums(NumericVector weights, IntegerVector groups, IntegerVector bins, int ng, int nb);
 RcppExport SEXP _mlvtoolbox_cpp_grouped_sums(SEXP weightsSEXP, SEXP groupsSEXP, SEXP binsSEXP, SEXP ngSEXP, SEXP nbSEXP) {
@@ -320,6 +404,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mlvtoolbox_cpp_skeletonize_minimal", (DL_FUNC) &_mlvtoolbox_cpp_skeletonize_minimal, 1},
     {"_mlvtoolbox_cpp_redundant_pixels", (DL_FUNC) &_mlvtoolbox_cpp_redundant_pixels, 1},
     {"_mlvtoolbox_cpp_mirror_loop", (DL_FUNC) &_mlvtoolbox_cpp_mirror_loop, 3},
+    {"_mlvtoolbox_cpp_line_flow", (DL_FUNC) &_mlvtoolbox_cpp_line_flow, 5},
+    {"_mlvtoolbox_cpp_kuwahara", (DL_FUNC) &_mlvtoolbox_cpp_kuwahara, 8},
+    {"_mlvtoolbox_cpp_fdog", (DL_FUNC) &_mlvtoolbox_cpp_fdog, 9},
+    {"_mlvtoolbox_cpp_band_edge", (DL_FUNC) &_mlvtoolbox_cpp_band_edge, 10},
+    {"_mlvtoolbox_cpp_fill_holes", (DL_FUNC) &_mlvtoolbox_cpp_fill_holes, 2},
     {"_mlvtoolbox_cpp_grouped_sums", (DL_FUNC) &_mlvtoolbox_cpp_grouped_sums, 5},
     {"_mlvtoolbox_cpp_contour_lengths", (DL_FUNC) &_mlvtoolbox_cpp_contour_lengths, 1},
     {"_mlvtoolbox_cpp_geometry_histograms", (DL_FUNC) &_mlvtoolbox_cpp_geometry_histograms, 5},

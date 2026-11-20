@@ -138,10 +138,12 @@ every per-contour feature, so measurements of a traced drawing are not
 interchangeable with measurements of its vector source.
 
 For colour photographs, `trace_rgb()` takes an RGB image and a `backend`
-function that returns a logical ink mask. The package does not bundle an
-edge or segmentation model; whatever produces the mask (and its weights and
-preprocessing) is the backend's responsibility, and the backend's name is
-recorded in the drawing's provenance.
+function that returns a logical ink mask. The package provides one classical
+backend, `xdog_lines()`, a flow-based difference of Gaussians described in
+`vignette("line-extraction", package = "mlvtoolbox")`; it bundles no learned
+edge or segmentation model. For any other backend, whatever produces the mask
+(and its weights and preprocessing) is the backend's responsibility, and the
+backend's name is recorded in the drawing's provenance.
 
 ```{r trace-rgb, eval = has_xml2 && has_png}
 rgb <- array(rep(read_mlv_image(png_file), 3), c(40, 60, 3))

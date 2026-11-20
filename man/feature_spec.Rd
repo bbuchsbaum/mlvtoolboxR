@@ -76,7 +76,13 @@ pixels/samples. The morphology also thins extracted contours.}
 in pixels; rasterization is explicitly a pixel-grid operation.}
 
 \item{extraction}{Named extraction settings: method, threshold, thin,
-min_points, simplify, provider, provider_version. Simplification is in pixels.}
+min_points, simplify, provider, provider_version and lines. Simplification
+is in pixels. `lines` is a named list of [extract_lines()] parameters; the
+specification then records the line extractor's definition
+(`definitions["lines"]`, currently `"fdog-xdog-1"`) with every parameter
+filled in, the provider defaults to `"xdog_lines"`, and [trace_rgb()]
+passes the parameters to the backend. A provider version naming another
+definition of this extractor is rejected.}
 }
 \value{
 A validated `mlv_feature_spec`. It declares methods; constructing it
