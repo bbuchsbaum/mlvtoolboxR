@@ -592,6 +592,38 @@ units: <code>units = "visual_degrees"</code> with a
 visual angle (curvature stays in geometric degrees per unit length).</p>
 </div>
 <div class="section level2">
+<h2 id="from-an-image-to-a-drawing">From an image to a drawing<a class="anchor" aria-label="anchor" href="#from-an-image-to-a-drawing"></a>
+</h2>
+<p>Everything above starts from a vector drawing. A photograph or a
+painting has no contours until they are traced. <code><a href="../reference/trace_rgb.html">trace_rgb()</a></code>
+takes the image and a <code>backend</code> function that marks the ink;
+the package’s own backend, <code><a href="../reference/xdog_lines.html">xdog_lines()</a></code>, is a classical
+edge filter that needs no model weights. The result is an ordinary
+drawing, measured like any other, with the extraction method and its
+settings recorded in its provenance.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">painting</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"melendez-still-life.jpg"</span>, package <span class="op">=</span> <span class="st">"mlvtoolbox"</span><span class="op">)</span></span>
+<span><span class="va">img</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mlv_image.html">read_mlv_image</a></span><span class="op">(</span><span class="va">painting</span><span class="op">)</span></span>
+<span><span class="va">traced</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trace_rgb.html">trace_rgb</a></span><span class="op">(</span><span class="va">img</span>, backend <span class="op">=</span> <span class="va">xdog_lines</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">traced</span><span class="op">$</span><span class="va">contours</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 323</span></span>
+<span><span class="va">traced</span><span class="op">$</span><span class="va">source</span><span class="op">$</span><span class="va">provider_version</span></span>
+<span><span class="co">#&gt; [1] "fdog-xdog-1"</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="getting-started_files/figure-html/fig-painting-1.jpg" class="r-plt" alt="A still life by Luis Meléndez (c. 1772, Cleveland Museum of Art, CC0) and the drawing traced from it at the default settings: 323 contours. The fish's head, the loaves, the citrus fruit and the round copper vessel behind them are recognisable; the wall's streaks and the fish's scales leave short marks." width="100%"><p class="caption">
+A still life by Luis Meléndez (c. 1772, Cleveland Museum of Art, CC0)
+and the drawing traced from it at the default settings: 323 contours.
+The fish’s head, the loaves, the citrus fruit and the round copper
+vessel behind them are recognisable; the wall’s streaks and the fish’s
+scales leave short marks.
+</p>
+</div>
+<p>The <a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html">Line
+extraction</a> article shows the filter stage by stage, how its
+parameters change the drawing, and how to plug in a learned extractor
+instead.</p>
+</div>
+<div class="section level2">
 <h2 id="where-to-go-next">Where to go next<a class="anchor" aria-label="anchor" href="#where-to-go-next"></a>
 </h2>
 <ul>
@@ -612,6 +644,10 @@ default changes.</li>
 reading SVG, MAT and image files, and fitting and applying models to
 feature tables.</li>
 <li>
+<a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html">Line
+extraction</a>: from an image or a painting to a measurable line
+drawing.</li>
+<li>
 <a href="https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html">Stimulus
 design</a>: selecting matched subsets of contours across a stimulus
 set.</li>
@@ -621,7 +657,7 @@ set.</li>
 <h2 id="appendix-the-opening-figure">Appendix: the opening figure<a class="anchor" aria-label="anchor" href="#appendix-the-opening-figure"></a>
 </h2>
 <p>The scene and the four panels at the top of this vignette:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A synthetic room: a wall corner, a window with mullions and a curtain, a</span></span>
 <span><span class="co"># picture, a table, a hanging lamp and a box, as 17 contours.</span></span>
 <span><span class="va">sc_line</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="va">x</span><span class="op">[</span><span class="op">-</span><span class="va">n</span><span class="op">]</span>, y1 <span class="op">=</span> <span class="va">y</span><span class="op">[</span><span class="op">-</span><span class="va">n</span><span class="op">]</span>, x2 <span class="op">=</span> <span class="va">x</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, y2 <span class="op">=</span> <span class="va">y</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">}</span></span>

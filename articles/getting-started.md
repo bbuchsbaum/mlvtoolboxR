@@ -605,6 +605,47 @@ article). The same specification can express physical units:
 reports lengths in degrees of visual angle (curvature stays in geometric
 degrees per unit length).
 
+## From an image to a drawing
+
+Everything above starts from a vector drawing. A photograph or a
+painting has no contours until they are traced.
+[`trace_rgb()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/trace_rgb.md)
+takes the image and a `backend` function that marks the ink; the
+package’s own backend,
+[`xdog_lines()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/xdog_lines.md),
+is a classical edge filter that needs no model weights. The result is an
+ordinary drawing, measured like any other, with the extraction method
+and its settings recorded in its provenance.
+
+``` r
+
+painting <- system.file("extdata", "melendez-still-life.jpg", package = "mlvtoolbox")
+img <- read_mlv_image(painting)
+traced <- trace_rgb(img, backend = xdog_lines)
+length(traced$contours)
+#> [1] 323
+traced$source$provider_version
+#> [1] "fdog-xdog-1"
+```
+
+![A still life by Luis Meléndez (c. 1772, Cleveland Museum of Art, CC0)
+and the drawing traced from it at the default settings: 323 contours.
+The fish's head, the loaves, the citrus fruit and the round copper
+vessel behind them are recognisable; the wall's streaks and the fish's
+scales leave short
+marks.](getting-started_files/figure-html/fig-painting-1.jpg)
+
+A still life by Luis Meléndez (c. 1772, Cleveland Museum of Art, CC0)
+and the drawing traced from it at the default settings: 323 contours.
+The fish’s head, the loaves, the citrus fruit and the round copper
+vessel behind them are recognisable; the wall’s streaks and the fish’s
+scales leave short marks.
+
+The [Line
+extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html)
+article shows the filter stage by stage, how its parameters change the
+drawing, and how to plug in a learned extractor instead.
+
 ## Where to go next
 
 - [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html):
@@ -620,6 +661,9 @@ degrees per unit length).
 - [Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html):
   reading SVG, MAT and image files, and fitting and applying models to
   feature tables.
+- [Line
+  extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html):
+  from an image or a painting to a measurable line drawing.
 - [Stimulus
   design](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html):
   selecting matched subsets of contours across a stimulus set.
