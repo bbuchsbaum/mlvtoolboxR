@@ -709,6 +709,39 @@ specification can express physical units: `units = "visual_degrees"` with a
 `pixels_per_degree` calibration reports lengths in degrees of visual angle
 (curvature stays in geometric degrees per unit length).
 
+## From an image to a drawing
+
+Everything above starts from a vector drawing. A photograph or a painting has
+no contours until they are traced. `trace_rgb()` takes the image and a
+`backend` function that marks the ink; the package's own backend,
+`xdog_lines()`, is a classical edge filter that needs no model weights. The
+result is an ordinary drawing, measured like any other, with the extraction
+method and its settings recorded in its provenance.
+
+```{r trace-painting, eval = requireNamespace("jpeg", quietly = TRUE)}
+painting <- system.file("extdata", "melendez-still-life.jpg", package = "mlvtoolbox")
+img <- read_mlv_image(painting)
+traced <- trace_rgb(img, backend = xdog_lines)
+length(traced$contours)
+traced$source$provider_version
+```
+
+```{r fig-painting, echo = FALSE, dev = "jpeg", fig.ext = "jpg", dev.args = list(quality = 90), eval = requireNamespace("jpeg", quietly = TRUE), fig.height = 2.75, fig.cap = sprintf("A still life by Luis Meléndez (c. 1772, Cleveland Museum of Art, CC0) and the drawing traced from it at the default settings: %d contours. The fish's head, the loaves, the citrus fruit and the round copper vessel behind them are recognisable; the wall's streaks and the fish's scales leave short marks.", length(traced$contours))}
+op <- par(mfrow = c(1, 2), mar = c(0.2, 0.2, 1.6, 0.2))
+h <- dim(img)[1]; w <- dim(img)[2]
+plot.new(); plot.window(c(0.5, w + 0.5), c(h + 0.5, 0.5), asp = 1)
+rasterImage(img, 0.5, h + 0.5, w + 0.5, 0.5)
+title(main = "Painting", cex.main = 1, font.main = 1)
+plot(traced, lwd = 1, axes = FALSE, frame = FALSE)
+rect(0.5, h + 0.5, w + 0.5, 0.5, border = "grey70", lwd = 0.5)
+title(main = "Traced drawing", cex.main = 1, font.main = 1)
+par(op)
+```
+
+The [Line extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html)
+article shows the filter stage by stage, how its parameters change the
+drawing, and how to plug in a learned extractor instead.
+
 ## Where to go next
 
 - [Junctions](https://bbuchsbaum.github.io/mlvtoolboxR/articles/junctions.html): how junctions are found,
@@ -719,6 +752,8 @@ specification can express physical units: `units = "visual_degrees"` with a
   published MLV values and what each default changes.
 - [Workflows](https://bbuchsbaum.github.io/mlvtoolboxR/articles/workflows.html): reading SVG, MAT and image
   files, and fitting and applying models to feature tables.
+- [Line extraction](https://bbuchsbaum.github.io/mlvtoolboxR/articles/line-extraction.html): from an
+  image or a painting to a measurable line drawing.
 - [Stimulus design](https://bbuchsbaum.github.io/mlvtoolboxR/articles/stimulus-design.html): selecting matched
   subsets of contours across a stimulus set.
 
