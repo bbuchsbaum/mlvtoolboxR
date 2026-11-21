@@ -24,7 +24,7 @@ plot_properties <- function(x,properties=c("orientation","length","curvature","j
 batch_statistics <- function(drawings,image_ids=names(drawings),...) {
  if(!is.list(drawings)||inherits(drawings,"mlv_drawing"))stop("drawings must be a list of drawings",call.=FALSE)
  if(is.null(image_ids))image_ids<-as.character(seq_along(drawings))
- if(length(image_ids)!=length(drawings)||anyNA(image_ids)||anyDuplicated(image_ids))
+ if(length(image_ids)!=length(drawings)||anyNA(image_ids)||any(!nzchar(as.character(image_ids)))||anyDuplicated(image_ids))
   stop("invalid image_ids",call.=FALSE)
  out<-lapply(seq_along(drawings),function(i) {
   z<-contour_statistics(drawings[[i]],...)

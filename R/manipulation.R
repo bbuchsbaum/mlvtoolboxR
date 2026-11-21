@@ -46,7 +46,8 @@ shift_contours <- function(x,offsets=NULL,within=is.null(offsets)) {
 .piece_drawing <- function(x,pieces,parents,operation) {
  if(!length(pieces))return(.rebuild(x,list(),character(),operation))
  ids<-make.unique(paste0(parents,".part"),sep=".")
- out<-.rebuild(x,pieces,ids,operation);out$parent_ids<-parents;out
+ # .rebuild() drops pieces whose segments are all zero length; keep parents aligned.
+ out<-.rebuild(x,pieces,ids,operation);out$parent_ids<-parents[match(out$ids,ids)];out
 }
 #' Clip all segment-circle intersections
 #'
@@ -68,7 +69,7 @@ clip_circle <- function(x,radius=min(x$width,x$height)/2,center=c(x$width,x$heig
    if(nrow(current)){pieces[[length(pieces)+1L]]<<-current;parents<<-c(parents,x$ids[i]);current<<-matrix(numeric(),0,4)}
   }
   for(s in seq_len(nrow(z))) {
-   a<-z[s,1:2];v<-z[s,3:4]-a;d<-a-center
+   a<-z[s,1:2];v<-z[s,3:4]-a
    length<-sqrt(sum(v^2));unit<-v/length
    along<-sum((center-a)*unit);foot<-a+along*unit
    perpendicular<-sum((foot-center)^2)
@@ -109,6 +110,14 @@ simplify_contours <- function(x,tolerance=1) {
 segment_at_junctions <- function(x,junctions=NULL) {
  .check_drawing(x)
  if(is.null(junctions))junctions<-detect_junctions(x)
+ # Junctions incident on each (contour, segment), looked up by key.
+ incident<-lapply(seq_len(nrow(junctions)),function(j) {
+  m<-junctions$members[[j]]
+  # Integer keys: paste() would format a double 1e5 as "1e+05".
+  data.frame(key=paste(as.integer(m$contour_index),as.integer(m$segment_index)),junction=rep(j,nrow(m)))
+ })
+ incident<-do.call(rbind,c(list(data.frame(key=character(),junction=integer())),incident))
+ incident<-split(incident$junction,incident$key)
  pieces<-list();parents<-character()
  for(i in seq_along(x$contours)) {
   z<-x$contours[[i]];current<-matrix(numeric(),0,4)
@@ -117,12 +126,9 @@ segment_at_junctions <- function(x,junctions=NULL) {
   }
   for(s in seq_len(nrow(z))) {
    a<-z[s,1:2];v<-z[s,3:4]-a;times<-numeric()
-   for(j in seq_len(nrow(junctions))) {
-    m<-junctions$members[[j]]
-    if(any(m$contour_index==i & m$segment_index==s)) {
-     t<-sum((c(junctions$x[j],junctions$y[j])-a)*v)/sum(v^2)
-     if(t>=-1e-8&&t<=1+1e-8)times<-c(times,pmax(0,pmin(1,t)))
-    }
+   for(j in unique(incident[[paste(i,s)]])) {
+    t<-sum((c(junctions$x[j],junctions$y[j])-a)*v)/sum(v^2)
+    if(t>=-1e-8&&t<=1+1e-8)times<-c(times,pmax(0,pmin(1,t)))
    }
    cuts<-sort(unique(c(0,times,1)))
    if(0 %in% times)flush()
@@ -163,19 +169,25 @@ split_junction_regions <- function(x) {
  st<-.measurement_table(x,x$feature_spec)
  ends<-cumsum(tabulate(st$contour_index,nbins=length(x$ids)))
  starts<-c(1L,head(ends,-1L)+1L)
- junctions<-if(property=="junctions") {
-  .measurement_junctions(x,x$feature_spec)
+ n<-length(x$ids)
+ junction_count<-if(property=="junctions") {
+  m<-.measurement_junctions(x,x$feature_spec)$members
+  as.double(tabulate(as.integer(unlist(lapply(m,function(z)unique(z$contour_index)))),nbins=n))
  } else NULL
+ mapped<-!property %in% c("length","curvature","integrated_curvature","orientation","junctions","random")
+ if(mapped&&n) {
+  .checked_mat_measurements(x,x$feature_spec)
+  if(is.null(x$mat_properties[[property]]))stop("missing contour criterion: ",property,call.=FALSE)
+ }
  vapply(seq_along(x$ids),function(i) {
   s<-st[starts[i]:ends[i],,drop=FALSE];ll<-sum(s$length)
   switch(property,
    length=ll,curvature=sum(s$curvature*s$length)/ll,
    integrated_curvature=sum(s$curvature*s$length),
    orientation=sum((abs(cos(s$orientation*pi/180))-abs(sin(s$orientation*pi/180)))*s$length)/ll,
-   junctions=sum(vapply(junctions$members,function(m)i %in% m$contour_index,logical(1))),
+   junctions=junction_count[i],
    random=stats::runif(1),
-   {.checked_mat_measurements(x,x$feature_spec);z<-x$mat_properties[[property]][[i]]
-    if(is.null(z))stop("missing contour criterion: ",property,call.=FALSE)
+   {z<-x$mat_properties[[property]][[i]]
     # A contour with no defined mapped score has no criterion value (NA).
     if(any(is.finite(z)))mean(z[is.finite(z)]) else NA_real_})
  },double(1))
@@ -237,16 +249,26 @@ split_contours <- function(x,property="length",fraction=.5,weights=NULL,scores=N
 }
 #' Split contours using weighted feature histograms
 #' @param x A drawing.
-#' @param weights Named numeric vector matching feature-table columns.
-#' @param properties,bins Feature settings.
+#' @param weights Named numeric vector matching feature-table columns (other
+#'   than `contour_id`), each named at most once.
+#' @param properties,bins Feature settings, used when `spec` is NULL; the
+#'   histograms are then unnormalized.
 #' @param fraction Whole-contour length budget.
+#' @param spec Optional feature specification, exclusive of `properties` and
+#'   `bins`; its own histogram settings (including normalization) apply. The
+#'   default ignores any specification the drawing carries.
 #' @return The same structure as split_contours.
 #' @export
 split_by_histogram <- function(x,weights,properties=c("orientation","length","curvature"),
-                               bins=8,fraction=.5) {
- f<-feature_table(x,properties,bins,normalize=FALSE)
- if(is.null(names(weights))||any(!names(weights)%in% names(f))||
-    !is.numeric(weights)||any(!is.finite(weights)))stop("weights must name feature-table columns",call.=FALSE)
+                               bins=8,fraction=.5,spec=NULL) {
+ if(!is.null(spec)) {
+  if(!missing(properties)||!missing(bins))stop("use spec or individual feature settings, not both",call.=FALSE)
+  f<-feature_table(x,spec=spec)
+ } else f<-feature_table(x,properties,bins,normalize=FALSE,spec=NULL)
+ columns<-setdiff(names(f),"contour_id")
+ if(!is.numeric(weights)||is.null(names(weights))||anyNA(names(weights))||any(!names(weights)%in%columns)||
+    anyDuplicated(names(weights))||any(!is.finite(weights)))
+  stop("weights must be finite and name distinct feature-table columns",call.=FALSE)
  score<-if(length(weights))as.numeric(as.matrix(f[,names(weights),drop=FALSE])%*%weights) else rep(0,nrow(f))
  split_contours(x,fraction=fraction,scores=score)
 }

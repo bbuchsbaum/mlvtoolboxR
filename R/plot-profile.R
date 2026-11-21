@@ -72,6 +72,7 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
   nc <- length(mats)
   if (!is.character(what) || !length(what) || anyNA(what))
     stop("what must name branch quantities", call. = FALSE)
+  if (!is.character(blank)) stop("blank must be a character vector", call. = FALSE)
   for (m in mats) {
     have <- unique(unlist(lapply(m$branches, names)))
     miss <- setdiff(what, c(have, blank))
@@ -96,7 +97,6 @@ plot_branch_profile <- function(x, what = "parallelism", branches = NULL, discs 
 
   # Data: one row per plotted point.
   rows <- list()
-  if (!is.character(blank)) stop("blank must be a character vector", call. = FALSE)
   for (k in seq_len(nc)) for (i in shown[[k]]) for (v in setdiff(what, blank)) {
     b <- mats[[k]]$branches[[i]]
     if (nrow(b)) rows[[length(rows) + 1L]] <- data.frame(column = k, branch = i, what = v,

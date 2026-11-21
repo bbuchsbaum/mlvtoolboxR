@@ -91,12 +91,13 @@
  start<-proc.time()[['elapsed']]
  walk<-function(i,la,lb,ca,cb,value) {
   if(stopped)return(invisible(NULL))
-  if(nodes>=max_nodes||proc.time()[['elapsed']]-start>=time_limit) {stopped<<-TRUE;return(invisible(NULL))}
+  # The clock is read every 256 nodes; proc.time() dominates small nodes.
+  if(nodes>=max_nodes||(nodes%%256L==0L&&proc.time()[['elapsed']]-start>=time_limit)) {stopped<<-TRUE;return(invisible(NULL))}
   nodes<<-nodes+1L
-  if(any(la>p$length_bounds[2]+tol)|any(lb>p$length_bounds[2]+tol)|
-     any(ca>p$count_bounds[2])|any(cb>p$count_bounds[2]))return(invisible(NULL))
-  if(any(la+len_left[i,]<p$length_bounds[1]-tol)|any(lb+len_left[i,]<p$length_bounds[1]-tol)|
-     any(ca+count_left[i,]<p$count_bounds[1])|any(cb+count_left[i,]<p$count_bounds[1]))return(invisible(NULL))
+  if(any(la>p$length_bounds[2]+tol)||any(lb>p$length_bounds[2]+tol)||
+     any(ca>p$count_bounds[2])||any(cb>p$count_bounds[2]))return(invisible(NULL))
+  if(any(la+len_left[i,]<p$length_bounds[1]-tol)||any(lb+len_left[i,]<p$length_bounds[1]-tol)||
+     any(ca+count_left[i,]<p$count_bounds[1])||any(cb+count_left[i,]<p$count_bounds[1]))return(invisible(NULL))
   if(value+remaining[i]<=best_score+tol)return(invisible(NULL))
   if(i>n) {
    original<-integer(n);original[order]<-selected
@@ -190,6 +191,15 @@ design_subsets <- function(drawings,spec,target="integrated_curvature",length_bo
     any(!diagnostics%in%c("junctions","parallelism","separation","mirror","taper")))
   stop("invalid diagnostics",call.=FALSE)
  p<-.subset_prepare(drawings,spec,target,length_bounds,count_bounds,nuisance,count_imbalance,mode,pixels_per_degree)
+ # MAT diagnostics run on each drawing's own specification with the requested
+ # properties; build those specifications now so an invalid combination fails
+ # before the search rather than after it.
+ mat_diagnostics<-setdiff(diagnostics,"junctions")
+ diagnostic_spec<-function(x) {
+  args<-x$feature_spec$settings;args$properties<-mat_diagnostics
+  do.call(feature_spec,args)
+ }
+ if(length(mat_diagnostics))for(x in p$drawings)diagnostic_spec(x)
  prepared_at<-proc.time()[['elapsed']]
  result<-.subset_solve(p,time_limit,max_nodes)
  assignment<-result$assignment;result$assignment<-NULL
@@ -210,11 +220,7 @@ design_subsets <- function(drawings,spec,target="integrated_curvature",length_bo
   if(length(diagnostics))relational<-lapply(conditions,function(set)lapply(set,function(x) {
    out<-list()
    if("junctions"%in%diagnostics)out$junctions<-.measurement_junctions(x,x$feature_spec)
-   props<-setdiff(diagnostics,"junctions")
-   if(length(props)) {
-    args<-x$feature_spec$settings;args$properties<-props
-    out$mat<-analyse_mat(x,spec=do.call(feature_spec,args))
-   }
+   if(length(mat_diagnostics))out$mat<-analyse_mat(x,spec=diagnostic_spec(x))
    out
   }))
  }

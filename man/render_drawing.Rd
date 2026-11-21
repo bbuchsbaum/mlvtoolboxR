@@ -19,7 +19,8 @@ render_drawing(
 
 \item{property}{Optional segment or mapped medial-axis property name.}
 
-\item{values}{Optional numeric score for each contour, for example model predictions.}
+\item{values}{Optional numeric score for each contour, for example model
+predictions; exclusive of `property`.}
 
 \item{width, height}{Output dimensions.}
 

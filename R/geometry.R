@@ -146,7 +146,8 @@ detect_junctions <- function(x,absolute_epsilon=1,relative_epsilon=0.3,
   for(g in unique(groups)) {
     rr <- raw[groups==g,,drop=FALSE]; p <- colMeans(rr[,3:4,drop=FALSE])
     indices <- sort(unique(as.integer(rr[,1:2])))
-    members <- unique(st[indices,c("contour_index","segment_index"),drop=FALSE])
+    # Segment-table rows are distinct segments, so members[i,] is row indices[i].
+    members <- st[indices,c("contour_index","segment_index"),drop=FALSE]
     rays <- list(); keys <- character(); pts <- unname(rr[,3:4,drop=FALSE])
     # The junction neighbourhood is the union of open discs of radius
     # endpoint_radius around every intersection merged into the junction, so
@@ -183,8 +184,8 @@ detect_junctions <- function(x,absolute_epsilon=1,relative_epsilon=0.3,
       # that never enters the neighbourhood and lies wholly beyond those
       # intersections (a gap wider than the radius) leaves only away from
       # them; it has no arm pointing back across the junction (MLV-R008).
-      g <- which(st$contour_index==ci & st$segment_index==si)
-      own <- pts[rr[,1]==g | rr[,2]==g,,drop=FALSE]
+      row <- indices[i]
+      own <- pts[rr[,1]==row | rr[,2]==row,,drop=FALSE]
       t <- ((own[,1]-a[1])*u[1]+(own[,2]-a[2])*u[2])/sum(u^2)
       tc <- pmin(pmax(((pts[,1]-a[1])*u[1]+(pts[,2]-a[2])*u[2])/sum(u^2),0),1)
       reaches <- any((a[1]+tc*u[1]-pts[,1])^2+(a[2]+tc*u[2]-pts[,2])^2 < r2)

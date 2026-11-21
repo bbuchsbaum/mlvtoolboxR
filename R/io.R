@@ -16,7 +16,7 @@ as_mlv_drawing <- function(x,zero_length=c("error","drop")) {
  cells<-lapply(as.vector(cells),unwrap)
  if(!is.null(x$numContours)) {
   n<-as.numeric(unwrap(x$numContours))
-  if(length(n)!=1L||n!=length(cells))stop("legacy numContours disagrees with contour cells",call.=FALSE)
+  if(length(n)!=1L||!is.finite(n)||n!=length(cells))stop("legacy numContours disagrees with contour cells",call.=FALSE)
  }
  mlv_drawing(cells,dimensions[1],dimensions[2],zero_length=zero_length,
   source=list(original_image=if(!is.null(x$originalImage))unwrap(x$originalImage) else NULL,

@@ -279,6 +279,9 @@ colour_key.mlv_mat <- function(x, what = "flux", zlim = NULL, col = NULL, ...) {
     m <- length(x)
     vx <- c(nx[1], nx[-1] + nx[-(m - 1)], nx[m - 1])
     vy <- c(ny[1], ny[-1] + ny[-(m - 1)], ny[m - 1])
+    # A 180-degree reversal cancels the two normals; use the incoming one there.
+    turn <- sqrt(vx^2 + vy^2) < 1e-12
+    vx[turn] <- c(nx[1], nx)[turn]; vy[turn] <- c(ny[1], ny)[turn]
     vl <- sqrt(vx^2 + vy^2); vx <- vx / vl; vy <- vy / vl
     seg_n <- cbind(c(nx, nx[m - 1]), c(ny, ny[m - 1]))
     miter <- pmin(2, 1 / pmax(0.5, vx * seg_n[, 1] + vy * seg_n[, 2])) * h

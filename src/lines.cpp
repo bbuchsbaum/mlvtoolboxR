@@ -127,10 +127,20 @@ inline void sector_weights(double u,double v,double zeta,double eta,double* wk){
  if(s>0){double is=1/s;for(int k=0;k<8;++k)wk[k]*=is;}
 }
 
+// Entry-point guard: a positive h x w image with nc channels stored in len values.
+void check_image(int h,int w,int nc,R_xlen_t len){
+ if(h<=0||w<=0||nc<=0)stop("image dimensions and channel count must be positive");
+ if(double(h)*double(w)*double(nc)!=double(len))stop("image buffer does not match its dimensions");
+}
+void check_plane(const NumericMatrix& m,int h,int w,const char* name){
+ if(m.nrow()!=h||m.ncol()!=w)stop("%s must match the image dimensions",name);
+}
+
 }  // namespace
 
 // [[Rcpp::export]]
 List cpp_line_flow(NumericVector image,int h,int w,int nc,double sigma_c){
+ check_image(h,w,nc,image.size());
  std::vector<double> img(image.begin(),image.end()),gx,gy,an;
  tensor_flow(img,nc,h,w,sigma_c,gx,gy,an);
  NumericMatrix tx(h,w),ty(h,w),A(h,w);
@@ -149,6 +159,7 @@ List cpp_line_flow(NumericVector image,int h,int w,int nc,double sigma_c){
 // [[Rcpp::export]]
 NumericVector cpp_kuwahara(NumericVector image,int h,int w,int nc,double sigma_c,
                            double radius,double q,double s0){
+ check_image(h,w,nc,image.size());
  size_t n=size_t(h)*w;
  std::vector<double> img(image.begin(),image.end()),gx,gy,an;
  NumericVector out(image.size());
@@ -245,6 +256,7 @@ NumericVector cpp_kuwahara(NumericVector image,int h,int w,int nc,double sigma_c
 List cpp_fdog(NumericMatrix L,NumericVector smooth,int nc,double sigma_c,double sigma,
               double k,double tau,double sigma_m,double cos_turn=-2){
  int h=L.nrow(),w=L.ncol();size_t n=size_t(h)*w;
+ check_image(h,w,nc,smooth.size());
  std::vector<double> img(smooth.begin(),smooth.end()),gx,gy,an;
  tensor_flow(img,nc,h,w,sigma_c,gx,gy,an);
  int J=std::max(1,int(std::ceil(3*k*sigma)));
@@ -349,6 +361,9 @@ LogicalMatrix cpp_band_edge(LogicalMatrix band,NumericMatrix blur,NumericMatrix 
                             NumericMatrix zero,double thr,NumericMatrix tx,NumericMatrix ty,
                             double max_width,double light_width,int min_size){
  int h=band.nrow(),w=band.ncol();size_t n=size_t(h)*w;
+ check_image(h,w,1,band.size());
+ check_plane(blur,h,w,"blur");check_plane(response,h,w,"response");check_plane(zero,h,w,"zero");
+ check_plane(tx,h,w,"tx");check_plane(ty,h,w,"ty");
  const double* H=response.begin();const double* B=blur.begin();const double* Z=zero.begin();
  LogicalMatrix centre(h,w),edge(h,w);
  std::vector<char> dark(n,0);
@@ -428,11 +443,26 @@ LogicalMatrix cpp_band_edge(LogicalMatrix band,NumericMatrix blur,NumericMatrix 
   if(int(queue.size())>=min_size)for(int p:queue)keep[p]=1;
  }
  int reach=int(std::floor(max_width/2))+1;
- std::vector<char> near(n,0);
- for(int x=0;x<w;++x)for(int y=0;y<h;++y){
-  if(!keep[y+size_t(h)*x])continue;
-  for(int dx=-reach;dx<=reach;++dx)for(int dy=-reach;dy<=reach;++dy){
-   int xx=x+dx,yy=y+dy;if(xx>=0&&xx<w&&yy>=0&&yy<h)near[yy+size_t(h)*xx]=1;
+ // Square (2 reach + 1)^2 dilation of keep, as two separable sliding-window
+ // passes: O(h w) whatever the reach.
+ std::vector<char> across(n,0),near(n,0);
+ std::vector<int> run;
+ for(int y=0;y<h;++y){
+  if((y&255)==0)checkUserInterrupt();
+  run.assign(size_t(w)+1,0);
+  for(int x=0;x<w;++x)run[x+1]=run[x]+(keep[y+size_t(h)*x]?1:0);
+  for(int x=0;x<w;++x){
+   int lo=std::max(0,x-reach),hi=std::min(w-1,x+reach);
+   across[y+size_t(h)*x]=run[hi+1]-run[lo]>0;
+  }
+ }
+ for(int x=0;x<w;++x){
+  if((x&255)==0)checkUserInterrupt();
+  run.assign(size_t(h)+1,0);
+  for(int y=0;y<h;++y)run[y+1]=run[y]+(across[y+size_t(h)*x]?1:0);
+  for(int y=0;y<h;++y){
+   int lo=std::max(0,y-reach),hi=std::min(h-1,y+reach);
+   near[y+size_t(h)*x]=run[hi+1]-run[lo]>0;
   }
  }
  LogicalMatrix out(h,w);
@@ -448,6 +478,7 @@ LogicalMatrix cpp_fill_holes(LogicalMatrix mask,int max_size){
  int h=mask.nrow(),w=mask.ncol();LogicalMatrix out=clone(mask);
  std::vector<char> seen(size_t(h)*w,0);std::vector<int> queue;
  for(int s=0;s<h*w;++s){
+  if((s&65535)==0)checkUserInterrupt();
   if(mask[s]||seen[s])continue;
   queue.clear();queue.push_back(s);seen[s]=1;bool border=false,big=false;
   for(size_t qi=0;qi<queue.size();++qi){

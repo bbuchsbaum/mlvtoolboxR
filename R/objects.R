@@ -5,9 +5,11 @@
 #' raster pixel centers begin at (1,1). Geometry may extend outside the image.
 #' Zero-length segments require explicit cleaning; a segment whose endpoint
 #' coordinates differ by at most 64 units in the last place of their own
-#' magnitude (rounding residue) counts as zero-length. When such segments are
-#' dropped, the next kept segment starts exactly where the previous one ends
-#' (cyclically for closed contours). Subpixel values are otherwise retained.
+#' magnitude (rounding residue), or whose length underflows to zero, counts as
+#' zero-length. When such segments are dropped, the next kept segment starts
+#' exactly where the previous one ends (cyclically for closed contours), and
+#' cleaning repeats until no zero-length segment remains. Subpixel values are
+#' otherwise retained.
 #' @param contours List of numeric matrices with four columns.
 #' @param width,height Positive integer image dimensions.
 #' @param ids Unique character contour identifiers.
@@ -40,14 +42,19 @@ mlv_drawing <- function(contours = list(), width, height, ids = NULL,
     if (!is.matrix(z) || !is.numeric(z) || ncol(z) != 4L || any(!is.finite(z)))
       stop("each contour must be a finite numeric matrix with four columns", call. = FALSE)
     storage.mode(z) <- "double"
-    if (nrow(z)) {
+    # Dropping or snapping can itself create a zero-length segment (a closed
+    # loop that collapses to one segment, or a gap snap that moves a start
+    # point onto its end), so clean until no zero-length segment remains.
+    while (nrow(z)) {
       len <- sqrt(rowSums((z[,3:4,drop=FALSE] - z[,1:2,drop=FALSE])^2))
       if (any(!is.finite(len))) stop("coordinate differences overflow", call. = FALSE)
       # Endpoints that differ only by rounding residue (64 ulp of their own
       # magnitude, with no absolute floor so small-scale geometry stays
       # valid) are the same point: such segments are zero-length (MLV-R009).
+      # A segment whose length underflows to zero is zero-length as well.
       zero <- rowSums(abs(z[,3:4,drop=FALSE] - z[,1:2,drop=FALSE]) >
-                      64*.Machine$double.eps*pmax(abs(z[,1:2,drop=FALSE]),abs(z[,3:4,drop=FALSE]))) == 0
+                      64*.Machine$double.eps*pmax(abs(z[,1:2,drop=FALSE]),abs(z[,3:4,drop=FALSE]))) == 0 |
+              len == 0
       if (any(zero)) {
         if (zero_length == "error") stop("zero-length segment; use zero_length='drop' to clean", call. = FALSE)
         n0 <- nrow(z); kept <- which(!zero)
@@ -61,6 +68,7 @@ mlv_drawing <- function(contours = list(), width, height, ids = NULL,
         for (m in seq_along(kept)[-1L]) if (kept[m]-kept[m-1L]>1L) z[m,1:2] <- z[m-1L,3:4]
         if (length(kept) && closed0 && (kept[1L]>1L || kept[length(kept)]<n0))
           z[1L,1:2] <- z[length(kept),3:4]
+        next
       }
       if (nrow(z)>1L && any(abs(z[-1L,1:2,drop=FALSE] -
                                    z[-nrow(z),3:4,drop=FALSE]) >
@@ -71,12 +79,14 @@ mlv_drawing <- function(contours = list(), width, height, ids = NULL,
       # gap, so closure tests downstream do not depend on the start vertex or on
       # whether a segment was dropped (MLV-R016).
       if (nrow(z)>1L) {
-        n1 <- nrow(z)
+        n1 <- nrow(z); z0 <- z
         z[-1L,1:2] <- z[-n1,3:4]
         if (all(abs(z[1L,1:2] - z[n1,3:4]) <=
                 64*.Machine$double.eps*pmax(1,abs(z[1L,1:2]),abs(z[n1,3:4]))))
           z[1L,1:2] <- z[n1,3:4]
+        if (!identical(z, z0)) next
       }
+      break
     }
     colnames(z) <- c("x1","y1","x2","y2")
     out[[i]] <- z; keep[i] <- nrow(z)>0L

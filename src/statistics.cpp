@@ -77,6 +77,7 @@ struct Piece {double value,weight;};
 // cells, where the R profile splits each cell at its vertex.
 void turning_pieces(const double* z,int n,std::vector<Piece>& out) {
  out.clear();
+ if(n<=0)return;
  const R_xlen_t st=n;const double tol=64*std::numeric_limits<double>::epsilon();
  std::vector<double> x(n+1),y(n+1);
  x[0]=z[0];y[0]=z[st];

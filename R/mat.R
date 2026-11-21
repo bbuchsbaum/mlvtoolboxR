@@ -120,26 +120,31 @@ compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
  definitions<-list(aof_definition=.aof_definition(aof),morphology_definition=.morphology_definition(morphology),
   branch_rule=branch_rule,branch_rule_definition=.branch_rule_definition(branch_rule),
   tracing=if(branch_rule=="invariant")"pixel_graph_no_corner_cut" else "kovesi_edgelink_cleanedgelist")
+ line_width<-if(is.null(spec))1 else spec$settings$raster_line_width
  attach_spec<-function(out) {
+  # A MAT computed from a drawing records the ink raster width it thresholded,
+  # so map_mat_properties() maps scores back onto the same raster.
+  if(!is.null(drawing))out$parameters$raster_line_width<-line_width
   if(!is.null(spec)) {
    out$feature_spec<-spec
    if(!is.null(drawing))out$source_geometry<-.geometry_snapshot(drawing)
   }
   out
  }
- if(!is.null(drawing))mask<-rasterize(mask,line_width=if(is.null(spec))1 else spec$settings$raster_line_width)
+ if(!is.null(drawing))mask<-rasterize(mask,line_width=line_width)
  mask<-.check_mask(mask); h<-nrow(mask);w<-ncol(mask)
  if(!is.logical(trace_branches)||length(trace_branches)!=1L||is.na(trace_branches))stop("trace_branches must be TRUE or FALSE",call.=FALSE)
  if(length(threshold_angle)!=1L||!is.finite(threshold_angle)||threshold_angle<0||threshold_angle>90)
   stop("threshold_angle must be between 0 and 90 degrees",call.=FALSE)
+ if(length(min_branch_points)!=1L||!is.numeric(min_branch_points)||!is.finite(min_branch_points)||min_branch_points<2||
+    min_branch_points!=floor(min_branch_points)||min_branch_points>.Machine$integer.max)
+  stop("min_branch_points must be an integer of at least 2",call.=FALSE)
  if(is.null(min_component))min_component<-max(floor(.025*max(h,w)),1L)
  if(!any(mask)||all(mask)) {
   D<-matrix(if(all(mask)) -Inf else Inf,h,w)
   idx<-matrix(NA_integer_,h,w)
   flux<-average_outward_flux(D,idx,samples,epsilon)
   sk<-skeletonize(matrix(FALSE,h,w),min_component,method=morphology)
-  if(length(min_branch_points)!=1L||!is.finite(min_branch_points)||min_branch_points<2||min_branch_points!=floor(min_branch_points))
-   stop("min_branch_points must be at least 2",call.=FALSE)
   return(attach_spec(structure(list(distance_map=D,nearest_boundary=idx,AOF=flux,skeleton=sk,
    mask=mask,branches=list(),parameters=list(threshold_angle=threshold_angle,
    threshold=2/pi*sin(threshold_angle*pi/180),samples=samples,epsilon=epsilon,
@@ -214,8 +219,9 @@ compute_mat <- function(mask,threshold_angle=28,samples=60L,epsilon=1,
 #' @export
 trace_skeleton <- function(mat,min_points=10L,rule=NULL) {
  if(!inherits(mat,"mlv_mat"))stop("mat must be an mlv_mat",call.=FALSE)
- if(length(min_points)!=1L||!is.finite(min_points)||min_points<2||min_points!=floor(min_points))
-  stop("min_points must be at least 2",call.=FALSE)
+ if(length(min_points)!=1L||!is.numeric(min_points)||!is.finite(min_points)||min_points<2||
+    min_points!=floor(min_points)||min_points>.Machine$integer.max)
+  stop("min_points must be an integer of at least 2",call.=FALSE)
  rule<-.branch_rule(mat,rule)
  sk<-.check_mask(mat$skeleton)
  D<-mat$distance_map
@@ -527,7 +533,15 @@ map_mat_properties <- function(x,mat,radius=4,spec=mat$feature_spec,pixels_per_d
  }
  if(!identical(dim(mat$mask),c(x$height,x$width)))stop("drawing and MAT image dimensions differ",call.=FALSE)
  if(length(radius)!=1L||!is.finite(radius)||radius<=0)stop("radius must be positive",call.=FALSE)
- ink<-which(rasterize(x));rc<-arrayInd(ink,dim(mat$mask))
+ # Map onto the ink raster compute_mat() thresholded, as the MAT records it.
+ # A MAT computed from a mask records none: the specification's width applies,
+ # or the 1-pixel raster without one.
+ line_width<-mat$parameters$raster_line_width
+ spec_width<-if(is.null(spec))NULL else spec$settings$raster_line_width
+ if(is.null(line_width))line_width<-if(is.null(spec_width))1 else spec_width
+ else if(!is.null(spec_width)&&!isTRUE(all.equal(spec_width,line_width)))
+  stop("MAT raster width mismatch; recompute compute_mat()",call.=FALSE)
+ ink<-which(rasterize(x,line_width=line_width));rc<-arrayInd(ink,dim(mat$mask))
  props<-names(mat$score_images);images<-lapply(props,function(p)rep(NA_real_,length(ink)));names(images)<-props
  rule<-.branch_rule(mat);tol<-1e-9
  for(branch in mat$branches) {
@@ -568,14 +582,14 @@ map_mat_properties <- function(x,mat,radius=4,spec=mat$feature_spec,pixels_per_d
  # published-compatible rule reproduces that, the invariant rule keeps valid zeros.
  if(rule=="mlv2023")for(prop in props)images[[prop]][images[[prop]]==0]<-NA_real_
  x$mat_properties<-list();x$mat_images<-list();x$mat_mapping_masks<-list()
- contour_indices<-lapply(seq_along(x$ids),function(i).raster_indices(x,i))
+ contour_indices<-lapply(seq_along(x$ids),function(i).raster_indices(x,i,line_width=line_width))
  for(prop in props) {
   image<-matrix(NA_real_,x$height,x$width);image[ink]<-images[[prop]]
   x$mat_images[[prop]]<-image
   x$mat_mapping_masks[[prop]]<-is.finite(image)
   x$mat_properties[[prop]]<-lapply(contour_indices,function(index)image[index])
  }
- x$mat_parameters<-mat$parameters
+ x$mat_parameters<-mat$parameters;x$mat_parameters$raster_line_width<-line_width
  if(!is.null(spec)) {
   x$feature_spec<-spec;x$mat_feature_spec<-.mat_semantics(spec)
   x$mat_geometry<-.geometry_snapshot(x)

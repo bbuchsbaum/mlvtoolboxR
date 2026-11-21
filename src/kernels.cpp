@@ -200,8 +200,12 @@ IntegerVector cpp_raster_indices(NumericMatrix seg,int h,int w,double width){
   if((i&1023)==0)checkUserInterrupt();
   double x0=seg(i,0)-1,y0=seg(i,1)-1,x1=seg(i,2)-1,y1=seg(i,3)-1;
   if(width>1){
-   int minx=int(std::max(0.0,std::ceil(std::min(x0,x1)-width/2))),maxx=int(std::min(double(w-1),std::floor(std::max(x0,x1)+width/2)));
-   int miny=int(std::max(0.0,std::ceil(std::min(y0,y1)-width/2))),maxy=int(std::min(double(h-1),std::floor(std::max(y0,y1)+width/2)));
+   // Clamp in double before converting: coordinates far outside the image
+   // would otherwise overflow int.
+   auto lo=[](double v,int n){return int(std::min(double(n),std::max(0.0,std::ceil(v))));};
+   auto hi=[](double v,int n){return int(std::max(-1.0,std::min(double(n-1),std::floor(v))));};
+   int minx=lo(std::min(x0,x1)-width/2,w),maxx=hi(std::max(x0,x1)+width/2,w);
+   int miny=lo(std::min(y0,y1)-width/2,h),maxy=hi(std::max(y0,y1)+width/2,h);
    double dx=x1-x0,dy=y1-y0,den=dx*dx+dy*dy;
    for(int x=minx;x<=maxx;++x)for(int y=miny;y<=maxy;++y){double t=den?std::max(0.0,std::min(1.0,((x-x0)*dx+(y-y0)*dy)/den)):0;
     if(std::hypot(x-(x0+t*dx),y-(y0+t*dy))<=width/2)plot(x,y);}
@@ -319,7 +323,7 @@ List cpp_trace_graph_pruned(LogicalMatrix mask,int minimum){
  auto merge_all=[&](){
   bool changed=true;
   while(changed){changed=false;
-   for(auto& kv:inc){int J=kv.first;auto v=kv.second;
+   for(auto& kv:inc){auto v=kv.second;
     if(v.size()!=2||v[0].first==v[1].first)continue;
     int a=v[0].first,b=v[1].first;
     std::vector<int> pa=paths[a],pb=paths[b];
@@ -460,14 +464,14 @@ LogicalMatrix cpp_skeletonize_hmt(LogicalMatrix mask){
 // [[Rcpp::export]]
 NumericMatrix cpp_aof_centered(NumericMatrix distance,LogicalMatrix ink,LogicalMatrix outer,int samples,double epsilon){
  int h=distance.nrow(),w=distance.ncol();R_xlen_t n=(R_xlen_t)h*w;
- std::vector<R_xlen_t> ptr(n+1);std::vector<int> lab;
+ std::vector<R_xlen_t> ptr(n+1);std::vector<int> lab,hits;
  for(R_xlen_t i=0;i<n;++i){
   if((i&65535)==0)checkUserInterrupt();
   ptr[i]=lab.size();int r=i%h,c=i/h;
   if(outer[i]){lab.push_back(int(i));continue;}
   double D=distance[i];if(!std::isfinite(D))continue;
   long long S=llround(D*D);int d=int(std::floor(std::sqrt(double(S))))+1;bool on_ink=ink[i];
-  std::vector<int> hits;
+  hits.clear();
   for(int dr=-d;dr<=d;++dr){long long rem=S-(long long)dr*dr;if(rem<0)continue;
    long long dc=llround(std::sqrt(double(rem)));if(dc*dc!=rem)continue;
    for(int sg=-1;sg<=1;sg+=2){if(dc==0&&sg>0)continue;int rr=r+dr,cc=c+sg*int(dc);
@@ -570,8 +574,8 @@ List cpp_cleanedgelist(List edgelist,double minlength){
   for(int k=0;k<Nn;++k){auto p=nodept(k);at[{p[0],p[1]}].push_back(k);}
   for(auto& kv:at){auto& v=kv.second;for(size_t i=0;i<v.size();++i)for(size_t j=0;j<v.size();++j)if(i!=j){
    A[v[i]].insert(v[j]);B[v[i]/2].insert(v[j]/2);}}}
- std::vector<double> Nc(Nn),Ec(Ne);
- auto recount=[&](){for(int j=0;j<Nn;++j)Nc[j]=A[j].size();for(int j=0;j<Ne;++j)Ec[j]=B[j].size();};
+ std::vector<int> Nc(Nn),Ec(Ne);
+ auto recount=[&](){for(int j=0;j<Nn;++j)Nc[j]=int(A[j].size());for(int j=0;j<Ne;++j)Ec[j]=int(B[j].size());};
  recount();
  auto bself=[&](int n){return B[n].count(n)>0;};
  auto empty=[&](int n){return !alive[n];};
@@ -606,7 +610,7 @@ List cpp_cleanedgelist(List edgelist,double minlength){
   recount();
   removeedge(e2);
  };
- struct Info{double sd;int sp,sn,en;double sc,ec;};
+ struct Info{int sd,sp,sn,en,sc,ec;};
  auto info=[&](int n)->Info{Info z{0,-1,-1,-1,0,0};if(empty(n))return z;
   z.sn=2*n;z.en=2*n+1;z.sc=Nc[z.sn];z.ec=Nc[z.en];
   if(z.sc==0&&z.ec>=1){z.sd=z.ec;z.sp=z.en;}else if(z.sc>=1&&z.ec==0){z.sd=z.sc;z.sp=z.sn;}
@@ -618,7 +622,7 @@ List cpp_cleanedgelist(List edgelist,double minlength){
    if(!empty(n)&&z.ec==1){auto r=findrow(z.en);if(r.size()!=1)stop("unexpected connection count");mergenodes(r[0],z.en);}
   }}
  if(minlength>0){
-  for(int n=0;n<Ne;++n){Info z=info(n);
+  for(int n=0;n<Ne;++n){if((n&63)==0)checkUserInterrupt();Info z=info(n);
    if(!empty(n)&&len(n)<minlength){
     if(!Ec[n]||(Ec[n]==1&&bself(n)))removeedge(n);
     else if(z.sd==2){std::vector<int> linking(B[n].begin(),B[n].end());
@@ -696,7 +700,7 @@ static int yokoi8(const std::vector<unsigned char>& a,int h,int w,int r,int c,in
 LogicalMatrix cpp_skeletonize_minimal(LogicalMatrix mask){
  int h=mask.nrow(),w=mask.ncol();
  LogicalMatrix t=cpp_skeletonize_hmt(mask);
- std::vector<unsigned char> a(t.size());for(R_xlen_t i=0;i<t.size();++i)a[i]=t[i];
+ std::vector<unsigned char> a(t.size());for(R_xlen_t i=0;i<t.size();++i)a[i]=t[i]?1:0;
  for(bool change=true;change;){change=false;checkUserInterrupt();
   for(int c=0;c<w;++c)for(int r=0;r<h;++r)if(a[r+h*c]){int nb;int N=yokoi8(a,h,w,r,c,nb);
    if(N==1&&nb>=2){a[r+h*c]=0;change=true;}}}
@@ -704,7 +708,7 @@ LogicalMatrix cpp_skeletonize_minimal(LogicalMatrix mask){
 }
 // [[Rcpp::export]]
 int cpp_redundant_pixels(LogicalMatrix m){
- int h=m.nrow(),w=m.ncol(),k=0;std::vector<unsigned char> a(m.size());for(R_xlen_t i=0;i<m.size();++i)a[i]=m[i];
+ int h=m.nrow(),w=m.ncol(),k=0;std::vector<unsigned char> a(m.size());for(R_xlen_t i=0;i<m.size();++i)a[i]=m[i]?1:0;
  for(int c=0;c<w;++c)for(int r=0;r<h;++r)if(a[r+h*c]){int nb;if(yokoi8(a,h,w,r,c,nb)==1&&nb>=2)++k;}
  return k;
 }
@@ -717,6 +721,7 @@ NumericVector cpp_mirror_loop(NumericMatrix xy,double power,double tolerance){
  int m=xy.nrow();NumericVector acc(m);std::vector<double> comp(m,0.0); // Kahan compensation
  NumericMatrix p(m+1,2);
  for(int dir=0;dir<2;++dir)for(int k=0;k<m;++k){
+  if((k&15)==0)checkUserInterrupt();
   std::vector<int> ord(m);for(int i=0;i<m;++i)ord[i]=dir==0?(k+i)%m:((k-i)%m+m)%m;
   for(int i=0;i<=m;++i){int o=ord[i%m];p(i,0)=xy(o,0);p(i,1)=xy(o,1);}
   NumericVector sc=as<NumericVector>(cpp_fit_lines(p,tolerance)["scores"]);

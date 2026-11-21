@@ -131,8 +131,9 @@ trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=
  }
  source <- NULL
  if(is.character(image)){source<-image;image<-read_mlv_image(image)}
- if(length(min_points)!=1L || !is.finite(min_points)||min_points<2 ||
-    min_points!=floor(min_points))stop("min_points must be at least 2",call.=FALSE)
+ if(length(min_points)!=1L || !is.numeric(min_points) || !is.finite(min_points)||min_points<2 ||
+    min_points!=floor(min_points) || min_points>.Machine$integer.max)
+  stop("min_points must be an integer of at least 2",call.=FALSE)
  if(length(threshold)!=1L||!is.finite(threshold))stop("invalid threshold",call.=FALSE)
  if(length(dim(image))==3L) {
   if(dim(image)[3]<3L)stop("RGB image needs three channels",call.=FALSE)
@@ -177,7 +178,7 @@ trace_contours <- function(image,threshold=0.5,min_points=2L,thin=TRUE,simplify=
 #' @export
 trace_rgb <- function(image,backend,...,min_points=2L,spec=NULL) {
  if(!is.function(backend))stop("backend must be an explicitly supplied extraction function",call.=FALSE)
- provider<-deparse(substitute(backend))
+ provider<-deparse1(substitute(backend))
  lines<-NULL
  if(!is.null(spec)) {
   validate_feature_spec(spec)
@@ -571,7 +572,7 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  cols<-palette(n);out<-rep(NA_character_,length(value));ok<-is.finite(value)
  span<-diff(range)
  t<-if(span>0)(value[ok]-range[1])/span else rep(.5,sum(ok))
- index<-if(cyclic)as.integer(floor((t%%1)*n))%%n+1L else 1L+pmin(n-1L,pmax(0L,as.integer(floor(t*n))))
+ index<-if(cyclic)as.integer(floor((t%%1)*n))%%n+1L else 1L+as.integer(pmin(n-1,pmax(0,floor(t*n))))
  out[ok]<-cols[index];out
 }
 .plot_label <- function(x,property) {
@@ -607,6 +608,11 @@ plot.mlv_drawing <- function(x,property=NULL,col="black",lwd=1,...,legend=TRUE,
  graphics::text(x0,top-.04*side,bar$label,adj=c(0,0),cex=.72,xpd=NA)
  invisible(NULL)
 }
+# Raster stroke width map_mat_properties() used for the per-contour MAT pieces.
+.mat_line_width <- function(x) {
+ lw<-x$mat_parameters$raster_line_width
+ if(is.null(lw))1 else lw
+}
 #' Feature density on a pixel grid
 #' @param x A drawing.
 #' @param property Segment property, junctions, or a mapped MAT property.
@@ -627,16 +633,16 @@ feature_density <- function(x,property="length",sigma=0) {
    if(rr>=1&&rr<=x$height&&cc>=1&&cc<=x$width)out[rr,cc]<-out[rr,cc]+1
   }
  } else if(property %in% c("length","orientation","curvature")) {
+  segs<-as.matrix(st[,c("x1","y1","x2","y2"),drop=FALSE])
+  values<-st[[property]];if(property=="curvature")values<-values*st$length
   for(i in seq_len(nrow(st))) {
-   index<-cpp_raster_indices(as.matrix(st[i,c("x1","y1","x2","y2")]),x$height,x$width,1)
-   value<-st[[property]][i]
-   if(property=="curvature")value<-value*st$length[i]
-   if(length(index))out[index]<-out[index]+value/length(index)
+   index<-cpp_raster_indices(segs[i,,drop=FALSE],x$height,x$width,1)
+   if(length(index))out[index]<-out[index]+values[i]/length(index)
   }
  } else if(!is.null(x$mat_properties[[property]])) {
   .checked_mat_measurements(x,x$feature_spec)
   for(i in seq_along(x$ids)) {
-   index<-.raster_indices(x,i);v<-x$mat_properties[[property]][[i]]
+   index<-.raster_indices(x,i,line_width=.mat_line_width(x));v<-x$mat_properties[[property]][[i]]
    ok<-is.finite(v);out[index[ok]]<-pmax(out[index[ok]],v[ok])
   }
  } else stop("unknown or unmapped property",call.=FALSE)
@@ -646,8 +652,9 @@ feature_density <- function(x,property="length",sigma=0) {
    padded<-c(rep(0,radius),v,rep(0,radius))
    as.numeric(stats::filter(padded,g,sides=2))[(radius+1L):(radius+length(v))]
   }
-  out<-t(apply(out,1L,smooth));out<-apply(out,2L,smooth)
-  dim(out)<-c(x$height,x$width)
+  # apply() drops a dimension when a side has length 1, so reshape explicitly.
+  out<-t(matrix(apply(out,1L,smooth),nrow=x$width,ncol=x$height))
+  out<-matrix(apply(out,2L,smooth),nrow=x$height,ncol=x$width)
  }
  out
 }

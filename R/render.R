@@ -1,7 +1,8 @@
 #' Render a drawing with property or model-score colors
 #' @param x A drawing.
 #' @param property Optional segment or mapped medial-axis property name.
-#' @param values Optional numeric score for each contour, for example model predictions.
+#' @param values Optional numeric score for each contour, for example model
+#'   predictions; exclusive of `property`.
 #' @param width,height Output dimensions.
 #' @param line_width Stroke width.
 #' @param palette Color vector used from low to high values.
@@ -10,6 +11,7 @@
 render_drawing <- function(x,property=NULL,values=NULL,width=x$width,height=x$height,
                            line_width=1,palette=grDevices::hcl.colors(256,"Viridis")) {
  .check_drawing(x)
+ if(!is.null(property)&&!is.null(values))stop("use property or values, not both",call.=FALSE)
  mask<-rasterize(x,width,height,line_width)
  out<-array(1,c(nrow(mask),ncol(mask),3))
  if(is.null(property)&&is.null(values)){for(k in 1:3)out[,,k][mask]<-0;return(out)}
@@ -57,10 +59,11 @@ render_drawing <- function(x,property=NULL,values=NULL,width=x$width,height=x$he
  }
  rgb<-grDevices::col2rgb(colors)/255
  scale<-rep(c(width/x$width,height/x$height),2)
+ segs<-sweep(as.matrix(st[,c("x1","y1","x2","y2"),drop=FALSE]),2,scale,"*")
+ plane<-nrow(mask)*ncol(mask)
  for(i in seq_len(nrow(st))) {
-  seg<-as.matrix(st[i,c("x1","y1","x2","y2")]);seg<-sweep(seg,2,scale,"*")
-  index<-cpp_raster_indices(seg,height,width,line_width)
-  for(k in 1:3){layer<-out[,,k];layer[index]<-rgb[k,i];out[,,k]<-layer}
+  index<-cpp_raster_indices(segs[i,,drop=FALSE],height,width,line_width)
+  out[index]<-rgb[1L,i];out[index+plane]<-rgb[2L,i];out[index+2*plane]<-rgb[3L,i]
  }
  out
 }

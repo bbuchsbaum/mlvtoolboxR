@@ -47,8 +47,12 @@
 }
 .svg_path <- function(text,step) {
  if(length(text)!=1L||is.na(text))stop("SVG path is missing d",call.=FALSE)
- pattern<-"[A-Za-z]|[-+]?(?:[0-9]*\\.[0-9]+|[0-9]+\\.?[0-9]*)(?:[eE][-+]?[0-9]+)?"
+ # The final alternative captures any other non-separator character, which is
+ # then rejected rather than silently skipped.
+ pattern<-"[A-Za-z]|[-+]?(?:[0-9]*\\.[0-9]+|[0-9]+\\.?[0-9]*)(?:[eE][-+]?[0-9]+)?|[^[:space:],]"
  tokens<-regmatches(text,gregexpr(pattern,text,perl=TRUE))[[1]]
+ bad<-!grepl("^[A-Za-z]$",tokens)&is.na(suppressWarnings(as.numeric(tokens)))
+ if(any(bad))stop("invalid character in SVG path data: ",tokens[which(bad)[1]],call.=FALSE)
  pos<-1L;p<-c(0,0);start<-p;current<-matrix(numeric(),0,2);pieces<-list();cmd<-NULL;previous<-NULL;control<-NULL;started<-FALSE
  flush<-function(){if(nrow(current)>1L)pieces[[length(pieces)+1L]]<<-current;current<<-matrix(numeric(),0,2)}
  append<-function(points) {
@@ -68,9 +72,17 @@
   }
   count<-switch(op,M=2L,L=2L,H=1L,V=1L,Q=4L,T=2L,C=6L,S=4L,A=7L,
                 stop("unsupported SVG path command: ",cmd,call.=FALSE))
+  # Arc flags are single characters and may be written without separators
+  # ("0120 20" is flags 0 and 1, then x = 20): split such a token in place.
+  if(op=="A")for(at in pos+3:4)if(at<=length(tokens)) {
+   tok<-tokens[at]
+   if(nchar(tok)>1L&&substr(tok,1L,1L)%in%c("0","1"))
+    tokens<-c(tokens[seq_len(at-1L)],substr(tok,1L,1L),substring(tok,2L),tokens[-seq_len(at)])
+  }
   if(pos+count-1L>length(tokens)||any(grepl("^[A-Za-z]$",tokens[pos:(pos+count-1L)])))
    stop("incomplete SVG path command: ",cmd,call.=FALSE)
-  v<-as.numeric(tokens[pos:(pos+count-1L)]);pos<-pos+count
+  v<-suppressWarnings(as.numeric(tokens[pos:(pos+count-1L)]));pos<-pos+count
+  if(anyNA(v))stop("invalid number in SVG path command: ",cmd,call.=FALSE)
   endpoint<-function(v)if(relative)v+p else v
   if(op=="M") {
    flush();p<-endpoint(v);start<-p;current<-matrix(p,1);cmd<-if(relative)"l" else "L";control<-NULL
@@ -116,7 +128,8 @@ read_mlv_svg <- function(file,width=NULL,height=NULL,curve_step=1,strict=TRUE) {
  attrnum<-function(node,name,default=0) {
   s<-xml2::xml_attr(node,name)
   if(is.na(s))return(default)
-  if(!grepl("^[-+0-9.eE[:space:]]+(px)?$",s))stop("unsupported SVG unit in ",name,call.=FALSE)
+  if(!grepl("^[[:space:]]*[-+]?([0-9]+\\.?[0-9]*|\\.[0-9]+)([eE][-+]?[0-9]+)?(px)?[[:space:]]*$",s))
+   stop("invalid or unsupported SVG length in ",name,call.=FALSE)
   .svg_numbers(s)[1]
  }
  vb<-.svg_numbers(xml2::xml_attr(root,"viewBox"))
@@ -169,15 +182,19 @@ read_mlv_svg <- function(file,width=NULL,height=NULL,curve_step=1,strict=TRUE) {
    if(attrnum(node,"rx")!=0||attrnum(node,"ry")!=0)unsupported("rounded SVG rectangles are unsupported")
    a<-attrnum(node,"x");b<-attrnum(node,"y");w<-attrnum(node,"width");h<-attrnum(node,"height")
    if(w<0||h<0)stop("negative rectangle dimensions",call.=FALSE)
-   paths<-list(rbind(c(a,b),c(a+w,b),c(a+w,b+h),c(a,b+h),c(a,b)))
+   # A zero width or height disables rendering of the element (SVG 1.1, 9.2).
+   paths<-if(w>0&&h>0)list(rbind(c(a,b),c(a+w,b),c(a+w,b+h),c(a,b+h),c(a,b))) else list()
   } else if(name %in% c("circle","ellipse")) {
    rx<-if(name=="circle")attrnum(node,"r") else attrnum(node,"rx")
    ry<-if(name=="circle")rx else attrnum(node,"ry")
    if(rx<0||ry<0)stop("negative ellipse radius",call.=FALSE)
-   n<-max(12,ceiling(2*pi*max(rx,ry)/curve_step))
-   if(n>1000000L)stop("SVG curve exceeds point budget",call.=FALSE)
-   a<-seq(0,2*pi,length.out=n+1L)
-   paths<-list(cbind(attrnum(node,"cx")+rx*cos(a),attrnum(node,"cy")+ry*sin(a)))
+   # A zero radius disables rendering of the element (SVG 1.1, 9.3-9.4).
+   if(rx>0&&ry>0) {
+    n<-max(12,ceiling(2*pi*max(rx,ry)/curve_step))
+    if(n>1000000L)stop("SVG curve exceeds point budget",call.=FALSE)
+    a<-seq(0,2*pi,length.out=n+1L)
+    paths<-list(cbind(attrnum(node,"cx")+rx*cos(a),attrnum(node,"cy")+ry*sin(a)))
+   }
   } else if(name=="path")paths<-.svg_path(xml2::xml_attr(node,"d"),curve_step)
   else {unsupported(paste("unsupported SVG element:",name));return(invisible(NULL))}
   for(p in paths)if(nrow(p)>1L) {

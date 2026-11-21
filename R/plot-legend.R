@@ -63,6 +63,9 @@ colour_key.default <- function(x, limits, label = NULL, horizontal = TRUE, ticks
   for (flag in list(horizontal, cyclic, glyphs))
     if (!is.logical(flag) || length(flag) != 1L || is.na(flag))
       stop("horizontal, cyclic and glyphs must be TRUE or FALSE", call. = FALSE)
+  for (text in list(label, mark_label))
+    if (!is.null(text) && (!is.character(text) || length(text) != 1L || is.na(text)))
+      stop("label and mark_label must be NULL or a single string", call. = FALSE)
   n <- 128L
   cols <- if (cyclic) .map_colours((seq_len(n) - 0.5) / n * diff(limits) + limits[1],
                                    limits, palette, cyclic = TRUE) else palette(n)
