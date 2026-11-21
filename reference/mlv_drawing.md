@@ -5,10 +5,11 @@ are continuous image coordinates: x increases right, y increases down;
 raster pixel centers begin at (1,1). Geometry may extend outside the
 image. Zero-length segments require explicit cleaning; a segment whose
 endpoint coordinates differ by at most 64 units in the last place of
-their own magnitude (rounding residue) counts as zero-length. When such
-segments are dropped, the next kept segment starts exactly where the
-previous one ends (cyclically for closed contours). Subpixel values are
-otherwise retained.
+their own magnitude (rounding residue), or whose length underflows to
+zero, counts as zero-length. When such segments are dropped, the next
+kept segment starts exactly where the previous one ends (cyclically for
+closed contours), and cleaning repeats until no zero-length segment
+remains. Subpixel values are otherwise retained.
 
 ## Usage
 

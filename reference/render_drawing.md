@@ -29,7 +29,7 @@ render_drawing(
 - values:
 
   Optional numeric score for each contour, for example model
-  predictions.
+  predictions; exclusive of \`property\`.
 
 - width, height:
 
