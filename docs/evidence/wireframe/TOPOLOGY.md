@@ -1,5 +1,7 @@
 # Recovering photographic T and X junctions
 
+A follow-up tested where the scorer loses annotated crossings and compared alternative scoring and selection rules. [Controlled comparison](TOPOLOGY-HILL-CLIMB.md)
+
 Across **342 previously unused Wireframe photographs**, the frozen scorer recovered **56.3% of T junctions** and **52.2% of X junctions**. The preceding crop-based detector recovered 40.8% and 36.7% respectively. The matched increases were +15.5 points (95% interval 13.5 to 17.4) for T and +15.5 points (95% interval 11.2 to 19.9) for X. The intervals resample whole photographs in pairs. The 95% interval for absolute X recall is 45.3% to 59.5%. [Paired results](topology-paired.csv)
 
 | Photo set | T matches / reference | X matches / reference | Total detections | Reviewed gaps flagged |
