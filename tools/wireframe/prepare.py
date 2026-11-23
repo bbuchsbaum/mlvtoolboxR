@@ -17,6 +17,21 @@ MODEL = "https://raw.githubusercontent.com/navervision/mlsd/453cafa09467d0272760
 WITNESSES = ["00079423", "00078318"]
 
 
+def load_model(weights):
+    if hashlib.sha256(weights.read_bytes()).hexdigest() != (
+        "76b2ceae6b5e0000080e4846014dae1c0b653c0288cb70a852ccdc72e74c20b9"
+    ):
+        raise ValueError("M-LSD weight checksum mismatch")
+    model = Interpreter(model_path=str(weights), num_threads=1)
+    model.allocate_tensors()
+    return model
+
+
+def resize_photo(rgb):
+    size = tuple(max(1, round(d * 256 / max(rgb.size))) for d in rgb.size)
+    return rgb.resize(size, Image.Resampling.LANCZOS)
+
+
 def enhance_contrast(rgb):
     """Equalize local lightness on the resized photo before model inference."""
     lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB)
@@ -53,6 +68,20 @@ def run_model(model, image):
     return np.array(lines).reshape(-1, 4)
 
 
+def write_full_views(folder, image_id, pixels, model):
+    for suffix, view in [
+        (".segments.csv", pixels),
+        (".clahe.segments.csv", enhance_contrast(pixels)),
+    ]:
+        np.savetxt(
+            folder / (image_id + suffix),
+            run_model(model, view) + 1,
+            delimiter=",",
+            header="x1,y1,x2,y2",
+            comments="",
+        )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
@@ -61,7 +90,14 @@ def main():
         "--manifest", type=Path, help="Published issue #3 benchmark JSON"
     )
     inputs.add_argument("--roster", type=Path, help="Original issue panel images.csv")
+    parser.add_argument(
+        "--extra-panel",
+        choices=("replication", "confirmation"),
+        help="Prepare a disjoint set in a separate working directory",
+    )
     args = parser.parse_args()
+    if args.extra_panel and not args.manifest:
+        parser.error("--extra-panel requires --manifest for the exclusion roster")
     folder = args.directory
     folder.mkdir(parents=True, exist_ok=True)
     meta = download(folder / "metadata.jsonl", DATA + "/metadata.jsonl")
@@ -91,14 +127,25 @@ def main():
         if i not in records or photo["url"] != DATA + "/images/" + i + ".png":
             raise ValueError(f"Unknown image or different dataset revision for {i}")
         panel.setdefault(i, "issue")
-    model_file = download(folder / "mlsd.tflite", MODEL)
-    if (
-        hashlib.sha256(model_file.read_bytes()).hexdigest()
-        != "76b2ceae6b5e0000080e4846014dae1c0b653c0288cb70a852ccdc72e74c20b9"
-    ):
-        raise ValueError("M-LSD weight checksum mismatch")
-    model = Interpreter(model_path=str(model_file), num_threads=1)
-    model.allocate_tensors()
+    if args.extra_panel:
+        remaining = records.keys() - panel.keys()
+        replication = sorted(
+            remaining,
+            key=lambda i: hashlib.sha256(
+                ("issue3-replication-v1/" + i).encode()
+            ).digest(),
+        )[:24]
+        if args.extra_panel == "replication":
+            panel = dict.fromkeys(replication, "replication")
+        else:
+            confirmation = sorted(
+                remaining - set(replication),
+                key=lambda i: hashlib.sha256(
+                    ("issue3-confirmation-v1/" + i).encode()
+                ).digest(),
+            )[:48]
+            panel = dict.fromkeys(confirmation, "confirmation")
+    model = load_model(download(folder / "mlsd.tflite", MODEL))
 
     def fetch(i):
         return download(folder / (i + ".png"), DATA + "/images/" + i + ".png")
@@ -114,8 +161,8 @@ def main():
             )
             w, h = img.size
             assert [w, h] == records[i]["image_size"]
-            size = tuple(round(d * 256 / max(w, h)) for d in (w, h))
-            img = img.resize(size, Image.Resampling.LANCZOS)
+            img = resize_photo(img)
+            size = img.size
             digest = hashlib.sha256(img.tobytes()).hexdigest()
             if i == WITNESSES[0]:
                 assert (
@@ -127,18 +174,7 @@ def main():
             writer.writerow([i, group, *size, digest])
             img.save(folder / (i + ".small.png"))
             pixels = np.asarray(img)
-            for suffix, model_input in [
-                (".segments.csv", pixels),
-                (".clahe.segments.csv", enhance_contrast(pixels)),
-            ]:
-                seg = run_model(model, model_input)
-                np.savetxt(
-                    folder / (i + suffix),
-                    seg + 1,
-                    delimiter=",",
-                    header="x1,y1,x2,y2",
-                    comments="",
-                )
+            write_full_views(folder, i, pixels, model)
             # Map zero-based source pixel centers through the resize to one-based R coordinates.
             ref = (np.asarray(records[i]["lines"]) + 0.5) * (
                 np.asarray(size) / [w, h]

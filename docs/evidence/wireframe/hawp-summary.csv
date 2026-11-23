@@ -1,0 +1,11 @@
+panel,method,T_reference,T_matched,T_detected,X_reference,X_matched,X_detected,flagged,reviewed,cutoff,selected
+development,hawp_vector_0.05,328,5,64,76,9,945,0,9,0.05,0
+development,hawp_mask_0.05,328,159,1750,76,25,904,2,9,0.05,0
+development,hawp_vector_0.50,328,65,221,76,17,275,0,9,0.5,1
+development,hawp_mask_0.50,328,157,762,76,23,256,2,9,0.5,0
+development,hawp_vector_0.90,328,70,126,76,1,12,0,9,0.9,0
+development,hawp_mask_0.90,328,75,161,76,1,18,0,9,0.9,0
+development,hawp_vector_0.95,328,32,52,76,0,6,0,9,0.95,0
+development,hawp_mask_0.95,328,34,70,76,0,8,0,9,0.95,0
+issue,hawp_vector_0.50,62,7,277,101,12,413,0,15,0.5,1
+issue,hawp_mask_0.50,62,23,994,101,34,376,0,15,0.5,0

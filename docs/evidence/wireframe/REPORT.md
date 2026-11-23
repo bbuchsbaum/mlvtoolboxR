@@ -1,5 +1,7 @@
 # Recovering junctions in Wireframe photographs
 
+The [follow-up experiment](FOLLOWUP.md) tests overlapping image crops, four-arm crossings and a second pretrained model. On 48 new photographs the combined rule recovered 49 more Ts and 19 more Xs than full-image M-LSD, with zero flags from either method at 17 reviewed gaps.
+
 On the original 24-photo panel from issue #3, a pretrained M-LSD line-segment provider recovered **19 of 62 T junctions and 35 of 101 X junctions**, with **zero flags at the 15 reviewed gaps**. FDoG with 6 px gap repair recovered 3 Ts and no Xs. M-LSD recovered all four marked window crossings but none of the 33 eligible floor crossings. Boosting local contrast recovered six more Xs, lost five Ts and flagged one reviewed gap. Both versions fell below the protocol's 50% recovery threshold for each type. Keep the provider experimental. [Issue #3](https://github.com/bbuchsbaum/mlvtoolboxR/issues/3)
 
 ## Original benchmark

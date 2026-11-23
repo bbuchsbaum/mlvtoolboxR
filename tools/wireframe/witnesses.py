@@ -86,7 +86,51 @@ def render(folder):
     canvas.save(folder / "witness-inspection.png")
 
 
+def render_floor(folder, output):
+    image_id = "00078318"
+    sites = [
+        r
+        for r in read_csv(folder / "support-issue-sites.csv")
+        if r["id"] == image_id and r["kind"] == "X"
+    ]
+    with Image.open(folder / f"{image_id}.small.png") as photo:
+        floor = photo.convert("RGB").crop((0, 110, photo.width, photo.height))
+    zoom = 4
+    floor = floor.resize(
+        (floor.width * zoom, floor.height * zoom), Image.Resampling.NEAREST
+    )
+    canvas = Image.new("RGB", (floor.width, floor.height * 2 + 88), "white")
+    caption = ImageDraw.Draw(canvas)
+    caption.text(
+        (10, 6), "Floor seams on photograph 00078318", fill="black", font_size=20
+    )
+    canvas.paste(floor, (0, 36))
+    draw = ImageDraw.Draw(floor)
+    for site in sites:
+        x = (float(site["x"]) - 0.5) * zoom
+        y = (float(site["y"]) - 110.5) * zoom
+        if site["supported"] == "1":
+            draw.rectangle((x - 7, y - 7, x + 7, y + 7), outline="#01ffff", width=3)
+        else:
+            draw.ellipse((x - 4, y - 4, x + 4, y + 4), outline="#ff957b", width=2)
+    caption.text(
+        (10, floor.height + 43),
+        "Cyan squares mark matched reference crossings. Coral rings mark missed crossings.",
+        fill="black",
+        font_size=18,
+    )
+    canvas.paste(floor, (0, floor.height + 78))
+    canvas.save(output)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
-    render(parser.parse_args().directory)
+    parser.add_argument(
+        "--floor-recovery", type=Path, help="Render the scored floor crossings to a PNG"
+    )
+    args = parser.parse_args()
+    if args.floor_recovery:
+        render_floor(args.directory, args.floor_recovery)
+    else:
+        render(args.directory)

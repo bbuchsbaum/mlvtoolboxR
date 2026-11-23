@@ -1,0 +1,49 @@
+id,stem_index,target_index,stem_reversed,x,y,include,reason
+00193968,66,13,1,71.31332848065577,87.32036522159774,1,Upright stops below the window sill.
+00037212,35,36,1,191.27193982515684,124.26103699036703,0,"Indistinct edge, possible contact or another nearby junction."
+00192240,5,18,0,169.75189625820997,57.06270747286474,1,Soffit ends before the cabinet upright.
+00103259,43,40,1,189.68769078245765,124.98134552847246,1,Inside frame edge ends above the outer edge.
+00389661,61,35,1,59.26325916907305,16.492522828104473,1,Frame corner stops below the wall molding.
+00371091,15,17,0,97.69034133217603,157.9858607426035,0,"Indistinct edge, possible contact or another nearby junction."
+00191604,6,33,0,118.36037470628108,88.09440272451812,0,"Indistinct edge, possible contact or another nearby junction."
+00303705,72,32,0,17.978063649021255,123.62741892771723,0,"Indistinct edge, possible contact or another nearby junction."
+00494163,50,58,0,137.20925893511287,175.29177072384022,0,"Indistinct edge, possible contact or another nearby junction."
+00302938,73,28,1,146.14292415308023,116.32811992630026,1,Stone course ends at the outer fireplace trim.
+00070980,56,81,1,182.63887259329525,62.235382266236655,1,Awning edge stops before the wall edge.
+00100639,28,21,1,164.08795296746047,95.11103107424776,0,"Indistinct edge, possible contact or another nearby junction."
+00401754,60,75,1,18.019800111045598,142.64750051218985,0,"Indistinct edge, possible contact or another nearby junction."
+00190933,30,61,0,151.11501716915203,36.49795473820787,0,"Indistinct edge, possible contact or another nearby junction."
+00222614,8,3,0,117.92705516815184,217.39903088104563,1,Sash upright ends above the lower sill edge.
+00191429,69,2,0,89.68369976244864,106.95729402990995,0,"Indistinct edge, possible contact or another nearby junction."
+00031723,87,26,0,43.792734375,153.37961455271264,0,"Indistinct edge, possible contact or another nearby junction."
+00071700,60,69,1,182.14539586295245,95.58828402565496,0,"Indistinct edge, possible contact or another nearby junction."
+00036277,95,31,1,79.28949731119529,119.93884504125143,0,"Indistinct edge, possible contact or another nearby junction."
+00104126,12,4,0,197.76629315196777,61.80215234375,0,"Indistinct edge, possible contact or another nearby junction."
+00064612,37,72,1,208.31454584271265,106.02309178853446,1,Foreground cabinet edge ends below rear panel top.
+00065178,33,27,1,70.7367185188215,107.89836630292882,0,"Indistinct edge, possible contact or another nearby junction."
+00100462,36,14,1,195.5994016661919,72.22527345858941,1,Inner jamb ends below the outer lintel.
+00492153,41,16,1,122.6546131777252,94.58547246728706,0,"Indistinct edge, possible contact or another nearby junction."
+00193968,83,2,1,81.30234375,38.85026952627391,1,Window frame stops below the molding.
+00037212,16,21,0,166.73007045820728,91.94855825167988,0,"Indistinct edge, possible contact or another nearby junction."
+00192240,17,10,1,30.962178229575752,44.493257481137064,0,"Indistinct edge, possible contact or another nearby junction."
+00103259,15,11,1,22.806407839075742,65.03860393857762,0,"Indistinct edge, possible contact or another nearby junction."
+00389661,3,0,1,38.6692996657173,174.7402118185312,0,"Indistinct edge, possible contact or another nearby junction."
+00371091,22,20,0,82.4455656219823,164.04378168587468,0,"Indistinct edge, possible contact or another nearby junction."
+00191604,39,11,0,129.69328562330253,56.027094697249915,0,"Indistinct edge, possible contact or another nearby junction."
+00303705,15,10,1,146.72726959323515,165.5880541597196,0,"Indistinct edge, possible contact or another nearby junction."
+00494163,76,8,1,107.03004478682932,88.35279768601355,0,"Indistinct edge, possible contact or another nearby junction."
+00302938,48,26,1,192.5880119511949,110.16850853533579,1,Stone course ends before the inner fireplace surround.
+00070980,33,39,0,159.85636131130795,112.17310156250001,0,"Indistinct edge, possible contact or another nearby junction."
+00100639,16,14,1,139.854265625,31.74482369171678,0,"Indistinct edge, possible contact or another nearby junction."
+00401754,18,67,0,52.0369045609919,169.3626184259296,0,"Indistinct edge, possible contact or another nearby junction."
+00190933,9,1,0,48.348174778761056,153.86213537994257,0,"Indistinct edge, possible contact or another nearby junction."
+00222614,21,15,1,24.97186522114948,171.0590307303315,0,"Indistinct edge, possible contact or another nearby junction."
+00191429,26,8,1,166.7069656962598,51.22752865559139,1,Picture frame ends below the ceiling trim.
+00031723,15,12,0,105.12989353490565,68.59849931736605,1,Dark rectangle ends before the wall trim.
+00071700,61,56,1,219.1735648008718,90.94023102565828,1,Rail upright ends at the underside of the cap.
+00036277,51,91,1,170.47194707092163,65.34905950934372,1,Window upright ends below ceiling edge.
+00104126,17,10,1,54.563567070350054,183.05539957500434,0,"Indistinct edge, possible contact or another nearby junction."
+00064612,33,29,0,234.67437066271515,118.37415176451765,0,"Indistinct edge, possible contact or another nearby junction."
+00065178,39,5,1,72.07550619562012,83.0981042948636,0,"Indistinct edge, possible contact or another nearby junction."
+00100462,47,3,0,81.00170767238082,142.9318319563541,1,Interior shelf edge ends before the outer frame.
+00492153,2,4,0,27.155489264870845,55.865484732116116,0,"Indistinct edge, possible contact or another nearby junction."

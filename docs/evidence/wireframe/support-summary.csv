@@ -1,0 +1,17 @@
+panel,method,T_reference,T_matched,T_detected,X_reference,X_matched,X_detected,flagged,reviewed
+development,mlsd_mask,328,136,709,76,31,253,1,9
+development,crop_consensus,328,158,861,76,31,285,1,9
+development,fragment_x,328,136,709,76,31,262,1,9
+development,supported,328,156,853,76,31,293,1,9
+issue,mlsd_mask,62,19,962,101,35,329,0,15
+issue,crop_consensus,62,21,1150,101,38,390,0,15
+issue,fragment_x,62,19,962,101,40,353,0,15
+issue,supported,62,20,1134,101,42,406,0,15
+replication,mlsd_mask,496,208,995,93,35,404,3,16
+replication,crop_consensus,496,231,1199,93,40,466,3,16
+replication,fragment_x,496,208,995,93,38,421,3,16
+replication,supported,496,228,1185,93,42,480,3,16
+confirmation,mlsd_mask,864,329,1696,194,65,691,0,17
+confirmation,crop_consensus,864,383,2037,194,79,787,0,17
+confirmation,fragment_x,864,329,1696,194,76,739,0,17
+confirmation,supported,864,378,2004,194,84,820,0,17

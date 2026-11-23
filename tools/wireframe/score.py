@@ -9,6 +9,8 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cdist
 
+ROOT = Path(__file__).resolve().parents[2]
+
 METHODS = (
     "fdog0",
     "fdog6",
@@ -93,6 +95,10 @@ def match(reference, predicted):
     return [(i, j) for i, j in zip(refs, preds) if distances[i, j] <= 4]
 
 
+def positions(rows):
+    return np.array([(float(r["x"]), float(r["y"])) for r in rows]).reshape(-1, 2)
+
+
 def read_csv(path):
     with path.open() as f:
         return list(csv.DictReader(f))
@@ -105,10 +111,8 @@ def write_csv(path, rows, fields):
         writer.writerows(rows)
 
 
-def supplement(folder):
-    panel = [
-        p for p in read_csv(folder / "panel.csv") if p["panel"] in ("sample", "witness")
-    ]
+def supplement(folder, groups=("sample", "witness")):
+    panel = [p for p in read_csv(folder / "panel.csv") if p["panel"] in groups]
     photos = []
     for photo in panel:
         lines = np.loadtxt(
@@ -161,15 +165,16 @@ def original(folder, manifest):
     return photos, reviews
 
 
-def score(folder, photos, reviews, prefix=""):
-    detections = read_csv(folder / "junctions.csv")
+def score(folder, photos, reviews, prefix="", *, methods=METHODS, detections=None):
+    if detections is None:
+        detections = read_csv(folder / "junctions.csv")
     scores, sites, negatives = [], [], []
     for image_id, group, refs in photos:
         observed = [r for r in detections if r["id"] == image_id]
         for kind in ("T", "X"):
             points = [q for k, q in refs if k == kind]
             rows = [dict(id=image_id, kind=kind, x=q[0], y=q[1]) for q in points]
-            for method in METHODS:
+            for method in methods:
                 pred = [
                     (float(r["x"]), float(r["y"]))
                     for r in observed
@@ -195,7 +200,7 @@ def score(folder, photos, reviews, prefix=""):
                 continue
             row = dict(id=image_id, x=review["x"], y=review["y"])
             center = np.array([float(row["x"]), float(row["y"])])
-            for method in METHODS:
+            for method in methods:
                 flags = [
                     r["type"]
                     for r in observed
@@ -213,13 +218,25 @@ def score(folder, photos, reviews, prefix=""):
         ["id", "panel", "type", "method", "reference", "detected", "matched"],
     )
     write_csv(
-        folder / (prefix + "sites.csv"), sites, ["id", "kind", "x", "y", *METHODS]
+        folder / (prefix + "sites.csv"), sites, ["id", "kind", "x", "y", *methods]
     )
     write_csv(
         folder / (prefix + "near-miss-scores.csv"),
         negatives,
-        ["id", "x", "y", *METHODS],
+        ["id", "x", "y", *methods],
     )
+    return scores, negatives
+
+
+def totals(panel, method, scores, negatives):
+    row = dict(panel=panel, method=method)
+    for kind in ("T", "X"):
+        group = [r for r in scores if r["method"] == method and r["type"] == kind]
+        for field in ("reference", "matched", "detected"):
+            row[f"{kind}_{field}"] = sum(r[field] for r in group)
+    row["flagged"] = sum(r[method] != "-" for r in negatives)
+    row["reviewed"] = len(negatives)
+    return row
 
 
 if __name__ == "__main__":

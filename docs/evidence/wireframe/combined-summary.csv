@@ -1,0 +1,8 @@
+panel,method,T_reference,T_matched,T_detected,X_reference,X_matched,X_detected,flagged,reviewed,selected
+development,mlsd_mask,328,136,709,76,31,253,1,9,0
+development,corroborated,328,161,841,76,35,286,1,9,1
+development,union,328,189,1179,76,38,426,2,9,0
+issue,mlsd_mask,62,19,962,101,35,329,0,15,0
+issue,corroborated,62,21,1118,101,37,376,0,15,1
+replication,mlsd_mask,496,208,995,93,35,404,3,16,0
+replication,corroborated,496,260,1143,93,49,451,4,16,1

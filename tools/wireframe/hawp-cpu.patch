@@ -1,0 +1,17 @@
+--- a/hawp/__init__.py
++++ b/hawp/__init__.py
+@@ -4 +3,0 @@
+-from . import ssl
+\ No newline at end of file
+--- a/hawp/base/csrc/__init__.py
++++ b/hawp/base/csrc/__init__.py
+@@ -1,0 +2 @@
++import torch
+@@ -12 +13 @@
+-    )
++    ) if torch.cuda.is_available() else None
+--- a/hawp/fsl/model/models.py
++++ b/hawp/fsl/model/models.py
+@@ -121 +121 @@
+-        self.register_buffer('tspan', torch.linspace(0, 1, self.n_pts0)[None,None,:].cuda())
++        self.register_buffer('tspan', torch.linspace(0, 1, self.n_pts0)[None,None,:])

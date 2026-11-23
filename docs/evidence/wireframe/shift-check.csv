@@ -1,0 +1,9 @@
+panel,kind,extra_matches,shifts,null_median,null_p95
+development,T,20,199,1.0,3
+development,X,0,199,0.0,1
+issue,T,1,199,0.0,1
+issue,X,7,199,0.0,1
+replication,T,20,199,1.0,4
+replication,X,7,199,0.0,1
+confirmation,T,49,199,2.0,5
+confirmation,X,19,199,0.0,2
