@@ -15,6 +15,27 @@ from topology import (
 
 
 class TestVectorTopology(unittest.TestCase):
+    def test_context_uses_pixel_centers_and_separate_neighborhoods(self):
+        import torch
+        from context_features import SCENE_COLUMNS, descriptors, neighborhood
+        from predict_hawp import sample_context
+
+        # The map covers four photo pixels in each direction. The photo center
+        # is equally far from all four map samples.
+        maps = torch.tensor([[[[1.0, 3.0], [5.0, 7.0]]]])
+        xy = np.array([[1, 1], [2.5, 2.5], [4, 4]])
+        np.testing.assert_array_equal(sample_context(maps, xy, (4, 4))[:, 0], [1, 4, 7])
+        empty = descriptors(np.empty((0, 140)), maps, xy[:0], (4, 4))
+        self.assertEqual(empty.shape, (0, 230))
+        xy = np.array([[1, 1], [5, 1], [24, 1], [70, 1]])
+        geometry = np.zeros((4, 140), np.float32)
+        geometry[:, SCENE_COLUMNS[0]] = [1, 3, 8, 12]
+        n = len(SCENE_COLUMNS)
+        scene = neighborhood(xy, geometry, (100, 10))
+        np.testing.assert_allclose(
+            scene[0, [0, n, 2 * n + 1, 3 * n + 1, 4 * n + 2]], [2, 3, 4, 8, 6]
+        )
+
     def test_arm_geometry_and_gap(self):
         # Values are analytic for three or four perpendicular unit-strength rays.
         hist = np.zeros((2, 36))

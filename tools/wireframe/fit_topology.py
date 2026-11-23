@@ -98,21 +98,17 @@ def pack(model):
     return dict(bias=model._baseline_prediction.item(), trees=trees)
 
 
-def fit(folder, output, variant):
+def fit_trees(f, y, hard_negatives, *, iterations, leaves, learning_rate):
     from sklearn.ensemble import HistGradientBoostingClassifier
     from threadpoolctl import threadpool_limits
 
-    if {r["panel"] for r in read_csv(folder / "panel.csv")} != {"train"}:
-        raise ValueError("Training requires the official training roster")
-    records = list(cache(folder, variant, training=True))
-    f, y, hard = [np.concatenate(values) for values in zip(*records)]
     models = []
     with threadpool_limits(limits=4):
         for labels in y.T:
             model = HistGradientBoostingClassifier(
-                max_iter=100 if variant == "arms" else 130,
-                max_leaf_nodes=15,
-                learning_rate=0.09,
+                max_iter=iterations,
+                max_leaf_nodes=leaves,
+                learning_rate=learning_rate,
                 l2_regularization=2,
                 min_samples_leaf=45,
                 early_stopping=False,
@@ -122,8 +118,8 @@ def fit(folder, output, variant):
                 f,
                 labels,
                 sample_weight=None
-                if variant == "arms"
-                else np.where(hard & ~labels, 8.0, 1.0),
+                if hard_negatives is None
+                else np.where(hard_negatives & ~labels, 8.0, 1.0),
             )
             packed = pack(model)
             actual = probabilities(f[::23], [packed])[:, 0]
@@ -131,6 +127,22 @@ def fit(folder, output, variant):
                 actual, model.predict_proba(f[::23])[:, 1], atol=1e-12
             )
             models.append(packed)
+    return models
+
+
+def fit(folder, output, variant):
+    if {r["panel"] for r in read_csv(folder / "panel.csv")} != {"train"}:
+        raise ValueError("Training requires the official training roster")
+    records = list(cache(folder, variant, training=True))
+    f, y, hard = [np.concatenate(values) for values in zip(*records)]
+    models = fit_trees(
+        f,
+        y,
+        None if variant == "arms" else hard,
+        iterations=100 if variant == "arms" else 130,
+        leaves=15,
+        learning_rate=0.09,
+    )
     output.write_text(json.dumps(models, separators=(",", ":")) + "\n")
     print(
         "training photos, rows, type-positive rows",

@@ -2,6 +2,8 @@
 
 ## One image
 
+The newer `--method context` uses the same command and weight arguments as `--method topology`. It increased T recall on two photographic panels. Its detection counts and score scale differ from the topology model. [Comparison at frozen thresholds and equal counts](TOPOLOGY-CONTEXT.md)
+
 The scorer takes an ordinary photo and returns one row per detected T or X. The CSV gives one-based pixel centers both on the 256-pixel-long-side working image and on the original after EXIF orientation. The method can remove or retype a previous prediction. It produces junction locations; the additional Xs do not constitute a unified contour drawing.
 
 Use the same R package checkout and Python environment as the [previous experiment](FOLLOWUP.md#run-on-one-photo), including the supervised HAWPv2 dependencies. Download the pinned M-LSD model, HAWPv2 source and HAWPv2 checkpoint as described in the [M-LSD setup](REPORT.md#method-and-reproduction) and [HAWP setup](FOLLOWUP.md#reproduce-the-benchmark). Use the current CPU patch on pristine HAWP source. In addition to CPU compatibility, it returns an empty line set when fewer than two graph vertices exist. The small fitted T/X scorer is included in this checkout. From the repository root, run

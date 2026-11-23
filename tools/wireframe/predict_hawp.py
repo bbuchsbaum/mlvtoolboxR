@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from PIL import Image
+from torch.nn import functional as F
 
 WEIGHTS_SHA256 = "c9548d67dd1a60a4c3c0271eaf249adc234409d8c5512eaaa18a66ba64d2f670"
 
@@ -32,17 +33,49 @@ def load_predictor(source, weights):
     transform = build_transform(cfg)
 
     @torch.inference_mode()
-    def lines(rgb):
+    def lines(rgb, *, with_context=False):
         height, width = rgb.shape[:2]
-        output, _ = model(
+        args = (
             transform(rgb).unsqueeze(0),
             [dict(filename="input", width=width, height=height)],
         )
-        return np.column_stack(
+        if with_context:
+            # Capture only the full-photo pass. Crop predictions use the ordinary path.
+            captured = []
+            with model.backbone.register_forward_hook(
+                lambda m, args, result: captured.append(result)
+            ):
+                output, _ = model(*args)
+            heads, features = captured[0]
+            head = heads[0]
+            junction = head[:, 6:7] - head[:, 5:6]
+            thin = model.fc3(features)
+            maps = torch.cat(
+                [
+                    model.fc1(features),
+                    thin,
+                    head,
+                    F.max_pool2d(junction, 5, 1, 2),
+                    F.avg_pool2d(thin, 11, 1, 5),
+                ],
+                dim=1,
+            )
+        else:
+            output, _ = model(*args)
+        segments = np.column_stack(
             [output["lines_pred"].numpy() + 1, output["lines_score"].numpy()]
         )
+        return (segments, maps) if with_context else segments
 
     return lines
+
+
+def sample_context(maps, xy, size):
+    """Bilinearly sample activations at one-based pixel centers, as during fitting."""
+    grid = 2 * (xy - 0.5) / np.asarray(size) - 1
+    grid = torch.as_tensor(grid, dtype=torch.float32).reshape(1, 1, -1, 2)
+    sampled = F.grid_sample(maps, grid, align_corners=False, padding_mode="border")
+    return sampled[0, :, 0, :].T.numpy().astype(np.float16)
 
 
 def crop_lines(rgb, predict):
