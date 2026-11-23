@@ -12,7 +12,7 @@ from PIL import Image
 WEIGHTS_SHA256 = "c9548d67dd1a60a4c3c0271eaf249adc234409d8c5512eaaa18a66ba64d2f670"
 
 
-def predict(folder, source, weights):
+def load_predictor(source, weights):
     if hashlib.sha256(weights.read_bytes()).hexdigest() != WEIGHTS_SHA256:
         raise ValueError("HAWPv2 weight checksum mismatch")
     sys.path.insert(0, str(source.resolve()))
@@ -30,24 +30,60 @@ def predict(folder, source, weights):
     )
     model.eval()
     transform = build_transform(cfg)
+
+    @torch.inference_mode()
+    def lines(rgb):
+        height, width = rgb.shape[:2]
+        output, _ = model(
+            transform(rgb).unsqueeze(0),
+            [dict(filename="input", width=width, height=height)],
+        )
+        return np.column_stack(
+            [output["lines_pred"].numpy() + 1, output["lines_score"].numpy()]
+        )
+
+    return lines
+
+
+def crop_lines(rgb, predict):
+    from prepare import enhance_contrast
+
+    # Give faint short edges both a local contrast adjustment and a larger
+    # effective scale. All crops originate from the same benchmark pixels.
+    image = enhance_contrast(rgb)
+    h, w = rgb.shape[:2]
+    cw, ch = (2 * w + 2) // 3, (2 * h + 2) // 3
+    all_lines = []
+    for top in sorted({0, h - ch}):
+        for left in sorted({0, w - cw}):
+            rows = predict(image[top : top + ch, left : left + cw])
+            keep = rows[:, 4] > 0.06
+            for axis, cut, size, extent in [(0, left, cw, w), (1, top, ch, h)]:
+                ends = rows[:, [axis, axis + 2]]
+                if cut:
+                    keep &= ends.min(axis=1) > 2
+                if cut + size < extent:
+                    keep &= ends.max(axis=1) < size - 1
+            keep_rows = rows[keep].copy()
+            keep_rows[:, :4] += [left, top, left, top]
+            all_lines.append(keep_rows)
+    return np.vstack(all_lines)
+
+
+def predict(folder, source, weights, tiles=False):
+    lines = load_predictor(source, weights)
     with (folder / "panel.csv").open() as roster:
-        photos = list(csv.DictReader(roster))
-    with torch.inference_mode():
-        for photo in photos:
+        for photo in csv.DictReader(roster):
             image_id = photo["id"]
             with Image.open(folder / f"{image_id}.small.png") as image:
                 rgb = np.array(image.convert("RGB"))
             if hashlib.sha256(rgb.tobytes()).hexdigest() != photo["pixel_sha256"]:
                 raise ValueError(f"Resized RGB checksum mismatch for {image_id}")
-            height, width = rgb.shape[:2]
-            meta = dict(filename=image_id, width=width, height=height)
-            output, _ = model(transform(rgb).unsqueeze(0), [meta])
-            # Upstream scales back to the input photo and plots on zero-based centers.
-            coords = output["lines_pred"].numpy() + 1
-            scores = output["lines_score"].numpy()
+            result = crop_lines(rgb, lines) if tiles else lines(rgb)
+            suffix = "hawp-tiles" if tiles else "hawp"
             np.savetxt(
-                folder / f"{image_id}.hawp.csv",
-                np.column_stack([coords, scores]),
+                folder / f"{image_id}.{suffix}.csv",
+                result,
                 delimiter=",",
                 header="x1,y1,x2,y2,score",
                 comments="",
@@ -61,5 +97,6 @@ if __name__ == "__main__":
         "source", type=Path, help="Pinned HAWP checkout with the CPU patch"
     )
     parser.add_argument("weights", type=Path)
+    parser.add_argument("--tiles", action="store_true")
     args = parser.parse_args()
-    predict(args.directory, args.source, args.weights)
+    predict(args.directory, args.source, args.weights, args.tiles)

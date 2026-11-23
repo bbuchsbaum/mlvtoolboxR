@@ -1,0 +1,7 @@
+source,type,population,reviewed,reviewer_a,reviewer_b,both_confirm,same_classification,unclear_a,unclear_b
+previous,T,2577,24,15,14,11,17,4,3
+previous,X,875,24,4,1,1,17,4,4
+candidate,T,2209,24,20,20,19,21,0,2
+candidate,X,1023,24,5,3,3,18,0,3
+reference,T,,6,4,4,4,6,0,0
+reference,X,,6,2,1,1,5,0,0

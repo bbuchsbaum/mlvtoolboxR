@@ -1,0 +1,5 @@
+source,type,population,reviewed,reviewer_a,reviewer_b,both_confirm,same_classification,unclear_a,unclear_b
+upper,X,1235,36,17,16,15,27,3,2
+lower,X,4232,36,4,4,4,30,5,3
+reference,T,,9,9,9,9,9,0,0
+reference,X,,9,4,3,3,8,1,1

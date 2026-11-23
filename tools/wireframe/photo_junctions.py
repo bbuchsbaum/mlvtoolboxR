@@ -1,5 +1,7 @@
 """Write experimental photographic T/X detections for a single local image."""
 import argparse
+import gzip
+import json
 import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -14,7 +16,7 @@ from prepare import load_model, resize_photo, write_full_views
 from score import ROOT, read_csv, write_csv
 
 
-def detect(image, weights, method):
+def detect(image, weights, method, hawp_source=None, hawp_weights=None):
     with Image.open(image) as source:
         rgb = ImageOps.exif_transpose(source).convert("RGB")
     small = resize_photo(rgb)
@@ -46,17 +48,39 @@ def detect(image, weights, method):
     enhanced = [r for r in views if r["method"] == "mlsd_clahe"]
     crops = [r for r in views if r["method"].startswith("crop_")]
     proposals = rank_crops(enhanced, crops)
-    if method == "supported":
+    if method in ("supported", "topology"):
         fragments = [dict(x=x, y=y, type="X") for _, x, y in crossings(pixels)]
         proposals = fragments + proposals
     detections = extend(primary, proposals, method)
+    if method == "topology":
+        from predict_hawp import load_predictor, crop_lines
+        from topology import model_features, probabilities, resolve
+
+        with gzip.open(Path(__file__).with_name("junction-scorer.json.gz"), "rt") as f:
+            fitted = json.load(f)
+        predictor = load_predictor(hawp_source, hawp_weights)
+        detail = (
+            crop_lines(pixels, predictor) if fitted["variant"] == "multiscale" else None
+        )
+        xy, descriptors = model_features(
+            pixels, predictor(pixels), fitted["variant"], detail
+        )
+        detections = resolve(
+            xy,
+            probabilities(descriptors, fitted["models"]),
+            detections,
+            fitted["cutoffs"],
+        )
     scale = np.array(rgb.size) / small.size
     for event in detections:
         x, y = float(event["x"]), float(event["y"])
         original_x, original_y = (np.array([x, y]) - 0.5) * scale + 0.5
-        yield dict(
+        row = dict(
             type=event["type"], x=x, y=y, original_x=original_x, original_y=original_y
         )
+        if method == "topology":
+            row["score"] = event["confidence"]
+        yield row
 
 
 if __name__ == "__main__":
@@ -75,12 +99,29 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--method",
-        choices=("supported", "crops"),
+        choices=("supported", "crops", "topology"),
         default="supported",
-        help="Include four-arm X proposals (supported) or use only traced contours (crops)",
+        help="Choose the capped baseline, contour-only crops, or the fitted topology scorer",
+    )
+    parser.add_argument(
+        "--hawp-source", type=Path, help="Pinned HAWP source with CPU patch"
+    )
+    parser.add_argument(
+        "--hawp-weights", type=Path, help="Supervised HAWPv2 checkpoint"
     )
     args = parser.parse_args()
-    if args.output.resolve() in (args.image.resolve(), args.weights.resolve()):
+    if args.method == "topology" and (not args.hawp_source or not args.hawp_weights):
+        parser.error("--method topology requires --hawp-source and --hawp-weights")
+    if args.output.resolve() in {
+        p.resolve() for p in [args.image, args.weights, args.hawp_weights] if p
+    }:
         parser.error("Choose an output file distinct from the image and weights")
-    rows = list(detect(args.image, args.weights, args.method))
-    write_csv(args.output, rows, ["type", "x", "y", "original_x", "original_y"])
+    rows = list(
+        detect(
+            args.image, args.weights, args.method, args.hawp_source, args.hawp_weights
+        )
+    )
+    fields = ["type", "x", "y", "original_x", "original_y"]
+    if args.method == "topology":
+        fields.append("score")
+    write_csv(args.output, rows, fields)

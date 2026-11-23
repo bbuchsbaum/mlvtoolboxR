@@ -92,7 +92,7 @@ def main():
     inputs.add_argument("--roster", type=Path, help="Original issue panel images.csv")
     parser.add_argument(
         "--extra-panel",
-        choices=("replication", "confirmation"),
+        choices=("replication", "confirmation", "prospective", "remainder"),
         help="Prepare a disjoint set in a separate working directory",
     )
     args = parser.parse_args()
@@ -144,7 +144,20 @@ def main():
                     ("issue3-confirmation-v1/" + i).encode()
                 ).digest(),
             )[:48]
-            panel = dict.fromkeys(confirmation, "confirmation")
+            if args.extra_panel == "confirmation":
+                panel = dict.fromkeys(confirmation, "confirmation")
+            else:
+                unused = remaining - set(replication) - set(confirmation)
+                ordered = sorted(
+                    unused,
+                    key=lambda i: hashlib.sha256(
+                        ("issue3-topology-v1/" + i).encode()
+                    ).digest(),
+                )
+                roster = (
+                    ordered[:64] if args.extra_panel == "prospective" else ordered[64:]
+                )
+                panel = dict.fromkeys(roster, args.extra_panel)
     model = load_model(download(folder / "mlsd.tflite", MODEL))
 
     def fetch(i):

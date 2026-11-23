@@ -86,11 +86,12 @@ def render(folder):
     canvas.save(folder / "witness-inspection.png")
 
 
-def render_floor(folder, output):
+def render_floor(folder, output, method="supported"):
     image_id = "00078318"
+    prefix = "topology" if method == "topology" else "support"
     sites = [
         r
-        for r in read_csv(folder / "support-issue-sites.csv")
+        for r in read_csv(folder / f"{prefix}-issue-sites.csv")
         if r["id"] == image_id and r["kind"] == "X"
     ]
     with Image.open(folder / f"{image_id}.small.png") as photo:
@@ -109,7 +110,7 @@ def render_floor(folder, output):
     for site in sites:
         x = (float(site["x"]) - 0.5) * zoom
         y = (float(site["y"]) - 110.5) * zoom
-        if site["supported"] == "1":
+        if site[method] == "1":
             draw.rectangle((x - 7, y - 7, x + 7, y + 7), outline="#01ffff", width=3)
         else:
             draw.ellipse((x - 4, y - 4, x + 4, y + 4), outline="#ff957b", width=2)
@@ -129,8 +130,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--floor-recovery", type=Path, help="Render the scored floor crossings to a PNG"
     )
+    parser.add_argument(
+        "--floor-method", choices=("supported", "topology"), default="supported"
+    )
     args = parser.parse_args()
     if args.floor_recovery:
-        render_floor(args.directory, args.floor_recovery)
+        render_floor(args.directory, args.floor_recovery, args.floor_method)
     else:
         render(args.directory)

@@ -15,3 +15,15 @@
 @@ -121 +121 @@
 -        self.register_buffer('tspan', torch.linspace(0, 1, self.n_pts0)[None,None,:].cuda())
 +        self.register_buffer('tspan', torch.linspace(0, 1, self.n_pts0)[None,None,:])
+@@ -333,0 +334,11 @@
++        if juncs_pred.shape[0] < 2:
++            meta = annotations[0]
++            scale = juncs_pred.new_tensor([meta['width'] / output.size(3),
++                                          meta['height'] / output.size(2)])
++            empty = juncs_pred.new_empty((0, 4))
++            return {'lines_pred': empty, 'lines_init': empty.clone(),
++                    'lines_score': juncs_pred.new_empty(0),
++                    'juncs_pred': juncs_pred * scale, 'juncs_score': _,
++                    'num_proposals': 0, 'filename': meta['filename'],
++                    'width': meta['width'], 'height': meta['height']}, extra_info
++

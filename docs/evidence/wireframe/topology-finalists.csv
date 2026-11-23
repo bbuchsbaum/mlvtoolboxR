@@ -1,0 +1,5 @@
+variant,calibration_T_of_1688,calibration_X_of_363,calibration_detected,calibration_flags_of_42,issue_T_of_62,issue_X_of_101,issue_flags_of_15,selected
+Full-image vectors,546,127,1314,0,18,34,1,0
+Vectors at traced sites,935,201,5156,4,34,51,1,0
+Add image gradients and training gap weights,982,211,5385,2,36,51,0,0
+Add four contrast-enhanced crops,1002,215,5079,4,33,53,0,1

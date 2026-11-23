@@ -1,0 +1,15 @@
+panel,method,T_reference,T_matched,T_detected,X_reference,X_matched,X_detected,flagged,reviewed
+development,supported,328,156,853,76,31,293,1,9
+development,topology,328,197,658,76,43,346,1,9
+issue,supported,62,20,1134,101,42,406,0,15
+issue,topology,62,33,983,101,53,512,0,15
+replication,supported,496,228,1185,93,42,480,3,16
+replication,topology,496,328,1012,93,65,510,1,16
+confirmation,supported,864,378,2004,194,84,820,0,17
+confirmation,topology,864,477,1628,194,107,925,2,17
+prospective,supported,1091,457,2577,150,44,875,0,30
+prospective,topology,1091,664,2209,150,62,1023,1,30
+remainder,supported,5201,2109,11708,1093,412,4715,4,19
+remainder,topology,5201,2876,9575,1093,587,5467,4,19
+pooled,supported,6292,2566,14285,1243,456,5590,4,49
+pooled,topology,6292,3540,11784,1243,649,6490,5,49

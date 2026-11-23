@@ -1,0 +1,46 @@
+id,x,y,stem,target,reverse,token,include,reason
+00384487,242.44153949089832,45.32986251211095,58,45,1,G01,1,Door upright ends below a continuous ceiling edge.
+00071738,191.71849167408172,94.59753835413463,2,34,1,G02,1,Checkered wallpaper separates the frame edge from the corner.
+00250495,130.31337940821223,50.99645577606289,16,20,1,G03,1,Wall separates the picture upright from the sloping ceiling.
+00436912,65.47298958901115,167.52021500146796,7,4,0,G04,0,The stem disappears into dark furniture.
+00344624,80.7437415360782,103.39714763384306,3,11,0,G05,1,A white strip separates the two frames.
+00102201,27.933184393674022,89.35377236715796,56,1,1,G06,0,Several trim edges converge beside the upright.
+00192677,215.73424170590107,58.29515964971345,15,18,0,G07,1,The hood's lower edge runs uninterrupted under the upright.
+00090947,166.3455431436608,50.067414566853266,24,45,1,G08,1,Green wall separates the opening from the ceiling trim.
+00491591,179.59799971455615,101.89946796566147,20,15,1,G09,1,The front arm edge ends below the cushion seam.
+00436622,217.43357388555808,101.60232988958005,10,51,1,G10,0,The marked stem is indistinct on plain wood.
+00250982,161.26356316893336,125.85860563630462,48,20,1,G11,1,The upper edge of the crossbar continues over the narrow upright.
+00410682,108.06236379207124,135.35250862004384,41,11,1,G12,0,The table leg obscures the horizontal edge.
+00250457,86.10241595224981,164.63452934145815,118,111,1,G13,0,The diagonal merges into dark edges under the drawer.
+00197089,129.96432668235053,138.9813590178567,18,15,1,G14,1,The inset stops short of the outer upright.
+00130203,108.50916608183167,209.72062693296053,25,1,0,G15,0,A reflection makes the lower endpoint uncertain.
+00507764,132.61764858903763,49.16433583763638,16,15,1,G16,0,The horizontal feature and marked upright are diffuse.
+00075487,172.5163514015623,122.23398304778438,21,5,1,G17,1,The glass upright ends below the cabinet's top edge.
+00349638,49.13953821680828,136.67545698472279,0,44,0,G18,1,A dark band separates the upright from the outer silhouette.
+00036977,151.2639354945234,114.69482522988997,0,8,0,G19,1,The diagonal ends short of the continuous rear counter edge.
+00060863,176.582359375,100.02441416940171,40,8,0,G20,0,A vertical feature below the sill aligns with the upright.
+00060942,91.91182540588953,57.87817453797968,10,0,0,G21,1,A light strip separates the cabinet top from the wall edge.
+00444946,155.72710072496378,70.63576557193633,13,30,0,G22,1,The dark upright ends above the pale horizontal edge.
+00088956,107.62717907465381,27.905441196520805,34,1,1,G23,1,Wall separates the door trim from the corner.
+00267114,119.92122817171884,39.15338930939908,7,3,1,G24,1,The inset edge ends within the mat below the upper frame.
+00490921,104.11047340091119,28.985247240961876,23,21,1,G25,1,The opening edge stops short of the wall corner.
+00035585,108.62852434489757,85.43337962666305,53,58,1,G26,1,The glass edge ends beneath the continuous head rail.
+00380861,204.54915731486415,165.766548207584,43,31,1,G27,0,Two sloping boundaries converge beside the post.
+00064291,158.98259764818252,123.71149479233142,14,23,0,G28,0,A vertical reflection meets the lower sill at the projection.
+00393968,147.04555538605712,117.36654039823406,27,2,0,G29,0,The diagonal fades into the dark doorway.
+00520395,114.77677194623894,119.11342208689469,59,82,1,G30,0,The upholstery rounds over without a clear endpoint.
+00066069,66.7527905071301,80.10476225535776,47,2,1,G31,1,Wall separates the picture edge from the wall corner.
+00435368,157.506765625,149.6264911185286,45,8,1,G32,1,The post ends beneath the overhang's sloping outer edge.
+00224794,47.45857083832633,41.98635537944027,0,38,1,G33,1,The lower upright ends beneath a continuous cabinet edge.
+00193589,32.28733841152901,185.03608484618016,24,8,1,G34,1,"The crosspiece ends at the inner frame, short of the outer upright."
+00052212,123.02647246270425,102.41600813347009,31,23,0,G35,1,The screen edge ends before an upright seam.
+00379444,177.39633128448725,147.54881445654175,36,30,0,G36,1,The inset edge ends inside the broader panel.
+00070862,27.953092326979714,107.7724863210293,64,67,1,G37,0,A second slanted member meets the upper rail near the projection.
+00072690,75.79522388463559,27.411898232678073,6,3,1,G38,1,Wall separates the frame top from the corner.
+00078596,28.113782409379002,77.14567880453492,4,7,0,G39,1,The smaller picture ends short of the larger picture's side.
+00035608,181.0830723765492,45.98441223990151,9,4,0,G40,1,Visible stone separates the dark upright and ceiling edge.
+00378067,167.67453443131788,158.9570597495297,53,29,1,G41,0,The photograph has no clear diagonal corresponding to the stem.
+00192244,127.29076020022514,52.29864911755722,47,0,1,G42,1,Wall separates the upright from the sloping ceiling edge.
+00494222,218.38206401479297,20.036707452647484,8,18,0,G43,1,The inner picture edge ends within the mat.
+00075090,18.503661833556258,127.96484055791996,47,44,1,G44,0,The diagonal reappears across the upright near the projection.
+00077161,42.52044168189967,57.61544981983897,105,13,1,G45,1,The blind slat stops before the vertical trim.
