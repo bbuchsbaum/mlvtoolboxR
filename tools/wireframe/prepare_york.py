@@ -1,4 +1,4 @@
-"""Prepare the official York Urban test photos and paired line endpoints."""
+"""Prepare an official York Urban split and its paired line endpoints."""
 import argparse
 import hashlib
 from io import BytesIO
@@ -16,7 +16,7 @@ from score import ROOT, read_csv, write_csv
 ARCHIVE_SHA256 = "09c922b9a87b6c9385fa8a8b20b9900fb39d43928baa963bd4790ab5a8d0afc5"
 
 
-def prepare(archive, folder):
+def prepare(archive, folder, split="test", originals=False):
     evidence = ROOT / "docs/evidence/wireframe"
     rosters = (
         "panel",
@@ -31,6 +31,11 @@ def prepare(archive, folder):
         for name in rosters
         for row in read_csv(evidence / (name + ".csv"))
     }
+    if split == "train":
+        seen.update(
+            row["pixel_sha256"] for row in read_csv(evidence / "york-panel.csv")
+        )
+    index_field = {"test": "testSetIndex", "train": "trainingSetIndex"}[split]
     with archive.open("rb") as stream:
         if hashlib.file_digest(stream, "sha256").hexdigest() != ARCHIVE_SHA256:
             raise ValueError("York Urban archive checksum differs")
@@ -42,9 +47,9 @@ def prepare(archive, folder):
             return loadmat(BytesIO(source.read("YorkUrbanDB/" + name)))[field]
 
         names = mat("Manhattan_Image_DB_Names.mat", "Manhattan_Image_DB_Names").ravel()
-        indices = mat("ECCV_TrainingAndTestImageNumbers.mat", "testSetIndex").ravel()
+        indices = mat("ECCV_TrainingAndTestImageNumbers.mat", index_field).ravel()
         if len(indices) != 51 or len(set(indices)) != 51:
-            raise ValueError("Unexpected York Urban test split")
+            raise ValueError(f"Unexpected York Urban {split} split")
         for idx in indices:
             image_id = str(names[idx - 1][0]).rstrip("/\\")
             prefix = image_id + "/" + image_id
@@ -57,6 +62,8 @@ def prepare(archive, folder):
             if digest in seen:
                 raise ValueError(f"Duplicate photo {image_id}")
             seen.add(digest)
+            if originals:
+                rgb.save(folder / (image_id + ".png"))
             small.save(folder / (image_id + ".small.png"))
             lines = mat(prefix + "LinesAndVP.mat", "lines")
             # Each consecutive pair of rows forms one segment, at one-based pixel centers.
@@ -71,7 +78,7 @@ def prepare(archive, folder):
             rows.append(
                 dict(
                     id=image_id,
-                    panel="york51",
+                    panel="york51" if split == "test" else "york-train51",
                     width=small.width,
                     height=small.height,
                     pixel_sha256=digest,
@@ -84,5 +91,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive", type=Path)
     parser.add_argument("folder", type=Path)
+    parser.add_argument("--split", choices=("train", "test"), default="test")
+    parser.add_argument("--originals", action="store_true")
     args = parser.parse_args()
-    prepare(args.archive, args.folder)
+    prepare(args.archive, args.folder, args.split, args.originals)

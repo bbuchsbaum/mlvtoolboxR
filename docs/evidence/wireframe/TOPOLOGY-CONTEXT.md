@@ -58,3 +58,5 @@ To reproduce the York comparison from the authors' archive and the frozen predic
 ```
 
 Refitting from the training images reproduced all split indices, thresholds and leaf values of the frozen context model exactly. The single-photo CLI reproduced all 74 context predictions and all 81 topology predictions on York image P1040798, including scores. The new runner returned an empty table with the expected columns for a blank input. Scoring the archived York detections against a fresh extraction of the authors’ annotations reproduced every full-count and equal-count row. [Scoring ledger](context-by-photo.csv)
+
+A subsequent fixed-location experiment tested whether checking individual arms in the original pixels improved type assignment. The newly evaluated York panel favored the frozen context scorer. [Original-resolution arm comparison and blinded review](NATIVE-ARMS.md)

@@ -1,6 +1,7 @@
 """Match junction types derived from the human line annotations to detected junctions."""
 import argparse
 import csv
+import gzip
 import itertools
 import json
 from pathlib import Path
@@ -100,7 +101,7 @@ def positions(rows):
 
 
 def read_csv(path):
-    with path.open() as f:
+    with (gzip.open(path, "rt") if path.suffix == ".gz" else path.open()) as f:
         return list(csv.DictReader(f))
 
 

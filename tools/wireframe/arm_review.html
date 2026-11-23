@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><title>Photographic junction review</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      max-width: 1050px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 3rem;
+      font:
+        16px/1.45 system-ui,
+        sans-serif;
+      color: #242424;
+    }
+    h1 {
+      font-size: 1.65rem;
+    }
+    button,
+    select,
+    input {
+      font: inherit;
+    }
+    button,
+    select {
+      padding: 0.28rem 0.55rem;
+    }
+    #actions,
+    nav,
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    #cards {
+      max-width: 100%;
+      height: auto;
+    }
+    #answers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    label select {
+      margin-left: 0.3rem;
+    }
+    canvas {
+      display: block;
+      width: min(100%, 600px);
+      height: auto;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    p {
+      max-width: 85ch;
+    }
+    small {
+      color: #555;
+    }
+  </style>
+  <h1>Photographic junction review</h1>
+  <p>
+    Work independently. A <b>T</b> has a visible through-edge and a terminating
+    stem. An <b>X</b> has four visible arms along two crossing axes. Count arms
+    extending about ten original pixels or more. A <b>gap</b> has a stem ending
+    roughly 10–25 pixels before a target edge. Place it where the stem would
+    meet the target. Use <b>unclear</b> when the photo cannot settle the class.
+  </p>
+  <nav>
+    <label
+      >Review
+      <select id="mode">
+        <option value="regions">Unmarked regions</option>
+        <option value="cards">Target cards</option>
+      </select></label
+    >
+    <button id="prev">Previous</button><span id="page"></span
+    ><button id="next">Next</button>
+  </nav>
+  <section id="regionPane">
+    <p>
+      Do the regions first. Click every clear T, X and genuine gap centered
+      inside the dotted border. Use the surrounding pixels as context. Choose a
+      label before each click. Mark the region complete even if it contains no
+      junctions.
+    </p>
+    <div class="row">
+      <label
+        >Label
+        <select id="kind">
+          <option>T</option>
+          <option>X</option>
+          <option>gap</option>
+          <option>unclear</option>
+        </select></label
+      ><button id="undo">Undo last mark</button>
+    </div>
+    <canvas id="tile" width="240" height="200"></canvas>
+    <div class="row">
+      <label><input id="done" type="checkbox" /> Region complete</label>
+    </div>
+  </section>
+  <section id="cardPane" hidden>
+    <p>
+      Each target has two views of the same pixels. The cyan corners surround
+      the scoring area. Classify the junction nearest the center, using
+      <b>other</b> for a clear corner, line or texture with neither a junction
+      nor a genuine gap.
+    </p>
+    <img id="cards" alt="Nine pairs of unmarked and magnified photo crops" />
+    <div id="answers"></div>
+  </section>
+  <div id="actions">
+    <button id="save">Save ratings file</button
+    ><label
+      >Resume own file <input type="file" id="load" accept=".json"
+    /></label>
+  </div>
+  <output id="status" aria-live="polite"></output>
+  <p>
+    <small
+      >Save before closing. Each reviewer returns their own JSON file. All
+      images and ratings stay on this computer.</small
+    >
+  </p>
+  <script src="config.js"></script>
+  <script>
+    "use strict";
+    const cfg = window.reviewConfig,
+      el = (id) => document.getElementById(id);
+    const classes = ["T", "X", "gap", "other", "unclear"],
+      pad = (v, n) => String(v).padStart(n, "0");
+    const fresh = () => ({ version: 1, cards: {}, regions: {} });
+    let data = fresh(),
+      index = 0,
+      img = new Image(),
+      generation = 0;
+    const isRegion = () => el("mode").value === "regions";
+    const regionId = () => "R" + pad(index + 1, 2);
+    function region() {
+      return (data.regions[regionId()] ??= { complete: false, marks: [] });
+    }
+    function feedback() {
+      const n = Object.values(data.regions).filter((r) => r.complete).length;
+      el("status").textContent =
+        n +
+        " / " +
+        cfg.regions +
+        " regions complete. " +
+        Object.keys(data.cards).length +
+        " / " +
+        cfg.cards +
+        " cards rated.";
+    }
+    function paint() {
+      const c = el("tile"),
+        g = c.getContext("2d");
+      g.clearRect(0, 0, 240, 200);
+      if (!img.complete || !img.naturalWidth) return;
+      g.drawImage(img, 0, 0);
+      g.strokeStyle = "#06ffff";
+      g.lineWidth = 0.7;
+      g.setLineDash([2, 3]);
+      g.strokeRect(11.5, 11.5, 216, 176);
+      g.setLineDash([]);
+      for (const m of region().marks) {
+        g.beginPath();
+        g.arc(m.x, m.y, 2.2, 0, 2 * Math.PI);
+        g.stroke();
+        g.font = "9px sans-serif";
+        g.fillStyle = "#06ffff";
+        g.fillText(m.label, m.x + 3, m.y - 2);
+      }
+    }
+    function show() {
+      const reg = isRegion(),
+        n = reg ? cfg.regions : Math.ceil(cfg.cards / 9),
+        revision = ++generation;
+      el("page").textContent = index + 1 + " / " + n;
+      el("prev").disabled = index === 0;
+      el("next").disabled = index >= n - 1;
+      el("regionPane").hidden = !reg;
+      el("cardPane").hidden = reg;
+      if (reg) {
+        const shot = new Image();
+        img = shot;
+        shot.onload = () => {
+          if (revision === generation) paint();
+        };
+        shot.src = regionId() + ".png";
+        el("done").checked = region().complete;
+      } else {
+        el("cards").src = "cards-" + pad(index + 1, 2) + ".png";
+        el("answers").replaceChildren();
+        for (
+          let k = index * 9 + 1;
+          k <= Math.min(cfg.cards, index * 9 + 9);
+          k++
+        ) {
+          const token = "C" + pad(k, 3),
+            label = document.createElement("label"),
+            sel = document.createElement("select");
+          label.textContent = token;
+          for (const option of ["", ...classes])
+            sel.add(new Option(option || "Choose", option));
+          sel.value = data.cards[token] || "";
+          sel.onchange = () => {
+            if (sel.value) data.cards[token] = sel.value;
+            else delete data.cards[token];
+            feedback();
+          };
+          label.append(sel);
+          el("answers").append(label);
+        }
+      }
+      feedback();
+    }
+    el("tile").onclick = (e) => {
+      const box = el("tile").getBoundingClientRect(),
+        x = Math.floor(((e.clientX - box.left) * 240) / box.width),
+        y = Math.floor(((e.clientY - box.top) * 200) / box.height);
+      if (x < 12 || y < 12 || x >= 228 || y >= 188) return;
+      region().marks.push({ x, y, label: el("kind").value });
+      region().complete = false;
+      el("done").checked = false;
+      paint();
+      feedback();
+    };
+    el("undo").onclick = () => {
+      region().marks.pop();
+      region().complete = false;
+      el("done").checked = false;
+      paint();
+      feedback();
+    };
+    el("done").onchange = () => {
+      region().complete = el("done").checked;
+      feedback();
+    };
+    el("prev").onclick = () => {
+      index--;
+      show();
+    };
+    el("next").onclick = () => {
+      index++;
+      show();
+    };
+    el("mode").onchange = () => {
+      index = 0;
+      show();
+    };
+    el("save").onclick = () => {
+      const url = URL.createObjectURL(
+        new Blob([JSON.stringify(data)], { type: "application/json" }),
+      );
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "junction-ratings.json";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    };
+    el("load").onchange = async (e) => {
+      try {
+        const r = JSON.parse(await e.target.files[0].text());
+        if (r.version !== 1 || !r.cards || !r.regions) throw Error("format");
+        data = r;
+        show();
+      } catch (err) {
+        el("status").textContent = "Could not read ratings file.";
+      }
+    };
+    show();
+  </script>
+</html>
