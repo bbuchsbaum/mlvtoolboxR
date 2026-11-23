@@ -1,0 +1,19 @@
+id,stem_index,target_index,stem_reversed,x,y,include,reason
+00038534,45,39,1,137.79054,161.38798,0,Several furniture edges coincide.
+00405394,36,13,1,162.72626,46.99827,0,Horizontal source edge indistinct.
+00362458,35,31,1,85.8336,80.36613,1,Picture frame ends below the overhead trim.
+00070749,13,37,1,61.81084,86.17914,0,Reflection obscures the horizontal edge.
+00291405,7,52,0,200.73326,72.32929,1,Inner picture edge ends inside the mat.
+00033036,22,13,0,169.55427,74.37794,1,Top of the picture frame ends before the wall corner.
+00491832,6,11,1,108.10579,121.02163,1,Picture frame ends before the vertical trim.
+00493223,29,13,1,154.1214,48.41022,1,Top of the doorway ends before the room corner.
+00059389,82,65,0,210.51393,127.12309,0,A cabinet joint is close to the projected point.
+00492185,10,0,1,111.33623,134.144,1,Dark opening stops below the sloping outer trim.
+00193391,27,20,1,78.3766,56.35908,1,Inner picture edge ends before the outer frame.
+00102517,9,16,0,20.50313,16.44724,1,Interior upright stops below the top of the lintel.
+00031591,67,27,0,60.65211,104.79738,0,Multiple shelf and furniture edges overlap.
+00493934,27,19,0,87.56347,153.64669,0,Several objects meet near the candidate.
+00358638,121,120,1,240.63053,25.90174,0,Text and graphics overlap the edge.
+00051420,40,6,0,42.12302,134.46956,1,Fireplace edge stops above the baseboard.
+00067312,99,9,1,20.89526,140.65984,0,Pattern hides the endpoint.
+00191258,14,9,1,105.19969,183.06808,0,The wooden surface has ambiguous edges.
