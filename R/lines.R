@@ -1,12 +1,12 @@
 # Flow-based line extraction (FDoG with an XDoG threshold).
 
-# Versioned definition of the built-in line extractor. Masks, drawings and
-# feature specifications record it; specifications naming another version of
-# this extractor are rejected.
-.line_definition <- "fdog-xdog-1"
+# Masks, drawings and feature specifications record the extraction definition.
+.line_definitions <- c(base="fdog-xdog-1",repair="fdog-xdog-repair-1")
 .line_providers <- c("xdog_lines","extract_lines")
 .line_defaults <- list(sigma=2,k=1.6,tau=0.98,eps=0,phi=Inf,sigma_c=2,sigma_m=3,
                        smooth=5,colour=FALSE,min_component=20L)
+
+.line_definition <- function(p) .line_definitions[[if(is.null(p$junction_gap))"base" else "repair"]]
 
 .line_number <- function(x,name,lower,upper=Inf,strict=FALSE,lower_ok_inf=FALSE,zero_ok=FALSE) {
  if(zero_ok&&is.numeric(x)&&length(x)==1L&&!is.na(x)&&x==0)return(0)
@@ -22,8 +22,10 @@
 .line_parameters <- function(params=list()) {
  if(!is.list(params)||length(params)&&(is.null(names(params))||any(!nzchar(names(params))))||
     anyDuplicated(names(params)))stop("line extraction parameters must be uniquely named",call.=FALSE)
- unknown<-setdiff(names(params),names(.line_defaults))
+ unknown<-setdiff(names(params),c(names(.line_defaults),"junction_gap"))
  if(length(unknown))stop("unknown line extraction parameter(s): ",paste(unknown,collapse=", "),call.=FALSE)
+ gap<-if("junction_gap"%in%names(params)).line_number(params$junction_gap,"junction_gap",0,50) else 0
+ params$junction_gap<-NULL
  p<-.line_defaults;p[names(params)]<-params
  # Lower bounds keep every kernel at least a few samples wide (no 0/0).
  p$sigma<-.line_number(p$sigma,"sigma",0.1,50)
@@ -39,6 +41,8 @@
  if(!is.numeric(mc)||length(mc)!=1L||!is.finite(mc)||mc<1||mc!=floor(mc)||mc>.Machine$integer.max)
   stop("min_component must be a positive whole number",call.=FALSE)
  p$min_component<-as.integer(mc)
+ # Canonical parameters of the original definition omit the inactive option.
+ if(gap>0)p$junction_gap<-gap
  p
 }
 .line_method <- function(method) {
@@ -106,7 +110,8 @@
  mask<-cpp_band_edge(band,fd$blur,H,H-(1-p$tau)*fd$blur,thr,fd$flow$x,fd$flow$y,3*p$sigma,3*p$sigma,p$min_component)
  mask<-cpp_fill_holes(mask,2L)
  if(p$min_component>1L)mask<-cpp_remove_small(mask,p$min_component)
- attr(mask,"extraction")<-list(method=.line_definition,parameters=p)
+ if(!is.null(p$junction_gap))mask<-.repair_line_junctions(mask,L,p$junction_gap)
+ attr(mask,"extraction")<-list(method=.line_definition(p),parameters=p)
  if(!stages)return(mask)
  response<-if(is.finite(p$phi))ifelse(H>=p$eps,1,1+tanh(p$phi*(H-p$eps))) else 1*(H>=p$eps)
  list(lightness=L,smoothed=Ls,flow=fd$flow,dog=fd$dog,response=H,xdog=response,band=band,
@@ -188,7 +193,22 @@
 #' band boundary left and the mask is empty (XDoG's stylised output would be
 #' all ink).
 #'
-#' The extraction is deterministic. With `smooth = 0` the arithmetic is
+#' FDoG can leave a gap at an occlusion T junction in the thresholded band.
+#' A positive `junction_gap` enables a repair after mask cleanup. It fits
+#' straight segments to the thinned contours and considers extending a free
+#' endpoint to a nearby contour that crosses its projected path. It adds a
+#' bridge when contrast across that path in the original CIE lightness
+#' image has the same sign and at least 40 percent of the magnitude of the
+#' median contrast along the visible stem. The stem must have at least 3.5 L*
+#' units of median contrast. The new pixels must touch two distinct patches
+#' of existing ink, one at each endpoint. The thresholded band stays as
+#' computed by FDoG.
+#' Validate junction measurements against annotations on representative
+#' images. For line art whose junctions follow stroke centre lines, pass a
+#' centre-line mask to \code{\link{trace_contours}}.
+#'
+#' The extraction is deterministic. With `smooth = 0` and `junction_gap = 0`,
+#' the arithmetic is
 #' arranged so that quarter turns and reflections of the image transform
 #' every stage, and so the mask, exactly. The Kuwahara filter accumulates its
 #' sums in an order that these transforms change, so with the pre-filter on the
@@ -227,9 +247,12 @@
 #' @param min_component Smallest eight-connected ink component kept, in pixels.
 #'   Narrow light gaps between dark marks are drawn as short centre lines, so
 #'   lowering it below the default adds many short marks in textured areas.
+#' @param junction_gap Optional maximum bridge length in pixels (0 to 50).
+#'   Zero disables repair. The repair considers gaps longer than 1.5 pixels.
 #' @return A logical ink mask (`TRUE` is ink) with the dimensions of the image
-#'   and an `"extraction"` attribute: `list(method = "fdog-xdog-1", parameters =)`,
-#'   the full validated parameter list.
+#'   and an `"extraction"` attribute giving the method and validated
+#'   parameters. The original definition, `"fdog-xdog-1"`, omits
+#'   `junction_gap`. With repair enabled, `"fdog-xdog-repair-1"` records it.
 #' @references
 #' Kang, H., Lee, S. and Chui, C. K. (2007). Coherent line drawing.
 #' *Proceedings of the 5th International Symposium on Non-Photorealistic
@@ -264,10 +287,11 @@
 #' length(d$contours)
 #' @export
 extract_lines <- function(image,method="fdog",sigma=2,k=1.6,tau=0.98,eps=0,phi=Inf,
-                          sigma_c=2,sigma_m=3,smooth=5,colour=FALSE,min_component=20L) {
+                          sigma_c=2,sigma_m=3,smooth=5,colour=FALSE,min_component=20L,
+                          junction_gap=0) {
  .line_method(method)
  p<-.line_parameters(list(sigma=sigma,k=k,tau=tau,eps=eps,phi=phi,sigma_c=sigma_c,sigma_m=sigma_m,
-                          smooth=smooth,colour=colour,min_component=min_component))
+                          smooth=smooth,colour=colour,min_component=min_component,junction_gap=junction_gap))
  .line_pipeline(image,p)
 }
 
@@ -275,8 +299,8 @@ extract_lines <- function(image,method="fdog",sigma=2,k=1.6,tau=0.98,eps=0,phi=I
 #'
 #' `xdog_lines()` is [extract_lines()] with `method = "fdog"`, shaped as a
 #' [trace_rgb()] backend: `trace_rgb(image, backend = xdog_lines, ...)` records
-#' the provider `"xdog_lines"`, its version `"fdog-xdog-1"` and every parameter
-#' in the drawing's `source`.
+#' the provider `"xdog_lines"`, its extraction definition and the validated
+#' parameters in the drawing's `source`.
 #' @param image Greyscale matrix, RGB(A) array or image file name; see [extract_lines()].
 #' @param ... Parameters of [extract_lines()], each named in full; `method`,
 #'   if given, must be `"fdog"`.

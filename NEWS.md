@@ -40,6 +40,10 @@
   `"extraction"` attribute.
 * `xdog_lines()` is the same extractor shaped as a `trace_rgb()` backend, and
   `line_extraction_stages()` returns the intermediate images.
+* A positive `junction_gap` enables an optional repair for short gaps at
+  occlusion junctions (#2). A bridge needs supporting edge contrast in the
+  original image. The repaired mode records `"fdog-xdog-repair-1"` and its
+  gap limit. A zero gap keeps the existing `"fdog-xdog-1"` definition.
 * `trace_rgb()` records a backend's `"extraction"` attribute, when present, as
   `source$provider_version` and `source$extraction_parameters`.
 * `feature_spec(extraction = list(lines = list(...)))` fixes the line

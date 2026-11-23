@@ -18,8 +18,8 @@ The logical ink mask of [extract_lines()].
 \description{
 `xdog_lines()` is [extract_lines()] with `method = "fdog"`, shaped as a
 [trace_rgb()] backend: `trace_rgb(image, backend = xdog_lines, ...)` records
-the provider `"xdog_lines"`, its version `"fdog-xdog-1"` and every parameter
-in the drawing's `source`.
+the provider `"xdog_lines"`, its extraction definition and the validated
+parameters in the drawing's `source`.
 }
 \examples{
 rgb <- array(0.9, c(40, 40, 3)); rgb[10:30, 12:28, ] <- 0.25

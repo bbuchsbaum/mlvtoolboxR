@@ -115,6 +115,127 @@ test_that("step and narrow ramp edges are traced within 1 px of the edge", {
  }
 })
 
+test_that("the default FDoG band can break a three-region occlusion junction", {
+ img <- matrix(0.80, 256L, 256L)
+ img[1:128, 129:256] <- 0.50
+ img[129:256, ] <- 0.15
+
+ reference <- mlv_drawing(list(
+  rbind(c(1, 128.5, 128.5, 128.5), c(128.5, 128.5, 256, 128.5)),
+  matrix(c(128.5, 1, 128.5, 128.5), nrow = 1)
+ ), width = 256L, height = 256L)
+ exact <- detect_junctions(reference)
+ expect_identical(exact$type, "T")
+ expect_equal(c(exact$x, exact$y), c(128.5, 128.5))
+
+ # Issue #2: the band has ink on both boundaries but a gap between them.
+ stages <- line_extraction_stages(img)
+ expect_true(any(stages$band[123, 129:132]))
+ expect_false(any(stages$band[126:127, 126:132]))
+ expect_true(any(stages$band[129, 126:132]))
+ expect_identical(lx_plain(stages$mask), lx_plain(extract_lines(img, min_component = 1)))
+
+ drawing <- trace_contours(stages$mask, simplify = 1)
+ expect_equal(nrow(detect_junctions(drawing)), 0L)
+ recovered <- detect_junctions(drawing, absolute_epsilon = 6)
+ expect_identical(recovered$type, "T")
+ expect_equal(c(recovered$x, recovered$y), c(129, 129))
+
+ # Without simplification a one-pixel terminal segment limits the extension.
+ raw <- trace_contours(stages$mask)
+ expect_equal(nrow(detect_junctions(raw, absolute_epsilon = 10, relative_epsilon = 1)), 0L)
+
+ repaired <- line_extraction_stages(img, junction_gap = 6)
+ expect_identical(repaired$band, stages$band)
+ expect_identical(repaired$mask, extract_lines(img, junction_gap = 6))
+ expect_identical(repaired$mask, xdog_lines(img, junction_gap = 6))
+ expect_false(any(stages$mask & !repaired$mask))
+ expect_true(any(repaired$mask & !stages$mask))
+ expect_identical(lx_plain(extract_lines(img, junction_gap = 3)), lx_plain(stages$mask))
+ expect_identical(lx_plain(extract_lines(lx_rot90(img), junction_gap = 6)),
+                  lx_rot90(lx_plain(repaired$mask)))
+
+ # Run the repair through the public RGB backend and the default detector.
+ rgb <- array(rep(img, 3L), c(dim(img), 3L))
+ j <- detect_junctions(trace_rgb(rgb, xdog_lines, junction_gap = 6))
+ expect_identical(j$type, "T")
+ expect_lte(sqrt((j$x - 128.5)^2 + (j$y - 128.5)^2), 2)
+
+ spec <- feature_spec(extraction = list(lines = list(junction_gap = 6)))
+ expect_identical(spec$definitions[["lines"]], "fdog-xdog-repair-1")
+ expect_identical(spec$settings$extraction$provider_version, "fdog-xdog-repair-1")
+ d <- trace_rgb(rgb, xdog_lines, spec = spec)
+ expect_identical(d$source$extraction_parameters, repaired$extraction$parameters)
+ expect_identical(d$source$provider_version, repaired$extraction$method)
+ expect_identical(detect_junctions(d), j)
+})
+
+test_that("image contrast can support repair at an oblique occlusion", {
+ coordinates <- seq_len(256) - 128.5
+ angle <- 0.2
+ x <- outer(coordinates, coordinates, function(y, x) cos(angle) * x + sin(angle) * y)
+ y <- outer(coordinates, coordinates, function(y, x) cos(angle) * y - sin(angle) * x)
+ img <- ifelse(y > 0, 0.15, ifelse(x > 0, 0.50, 0.80))
+
+ expect_equal(nrow(detect_junctions(trace_contours(extract_lines(img), simplify = 1))), 0L)
+ drawing <- trace_contours(extract_lines(img, junction_gap = 6), simplify = 1)
+ j <- detect_junctions(drawing)
+ expect_identical(j$type, "T")
+ expect_lte(sqrt((j$x - 128.5)^2 + (j$y - 128.5)^2), 2)
+})
+
+test_that("a widened junction tolerance can join a genuinely separate stroke", {
+ img <- matrix(0.80, 256L, 256L)
+ img[1:125, 129:131] <- 0.50
+ img[129:256, ] <- 0.15
+ ink <- extract_lines(img)
+ drawing <- trace_contours(ink, simplify = 1)
+ expect_equal(nrow(detect_junctions(drawing)), 0L)
+ expect_identical(detect_junctions(drawing, absolute_epsilon = 6)$type, "T")
+ expect_identical(lx_plain(extract_lines(img, junction_gap = 6)), lx_plain(ink))
+})
+
+test_that("a bridge cannot touch a third piece of ink beside its path", {
+ skeleton <- matrix(FALSE, 24L, 24L)
+ skeleton[12, 16:24] <- TRUE
+ skeleton[5:20, 10] <- TRUE
+ lightness <- matrix(0.8, 24L, 24L)
+ lightness[12:24, 11:24] <- 0.3
+ start <- c(16, 12)
+ target <- c(10, 12)
+ vertices <- cbind(10, 5:20)
+ bridge <- function(m) mlvtoolbox:::.line_bridge_pixels(start, target, vertices, m, lightness, 6)
+ expect_equal(bridge(skeleton), 12 + (11:15 - 1) * nrow(skeleton))
+
+ # The detour attaches to the crossing contour below the proposed landing.
+ # It is next to the bridge and would turn the repair into a small loop.
+ skeleton[15, 10:13] <- TRUE
+ skeleton[13:15, 13] <- TRUE
+ expect_null(bridge(skeleton))
+})
+
+test_that("filled grid outlines and grid centerlines encode different junctions", {
+ grid <- function(radius) {
+  ink <- matrix(FALSE, 96L, 96L)
+  for (position in seq(16L, 80L, by = 16L)) {
+   stroke <- position + seq.int(-radius, radius)
+   ink[stroke, 8:88] <- TRUE
+   ink[8:88, stroke] <- TRUE
+  }
+  ink
+ }
+ centerlines <- trace_contours(grid(0L), simplify = 1)
+ expect_identical(detect_junctions(centerlines)$type, rep("X", 25L))
+
+ filled <- ifelse(grid(3L), 0.15, 0.80)
+ ink <- extract_lines(filled)
+ outlines <- trace_contours(ink, simplify = 1)
+ expect_length(outlines$contours, 17L)
+ expect_true(all(vapply(outlines$contours, lx_closed, logical(1))))
+ expect_false(any(detect_junctions(outlines)$type == "X"))
+ expect_identical(lx_plain(extract_lines(filled, junction_gap = 6)), lx_plain(ink))
+})
+
 test_that("the pre-filter suppresses brush texture that plain flow-DoG draws", {
  step <- lx_render(96, 96, function(x, y) x * cos(0.25) + y * sin(0.25) < 45.5)
  far_ink <- function(m) {
@@ -289,10 +410,10 @@ test_that("extraction is deterministic and records its definition", {
  expect_identical(e$method, "fdog-xdog-1")
  expect_identical(e$parameters, list(sigma = 1.5, k = 1.6, tau = 0.98, eps = 0, phi = Inf, sigma_c = 2,
                                      sigma_m = 3, smooth = 3, colour = FALSE, min_component = 5L))
- # One set of defaults: the formals of extract_lines() are the defaults the
- # other entry points and feature specifications use.
+ # The zero setting keeps the original extraction parameters canonical.
  defaults <- lapply(formals(extract_lines)[-(1:2)], eval)
- expect_identical(defaults, mlvtoolbox:::.line_defaults)
+ expect_identical(defaults, c(mlvtoolbox:::.line_defaults, list(junction_gap = 0)))
+ expect_identical(extract_lines(img, junction_gap = 0), extract_lines(img))
  expect_identical(attr(extract_lines(img), "extraction")$parameters, mlvtoolbox:::.line_defaults)
  expect_identical(attr(xdog_lines(img), "extraction")$parameters, mlvtoolbox:::.line_defaults)
  expect_identical(line_extraction_stages(img)$extraction$parameters, mlvtoolbox:::.line_defaults)
@@ -351,6 +472,9 @@ test_that("invalid arguments fail with clear messages", {
  expect_error(extract_lines(img, smooth = 100), "smooth")
  expect_error(extract_lines(img, colour = NA), "colour")
  expect_error(extract_lines(img, min_component = 0.5), "min_component")
+ expect_error(extract_lines(img, junction_gap = -1), "junction_gap")
+ expect_error(xdog_lines(img, junction_gap = NULL), "junction_gap")
+ expect_error(line_extraction_stages(img, junction_gap = Inf), "junction_gap")
  expect_error(extract_lines(img, method = "canny"), "must be \"fdog\"")
  expect_error(extract_lines(img * 3), "\\[0, 1\\]")
  expect_error(extract_lines(replace(img, 1, NA)), "\\[0, 1\\]")
@@ -441,6 +565,7 @@ test_that("feature specifications carry and validate the line extraction definit
  expect_identical(s$settings$extraction$lines$sigma, 1.5)
  expect_identical(s$settings$extraction$lines$smooth, 5)
  expect_invisible(validate_feature_spec(s))
+ expect_identical(s, feature_spec(extraction = list(lines = list(sigma = 1.5, min_component = 10, junction_gap = 0))))
  expect_identical(feature_spec(extraction = list(provider = "xdog_lines", provider_version = "fdog-xdog-1"))$settings$extraction$lines,
                   mlvtoolbox:::.line_parameters(list()))
  # Specifications without line settings are unchanged.
@@ -455,6 +580,9 @@ test_that("feature specifications carry and validate the line extraction definit
  expect_error(feature_spec(extraction = list(lines = 2)), "named list")
  expect_error(feature_spec(extraction = list(lines = list(), provider = "mine", provider_version = "v1")),
               "requires provider_version 'fdog-xdog-1'")
+ expect_error(feature_spec(extraction = list(lines = list(junction_gap = 6),
+                                            provider = "xdog_lines", provider_version = "fdog-xdog-1")),
+              "requires provider_version 'fdog-xdog-repair-1'")
  stale <- s; stale$definitions["lines"] <- "fdog-xdog-0"
  expect_error(validate_feature_spec(stale), "noncanonical")
  edited <- s; edited$settings$extraction$lines$sigma <- 3
