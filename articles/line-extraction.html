@@ -95,8 +95,8 @@ major shading boundaries) rather than individual brush strokes, places
 each line on its edge to within about a pixel, and is deterministic. It
 is a filter, not a model. Each stage is a published image operation,
 except a small step of this package’s own that places lines on the edges
-and draws thin strokes once, and all ten parameters are recorded with
-the result.</p>
+and draws thin strokes once. The extraction definition and parameter
+values are recorded with the result.</p>
 <div class="section level2">
 <h2 id="the-running-example">The running example<a class="anchor" aria-label="anchor" href="#the-running-example"></a>
 </h2>
@@ -282,8 +282,9 @@ measure in the package applies to it. Per-contour features:</p>
 <span><span class="co">#&gt; 1      3011.203      2479.814        0     302.379</span></span>
 <span><span class="co">#&gt; 2       633.787      4436.508    10000     672.232</span></span>
 <span><span class="co">#&gt; 3         0.000      8146.144        0     113.026</span></span></code></pre></div>
-<p>Junctions are few for so many contours (21): most outlines in the
-painting fade out rather than meet another line.</p>
+<p>The detector finds 21 junctions in the extracted drawing. FDoG can
+break contours at points where they meet in the source image. <a href="#junctions-at-occlusions">Junctions at occlusions</a> shows how to
+enable short repairs supported by the image.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">junctions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detect_junctions.html">detect_junctions</a></span><span class="op">(</span><span class="va">drawing</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">junctions</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
@@ -350,7 +351,7 @@ rejected.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">same</span><span class="op">$</span><span class="va">contours</span>, <span class="va">drawing</span><span class="op">$</span><span class="va">contours</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="../reference/feature_spec.html">feature_spec</a></span><span class="op">(</span>extraction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>provider <span class="op">=</span> <span class="st">"xdog_lines"</span>, provider_version <span class="op">=</span> <span class="st">"fdog-xdog-0"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error : unsupported line extraction definition 'fdog-xdog-0'; this version of mlvtoolbox provides 'fdog-xdog-1'</span></span></code></pre></div>
+<span><span class="co">#&gt; Error : unsupported line extraction definition 'fdog-xdog-0'</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-a-learned-extractor">Using a learned extractor<a class="anchor" aria-label="anchor" href="#using-a-learned-extractor"></a>
@@ -423,6 +424,44 @@ length to within 2% after <code>simplify = 1</code>.</li>
 <code>sigma_c</code>, <code>sigma_m</code> and <code>smooth</code>
 scaled with them.</li>
 </ul>
+<div class="section level3">
+<h3 id="junctions-at-occlusions">Junctions at occlusions<a class="anchor" aria-label="anchor" href="#junctions-at-occlusions"></a>
+</h3>
+<p>Three regions in this synthetic image meet at a single T junction.
+The thresholded FDoG band loses part of the vertical branch. With the
+default settings, the simplified branch stops 5 pixels short of the
+horizontal contour. A positive <code>junction_gap</code> lets the
+extractor bridge a short gap when the edge contrast continues in the
+source image.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">occlusion</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0.80</span>, <span class="fl">256L</span>, <span class="fl">256L</span><span class="op">)</span></span>
+<span><span class="va">occlusion</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">128</span>, <span class="fl">129</span><span class="op">:</span><span class="fl">256</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0.50</span></span>
+<span><span class="va">occlusion</span><span class="op">[</span><span class="fl">129</span><span class="op">:</span><span class="fl">256</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0.15</span></span>
+<span><span class="va">occlusion_stages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/line_extraction_stages.html">line_extraction_stages</a></span><span class="op">(</span><span class="va">occlusion</span><span class="op">)</span></span>
+<span><span class="va">occlusion_drawing</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trace_contours.html">trace_contours</a></span><span class="op">(</span><span class="va">occlusion_stages</span><span class="op">$</span><span class="va">mask</span>, simplify <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">repaired_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_lines.html">extract_lines</a></span><span class="op">(</span><span class="va">occlusion</span>, junction_gap <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="va">repaired_drawing</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trace_contours.html">trace_contours</a></span><span class="op">(</span><span class="va">repaired_mask</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="../reference/detect_junctions.html">detect_junctions</a></span><span class="op">(</span><span class="va">occlusion_drawing</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  repaired <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="../reference/detect_junctions.html">detect_junctions</a></span><span class="op">(</span><span class="va">repaired_drawing</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  default repaired </span></span>
+<span><span class="co">#&gt;        0        1</span></span></code></pre></div>
+<p>The repair gives the default detector one T. For an RGB image, enable
+the same option with
+<code>trace_rgb(img, backend = xdog_lines, junction_gap = 6)</code>. The
+drawing records the distinct extraction definition and gap limit.</p>
+<p>Widening the detector’s tolerance can also recover this T after
+simplification, but it can join strokes that genuinely stop short. The
+repair checks the contrast across the projected branch in the original
+image and skips bridges that would also touch a third piece of ink. It
+can still miss short or weak branches. Check junction counts against
+annotated examples at the resolution and contrast of your images. See <a href="https://github.com/bbuchsbaum/mlvtoolboxR/issues/2" class="external-link">issue
+#2</a>.</p>
+<p>For line art whose junctions are defined by stroke centre lines, pass
+a verified centre-line mask directly to <code><a href="../reference/trace_contours.html">trace_contours()</a></code>. A
+filled 5-by-5 grid in the synthetic test yields 17 closed outlines and
+zero X junctions through FDoG. Its one-pixel centre-line mask yields 25
+X junctions.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

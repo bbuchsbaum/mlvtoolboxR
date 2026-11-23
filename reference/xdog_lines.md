@@ -2,8 +2,8 @@
 
 \`xdog_lines()\` is \[extract_lines()\] with \`method = "fdog"\`, shaped
 as a \[trace_rgb()\] backend: \`trace_rgb(image, backend = xdog_lines,
-...)\` records the provider \`"xdog_lines"\`, its version
-\`"fdog-xdog-1"\` and every parameter in the drawing's \`source\`.
+...)\` records the provider \`"xdog_lines"\`, its extraction definition
+and the validated parameters in the drawing's \`source\`.
 
 ## Usage
 

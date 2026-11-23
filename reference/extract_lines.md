@@ -21,7 +21,8 @@ extract_lines(
   sigma_m = 3,
   smooth = 5,
   colour = FALSE,
-  min_component = 20L
+  min_component = 20L,
+  junction_gap = 0
 )
 ```
 
@@ -83,11 +84,18 @@ extract_lines(
   gaps between dark marks are drawn as short centre lines, so lowering
   it below the default adds many short marks in textured areas.
 
+- junction_gap:
+
+  Optional maximum bridge length in pixels (0 to 50). Zero disables
+  repair. The repair considers gaps longer than 1.5 pixels.
+
 ## Value
 
 A logical ink mask (\`TRUE\` is ink) with the dimensions of the image
-and an \`"extraction"\` attribute: \`list(method = "fdog-xdog-1",
-parameters =)\`, the full validated parameter list.
+and an \`"extraction"\` attribute giving the method and validated
+parameters. The original definition, \`"fdog-xdog-1"\`, omits
+\`junction_gap\`. With repair enabled, \`"fdog-xdog-repair-1"\` records
+it.
 
 ## Details
 
@@ -159,13 +167,27 @@ Kuwahara weights use an absolute variance scale. Raising \`eps\` widens
 the band; once it covers the whole image there is no band boundary left
 and the mask is empty (XDoG's stylised output would be all ink).
 
-The extraction is deterministic. With \`smooth = 0\` the arithmetic is
-arranged so that quarter turns and reflections of the image transform
-every stage, and so the mask, exactly. The Kuwahara filter accumulates
-its sums in an order that these transforms change, so with the
-pre-filter on the intermediate images agree only to rounding (about
-1e-14); the masks have agreed exactly in every test, but a pixel within
-rounding of the threshold could differ.
+FDoG can leave a gap at an occlusion T junction in the thresholded band.
+A positive \`junction_gap\` enables a repair after mask cleanup. It fits
+straight segments to the thinned contours and considers extending a free
+endpoint to a nearby contour that crosses its projected path. It adds a
+bridge when contrast across that path in the original CIE lightness
+image has the same sign and at least 40 percent of the magnitude of the
+median contrast along the visible stem. The stem must have at least 3.5
+L\* units of median contrast. The new pixels must touch two distinct
+patches of existing ink, one at each endpoint. The thresholded band
+stays as computed by FDoG. Validate junction measurements against
+annotations on representative images. For line art whose junctions
+follow stroke centre lines, pass a centre-line mask to
+[`trace_contours`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/trace_contours.md).
+
+The extraction is deterministic. With \`smooth = 0\` and \`junction_gap
+= 0\`, the arithmetic is arranged so that quarter turns and reflections
+of the image transform every stage, and so the mask, exactly. The
+Kuwahara filter accumulates its sums in an order that these transforms
+change, so with the pre-filter on the intermediate images agree only to
+rounding (about 1e-14); the masks have agreed exactly in every test, but
+a pixel within rounding of the threshold could differ.
 
 With \`colour = TRUE\` the pre-filter and both structure tensors use all
 three CIE \`L\*a\*b\*\` channels (each divided by 100), so colour

@@ -23,8 +23,8 @@ shading boundaries) rather than individual brush strokes, places each
 line on its edge to within about a pixel, and is deterministic. It is a
 filter, not a model. Each stage is a published image operation, except a
 small step of this package’s own that places lines on the edges and
-draws thin strokes once, and all ten parameters are recorded with the
-result.
+draws thin strokes once. The extraction definition and parameter values
+are recorded with the result.
 
 ## The running example
 
@@ -251,8 +251,10 @@ round(head(features[, c("orientation_1", "orientation_5", "length_4", "curvature
 #> 3         0.000      8146.144        0     113.026
 ```
 
-Junctions are few for so many contours (21): most outlines in the
-painting fade out rather than meet another line.
+The detector finds 21 junctions in the extracted drawing. FDoG can break
+contours at points where they meet in the source image. [Junctions at
+occlusions](#junctions-at-occlusions) shows how to enable short repairs
+supported by the image.
 
 ``` r
 
@@ -344,7 +346,7 @@ same <- trace_rgb(img, backend = xdog_lines, spec = spec)
 identical(same$contours, drawing$contours)
 #> [1] TRUE
 try(feature_spec(extraction = list(provider = "xdog_lines", provider_version = "fdog-xdog-0")))
-#> Error : unsupported line extraction definition 'fdog-xdog-0'; this version of mlvtoolbox provides 'fdog-xdog-1'
+#> Error : unsupported line extraction definition 'fdog-xdog-0'
 ```
 
 ## Using a learned extractor
@@ -417,6 +419,49 @@ toy$source[c("extraction_provider", "provider_version", "extraction_parameters")
 - All scales are in pixels. The defaults were tuned on four paintings
   640 px wide; images of other sizes want `sigma`, `sigma_c`, `sigma_m`
   and `smooth` scaled with them.
+
+### Junctions at occlusions
+
+Three regions in this synthetic image meet at a single T junction. The
+thresholded FDoG band loses part of the vertical branch. With the
+default settings, the simplified branch stops 5 pixels short of the
+horizontal contour. A positive `junction_gap` lets the extractor bridge
+a short gap when the edge contrast continues in the source image.
+
+``` r
+
+occlusion <- matrix(0.80, 256L, 256L)
+occlusion[1:128, 129:256] <- 0.50
+occlusion[129:256, ] <- 0.15
+occlusion_stages <- line_extraction_stages(occlusion)
+occlusion_drawing <- trace_contours(occlusion_stages$mask, simplify = 1)
+repaired_mask <- extract_lines(occlusion, junction_gap = 6)
+repaired_drawing <- trace_contours(repaired_mask)
+c(default = nrow(detect_junctions(occlusion_drawing)),
+  repaired = nrow(detect_junctions(repaired_drawing)))
+#>  default repaired 
+#>        0        1
+```
+
+The repair gives the default detector one T. For an RGB image, enable
+the same option with
+`trace_rgb(img, backend = xdog_lines, junction_gap = 6)`. The drawing
+records the distinct extraction definition and gap limit.
+
+Widening the detector’s tolerance can also recover this T after
+simplification, but it can join strokes that genuinely stop short. The
+repair checks the contrast across the projected branch in the original
+image and skips bridges that would also touch a third piece of ink. It
+can still miss short or weak branches. Check junction counts against
+annotated examples at the resolution and contrast of your images. See
+[issue \#2](https://github.com/bbuchsbaum/mlvtoolboxR/issues/2).
+
+For line art whose junctions are defined by stroke centre lines, pass a
+verified centre-line mask directly to
+[`trace_contours()`](https://bbuchsbaum.github.io/mlvtoolboxR/reference/trace_contours.md).
+A filled 5-by-5 grid in the synthetic test yields 17 closed outlines and
+zero X junctions through FDoG. Its one-pixel centre-line mask yields 25
+X junctions.
 
 ## References
 
