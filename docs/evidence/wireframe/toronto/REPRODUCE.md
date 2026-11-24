@@ -19,7 +19,7 @@ out=docs/evidence/wireframe/toronto
 "$py" tools/wireframe/score_contour_drawings.py "$stage" "$study/draw-toronto" "$out"
 ```
 
-Selection consumes resized RGB, the frozen context probabilities and full-image M-LSD segments. The R stage rasterizes the modified segments, runs `trace_contours(simplify = 1)`, and calls `detect_junctions()` on that drawing. It also traces two full-scene controls, full-image M-LSD segments with no joins added and the package's default FDoG mask. The artist ink reference uses the package rasterizer on the artist's vectors. Public tables contain photo IDs, hashes or aggregate measurements. The 325 reserve photos have no model scores.
+Selection consumes resized RGB, the frozen context probabilities and full-image M-LSD segments. The R stage rasterizes the modified segments, runs `trace_contours(simplify = 1)`, and calls `detect_junctions()` on that drawing. It also traces two full-scene controls, full-image M-LSD segments with no joins added and the package's default FDoG mask. The artist ink reference uses the package rasterizer on the artist's vectors. Public tables contain photo IDs, hashes or aggregate measurements. This workflow leaves all 325 reserve photos unscored. The subsequent [whole-contour test](../curve-rank/REPRODUCE.md) uses a fixed subset of 120.
 
 ## York gap replay
 

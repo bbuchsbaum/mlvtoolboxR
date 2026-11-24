@@ -46,3 +46,9 @@ Rscript --vanilla tools/wireframe/contour_union.R "$res/staged" "$res/base" "$pu
 ```
 
 The score table counts each artist junction and each predicted junction at most once per photo and class. Artist pixel coverage counts traced pixels reached within two pixels of the prediction. Pixel precision uses the reverse comparison, and F1 is the harmonic mean of pooled precision and coverage. The stricter incidence count also checks that the connecting contours agree around the site. Paired intervals resample photographs within the six scene categories 2,000 times at seed 20261124.
+
+To reproduce the post-test source-member audit on development drawings, run the following command after cross-validation.
+
+```sh
+"$py" tools/wireframe/audit_curve_members.py "$stage" "$base" "$trial/development" "$trial/source-members.csv"
+```

@@ -1,0 +1,7 @@
+method,comparator,metric,estimate,lo,hi,resamples,seed
+curve_rank,fdog,pixel_coverage,0.024947464459582736,0.019970739037287535,0.02978352356362367,2000,20261124
+curve_rank,fdog,pixel_F1,0.03353722426020378,0.02783566682234022,0.03905554148032459,2000,20261124
+curve_rank,union_vector,T_position_match,181,102.975,261.0,2000,20261124
+curve_rank,union_vector,X_position_match,9,-19.0,33.0,2000,20261124
+curve_rank,union_vector,T_incidence_match,4,-10.0,17.0,2000,20261124
+curve_rank,union_vector,X_incidence_match,-3,-9.0,0.0,2000,20261124

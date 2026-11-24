@@ -1,0 +1,82 @@
+{
+  "gate_pass": true,
+  "checks": {
+    "pooled_pixel_coverage_gain_at_least_0_02": true,
+    "pooled_pixel_F1_at_least_fdog": true,
+    "T_positional_matches_at_least_union_vector": true,
+    "X_positional_matches_at_least_union_vector": true,
+    "every_photo_ink_at_most_fdog": true,
+    "all_required_outputs_present": true
+  },
+  "values": {
+    "curve_rank": {
+      "photos": 120,
+      "ink": 269625,
+      "artist_ink": 704761,
+      "pixel_precision": 0.8163597589244321,
+      "pixel_coverage": 0.4626845129057936,
+      "pixel_F1": 0.5906238364577553,
+      "T_ref": 17368,
+      "T_position_pred": 1030,
+      "T_position_match": 511,
+      "T_position_recall": 0.029421925380009213,
+      "T_incidence_match": 32,
+      "T_incidence_recall": 0.0018424689083371719,
+      "X_ref": 2604,
+      "X_position_pred": 517,
+      "X_position_match": 37,
+      "X_position_recall": 0.014208909370199693,
+      "X_incidence_match": 0,
+      "X_incidence_recall": 0.0,
+      "non_ok_outputs": 0
+    },
+    "fdog": {
+      "photos": 120,
+      "ink": 269683,
+      "artist_ink": 704761,
+      "pixel_precision": 0.7659140546493476,
+      "pixel_coverage": 0.43773704844621086,
+      "pixel_F1": 0.5570866121975515,
+      "T_ref": 17368,
+      "T_position_pred": 279,
+      "T_position_match": 76,
+      "T_position_recall": 0.004375863657300783,
+      "T_incidence_match": 1,
+      "T_incidence_recall": 5.757715338553662e-05,
+      "X_ref": 2604,
+      "X_position_pred": 23,
+      "X_position_match": 0,
+      "X_position_recall": 0.0,
+      "X_incidence_match": 0,
+      "X_incidence_recall": 0.0,
+      "non_ok_outputs": 0
+    },
+    "union_vector": {
+      "photos": 120,
+      "ink": 269666,
+      "artist_ink": 704761,
+      "pixel_precision": 0.7970304005695935,
+      "pixel_coverage": 0.4304764310170398,
+      "pixel_F1": 0.559023857823744,
+      "T_ref": 17368,
+      "T_position_pred": 867,
+      "T_position_match": 330,
+      "T_position_recall": 0.019000460617227086,
+      "T_incidence_match": 28,
+      "T_incidence_recall": 0.0016121602947950253,
+      "X_ref": 2604,
+      "X_position_pred": 390,
+      "X_position_match": 28,
+      "X_position_recall": 0.010752688172043012,
+      "X_incidence_match": 3,
+      "X_incidence_recall": 0.001152073732718894,
+      "non_ok_outputs": 0
+    }
+  },
+  "thresholds": {
+    "pixel_coverage_gain": 0.02,
+    "pixel_tolerance": 2,
+    "junction_tolerance": 4,
+    "bootstrap_seed": 20261124
+  }
+}
