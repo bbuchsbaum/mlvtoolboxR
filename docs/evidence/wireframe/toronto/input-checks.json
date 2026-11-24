@@ -1,0 +1,115 @@
+{
+  "artist_file_sha256": {
+    "beaches_vecLD.mat": "9ca35525b267daaab189daa05d2a42e8ac335a97d2b3451d99e0799ed6a1949c",
+    "cities_vecLD.mat": "dd840897655cd6385e4ac118b8ce0e01303291e5982d2efafadaae8c845d63db",
+    "forests_vecLD.mat": "4a65aadbf4190736cf949f20baf5b2aaa2b57b3c2fe8cebbf5e7816bcc3c7445",
+    "highways_vecLD.mat": "c8c040eb7f96264f0b9e115140396b1d95cc6d97fc9532f01bfd1a4fe4aaa886",
+    "mountains_vecLD.mat": "d17a386c4e9263fbc85d6eb18e4a63d5349473d32ecd4631149b3f5c3ae538dd",
+    "offices_vecLD.mat": "0655e33c8c8f064a3e0454f71cfe5561c5295429d3d4deea3d81822677a3424a"
+  },
+  "archive_sha256": "c2f34ec5c7085baeb8c647a0886a74ee504cffb211ece6114b241d6127c396e2",
+  "registration": {
+    "dimension_matches": 475,
+    "shift_pixels": [
+      17,
+      11
+    ],
+    "mean_aligned_gradient": 41.37987378241215,
+    "mean_shifted_gradient": 28.129078171518707,
+    "photos_aligned_gt_shifted": 475
+  },
+  "dhash": {
+    "bits": 64,
+    "threshold": 4,
+    "algorithm": "Pillow LANCZOS 9x8 grayscale adjacent-horizontal comparison"
+  },
+  "toronto": {
+    "total": 475,
+    "panels": {
+      "development": 60,
+      "confirmation": 90,
+      "reserve": 325
+    }
+  },
+  "panels": {
+    "wireframe-root": {
+      "relative_path": ".",
+      "image_count": 47,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 13
+    },
+    "topology-train": {
+      "relative_path": "topology-train",
+      "image_count": 320,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 8
+    },
+    "prospective": {
+      "relative_path": "prospective",
+      "image_count": 64,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 12
+    },
+    "remainder": {
+      "relative_path": "remainder",
+      "image_count": 279,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 6
+    },
+    "confirmation": {
+      "relative_path": "confirmation",
+      "image_count": 48,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 8
+    },
+    "replication": {
+      "relative_path": "replication",
+      "image_count": 24,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 13
+    },
+    "york-fresh": {
+      "relative_path": "arms-next/fresh",
+      "image_count": 51,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 14
+    },
+    "york51": {
+      "relative_path": "york51",
+      "image_count": 51,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 11
+    }
+  },
+  "intra_toronto": {
+    "development_confirmation": {
+      "left_count": 60,
+      "right_count": 90,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 11
+    },
+    "development_reserve": {
+      "left_count": 60,
+      "right_count": 325,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 8
+    },
+    "confirmation_reserve": {
+      "left_count": 90,
+      "right_count": 325,
+      "exact_rgb_pairs": 0,
+      "dhash_pairs_at_or_below_threshold": 0,
+      "nearest_dhash_distance": 11
+    }
+  }
+}

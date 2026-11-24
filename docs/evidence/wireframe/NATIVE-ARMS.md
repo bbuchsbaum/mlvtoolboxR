@@ -68,3 +68,5 @@ done
 ```
 
 A fresh fit reproduced the frozen model file byte-for-byte. Replaying the new York set from the archived inputs reproduced the per-photo results and individual decisions byte-for-byte. Pixel controls tested two image scales, complete three- and four-arm patterns, and a six-pixel gap. The offline human form was exercised in a temporary browser profile through opening an image, marking a location, saving, reloading, undoing and navigating to the final card.
+
+The [contour-guided follow-up](toronto/REPORT.md) tests physical gaps on York and scores the output drawings against artists’ tracings of Toronto Scenes.

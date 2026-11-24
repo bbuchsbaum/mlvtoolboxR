@@ -1,4 +1,5 @@
 """Write experimental photographic T/X detections for a single local image."""
+
 import argparse
 import gzip
 import json
@@ -16,19 +17,15 @@ from prepare import load_model, resize_photo, write_full_views
 from score import ROOT, read_csv, write_csv
 
 
-def detect(image, weights, method, hawp_source=None, hawp_weights=None):
-    with Image.open(image) as source:
-        rgb = ImageOps.exif_transpose(source).convert("RGB")
-    small = resize_photo(rgb)
-    pixels = np.asarray(small)
-    model = load_model(weights)
+def traced_views(pixels, model):
+    """Return full-image M-LSD segments and the package's traced junctions."""
     with TemporaryDirectory() as temp:
         folder = Path(temp)
         write_full_views(folder, "photo", pixels, model)
         write_tiles(folder / "photo.tiles.csv", pixels, model)
         write_csv(
             folder / "panel.csv",
-            [dict(id="photo", width=small.width, height=small.height)],
+            [dict(id="photo", width=pixels.shape[1], height=pixels.shape[0])],
             ["id", "width", "height"],
         )
         subprocess.run(
@@ -44,6 +41,14 @@ def detect(image, weights, method, hawp_source=None, hawp_weights=None):
             cwd=ROOT,
         )
         views = read_csv(folder / "all-views.csv")
+        rows = read_csv(folder / "photo.segments.csv")
+        segments = np.array(
+            [[float(r[k]) for k in ("x1", "y1", "x2", "y2")] for r in rows]
+        ).reshape(-1, 4)
+    return segments, views
+
+
+def contour_prior(pixels, views, method):
     primary = [r for r in views if r["method"] == "mlsd_mask"]
     enhanced = [r for r in views if r["method"] == "mlsd_clahe"]
     crops = [r for r in views if r["method"].startswith("crop_")]
@@ -51,11 +56,39 @@ def detect(image, weights, method, hawp_source=None, hawp_weights=None):
     if method in ("supported", "topology", "context"):
         fragments = [dict(x=x, y=y, type="X") for _, x, y in crossings(pixels)]
         proposals = fragments + proposals
-    detections = extend(primary, proposals, method)
+    return extend(primary, proposals, method)
+
+
+def scored_candidates(pixels, predictor, fitted, method):
+    from predict_hawp import crop_lines
+    from topology import model_features, probabilities
+
+    detail = (
+        crop_lines(pixels, predictor) if fitted["variant"] == "multiscale" else None
+    )
+    if method == "context":
+        from context_features import descriptors
+
+        wire, maps = predictor(pixels, with_context=True)
+        xy, geometry = model_features(pixels, wire, fitted["variant"], detail)
+        features = descriptors(geometry, maps, xy, pixels.shape[1::-1])
+    else:
+        wire = predictor(pixels)
+        xy, features = model_features(pixels, wire, fitted["variant"], detail)
+    return xy, probabilities(features, fitted["models"])
+
+
+def detect(image, weights, method, hawp_source=None, hawp_weights=None):
+    with Image.open(image) as source:
+        rgb = ImageOps.exif_transpose(source).convert("RGB")
+    small = resize_photo(rgb)
+    pixels = np.asarray(small)
+    _, views = traced_views(pixels, load_model(weights))
+    detections = contour_prior(pixels, views, method)
     fitted_method = method in ("topology", "context")
     if fitted_method:
-        from predict_hawp import load_predictor, crop_lines
-        from topology import model_features, probabilities, resolve
+        from predict_hawp import load_predictor
+        from topology import resolve
 
         filename = (
             "context-scorer.json.gz"
@@ -65,25 +98,8 @@ def detect(image, weights, method, hawp_source=None, hawp_weights=None):
         with gzip.open(Path(__file__).with_name(filename), "rt") as f:
             fitted = json.load(f)
         predictor = load_predictor(hawp_source, hawp_weights)
-        detail = (
-            crop_lines(pixels, predictor) if fitted["variant"] == "multiscale" else None
-        )
-        if method == "context":
-            from context_features import descriptors as context_descriptors
-
-            lines, maps = predictor(pixels, with_context=True)
-            xy, geometry = model_features(pixels, lines, fitted["variant"], detail)
-            features = context_descriptors(geometry, maps, xy, small.size)
-        else:
-            xy, features = model_features(
-                pixels, predictor(pixels), fitted["variant"], detail
-            )
-        detections = resolve(
-            xy,
-            probabilities(features, fitted["models"]),
-            detections,
-            fitted["cutoffs"],
-        )
+        xy, prob = scored_candidates(pixels, predictor, fitted, method)
+        detections = resolve(xy, prob, detections, fitted["cutoffs"])
     scale = np.array(rgb.size) / small.size
     for event in detections:
         x, y = float(event["x"]), float(event["y"])
