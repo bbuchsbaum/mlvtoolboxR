@@ -166,29 +166,31 @@ def suppress(xy, prob, cutoffs, radius=4):
     return kept
 
 
+def tree_response(features, model):
+    """Sum the fitted bias and leaf values of a numeric tree ensemble."""
+    total = np.full(len(features), model["bias"], dtype=float)
+    for tree in model["trees"]:
+        nodes = np.zeros(len(features), dtype=int)
+        leaves = np.asarray(tree["leaf"], dtype=bool)
+        f = np.asarray(tree["feature"])
+        t = np.asarray(tree["threshold"])
+        left = np.asarray(tree["left"])
+        right = np.asarray(tree["right"])
+        active = np.flatnonzero(~leaves[nodes])
+        while len(active):
+            n = nodes[active]
+            nodes[active] = np.where(
+                features[active, f[n]] <= t[n], left[n], right[n]
+            )
+            active = active[~leaves[nodes[active]]]
+        total += np.asarray(tree["value"])[nodes]
+    return total
+
+
 def probabilities(features, models):
     from scipy.special import expit
 
-    scores = []
-    for model in models:
-        total = np.full(len(features), model["bias"], dtype=float)
-        for tree in model["trees"]:
-            nodes = np.zeros(len(features), dtype=int)
-            leaves = np.asarray(tree["leaf"], dtype=bool)
-            f = np.asarray(tree["feature"])
-            t = np.asarray(tree["threshold"])
-            left = np.asarray(tree["left"])
-            right = np.asarray(tree["right"])
-            active = np.flatnonzero(~leaves[nodes])
-            while len(active):
-                n = nodes[active]
-                nodes[active] = np.where(
-                    features[active, f[n]] <= t[n], left[n], right[n]
-                )
-                active = active[~leaves[nodes[active]]]
-            total += np.asarray(tree["value"])[nodes]
-        scores.append(expit(total))
-    return np.column_stack(scores)
+    return np.column_stack([expit(tree_response(features, model)) for model in models])
 
 
 def anchor(xy, prob, prior):

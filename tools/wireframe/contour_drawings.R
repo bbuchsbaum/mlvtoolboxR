@@ -16,7 +16,7 @@ for (i in seq_len(nrow(rows))) {
       cbind(head(xy, -1), tail(xy, -1))
     })
     drawing <- mlv_drawing(contours, size$width, size$height, zero_length = "drop")
-  } else if (method == "union_vector") {
+  } else if (method %in% c("union_vector", "curve_rank")) {
     seg <- read.csv(paste0(prefix, ".segments.csv"))
     indices <- split(seq_len(nrow(seg)), seg$group)
     paths <- lapply(indices, function(ix) as.matrix(seg[ix, c("x1","y1","x2","y2"), drop = FALSE]))
