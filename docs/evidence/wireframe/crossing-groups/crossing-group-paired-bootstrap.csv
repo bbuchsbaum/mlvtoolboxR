@@ -1,0 +1,8 @@
+method,comparator,metric,estimate,lo,hi,resamples,seed
+grouped,baseline,pixel_coverage,-0.0012207107312085519,-0.0023904473455146915,-0.00018445758958350516,2000,20261124
+grouped,baseline,pixel_F1,-0.0008819468760672411,-0.001984843268233888,0.00015545941341981698,2000,20261124
+grouped,baseline,T_position_match,-18,-31.0,-5.0,2000,20261124
+grouped,baseline,X_position_match,16,8.0,24.0,2000,20261124
+grouped,baseline,T_incidence_match,-1,-4.0,2.0,2000,20261124
+grouped,baseline,X_incidence_match,1,0.0,3.0,2000,20261124
+grouped,baseline,X_four_arm_match,1,0.0,3.0,2000,20261124

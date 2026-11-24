@@ -212,8 +212,10 @@ class Selection:
         )
         return self.gain + JUNCTION_CREDIT / 2 * (self.member_credit + completion)
 
-    def take(self, j):
-        if not self.eligible()[j]:
+    def take(self, j, *, allow_covered=False):
+        if not self.eligible()[j] and not (
+            allow_covered and self.ink[j] == 0 and j not in self.order
+        ):
             raise ValueError("Chosen path is outside the remaining ink budget")
         p = self.pool
         ink = p.pixels[j][~self.used[p.pixels[j]]]
@@ -275,7 +277,11 @@ def training_rows(pool, artist, matched, photo_id):
 
 def predict_paths(pool, model):
     """Select with source geometry and RGB observations; no artist inputs."""
-    state = Selection(pool)
+    return fill_singles(Selection(pool), model)
+
+
+def fill_singles(state, model):
+    """Spend the remaining budget on the best feasible paths."""
     while state.eligible().any():
         valid = state.eligible()
         reward = np.zeros(len(valid))
