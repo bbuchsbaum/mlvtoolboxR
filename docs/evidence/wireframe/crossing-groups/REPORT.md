@@ -21,6 +21,8 @@ Three M-LSD sites on two photos already satisfied the four-arm criterion in thei
 
 The next development question is how often four suitably aligned arms are already present around an artist X even when neither extractor calls it an X. Measure that fraction separately from the fraction selected into the finished drawing. It distinguishes the need to extract better paths from the need to recognize promising combinations of existing paths. Three verified source groups on two photographs give little basis for learning a new completion bonus.
 
+The [development branch diagnostic](../arm-opportunity/REPORT.md) measures this fraction on crossings with four traceable nine-pixel branches.
+
 ## Verification
 
 The protocol was committed as `e31b2c8` before scoring. Both photo-only selectors used the same folds and path model. Each baseline prediction reproduced the earlier held-out vector file byte for byte. The R package rendered every final drawing and re-detected its junctions. The source labels used to choose diagnostic groups were read for that purpose only after all primary drawings had been predicted. [Reproduction steps](REPRODUCE.md)
