@@ -1,0 +1,15 @@
+group,pool,max_piece_pixels,pieces,artist_pixels,covered,m2_coverage_pct
+all,fdog_mlsd,2,124443,353073,207397,58.74
+all,fdog_mlsd,13,24249,353073,187822,53.2
+beaches,fdog_mlsd,2,13528,32844,19138,58.27
+beaches,fdog_mlsd,13,2429,32844,17399,52.97
+cities,fdog_mlsd,2,28821,87878,53745,61.16
+cities,fdog_mlsd,13,5520,87878,48401,55.08
+forests,fdog_mlsd,2,19244,71419,32897,46.06
+forests,fdog_mlsd,13,3563,71419,32781,45.9
+highways,fdog_mlsd,2,20756,55901,32715,58.52
+highways,fdog_mlsd,13,4571,55901,28239,50.52
+mountains,fdog_mlsd,2,10959,27960,12606,45.09
+mountains,fdog_mlsd,13,2051,27960,12581,45.0
+offices,fdog_mlsd,2,31135,77071,56296,73.04
+offices,fdog_mlsd,13,6115,77071,48421,62.83

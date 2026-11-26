@@ -1,0 +1,189 @@
+subset,config,comparison,outcome,difference,ci_low,ci_high
+all,native,curve_rank - fdog,mean JS distance: orientation,-0.0169376,-0.024478,-0.00928637
+all,native,curve_rank - fdog,mean JS distance: length,-0.0227362,-0.0382555,-0.00711883
+all,native,curve_rank - fdog,mean JS distance: curvature,0.0339724,0.0269473,0.0406684
+all,native,curve_rank - fdog,mean JS distance: horizontal_vertical,-0.00965078,-0.0170248,-0.00208624
+all,native,curve_rank - fdog,mean JS distance: junction_type,-0.0833243,-0.117511,-0.0497409
+all,native,curve_rank - fdog,mean JS distance: junction_angle,-0.129993,-0.159195,-0.101416
+all,native,curve_rank - fdog,mean JS distance: mean over properties,-0.0375596,-0.0473069,-0.0279506
+all,native,curve_rank - fdog,identification percentile: mean over properties,0.0160227,0.00049387,0.0317971
+all,native,curve_rank - fdog,decoding accuracy: method,0.0666667,-0.0222222,0.144444
+all,native,curve_rank - fdog,decoding accuracy: transfer,0.144444,0.0833333,0.205556
+all,native,curve_rank - fdog,spearman: total_length,-0.0065146,-0.012064,-0.00148816
+all,native,curve_rank - fdog,spearman: n_contours,0.136465,0.0580094,0.214034
+all,native,curve_rank - fdog,spearman: density_T,0.603991,0.427917,0.780719
+all,native,curve_rank - fdog,spearman: density_Y,0.127603,-0.0346713,0.309414
+all,native,curve_rank - fdog,spearman: density_X,0.18689,-0.0454878,0.428295
+all,native,curve_rank - fdog,spearman: density_Arrow,0.154125,-0.0137049,0.317025
+all,native,curve_rank - fdog,spearman: density_Star,nan,nan,nan
+all,native,curve_rank - fdog,spearman: mean_abs_curvature,-0.140644,-0.253367,-0.0381687
+all,native,curve_rank - fdog,spearman: hv_fraction,-0.00907435,-0.0447315,0.0254211
+all,native,curve_rank - union_vector,mean JS distance: orientation,-0.0826069,-0.0930948,-0.0726489
+all,native,curve_rank - union_vector,mean JS distance: length,-0.0592334,-0.0732725,-0.0454573
+all,native,curve_rank - union_vector,mean JS distance: curvature,-0.0694311,-0.0763135,-0.0623041
+all,native,curve_rank - union_vector,mean JS distance: horizontal_vertical,-0.0765004,-0.0877062,-0.0662478
+all,native,curve_rank - union_vector,mean JS distance: junction_type,-0.0721928,-0.10815,-0.0368791
+all,native,curve_rank - union_vector,mean JS distance: junction_angle,-0.163529,-0.192898,-0.133857
+all,native,curve_rank - union_vector,mean JS distance: mean over properties,-0.087249,-0.0990905,-0.0754449
+all,native,curve_rank - union_vector,identification percentile: mean over properties,0.0135889,-0.000290322,0.0274642
+all,native,curve_rank - union_vector,decoding accuracy: method,-0.138889,-0.216806,-0.0611111
+all,native,curve_rank - union_vector,decoding accuracy: transfer,0.0722222,0.00555556,0.133333
+all,native,curve_rank - union_vector,spearman: total_length,0.00531909,-0.000583641,0.0124639
+all,native,curve_rank - union_vector,spearman: n_contours,0.181803,0.113074,0.250956
+all,native,curve_rank - union_vector,spearman: density_T,0.409687,0.277714,0.550003
+all,native,curve_rank - union_vector,spearman: density_Y,0.0924467,-0.0932687,0.287135
+all,native,curve_rank - union_vector,spearman: density_X,0.403478,0.230726,0.571324
+all,native,curve_rank - union_vector,spearman: density_Arrow,0.105142,-0.0687698,0.276711
+all,native,curve_rank - union_vector,spearman: density_Star,0.0247842,-0.140285,0.178505
+all,native,curve_rank - union_vector,spearman: mean_abs_curvature,0.118146,0.0404076,0.195205
+all,native,curve_rank - union_vector,spearman: hv_fraction,0.01177,-0.0388595,0.0656344
+all,working,curve_rank - fdog,mean JS distance: orientation,-0.0169376,-0.024478,-0.00928637
+all,working,curve_rank - fdog,mean JS distance: length,-0.0298425,-0.0452368,-0.0136499
+all,working,curve_rank - fdog,mean JS distance: curvature,0.0336598,0.0246851,0.0421049
+all,working,curve_rank - fdog,mean JS distance: horizontal_vertical,-0.00965078,-0.0170248,-0.00208624
+all,working,curve_rank - fdog,mean JS distance: junction_type,-0.171349,-0.201196,-0.141791
+all,working,curve_rank - fdog,mean JS distance: junction_angle,-0.212154,-0.240377,-0.184499
+all,working,curve_rank - fdog,mean JS distance: mean over properties,-0.0677123,-0.0773966,-0.0582344
+all,working,curve_rank - fdog,identification percentile: mean over properties,0.0187875,0.00257449,0.0348683
+all,working,curve_rank - fdog,decoding accuracy: method,0.15,0.0611111,0.233333
+all,working,curve_rank - fdog,decoding accuracy: transfer,0.222222,0.161111,0.288889
+all,working,curve_rank - fdog,spearman: total_length,-0.0065146,-0.012064,-0.00148816
+all,working,curve_rank - fdog,spearman: n_contours,0.136465,0.0580094,0.214034
+all,working,curve_rank - fdog,spearman: density_T,0.543376,0.347011,0.734247
+all,working,curve_rank - fdog,spearman: density_Y,-0.223914,-0.384097,-0.0630886
+all,working,curve_rank - fdog,spearman: density_X,0.251197,0.070157,0.443243
+all,working,curve_rank - fdog,spearman: density_Arrow,0.270143,0.0838346,0.44077
+all,working,curve_rank - fdog,spearman: density_Star,0.0762751,-0.118155,0.198709
+all,working,curve_rank - fdog,spearman: mean_abs_curvature,-0.140644,-0.253367,-0.0381687
+all,working,curve_rank - fdog,spearman: hv_fraction,-0.00907435,-0.0447315,0.0254211
+all,working,curve_rank - union_vector,mean JS distance: orientation,-0.0826069,-0.0930948,-0.0726489
+all,working,curve_rank - union_vector,mean JS distance: length,-0.0701954,-0.0838175,-0.0567104
+all,working,curve_rank - union_vector,mean JS distance: curvature,-0.07603,-0.0839221,-0.0683963
+all,working,curve_rank - union_vector,mean JS distance: horizontal_vertical,-0.0765004,-0.0877062,-0.0662478
+all,working,curve_rank - union_vector,mean JS distance: junction_type,-0.1163,-0.142931,-0.0880024
+all,working,curve_rank - union_vector,mean JS distance: junction_angle,-0.11738,-0.14559,-0.0898342
+all,working,curve_rank - union_vector,mean JS distance: mean over properties,-0.0898355,-0.101469,-0.0786648
+all,working,curve_rank - union_vector,identification percentile: mean over properties,0.0234068,0.0123422,0.0354494
+all,working,curve_rank - union_vector,decoding accuracy: method,-0.0722222,-0.144444,0.00555556
+all,working,curve_rank - union_vector,decoding accuracy: transfer,0.0944444,0.0333333,0.155556
+all,working,curve_rank - union_vector,spearman: total_length,0.00531909,-0.000583641,0.0124639
+all,working,curve_rank - union_vector,spearman: n_contours,0.181803,0.113074,0.250956
+all,working,curve_rank - union_vector,spearman: density_T,0.397771,0.256222,0.543401
+all,working,curve_rank - union_vector,spearman: density_Y,-0.0741628,-0.229862,0.0841898
+all,working,curve_rank - union_vector,spearman: density_X,0.413368,0.255578,0.575994
+all,working,curve_rank - union_vector,spearman: density_Arrow,0.19336,0.027663,0.364039
+all,working,curve_rank - union_vector,spearman: density_Star,0.15355,0.00204136,0.315002
+all,working,curve_rank - union_vector,spearman: mean_abs_curvature,0.118146,0.0404076,0.195205
+all,working,curve_rank - union_vector,spearman: hv_fraction,0.01177,-0.0388595,0.0656344
+all,published,curve_rank - fdog,mean JS distance: orientation,-0.0169376,-0.024478,-0.00928637
+all,published,curve_rank - fdog,mean JS distance: length,-0.0227362,-0.0382555,-0.00711883
+all,published,curve_rank - fdog,mean JS distance: curvature,0.0456107,0.0373687,0.0536171
+all,published,curve_rank - fdog,mean JS distance: junction_type,-0.0887505,-0.123131,-0.0547965
+all,published,curve_rank - fdog,mean JS distance: junction_angle,-0.137126,-0.166814,-0.108285
+all,published,curve_rank - fdog,mean JS distance: mean over properties,-0.0433132,-0.055252,-0.0315536
+all,published,curve_rank - fdog,identification percentile: mean over properties,0.00644424,-0.0130829,0.0256254
+all,published,curve_rank - fdog,decoding accuracy: method,0.155556,0.0611111,0.244444
+all,published,curve_rank - fdog,decoding accuracy: transfer,0.0888889,0.0277778,0.15
+all,published,curve_rank - union_vector,mean JS distance: orientation,-0.0826069,-0.0930948,-0.0726489
+all,published,curve_rank - union_vector,mean JS distance: length,-0.0592334,-0.0732725,-0.0454573
+all,published,curve_rank - union_vector,mean JS distance: curvature,-0.0844599,-0.0926304,-0.0766111
+all,published,curve_rank - union_vector,mean JS distance: junction_type,-0.0736224,-0.109432,-0.0375251
+all,published,curve_rank - union_vector,mean JS distance: junction_angle,-0.159698,-0.186778,-0.133475
+all,published,curve_rank - union_vector,mean JS distance: mean over properties,-0.0919242,-0.10458,-0.0789843
+all,published,curve_rank - union_vector,identification percentile: mean over properties,0.00691186,-0.0092867,0.022263
+all,published,curve_rank - union_vector,decoding accuracy: method,-0.0666667,-0.138889,0.00555556
+all,published,curve_rank - union_vector,decoding accuracy: transfer,0.0944444,0.0222222,0.161111
+test,native,curve_rank - fdog,mean JS distance: orientation,-0.014641,-0.0238974,-0.0045473
+test,native,curve_rank - fdog,mean JS distance: length,-0.0253649,-0.0424802,-0.00762607
+test,native,curve_rank - fdog,mean JS distance: curvature,0.0371949,0.029265,0.0450884
+test,native,curve_rank - fdog,mean JS distance: horizontal_vertical,-0.0070885,-0.0160407,0.0021382
+test,native,curve_rank - fdog,mean JS distance: junction_type,-0.0667641,-0.108502,-0.025919
+test,native,curve_rank - fdog,mean JS distance: junction_angle,-0.132132,-0.167438,-0.0940082
+test,native,curve_rank - fdog,mean JS distance: mean over properties,-0.0339811,-0.0462048,-0.0219635
+test,native,curve_rank - fdog,identification percentile: mean over properties,0.0131712,-0.00723774,0.0329411
+test,native,curve_rank - fdog,decoding accuracy: method,0.0583333,-0.05,0.158333
+test,native,curve_rank - fdog,decoding accuracy: transfer,0.133333,0.0583333,0.216667
+test,native,curve_rank - fdog,spearman: total_length,-0.00543788,-0.0146334,0.00181338
+test,native,curve_rank - fdog,spearman: n_contours,0.133776,0.0292279,0.229716
+test,native,curve_rank - fdog,spearman: density_T,0.645847,0.432981,0.859154
+test,native,curve_rank - fdog,spearman: density_Y,0.0878024,-0.134566,0.311862
+test,native,curve_rank - fdog,spearman: density_X,0.207689,-0.0699141,0.495115
+test,native,curve_rank - fdog,spearman: density_Arrow,0.195123,-0.00880337,0.402919
+test,native,curve_rank - fdog,spearman: density_Star,nan,nan,nan
+test,native,curve_rank - fdog,spearman: mean_abs_curvature,-0.182381,-0.326353,-0.0429646
+test,native,curve_rank - fdog,spearman: hv_fraction,-0.0158969,-0.0652547,0.0328679
+test,native,curve_rank - union_vector,mean JS distance: orientation,-0.0817784,-0.093876,-0.0691954
+test,native,curve_rank - union_vector,mean JS distance: length,-0.0620145,-0.0781562,-0.0460031
+test,native,curve_rank - union_vector,mean JS distance: curvature,-0.0723855,-0.0808269,-0.064593
+test,native,curve_rank - union_vector,mean JS distance: horizontal_vertical,-0.0740114,-0.0858591,-0.0626445
+test,native,curve_rank - union_vector,mean JS distance: junction_type,-0.0803307,-0.124169,-0.0356162
+test,native,curve_rank - union_vector,mean JS distance: junction_angle,-0.172838,-0.208862,-0.138081
+test,native,curve_rank - union_vector,mean JS distance: mean over properties,-0.0905597,-0.105216,-0.0760057
+test,native,curve_rank - union_vector,identification percentile: mean over properties,0.0215511,0.00499661,0.0384628
+test,native,curve_rank - union_vector,decoding accuracy: method,-0.116667,-0.216667,-0.0166667
+test,native,curve_rank - union_vector,decoding accuracy: transfer,0.0583333,-0.025,0.141667
+test,native,curve_rank - union_vector,spearman: total_length,0.00333356,-0.00368293,0.011379
+test,native,curve_rank - union_vector,spearman: n_contours,0.223933,0.141629,0.308146
+test,native,curve_rank - union_vector,spearman: density_T,0.504459,0.330915,0.679315
+test,native,curve_rank - union_vector,spearman: density_Y,0.158346,-0.0965559,0.406237
+test,native,curve_rank - union_vector,spearman: density_X,0.439677,0.24425,0.628862
+test,native,curve_rank - union_vector,spearman: density_Arrow,0.185954,-0.0274528,0.391177
+test,native,curve_rank - union_vector,spearman: density_Star,0.0414314,-0.107088,0.201472
+test,native,curve_rank - union_vector,spearman: mean_abs_curvature,0.0976318,-0.0104272,0.201313
+test,native,curve_rank - union_vector,spearman: hv_fraction,0.00380798,-0.0743159,0.0835301
+test,working,curve_rank - fdog,mean JS distance: orientation,-0.014641,-0.0238974,-0.0045473
+test,working,curve_rank - fdog,mean JS distance: length,-0.030685,-0.0479564,-0.013572
+test,working,curve_rank - fdog,mean JS distance: curvature,0.033842,0.023313,0.0441406
+test,working,curve_rank - fdog,mean JS distance: horizontal_vertical,-0.0070885,-0.0160407,0.0021382
+test,working,curve_rank - fdog,mean JS distance: junction_type,-0.15884,-0.194716,-0.121808
+test,working,curve_rank - fdog,mean JS distance: junction_angle,-0.217339,-0.25185,-0.183832
+test,working,curve_rank - fdog,mean JS distance: mean over properties,-0.065792,-0.0780649,-0.0538743
+test,working,curve_rank - fdog,identification percentile: mean over properties,0.0138695,-0.00506304,0.0320228
+test,working,curve_rank - fdog,decoding accuracy: method,0.15,0.05,0.25
+test,working,curve_rank - fdog,decoding accuracy: transfer,0.241667,0.166667,0.325
+test,working,curve_rank - fdog,spearman: total_length,-0.00543788,-0.0146334,0.00181338
+test,working,curve_rank - fdog,spearman: n_contours,0.133776,0.0292279,0.229716
+test,working,curve_rank - fdog,spearman: density_T,0.477528,0.248079,0.691671
+test,working,curve_rank - fdog,spearman: density_Y,-0.186486,-0.362273,-0.010126
+test,working,curve_rank - fdog,spearman: density_X,0.157922,-0.0851442,0.393751
+test,working,curve_rank - fdog,spearman: density_Arrow,0.244718,0.0218314,0.467503
+test,working,curve_rank - fdog,spearman: density_Star,0.00925269,-0.242766,0.156525
+test,working,curve_rank - fdog,spearman: mean_abs_curvature,-0.182381,-0.326353,-0.0429646
+test,working,curve_rank - fdog,spearman: hv_fraction,-0.0158969,-0.0652547,0.0328679
+test,working,curve_rank - union_vector,mean JS distance: orientation,-0.0817784,-0.093876,-0.0691954
+test,working,curve_rank - union_vector,mean JS distance: length,-0.0739442,-0.0894878,-0.0582297
+test,working,curve_rank - union_vector,mean JS distance: curvature,-0.078023,-0.087657,-0.0688613
+test,working,curve_rank - union_vector,mean JS distance: horizontal_vertical,-0.0740114,-0.0858591,-0.0626445
+test,working,curve_rank - union_vector,mean JS distance: junction_type,-0.11412,-0.146968,-0.0817558
+test,working,curve_rank - union_vector,mean JS distance: junction_angle,-0.129255,-0.165257,-0.0974117
+test,working,curve_rank - union_vector,mean JS distance: mean over properties,-0.0918554,-0.105484,-0.0785035
+test,working,curve_rank - union_vector,identification percentile: mean over properties,0.0180129,0.00349754,0.0315954
+test,working,curve_rank - union_vector,decoding accuracy: method,-0.0583333,-0.158333,0.0333333
+test,working,curve_rank - union_vector,decoding accuracy: transfer,0.075,0,0.15
+test,working,curve_rank - union_vector,spearman: total_length,0.00333356,-0.00368293,0.011379
+test,working,curve_rank - union_vector,spearman: n_contours,0.223933,0.141629,0.308146
+test,working,curve_rank - union_vector,spearman: density_T,0.419626,0.232546,0.612107
+test,working,curve_rank - union_vector,spearman: density_Y,-0.0977498,-0.284898,0.0938188
+test,working,curve_rank - union_vector,spearman: density_X,0.400606,0.21856,0.591835
+test,working,curve_rank - union_vector,spearman: density_Arrow,0.216088,0.0106179,0.412906
+test,working,curve_rank - union_vector,spearman: density_Star,0.228156,0.0407272,0.418099
+test,working,curve_rank - union_vector,spearman: mean_abs_curvature,0.0976318,-0.0104272,0.201313
+test,working,curve_rank - union_vector,spearman: hv_fraction,0.00380798,-0.0743159,0.0835301
+test,published,curve_rank - fdog,mean JS distance: orientation,-0.014641,-0.0238974,-0.0045473
+test,published,curve_rank - fdog,mean JS distance: length,-0.0253649,-0.0424802,-0.00762607
+test,published,curve_rank - fdog,mean JS distance: curvature,0.0491914,0.0397522,0.0584498
+test,published,curve_rank - fdog,mean JS distance: junction_type,-0.0707212,-0.112633,-0.0295169
+test,published,curve_rank - fdog,mean JS distance: junction_angle,-0.141494,-0.176624,-0.102878
+test,published,curve_rank - fdog,mean JS distance: mean over properties,-0.0396041,-0.0535726,-0.0250845
+test,published,curve_rank - fdog,identification percentile: mean over properties,0.00245965,-0.0221771,0.0255806
+test,published,curve_rank - fdog,decoding accuracy: method,0.15,0.0497917,0.258333
+test,published,curve_rank - fdog,decoding accuracy: transfer,0.0833333,0,0.158542
+test,published,curve_rank - union_vector,mean JS distance: orientation,-0.0817784,-0.093876,-0.0691954
+test,published,curve_rank - union_vector,mean JS distance: length,-0.0620145,-0.0781562,-0.0460031
+test,published,curve_rank - union_vector,mean JS distance: curvature,-0.0878444,-0.0980333,-0.0782899
+test,published,curve_rank - union_vector,mean JS distance: junction_type,-0.0797235,-0.123959,-0.0353746
+test,published,curve_rank - union_vector,mean JS distance: junction_angle,-0.168475,-0.203527,-0.135318
+test,published,curve_rank - union_vector,mean JS distance: mean over properties,-0.0959671,-0.11257,-0.0795868
+test,published,curve_rank - union_vector,identification percentile: mean over properties,0.0160475,-0.00275163,0.0352611
+test,published,curve_rank - union_vector,decoding accuracy: method,-0.05,-0.133333,0.0416667
+test,published,curve_rank - union_vector,decoding accuracy: transfer,0.0833333,0,0.166667

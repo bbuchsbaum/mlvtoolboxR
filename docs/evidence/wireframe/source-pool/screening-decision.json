@@ -1,0 +1,84 @@
+{
+  "protocol": "docs/evidence/wireframe/source-pool/PLAN.md at a2ffd64",
+  "structured_edges": {
+    "model_repository": "https://github.com/opencv/opencv_extra",
+    "model_commit": "5e3a56880fb115e757855f8e01e744c154791144",
+    "model_path": "testdata/cv/ximgproc/model.yml.gz",
+    "model_sha256": "fe3586bca5ec124b73fa769c2b54e195e4526d6ceeddf161fad96bf68a65bf17",
+    "opencv": "4.14.0",
+    "numpy": "2.2.6",
+    "pillow": "12.1.1",
+    "nms": "edgesNms defaults: r=2, s=0, m=1",
+    "threshold": 0.1,
+    "input": "original 800 x 600 RGB after EXIF transpose, float32 / 255, RGB order",
+    "photos": 60
+  },
+  "baseline_reproduction": {
+    "fdog": {
+      "per_photo_identical": true,
+      "ink": 134708,
+      "coverage": 42.65,
+      "ledger_ink": 134708,
+      "ledger_coverage": 42.65
+    },
+    "both_sources": {
+      "per_photo_identical": true,
+      "ink": 223878,
+      "coverage": 58.92,
+      "ledger_ink": 223878,
+      "ledger_coverage": 58.92
+    },
+    "reference_selection": {
+      "per_photo_identical": true,
+      "ink": 133548,
+      "coverage": 49.94,
+      "ledger_ink": 133548,
+      "ledger_coverage": 49.94
+    }
+  },
+  "rule": {
+    "m2_points": 2.0,
+    "m4_crossings": 5,
+    "m4_photos": 3
+  },
+  "baseline": {
+    "m2_coverage_pct": 49.9404,
+    "m4_four_arm": 5,
+    "m4_photos": 1
+  },
+  "sources": {
+    "with_fdog512": {
+      "m2_coverage_pct": 58.5477,
+      "m2_gain_points": 8.6073,
+      "m2_beyond_baseline_union_points": 14.7499,
+      "m2_pass": true,
+      "m4_four_arm": 7,
+      "m4_gained": 2,
+      "m4_gained_photos": 2,
+      "m4_pass": false,
+      "carry_forward": true
+    },
+    "with_sed": {
+      "m2_coverage_pct": 65.2834,
+      "m2_gain_points": 15.343,
+      "m2_beyond_baseline_union_points": 17.9224,
+      "m2_pass": true,
+      "m4_four_arm": 8,
+      "m4_gained": 3,
+      "m4_gained_photos": 3,
+      "m4_pass": false,
+      "carry_forward": true
+    },
+    "with_both": {
+      "m2_coverage_pct": 68.5453,
+      "m2_gain_points": 18.6049,
+      "m2_beyond_baseline_union_points": 22.6508,
+      "m2_pass": true,
+      "m4_four_arm": 9,
+      "m4_gained": 4,
+      "m4_gained_photos": 4,
+      "m4_pass": false,
+      "note": "reported for information; the rule applies to each source added alone"
+    }
+  }
+}
